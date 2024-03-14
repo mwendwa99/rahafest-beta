@@ -4,6 +4,7 @@ import { BottomNavigation } from "react-native-paper";
 import { CommonActions } from "@react-navigation/native";
 
 import { Home as HomeScreen } from "../screens/home";
+import { Chat as ChatScreen } from "../screens/chat";
 
 const BottomTab = createBottomTabNavigator();
 
@@ -108,9 +109,10 @@ export default function AppNav() {
       />
       <BottomTab.Screen
         name="Chat"
-        component={HomeScreen}
+        component={ChatScreen}
         options={{
           title: "Chat",
+          headerShown: true,
           tabBarIcon: ({ size, focused }) => (
             <MaterialCommunityIcons
               name="chat"
