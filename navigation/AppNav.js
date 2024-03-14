@@ -3,7 +3,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { BottomNavigation } from "react-native-paper";
 import { CommonActions } from "@react-navigation/native";
 
-import { Home as HomeScreen } from "../screens/home";
+import { HomeNavigator } from "../screens/home";
 import { Chat as ChatScreen } from "../screens/chat";
 
 const BottomTab = createBottomTabNavigator();
@@ -66,8 +66,8 @@ export default function AppNav() {
       )}
     >
       <BottomTab.Screen
-        name="Home"
-        component={HomeScreen}
+        name="HomeNav"
+        component={HomeNavigator}
         options={{
           title: "Home",
           tabBarIcon: ({ size, focused }) => (
@@ -81,7 +81,7 @@ export default function AppNav() {
       />
       <BottomTab.Screen
         name="Schedule"
-        component={HomeScreen}
+        component={HomeNavigator}
         options={{
           title: "Schedule",
           tabBarIcon: ({ size, focused }) => (
@@ -95,7 +95,7 @@ export default function AppNav() {
       />
       <BottomTab.Screen
         name="Lineup"
-        component={HomeScreen}
+        component={HomeNavigator}
         options={{
           title: "Lineup",
           tabBarIcon: ({ size, focused }) => (

@@ -14,7 +14,7 @@ const image = require("../../assets/background.webp");
 const logo = require("../../assets/logo.png");
 const blob = require("../../assets/blob.png");
 
-export default function Home() {
+export default function Home({ navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <ImageBackground
@@ -28,7 +28,7 @@ export default function Home() {
 
         <View style={styles.section}>
           <View style={styles.row}>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate("Playlist")}>
               <ImageBackground source={blob} style={styles.blob}>
                 <FontAwesome5 name="headphones-alt" size={40} color="#fff" />
                 <Text variant="small" value={"Playlist"} color="#fff" />
