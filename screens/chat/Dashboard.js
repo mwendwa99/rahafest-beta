@@ -1,12 +1,12 @@
 import { StyleSheet, View, Text } from "react-native";
 
-export default function () {
+export default function Dashboard() {
     return(
-        <View style={styles.container}>
-            <Text>Faq</Text>
+        <View>
+            <Text>Dashboard</Text>
         </View>
     )
-}
+};
 
 const styles = StyleSheet.create({
     container: {
@@ -14,4 +14,4 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
     }
-})
+});

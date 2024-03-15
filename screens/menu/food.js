@@ -1,5 +1,4 @@
-import { StyleSheet } from "react-native";
-import { View } from "react-native-reanimated/lib/typescript/Animated";
+import { View, StyleSheet, Text } from "react-native";
 
 export default function food() {
     return (
