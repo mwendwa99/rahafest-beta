@@ -25,6 +25,18 @@ export default function App() {
       </PersistGate>
     </Provider>
   );
+  // return (
+  //   <Provider store={store}>
+  //       <NavigationContainer>
+  //         <PaperProvider>
+  //           <SafeAreaView style={styles.container}>
+  //             <Routes />
+  //             <StatusBar style="auto" />
+  //           </SafeAreaView>
+  //         </PaperProvider>
+  //       </NavigationContainer>
+  //    </Provider>
+  // );
 }
 
 const styles = StyleSheet.create({

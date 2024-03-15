@@ -1,10 +1,12 @@
-import { MaterialCommunityIcons, FontAwesome5 } from "@expo/vector-icons";
+import { MaterialCommunityIcons, FontAwesome5, Ionicons } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { BottomNavigation } from "react-native-paper";
 import { CommonActions } from "@react-navigation/native";
 
 import { HomeNavigator } from "../screens/home";
-import { Chat as ChatScreen } from "../screens/chat";
+import ChatNavigator from "../screens/chat";
+import { Faq } from "../screens/faq";
+import { Menu } from "../screens/menu";
 
 const BottomTab = createBottomTabNavigator();
 
@@ -94,7 +96,7 @@ export default function AppNav() {
         }}
       />
       <BottomTab.Screen
-        name="Lineup"
+        name="NewsFeed"
         component={HomeNavigator}
         options={{
           title: "News Feed",
@@ -108,14 +110,44 @@ export default function AppNav() {
         }}
       />
       <BottomTab.Screen
-        name="Chat"
-        component={ChatScreen}
+        name="Faqs"
+        component={Faq}
         options={{
           title: "Faqs",
           headerShown: true,
           tabBarIcon: ({ size, focused }) => (
+            <Ionicons
+              name="information-circle"
+              color={focused ? "orange" : "#fafafa"}
+              size={size}
+            />
+          ),
+        }}
+      />
+      <BottomTab.Screen
+        name="Menu"
+        component={Menu}
+        options={{
+          title: "Menu",
+          headerShown: true,
+          tabBarIcon: ({ size, focused }) => (
             <MaterialCommunityIcons
-              name="frequently-asked-questions"
+              name="food-fork-drink"
+              color={focused ? "orange" : "#fafafa"}
+              size={size}
+            />
+          ),
+        }}
+      />
+      <BottomTab.Screen
+        name="Chats"
+        component={ChatNavigator}
+        options={{
+          title: "Swift Chat",
+          headerShown: true,
+          tabBarIcon: ({ size, focused }) => (
+            <MaterialCommunityIcons
+              name="chat"
               color={focused ? "orange" : "#fafafa"}
               size={size}
             />

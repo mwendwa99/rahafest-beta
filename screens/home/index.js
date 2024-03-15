@@ -12,7 +12,10 @@ export const HomeNavigator = () => {
       <Stack.Screen
         name="Home"
         component={Home}
-        options={{ headerShown: false }}
+        options={{
+          headerShown: false,
+          headerShadowVisible: false,
+        }}
       />
       <Stack.Screen
         name="Playlist"
