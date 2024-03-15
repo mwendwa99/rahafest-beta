@@ -85,8 +85,8 @@ export default function AppNav() {
         options={{
           title: "Schedule",
           tabBarIcon: ({ size, focused }) => (
-            <FontAwesome5
-              name="compact-disc"
+            <MaterialCommunityIcons
+              name="calendar-clock"
               color={focused ? "orange" : "#fafafa"}
               size={size}
             />
@@ -97,10 +97,10 @@ export default function AppNav() {
         name="Lineup"
         component={HomeNavigator}
         options={{
-          title: "Lineup",
+          title: "News Feed",
           tabBarIcon: ({ size, focused }) => (
             <MaterialCommunityIcons
-              name="calendar-clock"
+              name="newspaper"
               color={focused ? "orange" : "#fafafa"}
               size={size}
             />
@@ -111,11 +111,11 @@ export default function AppNav() {
         name="Chat"
         component={ChatScreen}
         options={{
-          title: "Chat",
+          title: "Faqs",
           headerShown: true,
           tabBarIcon: ({ size, focused }) => (
             <MaterialCommunityIcons
-              name="chat"
+              name="frequently-asked-questions"
               color={focused ? "orange" : "#fafafa"}
               size={size}
             />
