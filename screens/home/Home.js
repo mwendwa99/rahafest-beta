@@ -7,9 +7,16 @@ import {
   TouchableOpacity,
   Linking,
 } from "react-native";
-import { FontAwesome5, Entypo, Ionicons } from "@expo/vector-icons";
-import { useState } from "react";
+import {
+  FontAwesome5,
+  Entypo,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
+import { StatusBar } from "expo-status-bar";
+import { useState, useEffect } from "react";
 import { Portal, Modal } from "react-native-paper";
+import { useDispatch, useSelector } from "react-redux";
+import { getFaq } from "../../redux/faq/faqActions";
 
 import { Text, CText } from "../../components";
 
@@ -19,8 +26,20 @@ const blob = require("../../assets/blob.png");
 
 export default function Home({ navigation }) {
   const [visible, setVisible] = useState(false);
+  const { faq } = useSelector((state) => state.faq);
+  const dispatch = useDispatch();
+
+  // console.log({ faq });
+
+  useEffect(() => {
+    dispatch(getFaq());
+  }, []);
 
   const toggleModal = () => setVisible(!visible);
+
+  const handleNavigate = (screen) => {
+    navigation.navigate(screen);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -35,7 +54,7 @@ export default function Home({ navigation }) {
 
         <View style={styles.section}>
           <View style={styles.row}>
-            <TouchableOpacity onPress={() => navigation.navigate("Playlist")}>
+            <TouchableOpacity onPress={() => handleNavigate("Playlist")}>
               <ImageBackground source={blob} style={styles.blob}>
                 <FontAwesome5 name="headphones-alt" size={40} color="#fff" />
                 <Text variant="small" value={"Playlist"} color="#fff" />
@@ -47,30 +66,12 @@ export default function Home({ navigation }) {
                 <Text variant="small" value={"Socials"} color="#fff" />
               </ImageBackground>
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => handleNavigate("Chat")}>
               <ImageBackground source={blob} style={styles.blob}>
-                <Ionicons name="people-sharp" size={40} color="#fff" />
-                <Text variant="small" value={"Partners"} color="#fff" />
+                <MaterialCommunityIcons name="chat" size={40} color="#fff" />
+                <Text variant="small" value={"Chat"} color="#fff" />
               </ImageBackground>
             </TouchableOpacity>
-          </View>
-          <View style={styles.column}>
-            <Text variant="title" value={"Venue"} color="#fff" />
-            <CText
-              variant="title"
-              value={"Uhuru Gardens, Nairobi, Kenya"}
-              color="#fff"
-              textStyle={{ fontSize: 24, lineHeight: 32 }}
-            />
-          </View>
-          <View style={styles.column}>
-            <Text variant="title" value={"Dates"} color="#fff" />
-            <CText
-              variant="title"
-              value={"Sat 30th & 31st March 2024"}
-              color="#fff"
-              textStyle={{ fontSize: 24, lineHeight: 32 }}
-            />
           </View>
         </View>
       </ImageBackground>
@@ -120,6 +121,7 @@ export default function Home({ navigation }) {
           </View>
         </Modal>
       </Portal>
+      <StatusBar style="dark" />
     </SafeAreaView>
   );
 }
