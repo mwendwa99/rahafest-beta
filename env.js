@@ -1,11 +1,11 @@
 export const dev = {
   production: false,
-  // URL: "https://furaia.rahafest.com",
-  URL: "https://sapient.stackthon.com",
+  mobile: "https://sapient.stackthon.com",
+  web: "https://api.rahafest.com/api"
 };
 
 export const prod = {
   production: true,
-  URL: "https://sapient.stackthon.com",
-  // URL: "https://furaia.rahafest.com",
+  mobile: "https://sapient.stackthon.com",
+  web: "https://api.rahafest.com/api"
 };
