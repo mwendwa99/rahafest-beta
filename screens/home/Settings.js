@@ -7,12 +7,14 @@ import { useSelector, useDispatch } from "react-redux";
 
 export default function Settings({ navigation }) {
   const dispatch = useDispatch();
-  //   const { user } = useSelector((state) => state.auth);
-  const user = { first_name: "John" };
 
   const handleLogout = () => {
     // dispatch(logout());
-    // success("Logout success");
+    success("Logout success");
+  };
+
+  const handleNavigate = (screen) => {
+    navigation.navigate(screen);
   };
 
   return (
@@ -22,14 +24,9 @@ export default function Settings({ navigation }) {
           title="Faqs"
           iconLeft={"help-circle"}
           iconRight={"chevron-right"}
-          handlePressLink={() => alert("Feature coming soon!")}
+          handlePressLink={() => handleNavigate("Faqs")}
         />
-        <ListItem
-          title="About"
-          iconLeft={"information"}
-          iconRight={"chevron-right"}
-          handlePressLink={() => alert("Feature coming soon!")}
-        />
+
         <ListItem
           title="Logout"
           iconLeft={"logout"}
