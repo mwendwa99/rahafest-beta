@@ -1,4 +1,5 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { useSelector } from "react-redux";
 
 import { Text } from "../../components";
 import DirectMessage from "./DirectMessage";
@@ -7,8 +8,8 @@ import { Register, Login } from "../auth";
 const Stack = createNativeStackNavigator();
 
 export default function ChatNavigator() {
-  //change this var here to test auth true || false
-  const user = null;
+  const { user, token } = useSelector((state) => state.auth);
+
   return user ? (
     <Stack.Navigator initialRouteName="DirectMessage">
       <Stack.Screen
