@@ -1,5 +1,5 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { CText } from "../../components";
+import { Text } from "../../components";
 
 import Home from "./Home";
 import Playlist from "./Playlist";
@@ -25,7 +25,7 @@ export const HomeNavigator = () => {
             backgroundColor: "#212529",
           },
           headerTitle: (props) => (
-            <CText
+            <Text
               value={"Playlist"}
               {...props}
               textStyle={{ fontSize: 24, lineHeight: 32 }}
