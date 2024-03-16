@@ -5,3 +5,4 @@ export { default as Avatar } from "./Avatar";
 export { default as ListItem } from "./ListItem";
 export { default as Button } from "./Button";
 export { default as Artist } from "./Artist";
+export { default as Card } from "./Card";

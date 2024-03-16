@@ -111,7 +111,7 @@ export default function AppNav() {
         name="Newsfeed"
         component={NewsfeedNavigator}
         options={{
-          title: "Newsfeed",
+          title: "For You",
           headerShown: true,
           headerShadowVisible: false,
           headerTintColor: "#fff",
@@ -119,7 +119,7 @@ export default function AppNav() {
             backgroundColor: "#212529",
           },
           headerTitle: (props) => (
-            <Text value={"Newsfeed"} {...props} variant={"subtitle"} />
+            <Text value={"News updates"} {...props} variant={"subtitle"} />
           ),
           headerTitleAlign: "center",
           tabBarIcon: ({ size, focused }) => (
