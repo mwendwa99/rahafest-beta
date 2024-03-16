@@ -30,7 +30,7 @@ export default function Home({ navigation }) {
   const { faq } = useSelector((state) => state.faq);
   const dispatch = useDispatch();
 
-  // console.log({ faq });
+  console.log({ faq });
 
   useEffect(() => {
     dispatch(getFaq());

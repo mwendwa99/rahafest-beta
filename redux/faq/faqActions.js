@@ -7,7 +7,7 @@ export const getFaq = createAsyncThunk(
     try {
       return GetFaqApi();
     } catch (error) {
-      rejectWithValue(error);
+      return rejectWithValue(error);
     }
   }
 );

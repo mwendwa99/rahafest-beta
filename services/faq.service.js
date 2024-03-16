@@ -7,12 +7,9 @@ const headers = {
 
 export const GetFaqApi = async () => {
   try {
-    // const { data } = await axios.get(prod.URL + "/api/faq", { headers });
-    const { data } = await axios.get("https://api.rahafest.com/api/faqs", {
-      headers,
-    });
+    const { data } = await axios.get(prod.mobile + "/faq", headers);
     return data;
   } catch (error) {
-    return error;
+    throw error;
   }
 };

@@ -3,9 +3,11 @@ import { StyleSheet, View, Image, TouchableOpacity } from "react-native";
 import { ImageBackground } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { useDispatch, useSelector } from "react-redux";
 
 import { Input, Button, Text } from "../../components";
-import { danger, warning } from "../../utils/toast";
+import { danger, success, warning } from "../../utils/toast";
+import { register } from "../../redux/auth/authActions";
 
 const background = require("../../assets/pattern.png");
 const logo = require("../../assets/logo.png");
@@ -16,6 +18,24 @@ export default function Register({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const dispatch = useDispatch();
+  const { user, authError } = useSelector((state) => state.auth);
+
+  // console.log({ user });
+  // console.log({ authError });
+
+  useEffect(() => {
+    if (authError) {
+      danger("could not register!", 2000);
+    }
+  }, [authError]);
+
+  useEffect(() => {
+    if (user && !authError) {
+      success("You have successfully registered!", 2000);
+      navigation.navigate("Login");
+    }
+  }, [user]);
 
   const handleNavigate = (screen) => {
     navigation.navigate(screen);
@@ -47,8 +67,7 @@ export default function Register({ navigation }) {
       email: email,
     };
 
-    console.log(registerData);
-    // navigation.navigate("Login");
+    dispatch(register(registerData));
   };
   return (
     <ImageBackground source={background} style={styles.backgroundImage}>

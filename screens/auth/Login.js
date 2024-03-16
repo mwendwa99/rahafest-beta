@@ -3,7 +3,9 @@ import { StyleSheet, View, Image, TouchableOpacity } from "react-native";
 import { ImageBackground } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { useDispatch, useSelector } from "react-redux";
 
+import { login } from "../../redux/auth/authActions";
 import { Input, Button, Text } from "../../components";
 import { danger, warning } from "../../utils/toast";
 
@@ -13,24 +15,40 @@ const logo = require("../../assets/logo.png");
 export default function Login({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { token, authError, loading } = useSelector((state) => state.auth);
+
+  const dispatch = useDispatch();
+
+  console.log({ token });
+
+  useEffect(() => {
+    if (authError) {
+      danger("could not login!", 2000);
+    }
+  }, [authError]);
+
+  // useEffect(() => {
+  //   if (user && !authError) {
+  //     navigation.navigate("Home");
+  //   }
+  // }, [user]);
 
   const handleNavigate = (screen) => {
     navigation.navigate(screen);
   };
 
-  const handleSignup = () => {
+  const handleLogin = () => {
     if (password === "" || email === "") {
       warning("All fields are required!");
       return;
     }
 
     const loginData = {
-      password: password,
       email: email,
+      password: password,
     };
 
-    console.log(loginData);
-    // navigation.navigate("Login");
+    dispatch(login(loginData));
   };
   return (
     <ImageBackground source={background} style={styles.backgroundImage}>
@@ -59,7 +77,7 @@ export default function Login({ navigation }) {
             />
           </View>
 
-          <Button label="Login" onPress={handleSignup} theme="dark" />
+          <Button label="Login" onPress={handleLogin} theme="dark" />
         </View>
         <View style={styles.row}>
           <TouchableOpacity onPress={() => handleNavigate("Register")}>

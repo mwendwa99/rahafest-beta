@@ -18,10 +18,11 @@ const faqSlice = createSlice({
     builder.addCase(getFaq.fulfilled, (state, action) => {
       state.loading = false;
       state.faq = action.payload;
+      state.faqError = null;
     });
     builder.addCase(getFaq.rejected, (state, action) => {
       state.loading = false;
-      state.faqError = action.payload;
+      state.faqError = action.error;
     });
   },
 });
