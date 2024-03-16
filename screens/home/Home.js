@@ -18,7 +18,7 @@ import { Portal, Modal } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 import { getFaq } from "../../redux/faq/faqActions";
 
-import { Text, CText } from "../../components";
+import { Text } from "../../components";
 
 const image = require("../../assets/background.webp");
 const logo = require("../../assets/logo.png");
@@ -29,7 +29,7 @@ export default function Home({ navigation }) {
   const { faq } = useSelector((state) => state.faq);
   const dispatch = useDispatch();
 
-  // console.log({ faq });
+  console.log({ faq });
 
   useEffect(() => {
     dispatch(getFaq());
