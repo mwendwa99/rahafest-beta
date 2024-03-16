@@ -25,9 +25,11 @@ const image = require("../../assets/background.webp");
 const logo = require("../../assets/logo.png");
 const blob = require("../../assets/blob.png");
 
+const splash = require("../../assets/splash.png");
+
 export default function Home({ navigation }) {
   const [visible, setVisible] = useState(false);
-  const { faq } = useSelector((state) => state.faq);
+  const { faq, loading } = useSelector((state) => state.faq);
   const dispatch = useDispatch();
 
   console.log({ faq });
@@ -41,6 +43,17 @@ export default function Home({ navigation }) {
   const handleNavigate = (screen) => {
     navigation.navigate(screen);
   };
+
+  if (loading) {
+    return (
+      <ImageBackground
+        source={splash}
+        style={{ flex: 1, justifyContent: "center" }}
+      >
+        <StatusBar style="light" />
+      </ImageBackground>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
