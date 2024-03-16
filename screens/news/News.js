@@ -32,7 +32,8 @@ export default function News({ navigation }) {
   return (
     <View style={styles.container}>
       <FlatList
-        data={[...news].reverse()} // Create a copy of news array, reverse it, and pass to FlatList
+        // data={[...news].reverse()} // Create a copy of news array, reverse it, and pass to FlatList
+        data={news} // Create a copy of news array, reverse it, and pass to FlatList
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <Card
