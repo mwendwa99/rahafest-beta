@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { View, StyleSheet, FlatList } from "react-native";
+import { View, StyleSheet, FlatList, ImageBackground } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -7,7 +7,9 @@ import { Text, Artist } from "../../components";
 import { getLineup } from "../../redux/lineup/lineupActions";
 import { filterAndSortLineup } from "../../utils/helper";
 
-export default function Schedule({ navigation }) {
+const splash = require("../../assets/splash.png");
+
+export default function Schedule() {
   const dispatch = useDispatch();
   const { lineup, loading, lineupError } = useSelector((state) => state.lineup);
   const [day1Data, setDay1Data] = useState([]);
@@ -34,6 +36,17 @@ export default function Schedule({ navigation }) {
       setDay2Data(day2Data);
     }
   }, [lineup, loading]);
+
+  if (loading) {
+    return (
+      <ImageBackground
+        source={splash}
+        style={{ flex: 1, justifyContent: "center" }}
+      >
+        <StatusBar style="light" />
+      </ImageBackground>
+    );
+  }
 
   return (
     <View style={styles.container}>
