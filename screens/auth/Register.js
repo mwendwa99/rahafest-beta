@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { StyleSheet, View, Image } from "react-native";
+import { StyleSheet, View, Image, TouchableOpacity } from "react-native";
 import { ImageBackground } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
@@ -16,6 +16,10 @@ export default function Register({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
+  const handleNavigate = (screen) => {
+    navigation.navigate(screen);
+  };
 
   const handleSignup = () => {
     if (
@@ -96,8 +100,12 @@ export default function Register({ navigation }) {
               defaultValue={"confirm password"}
             />
           </View>
-
           <Button label="Register" onPress={handleSignup} theme="dark" />
+        </View>
+        <View style={styles.row}>
+          <TouchableOpacity onPress={() => handleNavigate("Login")}>
+            <Text value={"Already have an account?"} variant={"body"} />
+          </TouchableOpacity>
         </View>
       </KeyboardAwareScrollView>
       <StatusBar style="light" />
