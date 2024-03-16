@@ -7,7 +7,7 @@ const headers = {
 
 export const GetFaqApi = async () => {
   try {
-    const { data } = await axios.get(prod.mobile + "/faq", headers);
+    const { data } = await axios.get(`${prod.web}/faqs`);
     return data;
   } catch (error) {
     throw error;
