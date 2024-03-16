@@ -3,7 +3,7 @@ import { StatusBar } from "expo-status-bar";
 import { Text, ListItem } from "../../components";
 import { useSelector, useDispatch } from "react-redux";
 // import { logout } from "../../redux/auth/authActions";
-// import { success } from "../../utils/toast";
+import { success } from "../../utils/toast";
 
 export default function Settings({ navigation }) {
   const dispatch = useDispatch();
@@ -11,6 +11,7 @@ export default function Settings({ navigation }) {
   const handleLogout = () => {
     // dispatch(logout());
     success("Logout success");
+    navigation.navigate("Home");
   };
 
   const handleNavigate = (screen) => {
