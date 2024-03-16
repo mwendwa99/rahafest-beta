@@ -18,6 +18,7 @@ export default function App() {
           <PaperProvider>
             <View style={styles.container}>
               <Routes />
+              <StatusBar style="auto" />
             </View>
           </PaperProvider>
         </NavigationContainer>

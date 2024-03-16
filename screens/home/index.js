@@ -53,16 +53,7 @@ export const HomeNavigator = () => {
         name="Chat"
         component={ChatNavigator}
         options={{
-          headerShown: true,
-          headerShadowVisible: false,
-          headerTintColor: "#fff",
-          headerStyle: {
-            backgroundColor: "#212529",
-          },
-          headerTitle: (props) => (
-            <Text value={"Direct Messages"} {...props} variant={"subtitle"} />
-          ),
-          headerTitleAlign: "center",
+          headerShown: false,
         }}
       />
     </Stack.Navigator>
