@@ -2,7 +2,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import { Text } from "../../components";
 import DirectMessage from "./DirectMessage";
-import { Register } from "../auth";
+import { Register, Login } from "../auth";
 
 const Stack = createNativeStackNavigator();
 
@@ -29,7 +29,23 @@ export default function ChatNavigator() {
       />
     </Stack.Navigator>
   ) : (
-    <Stack.Navigator initialRouteName="Register">
+    <Stack.Navigator initialRouteName="Login">
+      <Stack.Screen
+        name="Login"
+        component={Login}
+        options={{
+          headerShown: true,
+          headerShadowVisible: false,
+          headerTintColor: "#fff",
+          headerStyle: {
+            backgroundColor: "#212529",
+          },
+          headerTitle: (props) => (
+            <Text value={"Login"} {...props} variant={"subtitle"} />
+          ),
+          headerTitleAlign: "center",
+        }}
+      />
       <Stack.Screen
         name="Register"
         component={Register}
