@@ -7,6 +7,7 @@ import Feed from "./Feed";
 import { Register, Login } from "../auth";
 import Friends from "./Friends";
 import Chats from "./Chats";
+import AllFriends from "./AllFriends";
 
 const Stack = createNativeStackNavigator();
 
@@ -75,6 +76,22 @@ export default function ChatNavigator() {
           },
           headerTitle: (props) => (
             <Text value={"Chats"} {...props} variant={"subtitle"} />
+          ),
+          headerTitleAlign: "center",
+        }}
+      />  
+      <Stack.Screen
+        name="Allfriends"
+        component={AllFriends}
+        options={{
+          headerShown: true,
+          headerShadowVisible: false,
+          headerTintColor: "#fff",
+          headerStyle: {
+            backgroundColor: "#212529",
+          },
+          headerTitle: (props) => (
+            <Text value={"All friends"} {...props} variant={"subtitle"} />
           ),
           headerTitleAlign: "center",
         }}

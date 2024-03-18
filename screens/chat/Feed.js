@@ -64,6 +64,14 @@ const [postText, setPostText] = useState("");
                 color="#fff"
               />
             </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate("Allfriends")}>
+              <Entypo
+                // onPress={() => navigation.navigate("Friends")}
+                name="add-user"
+                size={24}
+                color="#fff"
+              />
+            </TouchableOpacity>
             {/* <TouchableOpacity>
               <MaterialIcons onPress={handleLogout} name="logout" size={24} color="black" />
             </TouchableOpacity> */}
