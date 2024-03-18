@@ -18,7 +18,7 @@ export const GetAllMessages = async (token) => {
   }
 };
 
-export const PostMessageApi = async (message, token) => {
+export const PostMessageApi = async (token, message) => {
   try {
     const { data } = await axios.post(prod.chat + "/messages", message, {
       headers: {

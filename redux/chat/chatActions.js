@@ -18,9 +18,9 @@ export const getAllChats = createAsyncThunk(
 
 export const postMessage = createAsyncThunk(
   "chat/postMessage",
-  (message, { rejectWithValue }) => {
+  ({ token, message }, { rejectWithValue }) => {
     try {
-      return PostMessageApi(message);
+      return PostMessageApi(token, message);
     } catch (error) {
       return rejectWithValue(error);
     }
