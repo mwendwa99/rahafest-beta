@@ -13,3 +13,19 @@ export function filterAndSortLineup(dayKey, specialBandName, lineup) {
   }
   return filteredData;
 }
+
+export function getCategory(data){
+  const uniqueCategory = new Set();
+  data.forEach(item => {
+    uniqueCategory.add(item.category.name)
+  });
+  return Array.from(uniqueCategory)
+}
+
+export function getSubCategory(data){
+  const uniqueSubCategory = new Set();
+  data.forEach(item => {
+    uniqueSubCategory.add(item.subcategory.name)
+  });
+  return Array.from(uniqueSubCategory)
+}

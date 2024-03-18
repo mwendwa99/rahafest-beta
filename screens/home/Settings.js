@@ -7,6 +7,7 @@ import { success } from "../../utils/toast";
 
 export default function Settings({ navigation }) {
   const dispatch = useDispatch();
+  const {token} = useSelector(state=>state.auth)
 
   const handleLogout = () => {
     // dispatch(logout());
@@ -27,13 +28,19 @@ export default function Settings({ navigation }) {
           iconRight={"chevron-right"}
           handlePressLink={() => handleNavigate("Faqs")}
         />
-
         <ListItem
+          title="Maps"
+          iconLeft={"google-maps"}
+          iconRight={"chevron-right"}
+          handlePressLink={() => handleNavigate("Map")}
+        />
+
+        {token && <ListItem
           title="Logout"
           iconLeft={"logout"}
           iconRight={"chevron-right"}
           handlePressLink={handleLogout}
-        />
+        />}
       </ScrollView>
       <StatusBar style="light" />
     </View>

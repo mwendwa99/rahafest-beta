@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { List } from "react-native-paper";
 
-export default function Accordion({ question, answer }) {
+export default function Accordion({ question, answer, index }) {
   const [expanded, setExpanded] = useState(false);
 
   const handlePress = () => setExpanded(!expanded);
+  
 
   return (
     <List.Accordion
@@ -15,7 +16,7 @@ export default function Accordion({ question, answer }) {
       expanded={expanded}
       onPress={handlePress}
     >
-      <List.Item title={answer || "empty"} />
+      <List.Item descriptionNumberOfLines={50} description={answer || "empty"} />
     </List.Accordion>
   );
 }

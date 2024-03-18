@@ -24,6 +24,7 @@ export default function NewsItem({ active, title, description, image }) {
 const styles = StyleSheet.create({
   card: {
     marginBottom: 10,
+    backgroundColor:"#fafafa"
   },
   image: {
     height: 200,
