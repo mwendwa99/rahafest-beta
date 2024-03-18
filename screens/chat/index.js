@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { Text } from "../../components";
 import DirectMessage from "./DirectMessage";
 import { Register, Login } from "../auth";
+import FeedsScreen from "./Feed";
 
 const Stack = createNativeStackNavigator();
 
@@ -11,7 +12,23 @@ export default function ChatNavigator() {
   const { user, token } = useSelector((state) => state.auth);
 
   return token ? (
-    <Stack.Navigator initialRouteName="DirectMessage">
+    <Stack.Navigator initialRouteName="Feed">
+      <Stack.Screen
+        name="Feed"
+        component={FeedsScreen}
+        options={{
+          headerShown: true,
+          headerShadowVisible: false,
+          headerTintColor: "#fff",
+          headerStyle: {
+            backgroundColor: "#212529",
+          },
+          headerTitle: (props) => (
+            <Text value={"Feed"} {...props} variant={"subtitle"} />
+          ),
+          headerTitleAlign: "center",
+        }}
+      />
       <Stack.Screen
         name="DirectMessage"
         component={DirectMessage}
@@ -27,7 +44,7 @@ export default function ChatNavigator() {
           ),
           headerTitleAlign: "center",
         }}
-      />
+      />      
     </Stack.Navigator>
   ) : (
     <Stack.Navigator initialRouteName="Login">
