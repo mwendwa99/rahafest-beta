@@ -29,7 +29,6 @@ export function getSubCategory(data) {
   });
   return Array.from(uniqueSubCategory);
 }
-
 export function getRandomNumber() {
   // Generate a random number between 0 (inclusive) and 1 (exclusive)
   const random = Math.random();
