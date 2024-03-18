@@ -26,3 +26,16 @@ export const LoginApi = async (userData) => {
     throw error.message;
   }
 };
+
+export const GetUserApi = async (token) => {
+  try {
+    const response = await axios.get(prod.web + "/user", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.message;
+  }
+};
