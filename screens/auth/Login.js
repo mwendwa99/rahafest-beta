@@ -19,7 +19,7 @@ export default function Login({ navigation }) {
 
   const dispatch = useDispatch();
 
-  console.log({ token });
+  // console.log({ token });
 
   useEffect(() => {
     if (authError) {
@@ -77,7 +77,11 @@ export default function Login({ navigation }) {
             />
           </View>
 
-          <Button label="Login" onPress={handleLogin} theme="dark" />
+          <Button
+            label={loading ? `loggin in...` : "Login"}
+            onPress={handleLogin}
+            theme="dark"
+          />
         </View>
         <View style={styles.row}>
           <TouchableOpacity onPress={() => handleNavigate("Register")}>
