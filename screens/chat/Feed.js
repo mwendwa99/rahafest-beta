@@ -62,6 +62,7 @@ export default function Feed() {
     <View style={styles.container}>
       {/* <Text value={"Feed"} variant={"subtitle"} color="#000" /> */}
       <GiftedChat
+        inverted={false}
         messages={messages}
         onSend={(messages) => onSend(messages)}
         user={{
