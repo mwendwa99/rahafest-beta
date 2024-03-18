@@ -7,23 +7,28 @@ import { VideoPlayer, Text } from "../../components";
 const videoIds = [
   {
     id: 1,
-    videoId: "dU30FLgld50",
-    artist: "Otile Brown",
+    videoId: "SbgKpHi-Cao",
+    artist: "Davido",
   },
   {
     id: 2,
-    videoId: "dU30FLgld50",
-    artist: "Otile Brown",
-  },
-  {
-    id: 3,
-    videoId: "dU30FLgld50",
-    artist: "Otile Brown",
+    videoId: "NPCC02SaJVg",
+    artist: "King Promise",
   },
   {
     id: 4,
-    videoId: "dU30FLgld50",
-    artist: "Otile Brown",
+    videoId: "yuGwHO-DPOs",
+    artist: "Musa Keys",
+  },
+  {
+    id: 3,
+    videoId: "XVkkuTwaXgY",
+    artist: "Ya Levis",
+  },
+  {
+    id: 10,
+    videoId: "L1nYNjZX3K4",
+    artist: "Jb Mpiana",
   },
   {
     id: 5,
@@ -32,8 +37,23 @@ const videoIds = [
   },
   {
     id: 6,
-    videoId: "dU30FLgld50",
-    artist: "Otile Brown",
+    videoId: "7cV9DpE7yy8",
+    artist: "Bensoul",
+  },
+  {
+    id: 7,
+    videoId: "xHN_G3jdbdA",
+    artist: "Nviiri the Storyteller",
+  },
+  {
+    id: 8,
+    videoId: "6Ea-3ooL9Ps",
+    artist: "Femi One",
+  },
+  {
+    id: 9,
+    videoId: "IMw9Q8TM37E",
+    artist: "H_art the band",
   },
 ];
 
@@ -43,13 +63,14 @@ export default function Playlist() {
       <FlatList
         data={videoIds}
         renderItem={({ item }) => (
-          <View>
-            <Text value={item.artist} color="#fafafa" variant="body" />
+          <View style={{ marginBottom: 10 }}>
+            <Text value={item.artist} color="#fafafa" variant="subtitle" />
             <VideoPlayer video={item.videoId} />
           </View>
         )}
         keyExtractor={(item) => item.id}
       />
+      <StatusBar style="light" />
     </SafeAreaView>
   );
 }

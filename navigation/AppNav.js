@@ -3,10 +3,12 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { BottomNavigation } from "react-native-paper";
 import { CommonActions } from "@react-navigation/native";
 
+import { Text } from "../components";
+
 import { HomeNavigator } from "../screens/home";
-import ChatNavigator from "../screens/chat";
-import { Faq } from "../screens/faq";
-import { Menu } from "../screens/menu";
+import { MenuNavigator } from "../screens/menu";
+import { ScheduleNavigator } from "../screens/schedule";
+import { NewsfeedNavigator } from "../screens/news";
 
 const BottomTab = createBottomTabNavigator();
 
@@ -83,9 +85,19 @@ export default function AppNav() {
       />
       <BottomTab.Screen
         name="Schedule"
-        component={HomeNavigator}
+        component={ScheduleNavigator}
         options={{
           title: "Schedule",
+          headerShown: true,
+          headerShadowVisible: false,
+          headerTintColor: "#fff",
+          headerStyle: {
+            backgroundColor: "#212529",
+          },
+          headerTitle: (props) => (
+            <Text value={"Schedule"} {...props} variant={"subtitle"} />
+          ),
+          headerTitleAlign: "center",
           tabBarIcon: ({ size, focused }) => (
             <MaterialCommunityIcons
               name="calendar-clock"
@@ -96,10 +108,20 @@ export default function AppNav() {
         }}
       />
       <BottomTab.Screen
-        name="NewsFeed"
-        component={HomeNavigator}
+        name="Newsfeed"
+        component={NewsfeedNavigator}
         options={{
-          title: "News Feed",
+          title: "For You",
+          headerShown: true,
+          headerShadowVisible: false,
+          headerTintColor: "#fff",
+          headerStyle: {
+            backgroundColor: "#212529",
+          },
+          headerTitle: (props) => (
+            <Text value={"News updates"} {...props} variant={"subtitle"} />
+          ),
+          headerTitleAlign: "center",
           tabBarIcon: ({ size, focused }) => (
             <MaterialCommunityIcons
               name="newspaper"
@@ -109,45 +131,25 @@ export default function AppNav() {
           ),
         }}
       />
-      <BottomTab.Screen
-        name="Faqs"
-        component={Faq}
-        options={{
-          title: "Faqs",
-          headerShown: true,
-          tabBarIcon: ({ size, focused }) => (
-            <Ionicons
-              name="information-circle"
-              color={focused ? "orange" : "#fafafa"}
-              size={size}
-            />
-          ),
-        }}
-      />
+
       <BottomTab.Screen
         name="Menu"
-        component={Menu}
+        component={MenuNavigator}
         options={{
           title: "Menu",
           headerShown: true,
-          tabBarIcon: ({ size, focused }) => (
-            <MaterialCommunityIcons
-              name="food-fork-drink"
-              color={focused ? "orange" : "#fafafa"}
-              size={size}
-            />
+          headerShadowVisible: false,
+          headerTintColor: "#fff",
+          headerStyle: {
+            backgroundColor: "#212529",
+          },
+          headerTitle: (props) => (
+            <Text value={"Menu"} {...props} variant={"subtitle"} />
           ),
-        }}
-      />
-      <BottomTab.Screen
-        name="Chats"
-        component={ChatNavigator}
-        options={{
-          title: "Swift Chat",
-          headerShown: true,
+          headerTitleAlign: "center",
           tabBarIcon: ({ size, focused }) => (
             <MaterialCommunityIcons
-              name="chat"
+              name="food"
               color={focused ? "orange" : "#fafafa"}
               size={size}
             />
