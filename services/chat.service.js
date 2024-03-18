@@ -43,3 +43,29 @@ export const GetDirectMessages = async (token, messageId) => {
     throw error.message;
   }
 };
+
+export const AcceptFriendRequest = async (token, data) => {
+  try {
+    const response = await axios.post(prod.chat + `/friendships/accept`, data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.message;
+  }
+};
+
+export const RejectFriendRequest = async (token, data) => {
+  try {
+    const response = await axios.post(prod.chat + `/friendships/reject`, data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.message;
+  }
+};

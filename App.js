@@ -1,6 +1,6 @@
 import "react-native-gesture-handler";
-import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View } from "react-native";
+import { StatusBar } from "react-native";
 
 import Routes from "./navigation/routes";
 import { NavigationContainer } from "@react-navigation/native";
@@ -18,7 +18,7 @@ export default function App() {
           <PaperProvider>
             <View style={styles.container}>
               <Routes />
-              <StatusBar style="auto" />
+              <StatusBar barStyle="light-content" />
             </View>
           </PaperProvider>
         </NavigationContainer>

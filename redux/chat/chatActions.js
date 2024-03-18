@@ -3,6 +3,8 @@ import {
   GetAllMessages,
   PostMessageApi,
   GetDirectMessages,
+  AcceptFriendRequest,
+  RejectFriendRequest,
 } from "../../services/chat.service";
 
 export const getAllChats = createAsyncThunk(
@@ -32,6 +34,28 @@ export const getDirectMessages = createAsyncThunk(
   ({ token, messageId }, { rejectWithValue }) => {
     try {
       return GetDirectMessages(token, messageId);
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const acceptFriendRequest = createAsyncThunk(
+  "chat/acceptFriendRequest",
+  ({ token, data }, { rejectWithValue }) => {
+    try {
+      return AcceptFriendRequest(token, data);
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const rejectFriendRequest = createAsyncThunk(
+  "chat/rejectFriendRequest",
+  ({ token, data }, { rejectWithValue }) => {
+    try {
+      return RejectFriendRequest(token, data);
     } catch (error) {
       return rejectWithValue(error);
     }
