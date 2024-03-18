@@ -60,11 +60,11 @@ export default function Register({ navigation }) {
     }
 
     const registerData = {
-      first_name: firstName,
-      last_name: lastName,
+      name: `${firstName} ${lastName}`,
       password: password,
-      password_confirm: confirmPassword,
+      password2: confirmPassword,
       email: email,
+      tc: "True"
     };
 
     dispatch(register(registerData));

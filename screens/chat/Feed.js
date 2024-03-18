@@ -1,6 +1,6 @@
-import { Entypo, Ionicons } from "@expo/vector-icons";
+import { Entypo, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
   KeyboardAvoidingView,
   View,
@@ -14,20 +14,67 @@ import {
   StyleSheet,
 } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { danger, success } from "../../utils/toast";
+import { getAllChats } from "../../redux/chat/chatActions";
+import { Post } from "./components/Post";
+import { StatusBar } from "expo-status-bar";
+import { PostMessage } from "../../services/chat.service";
 
+const splash = require("../../assets/splash.png");
 const FeedsScreen = () => {
-  const [messages, setMessages] = useState([]);
-  const [message, setMessage] = useState("");
+  const { allChats, loading } = useSelector((state) => state.chat);
   const navigation = useNavigation();
   const scrollViewRef = useRef(null);
 
-  const [postText, setPostText] = useState("");
-  const [charCount, setCharCount] = useState(280); // Twitter's character limit
+console.log(allChats)
+const [postText, setPostText] = useState("");
+  const [charCount, setCharCount] = useState(280);
   const [showPostView, setShowPostView] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const { access_token, user } = useSelector((state) => state.auth);
+  const { token, user } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  
+  useLayoutEffect(() => {
+    navigation.setOptions({
+        headerTitle: "",
+        headerLeft: () => <Text style={{ fontSize: 16, fontWeight: "bold" }}>Swift Chat</Text>,
+        headerRight: () => (
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 15 }}>
+            <TouchableOpacity onPress={() => navigation.navigate("Chats")}>
+              <Ionicons
+                // onPress={() => navigation.navigate("Chats")}
+                name="chatbox-ellipses-outline"
+                size={24}
+                color="#fff"
+              />
+            </TouchableOpacity>
+            {/* <TouchableOpacity onPress={() => navigation.navigate("Feeds")}>
+              <MaterialIcons
+                // onPress={() => navigation.navigate("Feeds")}
+                name="forum"
+                size={24}
+                color="#fff"
+              />
+            </TouchableOpacity> */}
+            <TouchableOpacity onPress={() => navigation.navigate("Friends")}>
+              <MaterialIcons
+                // onPress={() => navigation.navigate("Friends")}
+                name="people-outline"
+                size={24}
+                color="#fff"
+              />
+            </TouchableOpacity>
+            {/* <TouchableOpacity>
+              <MaterialIcons onPress={handleLogout} name="logout" size={24} color="black" />
+            </TouchableOpacity> */}
+          </View>
+        ),
+      });
+  }, []);
+
+  useEffect(() => {
+    dispatch(getAllChats(token));
+  }, [token]);
 
   const handlePostTextChange = (text) => {
     setPostText(text);
@@ -36,44 +83,28 @@ const FeedsScreen = () => {
 
   const handlePost = async () => {
     console.log("Post:", postText);
-    setLoading(true);
+    console.log("user:", user);
+    // setLoading(true);
     try {
-      const postresp = await SendPost(
+      const postresp = await PostMessage(
         {
-          messageText: postText,
-          senderId: userId,
+          content: postText,
+          sender: user.id,
           messageType: "text",
           name: user.name,
         },
-        access_token,
+        token,
       );
       console.log(postresp);
       closeModal();
-      fetchAllMessages();
     } catch (e) {
       danger("Failed to upload your post!", 2000);
       console.log(e);
-    } finally {
-      setLoading(false);
     }
   };
 
   useEffect(() => {
     scrollToBottom();
-  }, []);
-
-  const fetchAllMessages = async () => {
-    try {
-      const res = await GetPosts(access_token);
-      setMessages(res);
-      console.log(res[0]);
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  useEffect(() => {
-    fetchAllMessages();
   }, []);
 
   const scrollToBottom = () => {
@@ -93,7 +124,7 @@ const FeedsScreen = () => {
         <View style={{ flexDirection: "row", alignItems: "center", gap: 10, marginRight: 20 }}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Ionicons
-              // onPress={() => navigation.goBack()}
+              onPress={() => navigation.goBack()}
               name="arrow-back"
               size={24}
               color="black"
@@ -131,8 +162,8 @@ const FeedsScreen = () => {
   const deletePost = async (post) => {
     try {
       const { _id, senderId } = post;
-      await DeletePost(access_token);
-      fetchAllMessages();
+      await DeletePost(token);
+    //   fetchAllMessages();
       success("Deleted the post", 3000);
     } catch (e) {
       console.log(e);
@@ -144,9 +175,9 @@ const FeedsScreen = () => {
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={{ height: "100%" }}>
-      <FlatList
+      < FlatList
         ref={scrollViewRef}
-        data={messages}
+        data={allChats}
         renderItem={({ item, index }) => (
           <Post
             index={index}
@@ -171,7 +202,6 @@ const FeedsScreen = () => {
             minHeight: 400,
             minWidth: "100%",
             top: "20%",
-            // backgroundColor: "wheat",
             justifyContent: "center",
             alignItems: "center",
             zIndex: 999,
@@ -184,9 +214,9 @@ const FeedsScreen = () => {
               backgroundColor: "#fff",
               borderRadius: 20,
             }}>
-            <View style={styles.container}>
+            <View style={feedsStyle.container}>
               <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                <Text style={styles.header}>Your post</Text>
+                <Text style={feedsStyle.header}>Your post</Text>
                 <TouchableOpacity onPress={closeModal}>
                   <Ionicons name="close-circle" size={24} />
                 </TouchableOpacity>
@@ -196,9 +226,9 @@ const FeedsScreen = () => {
                 placeholder="What's happening?"
                 value={postText}
                 onChangeText={handlePostTextChange}
-                style={styles.input}
+                style={feedsStyle.input}
               />
-              <Text style={styles.counter}>{charCount} characters remaining</Text>
+              <Text style={feedsStyle.counter}>{charCount} characters remaining</Text>
 
               {/* Image Upload (optional) */}
               {/* Implement image upload functionality if needed */}
@@ -212,58 +242,16 @@ const FeedsScreen = () => {
           </View>
         </View>
       )}
-      {/* <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          paddingHorizontal: 10,
-          paddingVertical: 10,
-          borderTopWidth: 1,
-          borderTopColor: "#dddddd",
-          marginBottom: showEmojiSelector ? 0 : 25,
-          bottom: 0,
-        }}>
-        <Entypo
-          onPress={handleEmojiPress}
-          style={{ marginRight: 5 }}
-          name="emoji-happy"
-          size={24}
-          color="gray"
-        />
-        <TextInput
-          value={message}
-          onChangeText={(text) => setMessage(text)}
-          style={{
-            flex: 1,
-            height: 40,
-            borderWidth: 1,
-            borderColor: "#dddddd",
-            borderRadius: 20,
-            paddingHorizontal: 10,
-          }}
-          placeholder="Type Your message..."
-        />
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            gap: 7,
-            marginHorizontal: 8,
-          }}> */}
-      {/* <Entypo onPress={pickImage} name="camera" size={24} color="gray" /> */}
-      {/* </View> */}
-      {/* </View> */}
     </KeyboardAvoidingView>
   );
 };
 
-const styles = StyleSheet.create({
+const feedsStyle = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
   },
   header: {
-    // Header styles
     fontSize: 18,
     marginBottom: 15,
   },
@@ -279,6 +267,15 @@ const styles = StyleSheet.create({
     alignSelf: "flex-end",
     marginBottom: 10,
     color: "#666",
+  },
+  createPostPressable: {
+    position: "absolute",
+    bottom: 10,
+    right: 35,
+    backgroundColor: "purple",
+    borderRadius: 20,
+    paddingHorizontal: 20,
+    paddingVertical: 5,
   },
 });
 

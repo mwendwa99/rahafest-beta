@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { GiftedChat } from "react-native-gifted-chat";
-import { View, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import { Text } from "../../components";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";

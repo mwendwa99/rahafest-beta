@@ -3,8 +3,10 @@ import { useSelector } from "react-redux";
 
 import { Text } from "../../components";
 import DirectMessage from "./DirectMessage";
+import Feed from "./Feed";
 import { Register, Login } from "../auth";
-import FeedsScreen from "./Feed";
+import Friends from "./Friends";
+import Chats from "./Chats";
 
 const Stack = createNativeStackNavigator();
 
@@ -15,7 +17,7 @@ export default function ChatNavigator() {
     <Stack.Navigator initialRouteName="Feed">
       <Stack.Screen
         name="Feed"
-        component={FeedsScreen}
+        component={Feed}
         options={{
           headerShown: true,
           headerShadowVisible: false,
@@ -24,7 +26,7 @@ export default function ChatNavigator() {
             backgroundColor: "#212529",
           },
           headerTitle: (props) => (
-            <Text value={"Feed"} {...props} variant={"subtitle"} />
+            <Text value={"Feeds"} {...props} variant={"subtitle"} />
           ),
           headerTitleAlign: "center",
         }}
@@ -44,7 +46,39 @@ export default function ChatNavigator() {
           ),
           headerTitleAlign: "center",
         }}
-      />      
+      />
+      <Stack.Screen
+        name="Friends"
+        component={Friends}
+        options={{
+          headerShown: true,
+          headerShadowVisible: false,
+          headerTintColor: "#fff",
+          headerStyle: {
+            backgroundColor: "#212529",
+          },
+          headerTitle: (props) => (
+            <Text value={"Friends"} {...props} variant={"subtitle"} />
+          ),
+          headerTitleAlign: "center",
+        }}
+      />
+      <Stack.Screen
+        name="Chats"
+        component={Chats}
+        options={{
+          headerShown: true,
+          headerShadowVisible: false,
+          headerTintColor: "#fff",
+          headerStyle: {
+            backgroundColor: "#212529",
+          },
+          headerTitle: (props) => (
+            <Text value={"Chats"} {...props} variant={"subtitle"} />
+          ),
+          headerTitleAlign: "center",
+        }}
+      />   
     </Stack.Navigator>
   ) : (
     <Stack.Navigator initialRouteName="Login">
