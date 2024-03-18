@@ -27,7 +27,7 @@ export default function ChatNavigator() {
             backgroundColor: "#212529",
           },
           headerTitle: (props) => (
-            <Text value={"Feeds"} {...props} variant={"subtitle"} />
+            <Text value={"Global Chat"} {...props} variant={"subtitle"} />
           ),
           headerTitleAlign: "center",
         }}

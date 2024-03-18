@@ -1,5 +1,9 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { GetAllMessages, PostMessage } from "../../services/chat.service";
+import {
+  GetAllMessages,
+  PostMessageApi,
+  GetDirectMessages,
+} from "../../services/chat.service";
 
 export const getAllChats = createAsyncThunk(
   "chat/getAllChats",
@@ -14,11 +18,22 @@ export const getAllChats = createAsyncThunk(
 
 export const postMessage = createAsyncThunk(
   "chat/postMessage",
-  (token, { rejectWithValue }) => {
+  ({ token, message }, { rejectWithValue }) => {
     try {
-      return PostMessage(token);
+      return PostMessageApi(token, message);
     } catch (error) {
       return rejectWithValue(error);
     }
   }
-)
+);
+
+export const getDirectMessages = createAsyncThunk(
+  "chat/getDirectMessages",
+  ({ token, messageId }, { rejectWithValue }) => {
+    try {
+      return GetDirectMessages(token, messageId);
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);

@@ -1,118 +1,61 @@
-import { Entypo, Ionicons, MaterialIcons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import {
-  KeyboardAvoidingView,
-  View,
-  TextInput,
-  FlatList,
-  Platform,
-  Button,
-  Pressable,
-  TouchableOpacity,
-  Text,
-  StyleSheet,
-} from "react-native";
-import { ActivityIndicator } from "react-native-paper";
-import { useDispatch, useSelector } from "react-redux";
-import { danger, success } from "../../utils/toast";
-import { getAllChats } from "../../redux/chat/chatActions";
-import { Post } from "./components/Post";
+import { GiftedChat } from "react-native-gifted-chat";
+import { View, StyleSheet } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import { PostMessage } from "../../services/chat.service";
+import { getAllChats, postMessage } from "../../redux/chat/chatActions";
+import { getUser } from "../../redux/auth/authActions";
+import { useSelector, useDispatch } from "react-redux";
+import { getRandomNumber } from "../../utils/helper";
+import { useCallback, useEffect, useLayoutEffect, useState } from "react";
 
-const splash = require("../../assets/splash.png");
-const FeedsScreen = () => {
-  const { allChats, loading } = useSelector((state) => state.chat);
-  const navigation = useNavigation();
-  const scrollViewRef = useRef(null);
-
-console.log(allChats)
-const [postText, setPostText] = useState("");
-  const [charCount, setCharCount] = useState(280);
-  const [showPostView, setShowPostView] = useState(false);
-  const { token, user } = useSelector((state) => state.auth);
+export default function FeedS() {
+  const { allChats } = useSelector((state) => state.chat);
+  const { user, token } = useSelector((state) => state.auth);
+  const [messages, setMessages] = useState([]);
   const dispatch = useDispatch();
-  
-  useLayoutEffect(() => {
-    navigation.setOptions({
-        headerTitle: "",
-        headerLeft: () => <Text style={{ fontSize: 16, fontWeight: "bold" }}>Swift Chat</Text>,
-        headerRight: () => (
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 15 }}>
-            <TouchableOpacity onPress={() => navigation.navigate("Chats")}>
-              <Ionicons
-                // onPress={() => navigation.navigate("Chats")}
-                name="chatbox-ellipses-outline"
-                size={24}
-                color="#fff"
-              />
-            </TouchableOpacity>
-            {/* <TouchableOpacity onPress={() => navigation.navigate("Feeds")}>
-              <MaterialIcons
-                // onPress={() => navigation.navigate("Feeds")}
-                name="forum"
-                size={24}
-                color="#fff"
-              />
-            </TouchableOpacity> */}
-            <TouchableOpacity onPress={() => navigation.navigate("Friends")}>
-              <MaterialIcons
-                // onPress={() => navigation.navigate("Friends")}
-                name="people-outline"
-                size={24}
-                color="#fff"
-              />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate("Allfriends")}>
-              <Entypo
-                // onPress={() => navigation.navigate("Friends")}
-                name="add-user"
-                size={24}
-                color="#fff"
-              />
-            </TouchableOpacity>
-            {/* <TouchableOpacity>
-              <MaterialIcons onPress={handleLogout} name="logout" size={24} color="black" />
-            </TouchableOpacity> */}
-          </View>
-        ),
-      });
-  }, []);
+
+  // console.log(sentMessages);
+  // console.log(getRandomNumber());
 
   useEffect(() => {
     dispatch(getAllChats(token));
-  }, [token]);
-
-  const handlePostTextChange = (text) => {
-    setPostText(text);
-    setCharCount(280 - text.length);
-  };
-
-  const handlePost = async () => {
-    console.log("Post:", postText);
-    console.log("user:", user);
-    // setLoading(true);
-    try {
-      const postresp = await PostMessage(
-        {
-          content: postText,
-          sender: user.id,
-          messageType: "text",
-          name: user.name,
-        },
-        token,
-      );
-      console.log(postresp);
-      closeModal();
-    } catch (e) {
-      danger("Failed to upload your post!", 2000);
-      console.log(e);
-    }
-  };
+  }, []);
 
   useEffect(() => {
-    scrollToBottom();
+    dispatch(getUser(token));
+  }, []);
+
+  useEffect(() => {
+    // ]);
+    // // update messages with data from allChats
+    if (allChats) {
+      const data = allChats?.map((chat) => {
+        return {
+          _id: chat.id,
+          text: chat.content,
+          user: {
+            _id: chat.senderuser,
+            name: chat.senderuser,
+          },
+        };
+      });
+      setMessages(data);
+    }
+  }, [allChats]);
+
+  const onSend = useCallback((messages = []) => {
+    const messageObject = {
+      sender: user?.id || getRandomNumber(),
+      content: messages[0].text,
+      created_at: messages[0].createdAt,
+      message_id: messages[0]._id,
+    };
+    dispatch(postMessage({ token, message: messageObject }));
+
+    setMessages((previousMessages) =>
+      GiftedChat.append(previousMessages, messages)
+    );
+
+    // dispatch(getAllChats(token));
   }, []);
 
   const scrollToBottom = () => {
@@ -180,77 +123,18 @@ const [postText, setPostText] = useState("");
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={{ height: "100%" }}>
-      < FlatList
-        ref={scrollViewRef}
-        data={allChats}
-        renderItem={({ item, index }) => (
-          <Post
-            index={index}
-            item={item}
-            editPost={editPost}
-            deletePost={deletePost}
-            handleLike={handleLike}
-          />
-        )}
-        keyExtractor={(item, index) => index.toString()}
+    <View style={styles.container}>
+      {/* <Text value={"Feed"} variant={"subtitle"} color="#000" /> */}
+      <GiftedChat
+        inverted={false}
+        messages={messages}
+        onSend={(messages) => onSend(messages)}
+        user={{
+          _id: 1,
+        }}
       />
-      <Pressable style={feedsStyle.createPostPressable} onPress={openPost}>
-        <TouchableOpacity onPress={openPost}>
-          <Ionicons name="create" size={54} color="salmon" />
-        </TouchableOpacity>
-      </Pressable>
-
-      {showPostView && (
-        <View
-          style={{
-            position: "absolute",
-            minHeight: 400,
-            minWidth: "100%",
-            top: "20%",
-            justifyContent: "center",
-            alignItems: "center",
-            zIndex: 999,
-          }}>
-          <View
-            style={{
-              position: "relative",
-              width: "93%",
-              height: "90%",
-              backgroundColor: "#fff",
-              borderRadius: 20,
-            }}>
-            <View style={feedsStyle.container}>
-              <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                <Text style={feedsStyle.header}>Your post</Text>
-                <TouchableOpacity onPress={closeModal}>
-                  <Ionicons name="close-circle" size={24} />
-                </TouchableOpacity>
-              </View>
-              <TextInput
-                multiline
-                placeholder="What's happening?"
-                value={postText}
-                onChangeText={handlePostTextChange}
-                style={feedsStyle.input}
-              />
-              <Text style={feedsStyle.counter}>{charCount} characters remaining</Text>
-
-              {/* Image Upload (optional) */}
-              {/* Implement image upload functionality if needed */}
-
-              {loading ? (
-                <ActivityIndicator size="small" color="blue" style={{ marginRight: 10 }} />
-              ) : (
-                <Button title="Post" onPress={handlePost} disabled={postText.length === 0} />
-              )}
-            </View>
-          </View>
-        </View>
-      )}
-    </KeyboardAvoidingView>
+      <StatusBar style="light" />
+    </View>
   );
 };
 
@@ -286,5 +170,3 @@ const feedsStyle = StyleSheet.create({
     paddingVertical: 5,
   },
 });
-
-export default FeedsScreen;

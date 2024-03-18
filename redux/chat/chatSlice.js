@@ -1,10 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getAllChats, postMessage } from "./chatActions";
+import { getAllChats, postMessage, getDirectMessages } from "./chatActions";
 
 const initialState = {
   allChats: [],
   chatError: null,
   loading: false,
+  directMessages: null,
+  sentMessage: null,
 };
 
 const chatSlice = createSlice({
@@ -21,26 +23,34 @@ const chatSlice = createSlice({
         state.allChats = action.payload;
         state.chatError = null;
       })
-
       .addCase(getAllChats.rejected, (state, action) => {
         state.loading = false;
         state.chatError = action.error;
       })
-
       .addCase(postMessage.pending, (state) => {
-        state.loading;
+        state.loading = true;
       })
-
       .addCase(postMessage.fulfilled, (state, action) => {
         state.loading = false;
-        // state.allChats = ac
+        state.sentMessage = action.payload;
         state.chatError = null;
       })
-
       .addCase(postMessage.rejected, (state, action) => {
         state.loading = false;
-        state.chatError = action.payload
+        state.chatError = action.error;
       })
+      .addCase(getDirectMessages.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getDirectMessages.fulfilled, (state, action) => {
+        state.loading = false;
+        state.directMessages = action.payload;
+        state.chatError = null;
+      })
+      .addCase(getDirectMessages.rejected, (state, action) => {
+        state.loading = false;
+        state.chatError = action.error;
+      });
   },
 });
 
