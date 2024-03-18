@@ -1,5 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getAllChats, postMessage, getDirectMessages } from "./chatActions";
+import {
+  getAllChats,
+  postMessage,
+  getDirectMessages,
+  acceptFriendRequest,
+  rejectFriendRequest,
+} from "./chatActions";
 
 const initialState = {
   allChats: null,
@@ -48,6 +54,28 @@ const chatSlice = createSlice({
         state.chatError = null;
       })
       .addCase(getDirectMessages.rejected, (state, action) => {
+        state.loading = false;
+        state.chatError = action.error;
+      })
+      .addCase(acceptFriendRequest.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(acceptFriendRequest.fulfilled, (state, action) => {
+        state.loading = false;
+        state.chatError = null;
+      })
+      .addCase(acceptFriendRequest.rejected, (state, action) => {
+        state.loading = false;
+        state.chatError = action.error;
+      })
+      .addCase(rejectFriendRequest.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(rejectFriendRequest.fulfilled, (state, action) => {
+        state.loading = false;
+        state.chatError = null;
+      })
+      .addCase(rejectFriendRequest.rejected, (state, action) => {
         state.loading = false;
         state.chatError = action.error;
       });

@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { register, login, getUser } from "./authActions";
+import { register, login, getUser, logout } from "./authActions";
+import { PURGE } from "redux-persist";
 
 const initialState = {
   user: null,
@@ -50,6 +51,23 @@ const authSlice = createSlice({
     builder.addCase(getUser.rejected, (state, action) => {
       state.loading = false;
       state.authError = action.error;
+    });
+    builder.addCase(logout.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(logout.fulfilled, (state) => {
+      state.loading = false;
+      state.user = null;
+      state.token = null;
+      state.roles = null;
+      state.authError = null;
+    });
+    builder.addCase(logout.rejected, (state, action) => {
+      state.loading = false;
+      state.authError = action.error;
+    });
+    builder.addCase(PURGE, () => {
+      return initialState;
     });
   },
 });

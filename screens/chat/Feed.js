@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { GiftedChat } from "react-native-gifted-chat";
-import { View, StyleSheet } from "react-native";
-import { StatusBar } from "expo-status-bar";
+import { View, StyleSheet, StatusBar } from "react-native";
+// import { StatusBar } from "expo-status-bar";
 import { getAllChats, postMessage } from "../../redux/chat/chatActions";
 import { getUser } from "../../redux/auth/authActions";
 import { useSelector, useDispatch } from "react-redux";
@@ -60,7 +60,6 @@ export default function Feed() {
 
   return (
     <View style={styles.container}>
-      {/* <Text value={"Feed"} variant={"subtitle"} color="#000" /> */}
       <GiftedChat
         inverted={false}
         messages={messages}
@@ -69,7 +68,7 @@ export default function Feed() {
           _id: 1,
         }}
       />
-      <StatusBar style="light" />
+      <StatusBar barStyle="light" />
     </View>
   );
 }

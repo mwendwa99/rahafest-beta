@@ -1,7 +1,12 @@
 import { useState, useEffect } from "react";
-import { StyleSheet, View, Image, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Image,
+  TouchableOpacity,
+  StatusBar,
+} from "react-native";
 import { ImageBackground } from "react-native";
-import { StatusBar } from "expo-status-bar";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -15,23 +20,15 @@ const logo = require("../../assets/logo.png");
 export default function Login({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { token, authError, loading } = useSelector((state) => state.auth);
+  const { authError, loading } = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
-
-  // console.log({ token });
 
   useEffect(() => {
     if (authError) {
       danger("could not login!", 2000);
     }
   }, [authError]);
-
-  // useEffect(() => {
-  //   if (user && !authError) {
-  //     navigation.navigate("Home");
-  //   }
-  // }, [user]);
 
   const handleNavigate = (screen) => {
     navigation.navigate(screen);
@@ -89,7 +86,7 @@ export default function Login({ navigation }) {
           </TouchableOpacity>
         </View>
       </KeyboardAwareScrollView>
-      <StatusBar style="light" />
+      <StatusBar barStyle="light-content" />
     </ImageBackground>
   );
 }
