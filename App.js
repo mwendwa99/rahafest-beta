@@ -1,7 +1,7 @@
 import "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { StyleSheet, View } from "react-native";
+
 import Routes from "./navigation/routes";
 import { NavigationContainer } from "@react-navigation/native";
 import { PaperProvider } from "react-native-paper";
@@ -16,10 +16,10 @@ export default function App() {
       <PersistGate persistor={persistor}>
         <NavigationContainer>
           <PaperProvider>
-            <SafeAreaView style={styles.container}>
+            <View style={styles.container}>
               <Routes />
               <StatusBar style="auto" />
-            </SafeAreaView>
+            </View>
           </PaperProvider>
         </NavigationContainer>
       </PersistGate>

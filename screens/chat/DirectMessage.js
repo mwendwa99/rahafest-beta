@@ -1,8 +1,11 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { GiftedChat } from "react-native-gifted-chat";
 import { View, StyleSheet } from "react-native";
+import { Text } from "../../components";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { StatusBar } from "expo-status-bar";
 
-export default function Chat() {
+export default function DirectMessage() {
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
@@ -27,7 +30,12 @@ export default function Chat() {
   }, []);
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <Text
+        value={"Direct Message ui here..."}
+        variant={"subtitle"}
+        color="#000"
+      />
       <GiftedChat
         messages={messages}
         onSend={(messages) => onSend(messages)}
@@ -35,13 +43,13 @@ export default function Chat() {
           _id: 1,
         }}
       />
-    </View>
+      <StatusBar style="light" />
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: "100%",
   },
 });

@@ -6,6 +6,7 @@ import {
   Image,
   TouchableOpacity,
   Linking,
+  Pressable,
 } from "react-native";
 import {
   FontAwesome5,
@@ -15,10 +16,8 @@ import {
 import { StatusBar } from "expo-status-bar";
 import { useState, useEffect } from "react";
 import { Portal, Modal } from "react-native-paper";
-import { useDispatch, useSelector } from "react-redux";
-import { getFaq } from "../../redux/faq/faqActions";
 
-import { Text, CText } from "../../components";
+import { Text, Avatar } from "../../components";
 
 const image = require("../../assets/background.webp");
 const logo = require("../../assets/logo.png");
@@ -26,14 +25,6 @@ const blob = require("../../assets/blob.png");
 
 export default function Home({ navigation }) {
   const [visible, setVisible] = useState(false);
-  const { faq } = useSelector((state) => state.faq);
-  const dispatch = useDispatch();
-
-  // console.log({ faq });
-
-  useEffect(() => {
-    dispatch(getFaq());
-  }, []);
 
   const toggleModal = () => setVisible(!visible);
 
@@ -48,6 +39,11 @@ export default function Home({ navigation }) {
         resizeMode="cover"
         style={styles.background}
       >
+        <View style={styles.avatar}>
+          <Pressable onPress={() => navigation.navigate("Settings")}>
+            <Avatar icon="menu" color={"white"} size={50} bgColor="#212529" />
+          </Pressable>
+        </View>
         <View style={styles.logoContainer}>
           <Image source={logo} style={styles.logo} />
         </View>
@@ -57,7 +53,7 @@ export default function Home({ navigation }) {
             <TouchableOpacity onPress={() => handleNavigate("Playlist")}>
               <ImageBackground source={blob} style={styles.blob}>
                 <FontAwesome5 name="headphones-alt" size={40} color="#fff" />
-                <Text variant="small" value={"Playlist"} color="#fff" />
+                <Text variant="small" value={"Playlists"} color="#fff" />
               </ImageBackground>
             </TouchableOpacity>
             <TouchableOpacity onPress={toggleModal}>
@@ -135,6 +131,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   logoContainer: {
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -147,6 +144,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  avatar: {
+    position: "absolute",
+    top: 10,
+    right: 10,
   },
   row: {
     display: "flex",
