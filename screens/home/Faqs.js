@@ -11,6 +11,8 @@ const splash = require("../../assets/splash.png");
 export default function Faqs() {
   const { faq, loading } = useSelector((state) => state.faq);
   const dispatch = useDispatch();
+  
+
 
   //   console.log({ faq });
 
@@ -33,8 +35,8 @@ export default function Faqs() {
       <FlatList
         data={faq}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <Accordion question={item.question} answer={item.answer} />
+        renderItem={({ item, index }) => (
+          <Accordion question={item.question} answer={item.answer} index={index} />
         )}
       />
     </View>

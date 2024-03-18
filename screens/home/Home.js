@@ -62,7 +62,7 @@ export default function Home({ navigation }) {
                 <Text variant="small" value={"Socials"} color="#fff" />
               </ImageBackground>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => handleNavigate("Chats")}>
+            <TouchableOpacity onPress={() => handleNavigate("Chat")}>
               <ImageBackground source={blob} style={styles.blob}>
                 <MaterialCommunityIcons name="chat" size={40} color="#fff" />
                 <Text variant="small" value={"Chat"} color="#fff" />
