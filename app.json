@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "rahafest",
-    "slug": "rahafest",
+    "slug": "rahafest-beta",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -13,7 +13,9 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.mwendwa99.rahafestbeta",
+      "buildNumber": "1.0.0"
     },
     "android": {
       "adaptiveIcon": {
