@@ -31,7 +31,7 @@ export const postMessage = createAsyncThunk(
 
 export const addFriend = createAsyncThunk(
   "chat/addFriend",
-  ({ token, message }, { rejectWithValue }) => {
+  ({ token, userId }, { rejectWithValue }) => {
     try {
       return PostMessageApi(token, message);
     } catch (error) {
