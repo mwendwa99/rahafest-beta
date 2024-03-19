@@ -4,7 +4,7 @@ import { getFriends, getFriendsRequests, sendFriendRequest } from "./friendsActi
 const initialState = {
     friends: [],
     friendRequests: [],
-    friendReqError: null,
+    friendError: null,
     friendReqError: null,
     loading: false,
 };

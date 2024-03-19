@@ -66,7 +66,6 @@ export default function Register({ navigation }) {
       email: email,
       tc: true
     };
-    console.log(registerData)
     dispatch(register(registerData));
   };
   return (

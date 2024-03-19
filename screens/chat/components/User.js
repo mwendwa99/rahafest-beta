@@ -1,31 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Text, View, Pressable } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
-import { sendFriendRequest } from "../../../redux/friends/friendsActions";
 import { success } from "../../../utils/toast";
-import { useDispatch } from "react-redux";
 
-const User = ({ index, item, token, user }) => {
+const User = ({ index, item, token, user, sendFriendReq }) => {
   const [requestSent, setRequestSent] = useState(false);
   const [friendRequests, setFriendRequests] = useState([]);
   const [userFriends, setUserFriends] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const dispatch = useDispatch();
-  console.log("ser::\t", item)
-
-  // useEffect(() => {
-
-  // }, []);
-  // console.log(user)
-  const sendFriendReq = async (selectedUserId) => {
-    const userInfo = {
-      user: user.id,
-      friend: selectedUserId,
-      is_accepted: false
-    }
-    // console.log("userInfo::\t", item)
-    dispatch(sendFriendRequest(token, userInfo));
-  };
+  const [loading, setLoading] = useState(false); 
 
   const cancelFriendRequest = async () => {
     try {
