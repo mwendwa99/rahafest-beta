@@ -8,7 +8,7 @@ const headers = {
 export const RegisterApi = async (userData) => {
   try {
     const { data } = await axios.post(
-      prod.web + "/register",
+      prod.chat + "/register",
       userData,
       headers
     );
@@ -20,7 +20,7 @@ export const RegisterApi = async (userData) => {
 
 export const LoginApi = async (userData) => {
   try {
-    const { data } = await axios.post(prod.web + "/login", userData, headers);
+    const { data } = await axios.post(prod.chat + "/login", userData, headers);
     return data;
   } catch (error) {
     throw error.message;
@@ -29,7 +29,7 @@ export const LoginApi = async (userData) => {
 
 export const GetUserApi = async (token) => {
   try {
-    const response = await axios.get(prod.web + "/user", {
+    const response = await axios.get(prod.chat + "/user", {
       headers: {
         Authorization: `Bearer ${token}`,
       },

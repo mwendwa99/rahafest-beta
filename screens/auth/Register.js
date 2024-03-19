@@ -1,9 +1,16 @@
 import { useState, useEffect } from "react";
-import { StyleSheet, View, Image, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Image,
+  TouchableOpacity,
+  Platform,
+} from "react-native";
 import { ImageBackground } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useDispatch, useSelector } from "react-redux";
+import { Checkbox } from "react-native-paper";
 
 import { Input, Button, Text } from "../../components";
 import { danger, success, warning } from "../../utils/toast";
@@ -20,6 +27,7 @@ export default function Register({ navigation }) {
   const [confirmPassword, setConfirmPassword] = useState("");
   const dispatch = useDispatch();
   const { user, authError } = useSelector((state) => state.auth);
+  const [checked, setChecked] = useState(false);
 
   // console.log({ user });
   // console.log({ authError });
@@ -27,6 +35,7 @@ export default function Register({ navigation }) {
   useEffect(() => {
     if (authError) {
       danger("could not register!", 2000);
+      // console.log(authError);
     }
   }, [authError]);
 
@@ -60,11 +69,11 @@ export default function Register({ navigation }) {
     }
 
     const registerData = {
-      first_name: firstName,
-      last_name: lastName,
+      name: `${firstName} ${lastName}`,
       password: password,
-      password_confirm: confirmPassword,
+      password2: confirmPassword,
       email: email,
+      tc: checked,
     };
 
     dispatch(register(registerData));
@@ -119,6 +128,32 @@ export default function Register({ navigation }) {
               defaultValue={"confirm password"}
             />
           </View>
+          {Platform.OS === "android" && (
+            <View style={styles.row}>
+              <Checkbox
+                status={checked ? "checked" : "unchecked"}
+                color="#fff"
+                onPress={() => {
+                  setChecked(!checked);
+                }}
+              />
+              <Text
+                value={"Agree to the terms and conditions"}
+                variant={"body"}
+                color="#fff"
+              />
+            </View>
+          )}
+          {Platform.OS === "ios" && (
+            <Checkbox.Item
+              status={checked ? "checked" : "unchecked"}
+              color="#fff"
+              label="Agree to the terms and conditions"
+              onPress={() => {
+                setChecked(!checked);
+              }}
+            />
+          )}
           <Button label="Register" onPress={handleSignup} theme="dark" />
         </View>
         <View style={styles.row}>
@@ -159,7 +194,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
-    width: "100%",
+    // width: "100%",
   },
   input: {
     flex: 1,
