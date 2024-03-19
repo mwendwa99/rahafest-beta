@@ -11,10 +11,7 @@ const splash = require("../../assets/splash.png");
 export default function Faqs() {
   const { faq, loading } = useSelector((state) => state.faq);
   const dispatch = useDispatch();
-  
-
-
-  //   console.log({ faq });
+    //   console.log({ faq });
 
   useEffect(() => {
     dispatch(getFaq());

@@ -1,70 +1,40 @@
 import React, { useState, useEffect } from "react";
 import { Text, View, Pressable } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
+import { sendFriendRequest } from "../../../redux/friends/friendsActions";
+import { success } from "../../../utils/toast";
+import { useDispatch } from "react-redux";
 
-import { success } from "../../../src/utils/toast";
-import {
-  CancelFriendRequest,
-  GetFriendRequestSent,
-  GetUserFriends,
-  SendFriendRequest,
-} from "../services/user.service";
-
-const User = ({ index, item, access_token }) => {
+const User = ({ index, item, token, user }) => {
   const [requestSent, setRequestSent] = useState(false);
   const [friendRequests, setFriendRequests] = useState([]);
   const [userFriends, setUserFriends] = useState([]);
   const [loading, setLoading] = useState(false);
-  const { token } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  console.log("ser::\t", item)
 
-  useEffect(() => {
-    fetchFriendRequests();
-    fetchUserFriends();
-  }, []);
+  // useEffect(() => {
 
-  const fetchFriendRequests = async () => {
-    try {
-      const resp = await GetFriendRequestSent(token);
-      setFriendRequests(resp);
-    } catch (error) {
-      console.log("error", error);
+  // }, []);
+  // console.log(user)
+  const sendFriendReq = async (selectedUserId) => {
+    const userInfo = {
+      user: user.id,
+      friend: selectedUserId,
+      is_accepted: false
     }
-  };
-
-  const fetchUserFriends = async () => {
-    try {
-      const resp = await GetUserFriends(access_token);
-      // console.log("Friends::\t", resp);
-      setUserFriends(resp);
-    } catch (error) {
-      console.log("Error message", error);
-    }
-  };
-
-  const sendFriendRequest = async (selectedUserId) => {
-    try {
-      setLoading(true);
-      const resp = await SendFriendRequest(access_token, selectedUserId);
-      console.log(resp)
-      setRequestSent(true);
-      // console.log("SEND FRIEND REQ::\t", resp);
-    } catch (error) {
-      console.log("error message", error);
-    } finally {
-      setLoading(false);
-    }
+    // console.log("userInfo::\t", item)
+    dispatch(sendFriendRequest(token, userInfo));
   };
 
   const cancelFriendRequest = async () => {
     try {
-      setLoading(true);
-      const result = await CancelFriendRequest(access_token, item._id);
+      const result = await CancelFriendRequest(token, item._id);
       success(result.message, 2000);
       setRequestSent(false);
     } catch (error) {
       console.log(error);
     } finally {
-      setLoading(false);
       fetchFriendRequests();
       fetchUserFriends();
     }
@@ -102,7 +72,7 @@ const User = ({ index, item, access_token }) => {
         </Pressable>
       ) : (
         <Pressable
-          onPress={() => sendFriendRequest(item._id)}
+          onPress={() => sendFriendReq(item.id)}
           style={{
             backgroundColor: "#567189",
             padding: 10,

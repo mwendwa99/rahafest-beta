@@ -1,16 +1,17 @@
-import { View, StyleSheet, Image, ScrollView } from "react-native";
-import { StatusBar } from "expo-status-bar";
-import { Text, ListItem } from "../../components";
+import { View, StyleSheet, Image, ScrollView, StatusBar } from "react-native";
+import { ListItem } from "../../components";
 import { useSelector, useDispatch } from "react-redux";
-// import { logout } from "../../redux/auth/authActions";
 import { success } from "../../utils/toast";
+import { persistor } from "../../redux/store";
+import { logout } from "../../redux/auth/authActions";
 
 export default function Settings({ navigation }) {
   const dispatch = useDispatch();
-  const {token} = useSelector(state=>state.auth)
+  const { token } = useSelector((state) => state.auth);
 
   const handleLogout = () => {
-    // dispatch(logout());
+    persistor.purge();
+    dispatch(logout());
     success("Logout success");
     navigation.navigate("Home");
   };
@@ -35,14 +36,16 @@ export default function Settings({ navigation }) {
           handlePressLink={() => handleNavigate("Map")}
         />
 
-        {token && <ListItem
-          title="Logout"
-          iconLeft={"logout"}
-          iconRight={"chevron-right"}
-          handlePressLink={handleLogout}
-        />}
+        {token && (
+          <ListItem
+            title="Logout"
+            iconLeft={"logout"}
+            iconRight={"chevron-right"}
+            handlePressLink={handleLogout}
+          />
+        )}
       </ScrollView>
-      <StatusBar style="light" />
+      <StatusBar barStyle="light-content" />
     </View>
   );
 }

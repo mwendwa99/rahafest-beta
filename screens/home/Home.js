@@ -7,13 +7,13 @@ import {
   TouchableOpacity,
   Linking,
   Pressable,
+  StatusBar,
 } from "react-native";
 import {
   FontAwesome5,
   Entypo,
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
-import { StatusBar } from "expo-status-bar";
 import { useState, useEffect } from "react";
 import { Portal, Modal } from "react-native-paper";
 
@@ -117,7 +117,7 @@ export default function Home({ navigation }) {
           </View>
         </Modal>
       </Portal>
-      <StatusBar style="dark" />
+      <StatusBar barStyle="dark-content" />
     </SafeAreaView>
   );
 }

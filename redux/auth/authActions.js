@@ -33,3 +33,14 @@ export const getUser = createAsyncThunk(
     }
   }
 );
+
+export const logout = createAsyncThunk(
+  "auth/logout",
+  (_, { rejectWithValue }) => {
+    try {
+      return null;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);

@@ -64,9 +64,9 @@ export default function Register({ navigation }) {
       password: password,
       password2: confirmPassword,
       email: email,
-      tc: "True"
+      tc: true
     };
-
+    console.log(registerData)
     dispatch(register(registerData));
   };
   return (

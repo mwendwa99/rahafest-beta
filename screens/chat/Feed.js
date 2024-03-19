@@ -1,13 +1,16 @@
+import { useNavigation } from "@react-navigation/native";
 import { GiftedChat } from "react-native-gifted-chat";
-import { View, StyleSheet } from "react-native";
-import { StatusBar } from "expo-status-bar";
+import { View, StyleSheet, StatusBar, TouchableOpacity } from "react-native";
+// import { StatusBar } from "expo-status-bar";
 import { getAllChats, postMessage } from "../../redux/chat/chatActions";
 import { getUser } from "../../redux/auth/authActions";
 import { useSelector, useDispatch } from "react-redux";
 import { getRandomNumber } from "../../utils/helper";
 import { useCallback, useEffect, useLayoutEffect, useState } from "react";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function FeedS() {
+  const navigation = useNavigation();
   const { allChats } = useSelector((state) => state.chat);
   const { user, token } = useSelector((state) => state.auth);
   const [messages, setMessages] = useState([]);
@@ -78,7 +81,7 @@ export default function FeedS() {
               onPress={() => navigation.goBack()}
               name="arrow-back"
               size={24}
-              color="black"
+              color="#fff"
             />
           </TouchableOpacity>
         </View>
@@ -124,7 +127,6 @@ export default function FeedS() {
 
   return (
     <View style={styles.container}>
-      {/* <Text value={"Feed"} variant={"subtitle"} color="#000" /> */}
       <GiftedChat
         inverted={false}
         messages={messages}
@@ -133,40 +135,13 @@ export default function FeedS() {
           _id: 1,
         }}
       />
-      <StatusBar style="light" />
+      <StatusBar barStyle="light" />
     </View>
   );
 };
 
-const feedsStyle = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-  },
-  header: {
-    fontSize: 18,
-    marginBottom: 15,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 10,
-    minHeight: 150,
-  },
-  counter: {
-    alignSelf: "flex-end",
-    marginBottom: 10,
-    color: "#666",
-  },
-  createPostPressable: {
-    position: "absolute",
-    bottom: 10,
-    right: 35,
-    backgroundColor: "purple",
-    borderRadius: 20,
-    paddingHorizontal: 20,
-    paddingVertical: 5,
   },
 });

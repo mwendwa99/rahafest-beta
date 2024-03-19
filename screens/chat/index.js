@@ -1,11 +1,13 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useSelector } from "react-redux";
+import { View, TouchableOpacity } from "react-native";
+import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 
 import { Text } from "../../components";
 import DirectMessage from "./DirectMessage";
 import Feed from "./Feed";
-import { Register, Login } from "../auth";
 import Friends from "./Friends";
+import { Register, Login } from "../auth";
 import Chats from "./Chats";
 import AllFriends from "./AllFriends";
 
@@ -19,7 +21,7 @@ export default function ChatNavigator() {
       <Stack.Screen
         name="Feed"
         component={Feed}
-        options={{
+        options={({ navigation }) => ({
           headerShown: true,
           headerShadowVisible: false,
           headerTintColor: "#fff",
@@ -30,7 +32,34 @@ export default function ChatNavigator() {
             <Text value={"Global Chat"} {...props} variant={"subtitle"} />
           ),
           headerTitleAlign: "center",
-        }}
+          headerRight: () => (
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                marginRight: 10,
+              }}
+            >
+              {/* You can add multiple icons or components here */}
+              <TouchableOpacity onPress={() => navigation.navigate("Friends")}>
+                <FontAwesome5
+                  name="user-friends"
+                  size={24}
+                  color="white"
+                  style={{ marginRight: 15 }}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => navigation.navigate("Allusers")}>
+                <Ionicons
+                  name="add"
+                  size={24}
+                  color="white"
+                  style={{ marginRight: 15 }}
+                />
+              </TouchableOpacity>
+            </View>
+          ),
+        })}
       />
       <Stack.Screen
         name="DirectMessage"
@@ -44,6 +73,22 @@ export default function ChatNavigator() {
           },
           headerTitle: (props) => (
             <Text value={"Direct Messages"} {...props} variant={"subtitle"} />
+          ),
+          headerTitleAlign: "center",
+        }}
+      />
+            <Stack.Screen
+        name="Allusers"
+        component={AllFriends}
+        options={{
+          headerShown: true,
+          headerShadowVisible: false,
+          headerTintColor: "#fff",
+          headerStyle: {
+            backgroundColor: "#212529",
+          },
+          headerTitle: (props) => (
+            <Text value={"All users"} {...props} variant={"subtitle"} />
           ),
           headerTitleAlign: "center",
         }}
@@ -64,38 +109,6 @@ export default function ChatNavigator() {
           headerTitleAlign: "center",
         }}
       />
-      <Stack.Screen
-        name="Chats"
-        component={Chats}
-        options={{
-          headerShown: true,
-          headerShadowVisible: false,
-          headerTintColor: "#fff",
-          headerStyle: {
-            backgroundColor: "#212529",
-          },
-          headerTitle: (props) => (
-            <Text value={"Chats"} {...props} variant={"subtitle"} />
-          ),
-          headerTitleAlign: "center",
-        }}
-      />  
-      <Stack.Screen
-        name="Allfriends"
-        component={AllFriends}
-        options={{
-          headerShown: true,
-          headerShadowVisible: false,
-          headerTintColor: "#fff",
-          headerStyle: {
-            backgroundColor: "#212529",
-          },
-          headerTitle: (props) => (
-            <Text value={"All friends"} {...props} variant={"subtitle"} />
-          ),
-          headerTitleAlign: "center",
-        }}
-      />   
     </Stack.Navigator>
   ) : (
     <Stack.Navigator initialRouteName="Login">

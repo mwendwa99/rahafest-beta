@@ -1,26 +1,24 @@
 import { useEffect, useState } from "react";
-import { GetUsersApi } from "../../services/user.service";
 import { ScrollView, View } from "react-native";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllUsers } from "../../redux/users/usersAction";
+import User from "./components/User";
 
 export default function AllFriends() {
-  const { token } = useSelector((state) => state.auth);
-  const [users, setUser] = useState([]);
-  console.log(token)
+  const { token, user } = useSelector((state) => state.auth);
+  const { users } = useSelector((state) => state.users);
+  const dispatch = useDispatch();
+  // const [users, setUser] = useState([]);
+  console.log("USERS::\t",users);
   useEffect(() => {
-    const fetchUsers = async () => {
-        const users = await GetUsersApi(token);
-        setUser(users);
-        console.log(users);
-    }
-    fetchUsers();
-  }, []);
+    dispatch(getAllUsers(token));
+  }, [token]);
 
   return (
     <ScrollView>
         <View style={{ padding: 10 }}>
             {users ? (
-            users.map((item, index) => <User key={index} item={item} access_token={access_token}/>)
+            users.map((item, index) => <User key={index} item={item} token={token} user={user}/>)
             ) : (
             <Text>No users</Text>
             )}
