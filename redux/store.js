@@ -8,6 +8,7 @@ import lineupSlice from "./lineup/lineupSlice";
 import newsSlice from "./news/newsSlice";
 import menuSlice from "./menu/menuSlice";
 import chatSlice from "./chat/chatSlice";
+import friendSlice from "./friends/friendSlice";
 
 const rootPersistConfig = {
   key: "root",
@@ -23,6 +24,7 @@ const rootReducer = combineReducers({
   news: newsSlice,
   menu: menuSlice,
   chat: chatSlice,
+  friends: friendSlice,
 });
 
 const persistedReducer = persistReducer(rootPersistConfig, rootReducer);

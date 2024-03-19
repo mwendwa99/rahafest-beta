@@ -39,3 +39,11 @@ export function getRandomNumber() {
 
   return randomNumber;
 }
+
+export function getInitials(name) {
+  // Split the name into first and second names
+  var names = name.split(" ");
+  // Get the first letter of each name
+  var initials = names[0][0] + names[1][0];
+  return initials;
+}
