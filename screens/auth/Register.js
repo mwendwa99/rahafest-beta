@@ -154,7 +154,12 @@ export default function Register({ navigation }) {
               }}
             />
           )}
-          <Button label="Register" onPress={handleSignup} theme="dark" />
+          <Button
+            label="Register"
+            color="#483248"
+            onPress={handleSignup}
+            theme="dark"
+          />
         </View>
         <View style={styles.row}>
           <TouchableOpacity onPress={() => handleNavigate("Login")}>
