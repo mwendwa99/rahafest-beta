@@ -33,7 +33,7 @@ export default function Home({ navigation }) {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <ImageBackground
         source={image}
         resizeMode="cover"
@@ -118,7 +118,7 @@ export default function Home({ navigation }) {
         </Modal>
       </Portal>
       <StatusBar barStyle="dark-content" />
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
   },
   avatar: {
     position: "absolute",
-    top: 10,
+    top: 50,
     right: 10,
   },
   row: {
