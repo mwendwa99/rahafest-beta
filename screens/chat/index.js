@@ -17,7 +17,7 @@ const Stack = createNativeStackNavigator();
 export default function ChatNavigator() {
   const { user, token } = useSelector((state) => state.auth);
 
-  return !token ? (
+  return token ? (
     // <Stack.Navigator initialRouteName="Feed">
     <Stack.Navigator initialRouteName="DirectMessage">
       <Stack.Screen

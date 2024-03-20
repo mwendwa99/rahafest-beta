@@ -1,7 +1,12 @@
 import * as Location from "expo-location";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, Image, View } from "react-native";
-import MapView, { Callout, Marker, Polyline } from "react-native-maps";
+import MapView, {
+  Callout,
+  Marker,
+  Polyline,
+  PROVIDER_GOOGLE,
+} from "react-native-maps";
 // import LiveMap from '../app/components/livemap'
 
 import { AndroidLocation } from "../../utils/permissions";
@@ -17,19 +22,28 @@ const LiveMap = () => {
   useEffect(() => {
     const getLocation = async () => {
       try {
-        await AndroidLocation();
+        const permissions = await AndroidLocation();
 
-        Location.watchPositionAsync(
-          { accuracy: Location.Accuracy.Highest, timeInterval: 1000 },
-          (location) => {
-            setCurrentLocation(location.coords);
-            setLoading(false);
-          },
-        );
+        if (permissions === "granted") {
+          const location = await Location.getCurrentPositionAsync({
+            accuracy: Location.Accuracy.Highest,
+          });
 
-        Location.watchHeadingAsync((heading) => {
-          setHeading(heading.trueHeading);
-        });
+          const { coords } = location;
+          setCurrentLocation({
+            latitude: coords.latitude,
+            longitude: coords.longitude,
+          });
+
+          const subscription = await Location.watchHeadingAsync((heading) => {
+            setHeading(heading.trueHeading);
+          });
+
+          return () => subscription.remove();
+        } else {
+          alert("Location permission is required");
+        }
+        setLoading(false);
       } catch (err) {
         console.error(err);
         setLoading(false);
@@ -49,7 +63,8 @@ const LiveMap = () => {
         calloutEnabled
         tracksViewChanges
         rotation={heading}
-        pinColor="green">
+        pinColor="green"
+      >
         <Callout>
           <View>
             {/* <Image style={tyles.icon} source={require('../../assets/icons/bar1.png')} /> */}
@@ -60,38 +75,11 @@ const LiveMap = () => {
   );
 };
 
-const tyles = StyleSheet.create({
-  container: {
-    alignItems: "center",
-    flex: 1,
-    justifyContent: "center",
-  },
-  icon: {
-    height: 32,
-    width: 32,
-  },
-  imageContainer: {
-    alignItems: "center",
-    backgroundColor: "#fff",
-    borderRadius: 5,
-    flexDirection: "row",
-    padding: 5,
-  },
-  label: {
-    borderRadius: 5,
-    flexDirection: "row",
-  },
-  map: {
-    flex: 1,
-    height: "100%",
-    width: "100%",
-  },
-});
-
 const Map = () => {
   return (
     <View style={styles.container}>
       <MapView
+        provider={PROVIDER_GOOGLE}
         style={styles.map}
         initialRegion={{
           latitude: -1.3260428510920745,
@@ -102,7 +90,8 @@ const Map = () => {
         // minZoomLevel={17}
         // maxZoomLevel={18.5}
         mapType="satellite"
-        loadingEnabled>
+        loadingEnabled
+      >
         <LiveMap />
 
         {/* main stage */}
@@ -114,9 +103,13 @@ const Map = () => {
           title="Stage"
           description="Main stage"
           calloutEnabled
-          tracksViewChanges>
+          tracksViewChanges
+        >
           <View style={styles.imageContainer}>
-            <Image style={styles.icon} source={require("../../assets/icons/stage.png")} />
+            <Image
+              style={styles.icon}
+              source={require("../../assets/icons/stage.png")}
+            />
           </View>
           <Callout>
             <View>
@@ -134,9 +127,13 @@ const Map = () => {
           title="Rahafest 3D logo"
           description="Rahafest 3D logo"
           calloutEnabled
-          tracksViewChanges>
+          tracksViewChanges
+        >
           <View style={styles.imageContainer}>
-            <Image style={styles.icon} source={require("../../assets/icons/logo-design.png")} />
+            <Image
+              style={styles.icon}
+              source={require("../../assets/icons/logo-design.png")}
+            />
           </View>
           <Callout>
             <View>
@@ -154,9 +151,13 @@ const Map = () => {
           title="Concert area"
           description="Main concert area"
           calloutEnabled
-          tracksViewChanges>
+          tracksViewChanges
+        >
           <View style={styles.imageContainer}>
-            <Image style={styles.icon} source={require("../../assets/icons/hands-up.png")} />
+            <Image
+              style={styles.icon}
+              source={require("../../assets/icons/hands-up.png")}
+            />
           </View>
           <Callout style={{ width: "auto" }}>
             <View>
@@ -174,7 +175,8 @@ const Map = () => {
           title="Exit"
           description="exit"
           calloutEnabled
-          tracksViewChanges>
+          tracksViewChanges
+        >
           <View style={styles.imageContainer}>
             {/* <Image style = { styles.icon } source={require('../../assets/icons/exit.png')} /> */}
           </View>
@@ -201,9 +203,13 @@ const Map = () => {
           title="Exit"
           description="exit"
           calloutEnabled
-          tracksViewChanges>
+          tracksViewChanges
+        >
           <View style={styles.imageContainer}>
-            <Image style={styles.icon} source={require("../../assets/icons/exit.png")} />
+            <Image
+              style={styles.icon}
+              source={require("../../assets/icons/exit.png")}
+            />
           </View>
           <Callout>
             <View>
@@ -220,7 +226,8 @@ const Map = () => {
           }}
           title="VIP entrance"
           description="VIP entrance"
-          calloutEnabled>
+          calloutEnabled
+        >
           <View style={styles.imageContainer}>
             {/* <Image style = { styles.icon } source={require('../../assets/icons/red-carpet.png')} /> */}
           </View>
@@ -246,9 +253,13 @@ const Map = () => {
           }}
           title="VIP entrance"
           description="VIP entrance"
-          calloutEnabled>
+          calloutEnabled
+        >
           <View style={styles.imageContainer}>
-            <Image style={styles.icon} source={require("../../assets/icons/red-carpet.png")} />
+            <Image
+              style={styles.icon}
+              source={require("../../assets/icons/red-carpet.png")}
+            />
           </View>
           <Callout>
             <View>
@@ -265,7 +276,8 @@ const Map = () => {
           }}
           title="Regular entrance"
           description="Regular entrance"
-          calloutEnabled>
+          calloutEnabled
+        >
           <View style={styles.imageContainer}>
             {/* <Image style = { styles.icon } source={require('../../assets/icons/entrance.png')} /> */}
           </View>
@@ -292,9 +304,13 @@ const Map = () => {
           }}
           title="Regular entrance"
           description="Regular entrance"
-          calloutEnabled>
+          calloutEnabled
+        >
           <View style={styles.imageContainer}>
-            <Image style={styles.icon} source={require("../../assets/icons/entrance.png")} />
+            <Image
+              style={styles.icon}
+              source={require("../../assets/icons/entrance.png")}
+            />
           </View>
           <Callout>
             <View>
@@ -311,9 +327,13 @@ const Map = () => {
           }}
           title="Toilet"
           description="Toilet"
-          calloutEnabled>
+          calloutEnabled
+        >
           <View style={styles.imageContainer}>
-            <Image style={styles.icon} source={require("../../assets/icons/toilet.png")} />
+            <Image
+              style={styles.icon}
+              source={require("../../assets/icons/toilet.png")}
+            />
           </View>
           <Callout>
             <View>
@@ -329,9 +349,13 @@ const Map = () => {
           }}
           title="Toilet"
           description="Toilet"
-          calloutEnabled>
+          calloutEnabled
+        >
           <View style={styles.imageContainer}>
-            <Image style={styles.icon} source={require("../../assets/icons/toilet.png")} />
+            <Image
+              style={styles.icon}
+              source={require("../../assets/icons/toilet.png")}
+            />
           </View>
           <Callout>
             <View>
@@ -348,9 +372,13 @@ const Map = () => {
           }}
           title="Food & Bar"
           description="Food & Bar"
-          calloutEnabled>
+          calloutEnabled
+        >
           <View style={styles.imageContainer}>
-            <Image style={styles.icon} source={require("../../assets/icons/bar.png")} />
+            <Image
+              style={styles.icon}
+              source={require("../../assets/icons/bar.png")}
+            />
           </View>
           <Callout>
             <View>
@@ -366,9 +394,13 @@ const Map = () => {
           }}
           title="Food & Bar"
           description="Food & Bar"
-          calloutEnabled>
+          calloutEnabled
+        >
           <View style={styles.imageContainer}>
-            <Image style={styles.icon} source={require("../../assets/icons/bar.png")} />
+            <Image
+              style={styles.icon}
+              source={require("../../assets/icons/bar.png")}
+            />
           </View>
           <Callout>
             <View>
@@ -385,9 +417,13 @@ const Map = () => {
           }}
           title="Corporate Area"
           description="Corporate Area"
-          calloutEnabled>
+          calloutEnabled
+        >
           <View style={styles.imageContainer}>
-            <Image style={styles.icon} source={require("../../assets/icons/corporate.png")} />
+            <Image
+              style={styles.icon}
+              source={require("../../assets/icons/corporate.png")}
+            />
           </View>
           <Callout>
             <View>
@@ -404,9 +440,13 @@ const Map = () => {
           }}
           title="VVIP entrance"
           description="VVIP entrance"
-          calloutEnabled>
+          calloutEnabled
+        >
           <View style={styles.imageContainer}>
-            <Image style={styles.icon} source={require("../../assets/icons/gate.png")} />
+            <Image
+              style={styles.icon}
+              source={require("../../assets/icons/gate.png")}
+            />
           </View>
           <Callout>
             <View>
@@ -423,9 +463,13 @@ const Map = () => {
           }}
           title="VVIP Area"
           description="VVIP private food, bar and toilets"
-          calloutEnabled>
+          calloutEnabled
+        >
           <View style={styles.imageContainer}>
-            <Image style={styles.icon} source={require("../../assets/icons/exclusive.png")} />
+            <Image
+              style={styles.icon}
+              source={require("../../assets/icons/exclusive.png")}
+            />
           </View>
           <Callout>
             <View>
@@ -442,9 +486,13 @@ const Map = () => {
           }}
           title="VIP Area"
           description="private food, bar and toilets"
-          calloutEnabled>
+          calloutEnabled
+        >
           <View style={styles.imageContainer}>
-            <Image style={styles.icon} source={require("../../assets/icons/vip.png")} />
+            <Image
+              style={styles.icon}
+              source={require("../../assets/icons/vip.png")}
+            />
           </View>
           <Callout>
             <View>
@@ -461,9 +509,13 @@ const Map = () => {
           }}
           title="VVIP Parking"
           description="VVIP Parking"
-          calloutEnabled>
+          calloutEnabled
+        >
           <View style={styles.imageContainer}>
-            <Image style={styles.icon} source={require("../../assets/icons/parking-area.png")} />
+            <Image
+              style={styles.icon}
+              source={require("../../assets/icons/parking-area.png")}
+            />
           </View>
           <Callout>
             <View>
@@ -480,9 +532,13 @@ const Map = () => {
           }}
           title="Artists & VVIP lounge"
           description="Artists & VVIP lounge"
-          calloutEnabled>
+          calloutEnabled
+        >
           <View style={styles.imageContainer}>
-            <Image style={styles.icon} source={require("../../assets/icons/lounge.png")} />
+            <Image
+              style={styles.icon}
+              source={require("../../assets/icons/lounge.png")}
+            />
           </View>
           <Callout>
             <View>
@@ -499,9 +555,13 @@ const Map = () => {
           }}
           title="Art and branding panel"
           description="Art and branding panel"
-          calloutEnabled>
+          calloutEnabled
+        >
           <View style={styles.imageContainer}>
-            <Image style={styles.icon} source={require("../../assets/icons/painting.png")} />
+            <Image
+              style={styles.icon}
+              source={require("../../assets/icons/painting.png")}
+            />
           </View>
           <Callout>
             <View>
@@ -518,13 +578,19 @@ const Map = () => {
           }}
           title="VVIP Art, Games, Fashion, Activations"
           description="VVIP Art, Games, Fashion, Activations"
-          calloutEnabled>
+          calloutEnabled
+        >
           <View style={styles.imageContainer}>
-            <Image style={styles.icon} source={require("../../assets/icons/crown.png")} />
+            <Image
+              style={styles.icon}
+              source={require("../../assets/icons/crown.png")}
+            />
           </View>
           <Callout>
             <View>
-              <Text style={styles.label}>VVIP Art, Games, Fashion, Activations</Text>
+              <Text style={styles.label}>
+                VVIP Art, Games, Fashion, Activations
+              </Text>
             </View>
           </Callout>
         </Marker>
@@ -537,9 +603,13 @@ const Map = () => {
           }}
           title="Art, Games, Fashion, Activations"
           description="Art, Games, Fashion, Activations"
-          calloutEnabled>
+          calloutEnabled
+        >
           <View style={styles.imageContainer}>
-            <Image style={styles.icon} source={require("../../assets/icons/game-console.png")} />
+            <Image
+              style={styles.icon}
+              source={require("../../assets/icons/game-console.png")}
+            />
           </View>
           <Callout>
             <View>
