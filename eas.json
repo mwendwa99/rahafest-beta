@@ -16,6 +16,12 @@
     "production": {}
   },
   "submit": {
-    "production": {}
+    "production": {
+      "ios": {
+        "appleId": "brianmwendwa.mu@gmail.com",
+        "ascAppId": "6479684248",
+        "appleTeamId": "7Z8Y9Z7Z7Z"
+      }
+    }
   }
 }
