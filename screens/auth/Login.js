@@ -81,9 +81,9 @@ export default function Login({ navigation }) {
             color="#483248"
           />
         </View>
-        <View style={styles.row}>
+        <View style={{ ...styles.row, marginTop: 10 }}>
           <TouchableOpacity onPress={() => handleNavigate("Register")}>
-            <Text value={"Don't have an account?"} variant={"body"} />
+            <Text value={"Signup"} variant={"body"} />
           </TouchableOpacity>
         </View>
       </KeyboardAwareScrollView>

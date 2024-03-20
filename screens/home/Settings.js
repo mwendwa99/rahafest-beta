@@ -1,4 +1,11 @@
-import { View, StyleSheet, Image, ScrollView, StatusBar } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Image,
+  ScrollView,
+  StatusBar,
+  Linking,
+} from "react-native";
 import { ListItem } from "../../components";
 import { useSelector, useDispatch } from "react-redux";
 import { success } from "../../utils/toast";
@@ -35,14 +42,28 @@ export default function Settings({ navigation }) {
           iconRight={"chevron-right"}
           handlePressLink={() => handleNavigate("Map")}
         />
+        <ListItem
+          title="Buy Tickets"
+          iconLeft={"ticket"}
+          iconRight={"chevron-right"}
+          handlePressLink={() => Linking.openURL("https://linktr.ee/rahafest")}
+        />
 
+        <ListItem
+          title="Delete Account"
+          iconLeft={"delete"}
+          handlePressLink={handleLogout}
+          color={"#dc3545"}
+        />
         {token && (
-          <ListItem
-            title="Logout"
-            iconLeft={"logout"}
-            iconRight={"chevron-right"}
-            handlePressLink={handleLogout}
-          />
+          <View>
+            <ListItem
+              title="Logout"
+              iconLeft={"logout"}
+              iconRight={"chevron-right"}
+              handlePressLink={handleLogout}
+            />
+          </View>
         )}
       </ScrollView>
       <StatusBar barStyle="light-content" />

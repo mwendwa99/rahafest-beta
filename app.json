@@ -15,7 +15,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.mwendwa99.rahafestbeta",
-      "buildNumber": "1.0.0"
+      "buildNumber": "1"
     },
     "android": {
       "adaptiveIcon": {

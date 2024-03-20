@@ -13,6 +13,7 @@ const ListItem = ({
   handlePressLeftIcon,
   handlePressRightIcon,
   handlePressLink,
+  color,
 }) => {
   return (
     <List.Section style={{ color: "#fff" }} titleStyle={{ color: "#fff" }}>
@@ -30,7 +31,7 @@ const ListItem = ({
               <List.Icon
                 {...iconProps}
                 icon={iconLeft}
-                color="#fff"
+                color={color || "#fff"}
                 style={iconStyle}
               />
             </TouchableOpacity>
