@@ -22,19 +22,28 @@ const LiveMap = () => {
   useEffect(() => {
     const getLocation = async () => {
       try {
-        await AndroidLocation();
+        const permissions = await AndroidLocation();
 
-        Location.watchPositionAsync(
-          { accuracy: Location.Accuracy.Highest, timeInterval: 1000 },
-          (location) => {
-            setCurrentLocation(location.coords);
-            setLoading(false);
-          }
-        );
+        if (permissions === "granted") {
+          const location = await Location.getCurrentPositionAsync({
+            accuracy: Location.Accuracy.Highest,
+          });
 
-        Location.watchHeadingAsync((heading) => {
-          setHeading(heading.trueHeading);
-        });
+          const { coords } = location;
+          setCurrentLocation({
+            latitude: coords.latitude,
+            longitude: coords.longitude,
+          });
+
+          const subscription = await Location.watchHeadingAsync((heading) => {
+            setHeading(heading.trueHeading);
+          });
+
+          return () => subscription.remove();
+        } else {
+          alert("Location permission is required");
+        }
+        setLoading(false);
       } catch (err) {
         console.error(err);
         setLoading(false);
