@@ -1,6 +1,6 @@
 import * as Location from "expo-location";
 
-const AndroidLocation = async () => {
+export const AndroidLocation = async () => {
   try {
     const { status } = await Location.requestForegroundPermissionsAsync();
     return status;
@@ -9,5 +9,3 @@ const AndroidLocation = async () => {
     return false;
   }
 };
-
-export { AndroidLocation };

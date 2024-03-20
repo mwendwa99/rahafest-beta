@@ -5,7 +5,6 @@ export default function Accordion({ question, answer, index }) {
   const [expanded, setExpanded] = useState(false);
 
   const handlePress = () => setExpanded(!expanded);
-  
 
   return (
     <List.Accordion
@@ -15,8 +14,12 @@ export default function Accordion({ question, answer, index }) {
       )}
       expanded={expanded}
       onPress={handlePress}
+      titleNumberOfLines={50}
     >
-      <List.Item descriptionNumberOfLines={50} description={answer || "empty"} />
+      <List.Item
+        descriptionNumberOfLines={50}
+        description={answer || "empty"}
+      />
     </List.Accordion>
   );
 }
