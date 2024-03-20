@@ -148,7 +148,8 @@ const styles = StyleSheet.create({
   avatar: {
     position: "absolute",
     top: 50,
-    right: 10,
+    right: 20,
+    zIndex: 100,
   },
   row: {
     display: "flex",

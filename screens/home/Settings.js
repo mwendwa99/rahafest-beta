@@ -49,12 +49,6 @@ export default function Settings({ navigation }) {
           handlePressLink={() => Linking.openURL("https://linktr.ee/rahafest")}
         />
 
-        <ListItem
-          title="Delete Account"
-          iconLeft={"delete"}
-          handlePressLink={handleLogout}
-          color={"#dc3545"}
-        />
         {token && (
           <View>
             <ListItem
@@ -62,6 +56,12 @@ export default function Settings({ navigation }) {
               iconLeft={"logout"}
               iconRight={"chevron-right"}
               handlePressLink={handleLogout}
+            />
+            <ListItem
+              title="Delete Account"
+              iconLeft={"delete"}
+              handlePressLink={handleLogout}
+              color={"#dc3545"}
             />
           </View>
         )}
