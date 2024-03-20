@@ -34,9 +34,22 @@ export const SendFriendRequestApi = async (token, data) => {
         Authorization: `Bearer ${token}`,
       },
     });
-    // console.log(response);
+    // console.log("RESP::\t",response);
     return response.data;
   } catch (error) {
     throw error.message;
   }
 };
+
+export const GetFriendRequest = async (token) => {
+  try {
+    const { data } = await axios.get(prod.chat + "/unaccepted-friendship-requests", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return data;
+  } catch (error) {
+    throw error,message;
+  }
+}

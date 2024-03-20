@@ -2,7 +2,7 @@ import { StyleSheet, View, FlatList, RefreshControl } from "react-native";
 import { UserList } from "../../components";
 import { useDispatch, useSelector } from "react-redux";
 import { getUsers } from "../../redux/chat/chatActions";
-import { sendFriendRequest } from "../../redux/friends/friendActions";
+import { getFriendsRequests, sendFriendRequest } from "../../redux/friends/friendActions";
 import { useEffect, useState } from "react";
 import { ActivityIndicator } from "react-native";
 
@@ -13,10 +13,14 @@ export default function AllUsers() {
   const [refreshing, setRefreshing] = useState(false);
   const dispatch = useDispatch();
 
-  // console.log(sentFriendRequest);
+  console.log("Req::\t",sentFriendRequest);
 
   useEffect(() => {
     dispatch(getUsers(token));
+  }, []);
+
+  useEffect(() => {
+    dispatch(getFriendsRequests(token));
   }, []);
 
   const onRefresh = () => {
@@ -26,13 +30,35 @@ export default function AllUsers() {
   };
 
   const onSendFriendReq = (sendId) => {
-    const data = {
-      user: user.id,
-      friend: sendId,
-      is_accepted: false,
-    };
-    // console.log(data);
-    dispatch(sendFriendRequest({ token, data }));
+    users.map(item => {
+      // console.log("FriendId::\t", item.id)
+      if (item.id === sendId) {
+        const data = {
+          user: user.id,
+          friend: sendId,
+          is_accepted: false,
+        };
+        console.log("Sending now::\t",sendId);
+        dispatch(sendFriendRequest({ token, data }));
+        return;
+      };
+    });
+  };
+
+  const cancelRequest = (sendId) => {
+    users.map(item => {
+      // console.log("FriendId::\t", item.id)
+      if (item.id === sendId) {
+        const data = {
+          user: user.id,
+          friend: sendId,
+          is_accepted: false,
+        };
+        console.log("Sending now::\t",sendId);
+        // dispatch(sendFriendRequest({ token, data }));
+        return;
+      };
+    });
   };
 
   return (
@@ -44,7 +70,9 @@ export default function AllUsers() {
           <UserList
             allUsers={item}
             onSendFriendReq={onSendFriendReq}
+            cancelRequest={cancelRequest}
             sentFriendRequest={sentFriendRequest}
+            user={user}
           />
         )}
         ListEmptyComponent={() => <ActivityIndicator />}

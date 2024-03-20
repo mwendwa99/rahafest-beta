@@ -27,7 +27,6 @@ export const sendFriendRequest = createAsyncThunk(
     "friends/sendFriendRequest",
     (token, { rejectWithValue }) => {
         try {
-            console.log("info u:\t", userInfo);
             return SendFriendRequest(token, userInfo);
         } catch (error) {
             return rejectWithValue(error.message);

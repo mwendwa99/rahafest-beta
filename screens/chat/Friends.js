@@ -14,6 +14,7 @@ export default function Friends() {
   const { friends, friendRequests } = useSelector((state) => state.friends);
   const { token } = useSelector((state) => state.auth);
   console.log(friendRequests)
+  console.log(friends)
   useEffect(() => {
     dispatch(getFriends(token));
   }, []);
