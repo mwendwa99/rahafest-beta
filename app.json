@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "rahafest-beta",
+    "name": "rahafest",
     "slug": "rahafest-beta",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -13,7 +13,9 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.mwendwa99.rahafestbeta",
+      "buildNumber": "1.0.0"
     },
     "android": {
       "adaptiveIcon": {
@@ -30,6 +32,11 @@
     },
     "updates": {
       "url": "https://u.expo.dev/8463c7e8-0d31-4d61-b074-0bb88e620e46"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "8463c7e8-0d31-4d61-b074-0bb88e620e46"
+      }
     }
   }
 }

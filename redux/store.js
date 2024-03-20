@@ -8,8 +8,8 @@ import lineupSlice from "./lineup/lineupSlice";
 import newsSlice from "./news/newsSlice";
 import menuSlice from "./menu/menuSlice";
 import chatSlice from "./chat/chatSlice";
-import friendsSlice from "./friends/friendsSlice";
-import usersSlice from "./users/usersSlice";
+import friendSlice from "./friends/friendSlice";
+
 const rootPersistConfig = {
   key: "root",
   storage: AsyncStorage,
@@ -24,8 +24,7 @@ const rootReducer = combineReducers({
   news: newsSlice,
   menu: menuSlice,
   chat: chatSlice,
-  friends: friendsSlice,
-  users: usersSlice,
+  friends: friendSlice,
 });
 
 const persistedReducer = persistReducer(rootPersistConfig, rootReducer);

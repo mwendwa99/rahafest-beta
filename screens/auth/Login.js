@@ -78,6 +78,7 @@ export default function Login({ navigation }) {
             label={loading ? `loggin in...` : "Login"}
             onPress={handleLogin}
             theme="dark"
+            color="#483248"
           />
         </View>
         <View style={styles.row}>

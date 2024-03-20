@@ -7,6 +7,7 @@ import { Text } from "../../components";
 import DirectMessage from "./DirectMessage";
 import Feed from "./Feed";
 import Friends from "./Friends";
+import AllUsers from "./AllUsers";
 import { Register, Login } from "../auth";
 import Chats from "./Chats";
 import AllFriends from "./AllFriends";
@@ -49,9 +50,9 @@ export default function ChatNavigator() {
                   style={{ marginRight: 15 }}
                 />
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => navigation.navigate("Allusers")}>
-                <Ionicons
-                  name="add"
+              <TouchableOpacity onPress={() => navigation.navigate("AllUsers")}>
+                <FontAwesome5
+                  name="globe"
                   size={24}
                   color="white"
                   style={{ marginRight: 15 }}
@@ -105,6 +106,22 @@ export default function ChatNavigator() {
           },
           headerTitle: (props) => (
             <Text value={"Friends"} {...props} variant={"subtitle"} />
+          ),
+          headerTitleAlign: "center",
+        }}
+      />
+      <Stack.Screen
+        name="AllUsers"
+        component={AllUsers}
+        options={{
+          headerShown: true,
+          headerShadowVisible: false,
+          headerTintColor: "#fff",
+          headerStyle: {
+            backgroundColor: "#212529",
+          },
+          headerTitle: (props) => (
+            <Text value={"AllUsers"} {...props} variant={"subtitle"} />
           ),
           headerTitleAlign: "center",
         }}

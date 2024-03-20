@@ -16,8 +16,12 @@ export default function FeedS() {
   const [messages, setMessages] = useState([]);
   const dispatch = useDispatch();
 
+  // console.log(user);
+
   // console.log(sentMessages);
   // console.log(getRandomNumber());
+  // console.log(token);
+  // console.log({ allChats });
 
   useEffect(() => {
     dispatch(getAllChats(token));
@@ -47,7 +51,7 @@ export default function FeedS() {
 
   const onSend = useCallback((messages = []) => {
     const messageObject = {
-      sender: user?.id || getRandomNumber(),
+      sender: user?.id,
       content: messages[0].text,
       created_at: messages[0].createdAt,
       message_id: messages[0]._id,
@@ -58,7 +62,7 @@ export default function FeedS() {
       GiftedChat.append(previousMessages, messages)
     );
 
-    // dispatch(getAllChats(token));
+    dispatch(getAllChats(token));
   }, []);
 
   const scrollToBottom = () => {
