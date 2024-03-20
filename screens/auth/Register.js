@@ -73,11 +73,7 @@ export default function Register({ navigation }) {
       password: password,
       password2: confirmPassword,
       email: email,
-<<<<<<< HEAD
-      tc: true
-=======
       tc: checked,
->>>>>>> a46146295772e9c55cc439a88f6e86f21d951667
     };
     dispatch(register(registerData));
   };

@@ -16,13 +16,6 @@ export default function FeedS() {
   const [messages, setMessages] = useState([]);
   const dispatch = useDispatch();
 
-  // console.log(user);
-
-  // console.log(sentMessages);
-  // console.log(getRandomNumber());
-  // console.log(token);
-  // console.log({ allChats });
-
   useEffect(() => {
     dispatch(getAllChats(token));
   }, []);
@@ -32,8 +25,6 @@ export default function FeedS() {
   }, []);
 
   useEffect(() => {
-    // ]);
-    // // update messages with data from allChats
     if (allChats) {
       const data = allChats?.map((chat) => {
         return {
@@ -47,7 +38,7 @@ export default function FeedS() {
       });
       setMessages(data);
     }
-  }, [allChats]);
+  }, []);
 
   const onSend = useCallback((messages = []) => {
     const messageObject = {

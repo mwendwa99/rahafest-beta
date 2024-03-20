@@ -14,11 +14,7 @@ const initialState = {
   loading: false,
   directMessages: null,
   sentMessage: null,
-<<<<<<< HEAD
-  friendsError: false,
-=======
   users: null,
->>>>>>> a46146295772e9c55cc439a88f6e86f21d951667
 };
 
 const chatSlice = createSlice({

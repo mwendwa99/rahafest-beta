@@ -44,9 +44,9 @@ export const addFriend = createAsyncThunk(
 
 export const getDirectMessages = createAsyncThunk(
   "chat/getDirectMessages",
-  ({ token, messageId }, { rejectWithValue }) => {
+  (token, { rejectWithValue }) => {
     try {
-      return GetDirectMessages(token, messageId);
+      return GetDirectMessages(token);
     } catch (error) {
       return rejectWithValue(error);
     }
