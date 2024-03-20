@@ -7,7 +7,7 @@ import {
 
 const initialState = {
   friends: null,
-  friendRequests: null,
+  sentFriendRequest: null,
   friendError: null,
   loading: false,
 };
@@ -49,7 +49,7 @@ const friendsSlice = createSlice({
     });
     builder.addCase(sendFriendRequest.fulfilled, (state, action) => {
       state.loading = false;
-      state.friendRequests = action.payload;
+      state.sentFriendRequest = action.payload;
       state.friendError = null;
     });
     builder.addCase(sendFriendRequest.rejected, (state, action) => {

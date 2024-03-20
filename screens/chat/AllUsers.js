@@ -9,11 +9,11 @@ import { ActivityIndicator } from "react-native";
 export default function AllUsers() {
   const { token, user } = useSelector((state) => state.auth);
   const { users, loading } = useSelector((state) => state.chat);
-  const { friendRequests } = useSelector((state) => state.friends);
+  const { sentFriendRequest } = useSelector((state) => state.friends);
   const [refreshing, setRefreshing] = useState(false);
   const dispatch = useDispatch();
 
-  console.log(users);
+  // console.log(sentFriendRequest);
 
   useEffect(() => {
     dispatch(getUsers(token));
@@ -31,6 +31,7 @@ export default function AllUsers() {
       friend: sendId,
       is_accepted: false,
     };
+    // console.log(data);
     dispatch(sendFriendRequest({ token, data }));
   };
 
@@ -41,9 +42,9 @@ export default function AllUsers() {
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <UserList
-            user={item}
+            allUsers={item}
             onSendFriendReq={onSendFriendReq}
-            requestedFriend={friendRequests}
+            sentFriendRequest={sentFriendRequest}
           />
         )}
         ListEmptyComponent={() => <ActivityIndicator />}

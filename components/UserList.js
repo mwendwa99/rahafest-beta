@@ -4,34 +4,39 @@ import { getInitials } from "../utils/helper";
 import Text from "./Text";
 import Button from "./Button";
 
-export default function UserList({ user, onSendFriendReq, requestedFriend }) {
+export default function UserList({
+  allUsers,
+  onSendFriendReq,
+  sentFriendRequest,
+}) {
+  console.log(sentFriendRequest);
   return (
     <View style={styles.container}>
       <View style={styles.row}>
         <Avatar.Text
           style={{ marginRight: 10 }}
           size={30}
-          label={user.name[0]}
+          label={allUsers.name[0]}
         />
         <View style={styles.column}>
-          <Text value={user.name} color="#000" variant="body" />
-          <Text value={user.email} color="#000" variant="small" />
+          <Text value={allUsers.name} color="#000" variant="body" />
+          <Text value={allUsers.email} color="#000" variant="small" />
         </View>
       </View>
       <Button
-        onPress={() => onSendFriendReq(user.id)}
+        onPress={() => onSendFriendReq(allUsers.id)}
         disabled={
-          requestedFriend && requestedFriend.friend.email === user.email
+          sentFriendRequest && sentFriendRequest.is_accepted === false
             ? true
             : false
         }
         color={
-          requestedFriend && requestedFriend.friend.email === user.email
+          sentFriendRequest && sentFriendRequest.is_accepted === false
             ? "gray"
             : "orange"
         }
         label={
-          requestedFriend && requestedFriend.friend.email === user.email
+          sentFriendRequest && sentFriendRequest.is_accepted === false
             ? "Sent"
             : "Add Friend"
         }
