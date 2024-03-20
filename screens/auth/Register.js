@@ -162,7 +162,7 @@ export default function Register({ navigation }) {
         </View>
         <View style={styles.row}>
           <TouchableOpacity onPress={() => handleNavigate("Login")}>
-            <Text value={"Already have an account?"} variant={"body"} />
+            <Text value={"Login"} variant={"body"} />
           </TouchableOpacity>
         </View>
       </KeyboardAwareScrollView>
