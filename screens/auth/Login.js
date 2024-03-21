@@ -95,7 +95,6 @@ export default function Login({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    margin: 10,
   },
   backgroundImage: {
     flex: 1,
