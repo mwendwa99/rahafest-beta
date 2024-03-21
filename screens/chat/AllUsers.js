@@ -13,7 +13,7 @@ export default function AllUsers() {
   const [refreshing, setRefreshing] = useState(false);
   const dispatch = useDispatch();
 
-  // console.log("Req::\t",sentFriendRequest);
+  console.log("Req::\t",sentFriendRequest);
 
   useEffect(() => {
     dispatch(getUsers(token));

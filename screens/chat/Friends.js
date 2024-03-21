@@ -7,15 +7,13 @@ import { useDispatch, useSelector } from "react-redux";
 
 export default function Friends() {
   const [isAccepted, setIsAccepted] = useState(false);
-  // const [friendRequests, setFriendRequests] = useState([]);
-  // const [friends, setFriends] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
   const { friends, friendRequests } = useSelector((state) => state.friends);
   const { token } = useSelector((state) => state.auth);
 
   console.log("requests:\t",friendRequests)
-  console.log("friends:\t",friends)
+  console.log("friends:\t",friends[0])
   
   useEffect(() => {
     dispatch(getFriends(token));
@@ -56,23 +54,23 @@ export default function Friends() {
           You have no Friends!
         </Text>
       )}
-      {/* {friends?.length > 0 && (
+      {friends?.length > 0 && (
         <Text style={{ fontSize: 20, fontWeight: 500, marginLeft: 15 }}>
           Recent friends
         </Text>
       )}
-      <FlatList
+      {/* <FlatList
         data={friends}
-        renderItem={({ item, index }) => (
+        keyExtractor={(index) => index.toString()}
+        style={{ padding: 15 }}
+        renderItem={({ item }) => (
           <AcceptedFriend
-            index={index}
-            item={item}
+            friend={item}
+            // item={item}
             isLoading={isLoading}
             Unfriend={Unfriend}
           />
         )}
-        keyExtractor={(item, index) => index.toString()}
-        style={{ padding: 15 }}
       /> */}
     </SafeAreaView>
   );

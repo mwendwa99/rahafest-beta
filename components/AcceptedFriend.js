@@ -1,12 +1,12 @@
 import { Pressable, Image, Text, StyleSheet } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
 
-const AcceptedFriend = ({ index, item, isLoading, Unfriend }) => {
+const AcceptedFriend = ({ friend, isLoading, Unfriend }) => {
   const goToChat = () => {
     alert("Chat with " + item.name);
     // console.log(item);
   };
-
+  console.log(friend);
   return (
     <Pressable key={index} style={styles.mainPressable} onPress={goToChat}>
       <Image
