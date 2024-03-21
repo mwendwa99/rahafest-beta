@@ -29,12 +29,12 @@ export const RejectFriendRequest = async (token, data) => {
 
 export const SendFriendRequestApi = async (token, data) => {
   try {
+    console.log("DATA::\t",data);
     const response = await axios.post(prod.chat + "/request-friendship", data, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
-    // console.log("RESP::\t",response);
     return response.data;
   } catch (error) {
     throw error.message;

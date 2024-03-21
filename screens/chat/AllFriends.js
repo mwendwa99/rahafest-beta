@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { ScrollView, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllUsers } from "../../redux/users/usersAction";
-import { sendFriendRequest } from "../../redux/friends/friendsActions";
+import { sendFriendRequest } from "../../redux/friends/friendActions";
 import User from "./components/User";
 
 export default function AllFriends() {

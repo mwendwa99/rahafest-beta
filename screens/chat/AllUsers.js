@@ -2,7 +2,7 @@ import { StyleSheet, View, FlatList, RefreshControl } from "react-native";
 import { UserList } from "../../components";
 import { useDispatch, useSelector } from "react-redux";
 import { getUsers } from "../../redux/chat/chatActions";
-import { getFriendsRequests, sendFriendRequest } from "../../redux/friends/friendActions";
+import { getFriendsRequests, sendFriendRequest, rejectFriendRequest } from "../../redux/friends/friendActions";
 import { useEffect, useState } from "react";
 import { ActivityIndicator } from "react-native";
 
@@ -13,7 +13,7 @@ export default function AllUsers() {
   const [refreshing, setRefreshing] = useState(false);
   const dispatch = useDispatch();
 
-  console.log("Req::\t",sentFriendRequest);
+  // console.log("Req::\t",sentFriendRequest);
 
   useEffect(() => {
     dispatch(getUsers(token));
@@ -39,6 +39,7 @@ export default function AllUsers() {
           is_accepted: false,
         };
         console.log("Sending now::\t",sendId);
+        // console.log("Sending data::\t",data);
         dispatch(sendFriendRequest({ token, data }));
         return;
       };
@@ -55,7 +56,7 @@ export default function AllUsers() {
           is_accepted: false,
         };
         console.log("Sending now::\t",sendId);
-        // dispatch(sendFriendRequest({ token, data }));
+        dispatch(rejectFriendRequest({ token, data }));
         return;
       };
     });

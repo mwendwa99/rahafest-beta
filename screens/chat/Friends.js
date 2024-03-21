@@ -2,7 +2,7 @@ import { FlatList, SafeAreaView, Text, View } from "react-native";
 import FriendRequest from "../../components";
 import AcceptedFriend from "../../components";
 import { useEffect, useState } from "react";
-import { getFriends, getFriendsRequests } from "../../redux/friends/friendsActions";
+import { getFriends, getFriendsRequests } from "../../redux/friends/friendActions";
 import { useDispatch, useSelector } from "react-redux";
 
 export default function Friends() {
@@ -13,8 +13,10 @@ export default function Friends() {
   const dispatch = useDispatch();
   const { friends, friendRequests } = useSelector((state) => state.friends);
   const { token } = useSelector((state) => state.auth);
-  console.log(friendRequests)
-  console.log(friends)
+
+  console.log("requests:\t",friendRequests)
+  console.log("friends:\t",friends)
+  
   useEffect(() => {
     dispatch(getFriends(token));
   }, []);
@@ -29,7 +31,7 @@ export default function Friends() {
 
   return (
     <SafeAreaView>
-      {/* <View style={{ padding: 10, marginHorizontal: 12 }}>
+      <View style={{ padding: 10, marginHorizontal: 12 }}>
         {friendRequests?.length > 0 ? (
           <Text>Your Friend Requests!</Text>
         ) : (
@@ -48,18 +50,18 @@ export default function Friends() {
             isAccepted={isAccepted}
           />
         ))}
-      </View> */}
-      {/* {friends?.length === 0 && (
+      </View>
+      {friends?.length === 0 && (
         <Text style={{ textAlign: "center", marginHorizontal: 20 }}>
           You have no Friends!
         </Text>
       )}
-      {friends?.length > 0 && (
+      {/* {friends?.length > 0 && (
         <Text style={{ fontSize: 20, fontWeight: 500, marginLeft: 15 }}>
           Recent friends
-        </Text> */}
-      {/* )} */}
-      {/* <FlatList
+        </Text>
+      )}
+      <FlatList
         data={friends}
         renderItem={({ item, index }) => (
           <AcceptedFriend

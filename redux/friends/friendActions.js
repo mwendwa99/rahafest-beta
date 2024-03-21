@@ -2,6 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import {
   GetAcceptedFriends,
   GetFriendRequest,
+  RejectFriendRequest,
   SendFriendRequestApi,
 } from "../../services/friend.service";
 
@@ -33,6 +34,18 @@ export const sendFriendRequest = createAsyncThunk(
     try {
         // console.log("data", data);
       return SendFriendRequestApi(token, data);
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const rejectFriendRequest = createAsyncThunk(
+  "friends/cancelFriendRequest",
+  ({ token, data }, { rejectWithValue }) => {
+    try {
+        // console.log("data", data);
+      return RejectFriendRequest(token, data);
     } catch (error) {
       return rejectWithValue(error.message);
     }
