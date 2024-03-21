@@ -11,6 +11,8 @@ export default function UserList({
   cancelRequest,
   user,
 }) {
+
+  
   // console.log("sentfriendReq::\t",sentFriendRequest);
   // console.log(allUsers.friendships[0])
   // console.log(allUsers)
@@ -28,21 +30,24 @@ export default function UserList({
           <Text value={allUsers.email} color="#000" variant="small" />
         </View>
       </View>
-      {sentFriendRequest && sentFriendRequest.is_accepted === false && sentFriendRequest?.friend?.id === allUsers?.id ?
-        (
-          <Button
-            onPress={() => cancelRequest(allUsers.id)}
-            color={"gray"}
-            label={"Cancel request"}
-          />
-        ) : (
-          <Button
-            onPress={() => onSendFriendReq(allUsers.id)}
-            color={"orange"}
-            label={"Add Friend"}
-          />
-        )
-      }
+      <Button
+        onPress={() => onSendFriendReq(allUsers.id)}
+        disabled={
+          sentFriendRequest && sentFriendRequest.is_accepted === false && sentFriendRequest?.friend?.id === allUsers?.id
+            ? true
+            : false
+        }
+        color={
+          sentFriendRequest && sentFriendRequest.is_accepted === false && sentFriendRequest?.friend?.id === allUsers?.id
+            ? "gray"
+            : "orange"
+        }
+        label={
+          sentFriendRequest && sentFriendRequest.is_accepted === false && sentFriendRequest?.friend?.id === allUsers?.id
+            ? "Sent"
+            : "Add Friend"
+        }
+      />
     </View>
   );
 }
