@@ -40,22 +40,22 @@ export default function ChatNavigator() {
               }}
             >
               {/* You can add multiple icons or components here */}
-              <TouchableOpacity onPress={() => navigation.navigate("Friends")}>
+              {/* <TouchableOpacity onPress={() => navigation.navigate("Friends")}>
                 <FontAwesome5
                   name="user-friends"
                   size={24}
                   color="white"
                   style={{ marginRight: 15 }}
                 />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => navigation.navigate("AllUsers")}>
+              </TouchableOpacity> */}
+              {/* <TouchableOpacity onPress={() => navigation.navigate("AllUsers")}>
                 <FontAwesome5
                   name="globe"
                   size={24}
                   color="white"
                   style={{ marginRight: 15 }}
                 />
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </View>
           ),
         })}
