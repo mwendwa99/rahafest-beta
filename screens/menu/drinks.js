@@ -74,10 +74,10 @@ const Drinks = () => {
       source={background}
       style={{ flex: 1, position: "relative", marginTop: 0, height: "30%" }}>
         {LocalBeers &&
-          <Text style={{color: "black", fontSize: 30}}>Local Beers</Text>
+          <Text style={{color: "black", fontSize: 30, marginTop: "50%"}}>Local Beers</Text>
         }
           <FlatList
-          style={{maxHeight:100}}
+          style={{}}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} /> 
           }
@@ -90,7 +90,7 @@ const Drinks = () => {
           <Text style={{color: "black", fontSize: 30}}>Whisky</Text>
         }
           <FlatList
-        style={{maxHeight:100}}
+        style={{}}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} /> 
           }

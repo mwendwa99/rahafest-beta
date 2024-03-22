@@ -3,7 +3,6 @@ import {
   Image,
   ImageBackground,
   FlatList,
-  ScrollView,
   StyleSheet,
   Text,
   View,

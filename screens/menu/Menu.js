@@ -38,9 +38,9 @@ export default function Menu({ navigation }) {
 
   const dispatch = useDispatch();
 
-  // useEffect(()=>{
-  //   dispatch(getMenu());
-  // },[dispatch]);
+  useEffect(()=>{
+    dispatch(getMenu());
+  },[dispatch]);
 
   // useEffect(()=>{
   //   if(menu){
