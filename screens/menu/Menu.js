@@ -6,26 +6,25 @@ import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { getMenu } from "../../redux/menu/menuActions";
 import { getCategory } from "../../utils/helper";
-import Food from "./food";
 
 const scene = SceneMap({
   drinks: Drinks,
   food: food
 });
 
-  // Render tab bar
-  const renderTabBar = (props) => (
-    <TabBar
-      {...props}
-      indicatorStyle={tabStyles.indicator}
-      style={tabStyles.tabBar}
-      renderLabel={({ route, focused }) => (
-        <Text style={[tabStyles.label, focused && tabStyles.labelFocused]}>
-          {route.title}
-        </Text>
-      )}
-    />
-  );
+// Render tab bar
+const renderTabBar = (props) => (
+  <TabBar
+    {...props}
+    indicatorStyle={tabStyles.indicator}
+    style={tabStyles.tabBar}
+    renderLabel={({ route, focused }) => (
+      <Text style={[tabStyles.label, focused && tabStyles.labelFocused]}>
+        {route.title}
+      </Text>
+    )}
+  />
+);
 
 export default function Menu({ navigation }) {
   const layout = useWindowDimensions();
@@ -37,18 +36,21 @@ export default function Menu({ navigation }) {
     { key: "drinks", title: "Drinks" },
   ]);
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
-  useEffect(()=>{
-    dispatch(getMenu())
-  },[])
+  // useEffect(()=>{
+  //   dispatch(getMenu());
+  // },[dispatch]);
 
-  useEffect(()=>{
-    if(menu){
-      const val = getCategory(menu)
-      setCategory(val)
-    }
-  },[menu])
+  // useEffect(()=>{
+  //   if(menu){
+  //     const val = getCategory(menu)
+  //     setCategory(val)
+  //   }
+  // },[menu]);
+
+  // console.log("MENU::\t",menu)
+
 
   const handleIndexChange = (selectedIndex) => {
     if (selectedIndex >= 0 && selectedIndex < routes.length) {
@@ -58,25 +60,17 @@ export default function Menu({ navigation }) {
     }
   };
 
-  // console.log({category})
-
-
   return(
-  //     <TabView 
-  //     style={styles.tabview}
-  //     navigationState={{ index, routes }}
-  //     renderScene={scene}
-  //     onIndexChange={handleIndexChange}
-  //     initialLayout={{ width: layout.width }}
-  //     renderTabBar={renderTabBar}
-  // />
-  <View style={{flex:1}}>
-    <Food/>
-  </View>
-  
+    <TabView 
+      style={styles.tabview}
+      navigationState={{ index, routes }}
+      renderScene={scene}
+      onIndexChange={handleIndexChange}
+      initialLayout={{ width: layout.width }}
+      renderTabBar={renderTabBar}
+    />
 );
 }
-
 
 const tabStyles = StyleSheet.create({
   tabBar: {

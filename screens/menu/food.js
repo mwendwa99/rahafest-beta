@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import {
   Image,
   ImageBackground,
-  SafeAreaView,
+  FlatList,
   ScrollView,
   StyleSheet,
   Text,
@@ -21,6 +21,9 @@ const Food = () => {
   const dispatch = useDispatch();
   const { menu, loading } = useSelector((state) => state.menu);
   const [refreshing, setRefreshing] = useState(false);
+  const [food, setFood] = useState(null);
+
+  // console.log("MENU::\t",menu)
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -42,6 +45,11 @@ const Food = () => {
     return acc;
   }, {});
 
+  useEffect(() => {
+    const foodItems = menu?.filter(item => item.category.name === "Food");
+    setFood(foodItems);
+  },[]);
+
   if (loading) {
     return (
       <ImageBackground
@@ -53,12 +61,30 @@ const Food = () => {
     );
   }
 
+  const renderItem = ({ item }) => (
+    <View style={{ marginTop: 30 }}>
+      <View
+        style={{
+          borderBottomWidth: 1,
+          borderColor: "grey",
+          borderStyle: "dashed",
+          paddingVertical: 10,
+        }}
+      >
+        <Text style={{ color: "#000" }}>
+          {item?.name} - {item?.price}
+        </Text>
+        {/* <Text>{item?.description}</Text> */}
+      </View>
+    </View>
+  );
+
   return (
     <ImageBackground
       source={background}
       style={{ flex: 1, position: "relative", marginTop: 0, height: "30%" }}
     >
-      <SafeAreaView style={styles.container}>
+      <View style={styles.container}>
         <View style={styles.imgWrapper}>
           <Image style={styles.img} source={vanguardLogo} />
         </View>
@@ -66,38 +92,22 @@ const Food = () => {
           <View style={styles.menuWrapper}>
             <Text style={styles.menu}>MENU</Text>
           </View>
-          <ScrollView
-            style={{ flex: 1 }}
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
-          >
             <View style={styles.food}>
-              {Object.entries(groupedMenu).map(([subcategory, items]) => (
-                <View key={subcategory} style={{ marginTop: 30 }}>
-                  <Text style={styles.category}>{subcategory}</Text>
-                  {items.map((item, index) => (
-                    <View
-                      key={index}
-                      style={{
-                        borderBottomWidth: 1,
-                        borderColor: "grey",
-                        borderStyle: "dashed",
-                        paddingVertical: 10,
-                      }}
-                    >
-                      <Text key={index}>
-                        {item.name} - {item.price}
-                      </Text>
-                      <Text>{item.description}</Text>
-                    </View>
-                  ))}
-                </View>
-              ))}
+              <FlatList
+                refreshControl={
+                  <RefreshControl refreshing={refreshing} onRefresh={onRefresh} /> 
+                }
+                data={food}
+                renderItem={renderItem}
+                keyExtractor={(item, index) => index.toString()}
+                style={{
+                  paddingLeft: 30,
+                }}
+              />
+
             </View>
-          </ScrollView>
         </View>
-      </SafeAreaView>
+      </View>
       <StatusBar style="light" />
     </ImageBackground>
   );

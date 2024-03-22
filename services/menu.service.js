@@ -7,7 +7,8 @@ const headers = {
 
 export const GetMenu = async () => {
     try {
-        const { data } = await axios.get(`${prod.web}/menu-categories`);
+        console.log("GETTING MENU::\t")
+        const { data } = await axios.get(`${prod.chat}/menu-categories`);
         return data;
     } catch (error) {
         throw error;
