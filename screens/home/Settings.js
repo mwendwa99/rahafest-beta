@@ -1,7 +1,7 @@
 import {
   View,
   StyleSheet,
-  Image,
+  Alert,
   ScrollView,
   StatusBar,
   Linking,
@@ -10,7 +10,7 @@ import { ListItem } from "../../components";
 import { useSelector, useDispatch } from "react-redux";
 import { success } from "../../utils/toast";
 import { persistor } from "../../redux/store";
-import { logout } from "../../redux/auth/authActions";
+import { logout, deleteAccount } from "../../redux/auth/authActions";
 
 export default function Settings({ navigation }) {
   const dispatch = useDispatch();
@@ -20,6 +20,31 @@ export default function Settings({ navigation }) {
     persistor.purge();
     dispatch(logout());
     success("Logout success");
+    navigation.navigate("Home");
+  };
+
+  const handleDeleteAccount = () => {
+    Alert.alert(
+      "Confirm Delete",
+      "Are you sure you want to delete your account?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Delete",
+          onPress: () => confirmDelete(),
+          // onPress: console.log("Delete"),
+        },
+      ]
+    );
+  };
+
+  const confirmDelete = () => {
+    dispatch(deleteAccount(token));
+    persistor.purge();
+    success("Account deleted");
     navigation.navigate("Home");
   };
 
@@ -60,7 +85,7 @@ export default function Settings({ navigation }) {
             <ListItem
               title="Delete Account"
               iconLeft={"delete"}
-              handlePressLink={handleLogout}
+              handlePressLink={handleDeleteAccount}
               color={"#dc3545"}
             />
           </View>

@@ -5,20 +5,25 @@ import { View, StyleSheet, StatusBar, TouchableOpacity } from "react-native";
 import { getAllChats, postMessage } from "../../redux/chat/chatActions";
 import { getUser } from "../../redux/auth/authActions";
 import { useSelector, useDispatch } from "react-redux";
-import { getRandomNumber } from "../../utils/helper";
-import { useCallback, useEffect, useLayoutEffect, useState } from "react";
-import { Ionicons } from "@expo/vector-icons";
+// import { getRandomNumber } from "../../utils/helper";
 
-export default function FeedS() {
-  const navigation = useNavigation();
+export default function Feed({ navigation }) {
   const { allChats } = useSelector((state) => state.chat);
-  const { user, token } = useSelector((state) => state.auth);
+  const { user: currentUser, token } = useSelector((state) => state.auth);
   const [messages, setMessages] = useState([]);
   const dispatch = useDispatch();
 
+  //guest@rahafest.com
+  // console.log(user);
+
+  // console.log(sentMessages);
+  // console.log(getRandomNumber());
+  // console.log(token);
+  // console.log({ allChats });
+
   useEffect(() => {
     dispatch(getAllChats(token));
-  }, []);
+  }, [allChats]);
 
   useEffect(() => {
     dispatch(getUser(token));
@@ -31,7 +36,7 @@ export default function FeedS() {
           _id: chat.id,
           text: chat.content,
           user: {
-            _id: chat.senderuser,
+            _id: chat.sender,
             name: chat.senderuser,
           },
         };
@@ -42,7 +47,7 @@ export default function FeedS() {
 
   const onSend = useCallback((messages = []) => {
     const messageObject = {
-      sender: user?.id,
+      sender: currentUser?.id,
       content: messages[0].text,
       created_at: messages[0].createdAt,
       message_id: messages[0]._id,
@@ -123,11 +128,16 @@ export default function FeedS() {
   return (
     <View style={styles.container}>
       <GiftedChat
+        isLoadingEarlier={true}
         inverted={false}
         messages={messages}
         onSend={(messages) => onSend(messages)}
-        user={{
-          _id: 1,
+        onPressAvatar={(user) => {
+          if (user._id === currentUser.id) {
+            return false;
+          } else {
+            navigation.navigate("DirectMessage", { user });
+          }
         }}
       />
       <StatusBar barStyle="light" />
@@ -138,5 +148,6 @@ export default function FeedS() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    // paddingHorizontal: 10,
   },
 });

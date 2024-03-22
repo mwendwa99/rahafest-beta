@@ -39,3 +39,16 @@ export const GetUserApi = async (token) => {
     throw error.message;
   }
 };
+
+export const DeleteAccountApi = async (token) => {
+  try {
+    const response = await axios.post(prod.delete + "/delete-account", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.message;
+  }
+};

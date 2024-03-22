@@ -1,5 +1,10 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { RegisterApi, LoginApi, GetUserApi } from "../../services/auth.service";
+import {
+  RegisterApi,
+  LoginApi,
+  GetUserApi,
+  DeleteAccountApi,
+} from "../../services/auth.service";
 
 export const register = createAsyncThunk(
   "auth/register",
@@ -39,6 +44,17 @@ export const logout = createAsyncThunk(
   (_, { rejectWithValue }) => {
     try {
       return null;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const deleteAccount = createAsyncThunk(
+  "auth/deleteAccount",
+  (token, { rejectWithValue }) => {
+    try {
+      return DeleteAccountApi(token);
     } catch (error) {
       return rejectWithValue(error);
     }
