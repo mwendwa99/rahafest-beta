@@ -43,7 +43,7 @@ export default function DirectMessage({ route, navigation }) {
         (previousMessages) => GiftedChat.append(previousMessages, [data]) // Wrap data in an array
       );
     }
-  }, [directMessage]);
+  }, []);
 
   console.log(directMessage);
 
