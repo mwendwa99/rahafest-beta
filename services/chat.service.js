@@ -33,7 +33,7 @@ export const PostMessageApi = async (token, message) => {
 
 export const GetDirectMessages = async (token, messageId) => {
   try {
-    const response = await axios.get(prod.chat + `/messages`, {
+    const response = await axios.get(prod.chat + `/directmessages`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
