@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   SafeAreaView,
   StyleSheet,
@@ -6,102 +6,81 @@ import {
   View,
   ImageBackground,
   Image,
-  FlatList,
-  RefreshControl,
-  ScrollView
+  ScrollView,
 } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
-import { getMenu } from "../../redux/menu/menuActions";
-
-const background = require("../../assets/images/BarMenu.png");
-const vanguardLogo = require("../../assets/images/barbottom.png");
 
 const Drinks = () => {
-  const dispatch = useDispatch();
-  const { menu, loading } = useSelector((state) => state.menu);
-  const [LocalBeers, setLocalBeers] = useState(null);
-  const [Whisky, setWhisky] = useState(null);
-  const [refreshing, setRefreshing] = useState(false);
-  
-  const onRefresh = () => {
-    setRefreshing(true);
-    dispatch(getMenu());
-    setRefreshing(false);
-  };
-
-  useEffect(() => {
-    const whisky = menu?.filter(item => item.subcategory.name === "Whisky");
-    setWhisky(whisky);
-  },[]);
-
-  useEffect(() => {
-    const localBeers = menu?.filter(item => item.subcategory.name === "Local beers");
-    setLocalBeers(localBeers);
-  },[]);
-
-  const renderSubCategory = ({ item }) => (
-    <View style={{ marginTop: 30 }}>
-      <Text style={{ color: "black", fontSize: 30 }}>{item.name}</Text>
-      <FlatList
-        style={{ maxHeight: 100 }}
-        data={item.items}
-        renderItem={renderItem}
-        keyExtractor={(item, index) => index.toString()}
-      />
-    </View>
-  );
-  
-  const renderItem = ({ item }) => (
-    <View style={{ marginTop: 30 }}>
-      <View
-        style={{
-          borderBottomWidth: 1,
-          borderColor: "grey",
-          borderStyle: "dashed",
-          paddingVertical: 10,
-        }}
-      >
-        <Text style={{ color: "#000" }}>
-          {item?.name} - {item?.price}
-        </Text>
-        <Text>{item?.description}</Text>
-      </View>
-    </View>
-  );
-  console.log(LocalBeers);
   return (
     <ImageBackground
-      source={background}
+      source={require("../../assets/images/BarMenu.png")}
       style={{ flex: 1, position: "relative", marginTop: 0, height: "30%" }}>
-        {LocalBeers &&
-          <Text style={{color: "black", fontSize: 30, marginTop: "50%"}}>Local Beers</Text>
-        }
-          <FlatList
-          style={{}}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} /> 
-          }
-          data={LocalBeers}
-          renderItem={renderItem}
-          keyExtractor={(item, index) => index.toString()}
-          />
+      <SafeAreaView style={styles.safeArea}>
+        <ScrollView style={styles.scrollView}>
+          <View style={styles.categoryWrapper}>
+            <Text style={styles.category}>Cocktails</Text>
+            <View style={styles.subCategory}>
+              <Text style={styles.subCategoryTxt}>Original Vanguard</Text>
+              <View>
+                <Text style={styles.drink}>- Jameson</Text>
+                <Text style={styles.drink}>- Tonic water</Text>
+                <Text style={styles.drink}>- Elderflower Cordial</Text>
+              </View>
+            </View>
+            <View style={styles.subCategory}>
+              <Text style={styles.subCategoryTxt}>Raha Cooler</Text>
+              <View>
+                <Text style={styles.drink}>- Glenlivet Founders</Text>
+                <Text style={styles.drink}>- Ginger Ale</Text>
+              </View>
+            </View>
+            <View style={styles.subCategory}>
+              <Text style={styles.subCategoryTxt}>Martel Old Fashioned</Text>
+              <View>
+                <Text style={styles.drink}>- Martel VS</Text>
+                <Text style={styles.drink}>- Angostura</Text>
+                <Text style={styles.drink}>- Granulated Sugar</Text>
+                <Text style={styles.drink}>- Orange Twist</Text>
+              </View>
+            </View>
+            <View style={styles.subCategory}>
+              <Text style={styles.subCategoryTxt}>The Celeb</Text>
+              <View>
+                <Text style={styles.drink}>- Chivas XV</Text>
+                <Text style={styles.drink}>- Grape Fruit Soda</Text>
+              </View>
+            </View>
+            <View style={styles.subCategory}>
+              <Text style={styles.subCategoryTxt}>Rum and Coke</Text>
+              <View>
+                <Text style={styles.drink}>- Captain Morgan</Text>
+                <Text style={styles.drink}>- Coke</Text>
+              </View>
+            </View>
+          </View>
 
-        {Whisky &&
-          <Text style={{color: "black", fontSize: 30}}>Whisky</Text>
-        }
-          <FlatList
-        style={{}}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} /> 
-          }
-          data={Whisky}
-          renderItem={renderItem}
-          keyExtractor={(item, index) => index.toString()}
+          <View style={styles.categoryWrapper}>
+            <Text style={styles.category}>local beers</Text>
+            <View style={styles.subCategory}>
+              <Text style={styles.beer}>Tusker ......... 300</Text>
+              <Text style={styles.beer}>White Cup ...... 300</Text>
+              <Text style={styles.beer}>Balozi ......... 300</Text>
+            </View>
+          </View>
+
+          <View style={[styles.categoryWrapper, styles.beerCider]}>
+            <Text style={styles.category}>other beers & ciders</Text>
+            <View style={styles.subCategory}>
+              <Text style={styles.beer}>Heineken ....... 400</Text>
+              <Text style={styles.beer}>Desperado ...... 400</Text>
+              <Text style={styles.beer}>Savanna ........ 400</Text>
+            </View>
+          </View>
+        </ScrollView>
+        <Image
+          style={styles.bottomImg}
+          source={require("../../assets/images/barbottom.png")}
         />
-      <Image
-        style={styles.bottomImg}
-        source={vanguardLogo}
-      />
+      </SafeAreaView>
     </ImageBackground>
   );
 };

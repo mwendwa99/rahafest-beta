@@ -5,7 +5,9 @@ import { View, StyleSheet, StatusBar, TouchableOpacity } from "react-native";
 import { getAllChats, postMessage } from "../../redux/chat/chatActions";
 import { getUser } from "../../redux/auth/authActions";
 import { useSelector, useDispatch } from "react-redux";
+import { useCallback, useEffect, useLayoutEffect, useState } from "react";
 // import { getRandomNumber } from "../../utils/helper";
+import {Ionicons} from "@expo/vector-icons";
 
 export default function Feed({ navigation }) {
   const { allChats } = useSelector((state) => state.chat);
