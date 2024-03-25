@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "rahafest",
-    "slug": "rahafest-beta",
+    "slug": "rahafest",
     "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -43,7 +43,7 @@
     },
     "extra": {
       "eas": {
-        "projectId": "8463c7e8-0d31-4d61-b074-0bb88e620e46"
+        "projectId": "7f18520f-895f-4c62-a8ae-1042c22b5528"
       }
     }
   }
