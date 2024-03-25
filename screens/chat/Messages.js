@@ -20,14 +20,22 @@ export default function Messages({ navigation }) {
     dispatch(getDirectMessages(token));
   }, [dispatch, token]);
 
-  //   console.log(user);
+  // console.log(user);
+  // console.log(directMessages);
 
   const handleNavigate = (page, user) => {
+    // console.log(user);
     navigation.navigate(page, user);
   };
 
   return (
     <View style={styles.container}>
+      {!directMessages ||
+        (directMessages.length === 0 && (
+          <View style={styles.center}>
+            <Text value="You have no message requests" color="#000" />
+          </View>
+        ))}
       <FlatList
         data={directMessages}
         keyExtractor={(item) => item.id}

@@ -56,6 +56,19 @@ export const GetDirectMessage = async (token, messageId) => {
   }
 };
 
+export const SendDirectMessage = async (token, message) => {
+  try {
+    const { data } = await axios.post(prod.chat + "/directmessages", message, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return data;
+  } catch (error) {
+    throw error.message;
+  }
+};
+
 export const GetUsersApi = async (token) => {
   try {
     const { data } = await axios.get(prod.chat + "/all-users", {
