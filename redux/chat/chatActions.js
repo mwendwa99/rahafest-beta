@@ -7,6 +7,7 @@ import {
   RejectFriendRequest,
   GetUsersApi,
   SendFriendRequestApi,
+  GetDirectMessage,
 } from "../../services/chat.service";
 
 export const getAllChats = createAsyncThunk(
@@ -47,6 +48,17 @@ export const getDirectMessages = createAsyncThunk(
   (token, { rejectWithValue }) => {
     try {
       return GetDirectMessages(token);
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+export const getDirectMessage = createAsyncThunk(
+  "chat/getDirectMessage",
+  ({ token, messageId }, { rejectWithValue }) => {
+    console.log(messageId);
+    try {
+      return GetDirectMessage(token, messageId);
     } catch (error) {
       return rejectWithValue(error);
     }

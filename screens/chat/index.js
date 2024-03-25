@@ -8,6 +8,7 @@ import DirectMessage from "./DirectMessage";
 import Feed from "./Feed";
 import Friends from "./Friends";
 import AllUsers from "./AllUsers";
+import Messages from "./Messages";
 import { Register, Login } from "../auth";
 import Chats from "./Chats";
 import AllFriends from "./AllFriends";
@@ -43,6 +44,14 @@ export default function ChatNavigator() {
               }}
             >
               {/* You can add multiple icons or components here */}
+              <TouchableOpacity onPress={() => navigation.navigate("Messages")}>
+                <FontAwesome5
+                  name="inbox"
+                  size={24}
+                  color="white"
+                  style={{ marginRight: 15 }}
+                />
+              </TouchableOpacity>
               {/* <TouchableOpacity onPress={() => navigation.navigate("Friends")}>
                 <FontAwesome5
                   name="user-friends"
@@ -62,6 +71,22 @@ export default function ChatNavigator() {
             </View>
           ),
         })}
+      />
+      <Stack.Screen
+        name="Messages"
+        component={Messages}
+        options={{
+          headerShown: true,
+          headerShadowVisible: false,
+          headerTintColor: "#fff",
+          headerStyle: {
+            backgroundColor: "#212529",
+          },
+          headerTitle: (props) => (
+            <Text value={"Direct messages"} {...props} variant={"subtitle"} />
+          ),
+          headerTitleAlign: "center",
+        }}
       />
       <Stack.Screen
         name="DirectMessage"

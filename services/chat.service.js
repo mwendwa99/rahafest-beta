@@ -31,7 +31,19 @@ export const PostMessageApi = async (token, message) => {
   }
 };
 
-export const GetDirectMessages = async (token) => {
+export const GetDirectMessages = async (token, messageId) => {
+  try {
+    const response = await axios.get(prod.chat + `/messages`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.message;
+  }
+};
+export const GetDirectMessage = async (token, messageId) => {
   try {
     // const { data } = await axios.get(prod.chat + `/directmessages`, {
     //   headers: {
