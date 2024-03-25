@@ -46,7 +46,7 @@ export default function Feed({ navigation }) {
   }, [token]);
 
   // console.log(currentUser);
-  //_id: chat.sender === currentUser.id ? currentUser.id : chat.sender;
+  //_id: chat.sender === currentUser?.id ? currentUser?.id : chat.sender;
   //currentUser?.id === chat.sender ? 1 : 2
 
   useEffect(() => {
@@ -57,7 +57,7 @@ export default function Feed({ navigation }) {
         text: chat.content,
         createdAt: chat.timestamp,
         user: {
-          _id: chat.sender === currentUser.id ? currentUser.id : chat.sender,
+          _id: chat.sender === currentUser?.id ? currentUser?.id : chat.sender,
           name: chat.senderuser,
         },
       }));
@@ -77,7 +77,7 @@ export default function Feed({ navigation }) {
         messages={messages}
         onSend={(messages) => onSend(messages)}
         onPressAvatar={(user) => {
-          if (user._id === currentUser.id) {
+          if (user._id === currentUser?.id) {
             return false;
           } else {
             navigation.navigate("DirectMessage", { user });
