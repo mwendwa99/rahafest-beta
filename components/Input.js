@@ -9,6 +9,7 @@ export default function Input({
   inputStyle,
   multiline,
   numberOfLines,
+  secureTextEntry
 }) {
   return (
     <TextInput
@@ -23,6 +24,7 @@ export default function Input({
       keyboardType={type}
       multiline={multiline}
       numberOfLines={numberOfLines}
+      secureTextEntry={secureTextEntry}
     />
   );
 }

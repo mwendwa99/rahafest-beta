@@ -8,6 +8,7 @@ import {
   Text,
   View,
 } from "react-native";
+import { useSelector } from "react-redux";
 
 const homegrown = [
   {
@@ -70,16 +71,37 @@ const continental = [
   },
 ];
 
+const vanguardLogo = require("../../assets/images/VANGUARDLOGOFINAL.jpeg");
+const Bg = require("../../assets/images/istockphoto-518037033-170667a-1.webp");
 const Food = () => {
+  const { menu } = useSelector((state) => state.menu);
+  // console.log(menu);
+  const itemsBySubcategory = {};
+  menu.forEach(item => {
+      const subcategoryName = item.subcategory.name;
+      if (!itemsBySubcategory[subcategoryName]) {
+          itemsBySubcategory[subcategoryName] = [];
+      }
+      itemsBySubcategory[subcategoryName].push(item);
+  });
+  
+  // Log the items grouped by subcategory
+  Object.keys(itemsBySubcategory).forEach(subcategory => {
+      console.log(`Subcategory: ${subcategory}`);
+      itemsBySubcategory[subcategory].forEach(item => {
+          console.log(`- ${item.name}`);
+      });
+  });
+
   return (
     <ImageBackground
-      source={require("../../assets/images/istockphoto-518037033-170667a-1.webp")}
+      source={Bg}
       style={{ flex: 1, position: "relative", marginTop: 0, height: "30%" }}>
       <SafeAreaView style={styles.container}>
         <View style={styles.imgWrapper}>
           <Image
             style={styles.img}
-            source={require("../../assets/images/VANGUARDLOGOFINAL.jpeg")}
+            source={vanguardLogo}
           />
         </View>
         <View style={styles.menuContainer}>
@@ -159,12 +181,8 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     flex: 1,
-    // backgroundColor:"yellow"
-    // left: -60,
-    // marginTop: "30%"
   },
   food: {
-    // left: -60,
     width: "100%",
     zIndex: 99,
   },
@@ -180,22 +198,14 @@ const styles = StyleSheet.create({
   },
   menuWrapper: {
     width: "44%",
-    // position: "relative",
-    // height: "10%",
-    // flex: 1,
-    // left: -10,
     alignItems: "center",
     justifyContent: "center",
-    // backgroundColor: "green"
   },
   menu: {
     fontSize: 65,
     fontWeight: "bold",
     transform: [{ rotate: "270deg" }],
-    // marginLeft: 0,
-    // left: 0,
     textAlign: "center",
-    // backgroundColor: "purple",
   },
   quantity: {
     left: 5,

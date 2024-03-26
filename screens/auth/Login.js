@@ -13,6 +13,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { login } from "../../redux/auth/authActions";
 import { Input, Button, Text } from "../../components";
 import { danger, warning } from "../../utils/toast";
+import { TextInput } from "react-native-paper";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const background = require("../../assets/pattern.png");
 const logo = require("../../assets/logo.png");
@@ -21,9 +23,9 @@ export default function Login({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { authError, loading } = useSelector((state) => state.auth);
-
+  const [isPasswordSecure, setIsPasswordSecure] = useState(true);
   const dispatch = useDispatch();
-
+  console.log(isPasswordSecure)
   useEffect(() => {
     if (authError) {
       danger("could not login!", 2000);
@@ -49,7 +51,7 @@ export default function Login({ navigation }) {
   };
   return (
     <ImageBackground source={background} style={styles.backgroundImage}>
-      <KeyboardAwareScrollView style={styles.container}>
+      {/* <KeyboardAwareScrollView style={styles.container}> */}
         <View style={styles.logoContainer}>
           <Image source={logo} style={styles.logo} />
         </View>
@@ -71,6 +73,28 @@ export default function Login({ navigation }) {
               onChange={(pin) => setPassword(pin)}
               inputStyle={{ ...styles.input, width: "100%" }}
               defaultValue={"password"}
+              secureTextEntry={true}
+            />
+          </View>
+
+          <View>
+          <TextInput 
+              // right={
+              //   <TextInput.Icon
+              //   name={isPasswordSecure ? "eye-off" : "eye"}
+              //   onPress={() => setIsPasswordSecure(!isPasswordSecure)}
+              //   size={28}
+              //   color="black"
+              // />
+              // }
+              right={
+                <TextInput.Icon
+                  name={() => <MaterialCommunityIcons name={isPasswordSecure ? "briefcase-eye" : "eye"} size={28} color="black" />} // where <Icon /> is any component from vector-icons or anything else
+                  onPress={() => { isPasswordSecure ? setIsPasswordSecure(false) : setIsPasswordSecure(true) }}
+                />
+              }
+              label="Password"
+              secureTextEntry
             />
           </View>
 
@@ -86,7 +110,7 @@ export default function Login({ navigation }) {
             <Text value={"Signup"} variant={"body"} />
           </TouchableOpacity>
         </View>
-      </KeyboardAwareScrollView>
+      {/* </KeyboardAwareScrollView> */}
       <StatusBar barStyle="light-content" />
     </ImageBackground>
   );
@@ -118,7 +142,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
-    width: "100%",
+    width: "60%",
   },
   input: {
     flex: 1,
