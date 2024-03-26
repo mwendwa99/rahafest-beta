@@ -9,7 +9,10 @@ export default function Input({
   inputStyle,
   multiline,
   numberOfLines,
-  secureTextEntry
+  secureTextEntry,
+  typePassword=false,
+  isPasswordSecure,
+  setIsPasswordSecure
 }) {
   return (
     <TextInput
@@ -25,6 +28,14 @@ export default function Input({
       multiline={multiline}
       numberOfLines={numberOfLines}
       secureTextEntry={secureTextEntry}
+      right={typePassword && 
+        <TextInput.Icon
+        icon={isPasswordSecure ? "eye-off" : "eye"}
+        onPress={() => setIsPasswordSecure(!isPasswordSecure)}
+        size={28}
+        color="salmon"
+      />
+      }
     />
   );
 }

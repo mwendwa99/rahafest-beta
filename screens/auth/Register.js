@@ -28,6 +28,8 @@ export default function Register({ navigation }) {
   const dispatch = useDispatch();
   const { user, authError } = useSelector((state) => state.auth);
   const [checked, setChecked] = useState(false);
+  const [isPasswordSecure, setIsPasswordSecure] = useState(true);
+
 
   // console.log({ user });
   // console.log({ authError });
@@ -79,7 +81,6 @@ export default function Register({ navigation }) {
   };
   return (
     <ImageBackground source={background} style={styles.backgroundImage}>
-      <KeyboardAwareScrollView style={styles.container}>
         <View style={styles.logoContainer}>
           <Image source={logo} style={styles.logo} />
         </View>
@@ -114,6 +115,10 @@ export default function Register({ navigation }) {
               onChange={(pin) => setPassword(pin)}
               inputStyle={{ ...styles.input, width: "100%" }}
               defaultValue={"password"}
+              secureTextEntry={isPasswordSecure}
+              typePassword={true}
+              isPasswordSecure={isPasswordSecure}
+              setIsPasswordSecure={setIsPasswordSecure}
             />
           </View>
           <View style={styles.row}>
@@ -125,6 +130,10 @@ export default function Register({ navigation }) {
                 width: "100%",
               }}
               defaultValue={"confirm password"}
+              secureTextEntry={isPasswordSecure}
+              typePassword={true}
+              isPasswordSecure={isPasswordSecure}
+              setIsPasswordSecure={setIsPasswordSecure}
             />
           </View>
           {Platform.OS === "android" && (
@@ -140,7 +149,10 @@ export default function Register({ navigation }) {
                 value={"Agree to the terms and conditions"}
                 variant={"body"}
                 color="#fff"
-              />
+                textStyle={{
+                  marginLeft: 9
+                }}
+               />
             </View>
           )}
           {Platform.OS === "ios" && (
@@ -165,7 +177,6 @@ export default function Register({ navigation }) {
             <Text value={"Login"} variant={"body"} />
           </TouchableOpacity>
         </View>
-      </KeyboardAwareScrollView>
       <StatusBar style="light" />
     </ImageBackground>
   );
@@ -198,7 +209,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
-    // width: "100%",
+    width: "60%",
   },
   input: {
     flex: 1,
