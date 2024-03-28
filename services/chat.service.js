@@ -33,7 +33,7 @@ export const PostMessageApi = async (token, message) => {
 
 export const GetDirectMessages = async (token, messageId) => {
   try {
-    const response = await axios.get(prod.chat + `/messages`, {
+    const response = await axios.get(prod.chat + `/directmessages`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -85,6 +85,19 @@ export const GetDirectMessage = async (token, messageId) => {
       }
     ];
     // return response.data;
+    return data;
+  } catch (error) {
+    throw error.message;
+  }
+};
+
+export const SendDirectMessage = async (token, message) => {
+  try {
+    const { data } = await axios.post(prod.chat + "/directmessages", message, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     return data;
   } catch (error) {
     throw error.message;

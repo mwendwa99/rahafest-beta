@@ -26,7 +26,8 @@ export default function Login({ navigation }) {
 
   useEffect(() => {
     if (authError) {
-      danger("could not login!", 2000);
+      console.log(authError);
+      danger("Error at login!", 2000);
     }
   }, [authError]);
 

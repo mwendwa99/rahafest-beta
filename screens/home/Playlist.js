@@ -1,6 +1,7 @@
 import { View, StyleSheet, ScrollView, FlatList } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
+import { WebView } from "react-native-webview";
 
 import { VideoPlayer, Text } from "../../components";
 
@@ -60,7 +61,18 @@ const videoIds = [
 export default function Playlist() {
   return (
     <SafeAreaView style={styles.container}>
-      <FlatList
+      <WebView
+        style={{
+          backgroundColor: "transparent",
+          height: "100%",
+          padding: 0,
+          objectFit: "fill",
+        }}
+        source={{
+          html: '<iframe style="border-radius:12px; object-fit:fill;" src="https://open.spotify.com/embed/playlist/1GW2VyfbDFFc0QtdHi5TGr?utm_source=generator" width="100%" height="100%" frameBorder="0" allow="fullscreen" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>',
+        }}
+      />
+      {/* <FlatList
         data={videoIds}
         renderItem={({ item }) => (
           <View style={{ marginBottom: 10 }}>
@@ -69,7 +81,7 @@ export default function Playlist() {
           </View>
         )}
         keyExtractor={(item) => item.id}
-      />
+      /> */}
       <StatusBar style="light" />
     </SafeAreaView>
   );
@@ -78,7 +90,7 @@ export default function Playlist() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
+    // padding: 10,
     backgroundColor: "#212529",
   },
 });

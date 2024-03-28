@@ -7,6 +7,7 @@ import {
   rejectFriendRequest,
   getUsers,
   getDirectMessage,
+  sendDirectMessage,
 } from "./chatActions";
 
 const initialState = {
@@ -14,7 +15,8 @@ const initialState = {
   chatError: null,
   loading: false,
   directMessages: null,
-  sentMessage: null,
+  sentPost: null,
+  sentDirectMessage: null,
   users: null,
   directMessage: null,
 };
@@ -42,7 +44,7 @@ const chatSlice = createSlice({
       })
       .addCase(postMessage.fulfilled, (state, action) => {
         state.loading = false;
-        state.sentMessage = action.payload;
+        state.sentPost = action.payload;
         state.chatError = null;
       })
       .addCase(postMessage.rejected, (state, action) => {
@@ -104,6 +106,18 @@ const chatSlice = createSlice({
         state.chatError = null;
       })
       .addCase(getDirectMessage.rejected, (state, action) => {
+        state.loading = false;
+        state.chatError = action.error;
+      })
+      .addCase(sendDirectMessage.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(sendDirectMessage.fulfilled, (state, action) => {
+        state.loading = false;
+        state.sentDirectMessage = action.payload;
+        state.chatError = null;
+      })
+      .addCase(sendDirectMessage.rejected, (state, action) => {
         state.loading = false;
         state.chatError = action.error;
       });

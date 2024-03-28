@@ -1,13 +1,10 @@
 import { useNavigation } from "@react-navigation/native";
 import { GiftedChat } from "react-native-gifted-chat";
-import { View, StyleSheet, StatusBar, TouchableOpacity } from "react-native";
-// import { StatusBar } from "expo-status-bar";
+import { View, StyleSheet, StatusBar } from "react-native";
 import { getAllChats, postMessage } from "../../redux/chat/chatActions";
 import { getUser } from "../../redux/auth/authActions";
 import { useSelector, useDispatch } from "react-redux";
-import { useCallback, useEffect, useLayoutEffect, useState } from "react";
-// import { getRandomNumber } from "../../utils/helper";
-import {Ionicons} from "@expo/vector-icons";
+import { useCallback, useEffect, useState } from "react";
 
 export default function Feed({ navigation }) {
   const { allChats } = useSelector((state) => state.chat);
@@ -15,131 +12,81 @@ export default function Feed({ navigation }) {
   const [messages, setMessages] = useState([]);
   const dispatch = useDispatch();
 
-  //guest@rahafest.com
-  // console.log(user);
+  const onSend = useCallback(
+    (newMessages = []) => {
+      // Extract the first message from the array
+      const newMessage = newMessages[0];
 
-  // console.log(sentMessages);
-  // console.log(getRandomNumber());
-  // console.log(token);
-  // console.log({ allChats });
+      // Construct the message object
+      const messageObject = {
+        sender: currentUser?.id,
+        content: newMessage.text,
+        created_at: newMessage.createdAt,
+        message_id: newMessage._id,
+      };
+
+      // console.log(messageObject);
+      // Dispatch postMessage action to send message to the server
+      dispatch(postMessage({ token, message: messageObject }));
+
+      // Update the messages state with the new message appended
+      setMessages((previousMessages) =>
+        GiftedChat.append(previousMessages, newMessages)
+      );
+    },
+    [messages, allChats]
+  );
 
   useEffect(() => {
-    dispatch(getAllChats(token));
-  }, [allChats]);
-
-  useEffect(() => {
+    // Fetch all chats when component mounts
     dispatch(getUser(token));
-  }, []);
+  }, [token]);
+  useEffect(() => {
+    // Fetch all chats when component mounts
+    dispatch(getAllChats(token));
+  }, [token]);
+
+  // console.log(currentUser);
+  //_id: chat.sender === currentUser?.id ? currentUser?.id : chat.sender;
+  //currentUser?.id === chat.sender ? 1 : 2
 
   useEffect(() => {
+    // Update messages with data from allChats
     if (allChats) {
-      const data = allChats?.map((chat) => {
-        return {
-          _id: chat.id,
-          text: chat.content,
-          user: {
-            _id: chat.sender,
-            name: chat.senderuser,
-          },
-        };
-      });
+      const data = allChats.map((chat, index) => ({
+        _id: chat.id,
+        text: chat.content,
+        createdAt: chat.timestamp,
+        user: {
+          _id: chat.sender === currentUser?.id ? currentUser?.id : chat.sender,
+          name: chat.senderuser,
+        },
+      }));
       setMessages(data);
+      // setMessages((previousMessages) =>
+      //   GiftedChat.append(previousMessages, data)
+      // );
     }
-  }, []);
-
-  const onSend = useCallback((messages = []) => {
-    const messageObject = {
-      sender: currentUser?.id,
-      content: messages[0].text,
-      created_at: messages[0].createdAt,
-      message_id: messages[0]._id,
-    };
-    dispatch(postMessage({ token, message: messageObject }));
-
-    setMessages((previousMessages) =>
-      GiftedChat.append(previousMessages, messages)
-    );
-
-    dispatch(getAllChats(token));
-  }, []);
-
-  const scrollToBottom = () => {
-    if (scrollViewRef.current) {
-      scrollViewRef.current.scrollToEnd({ animated: false });
-    }
-  };
-
-  const handleSizeContentChange = () => {
-    scrollToBottom();
-  };
-
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerTitle: "Your feeds",
-      headerLeft: () => (
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 10, marginRight: 20 }}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Ionicons
-              onPress={() => navigation.goBack()}
-              name="arrow-back"
-              size={24}
-              color="#fff"
-            />
-          </TouchableOpacity>
-        </View>
-      ),
-    });
-  });
-
-  const formatTime = (time) => {
-    const options = { hour: "numeric", minute: "numeric" };
-    return new Date(time).toLocaleString("en-US", options);
-  };
-
-  const handleLike = (text) => {
-    // alert(text);
-  };
-
-  const openPost = () => {
-    setShowPostView(true);
-  };
-
-  const closeModal = () => {
-    setShowPostView(false);
-    setPostText("");
-    setCharCount(280);
-  };
-
-  const editPost = (post) => {
-    setShowPostView(true);
-    setPostText(post.message);
-  };
-
-  const deletePost = async (post) => {
-    try {
-      const { _id, senderId } = post;
-      await DeletePost(token);
-    //   fetchAllMessages();
-      success("Deleted the post", 3000);
-    } catch (e) {
-      console.log(e);
-      danger("Failed to delete the post", 3000);
-    }
-  };
+  }, [allChats]);
 
   return (
     <View style={styles.container}>
       <GiftedChat
-        isLoadingEarlier={true}
+        // isLoadingEarlier={true}
+        // listViewProps={{ ref: null }}
         inverted={false}
         messages={messages}
         onSend={(messages) => onSend(messages)}
         onPressAvatar={(user) => {
-          if (user._id === currentUser.id) {
+          if (user._id === currentUser?.id) {
             return false;
           } else {
             navigation.navigate("DirectMessage", { user });
           }
+        }}
+        user={{
+          _id: currentUser?.id,
+          name: currentUser?.name,
         }}
       />
       <StatusBar barStyle="light" />
@@ -150,6 +97,5 @@ export default function Feed({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // paddingHorizontal: 10,
   },
 });
