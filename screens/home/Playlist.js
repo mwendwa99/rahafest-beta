@@ -1,7 +1,15 @@
-import { View, StyleSheet, ScrollView, FlatList } from "react-native";
+import {
+  ActivityIndicator,
+  View,
+  StyleSheet,
+  ScrollView,
+  FlatList,
+  ImageBackground,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { WebView } from "react-native-webview";
+import { useState } from "react";
 
 import { VideoPlayer, Text } from "../../components";
 
@@ -58,10 +66,32 @@ const videoIds = [
   },
 ];
 
+const splash = require("../../assets/splash.png");
+
 export default function Playlist() {
+  const [loading, setLoading] = useState(true);
+
+  const handleLoadStart = () => {
+    setLoading(true);
+  };
+
+  const handleLoadEnd = () => {
+    setLoading(false);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
+      {loading && (
+        <ImageBackground
+          source={splash}
+          style={{ flex: 1, justifyContent: "center" }}
+        >
+          <StatusBar style="light" />
+        </ImageBackground>
+      )}
       <WebView
+        onLoadStart={handleLoadStart}
+        onLoadEnd={handleLoadEnd}
         style={{
           backgroundColor: "transparent",
           height: "100%",
