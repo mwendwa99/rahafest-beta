@@ -14,7 +14,7 @@ import {
   Entypo,
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Portal, Modal } from "react-native-paper";
 
 import { Text, Avatar } from "../../components";

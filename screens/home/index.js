@@ -68,22 +68,6 @@ export const HomeNavigator = () => {
         }}
       />
       <Stack.Screen
-        name="Map"
-        component={Map}
-        options={{
-          headerShown: true,
-          headerShadowVisible: false,
-          headerTintColor: "#fff",
-          headerStyle: {
-            backgroundColor: "#212529",
-          },
-          headerTitle: (props) => (
-            <Text value={"Map"} {...props} variant={"subtitle"} />
-          ),
-          headerTitleAlign: "center",
-        }}
-      />
-      <Stack.Screen
         name="Chat"
         component={ChatNavigator}
         options={{
