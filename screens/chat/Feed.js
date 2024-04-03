@@ -1,4 +1,3 @@
-import { useNavigation } from "@react-navigation/native";
 import { GiftedChat } from "react-native-gifted-chat";
 import { View, StyleSheet, StatusBar } from "react-native";
 import { getAllChats, postMessage } from "../../redux/chat/chatActions";

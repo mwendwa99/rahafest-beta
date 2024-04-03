@@ -25,7 +25,6 @@
     "react-native-element-dropdown": "^2.10.2",
     "react-native-gesture-handler": "~2.14.0",
     "react-native-gifted-chat": "^2.4.0",
-    "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-location": "^2.5.0",
     "react-native-maps": "1.10.0",
     "react-native-paper": "^5.12.3",
