@@ -5,7 +5,7 @@ import Home from "./Home";
 import Playlist from "./Playlist";
 import Settings from "./Settings";
 import Faqs from "./Faqs";
-import Map from "./Map";
+//import Map from "./Map";
 
 import ChatNavigator from "../chat";
 
@@ -67,7 +67,7 @@ export const HomeNavigator = () => {
           headerTitleAlign: "center",
         }}
       />
-      <Stack.Screen
+      {/*<Stack.Screen
         name="Map"
         component={Map}
         options={{
@@ -82,7 +82,7 @@ export const HomeNavigator = () => {
           ),
           headerTitleAlign: "center",
         }}
-      />
+      />*/}
       <Stack.Screen
         name="Chat"
         component={ChatNavigator}
