@@ -61,12 +61,12 @@ export default function Settings({ navigation }) {
           iconRight={"chevron-right"}
           handlePressLink={() => handleNavigate("Faqs")}
         />
-        <ListItem
+        {/*<ListItem
           title="Maps"
           iconLeft={"google-maps"}
           iconRight={"chevron-right"}
           handlePressLink={() => handleNavigate("Map")}
-        />
+        />*/}
         <ListItem
           title="Buy Tickets"
           iconLeft={"ticket"}
