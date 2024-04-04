@@ -2,7 +2,7 @@
   "expo": {
     "name": "rahafest",
     "slug": "rahafest-beta",
-    "version": "1.0.1",
+    "version": "2.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -15,7 +15,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.mwendwa99.rahafestbeta",
-      "buildNumber": "2",
+      "buildNumber": "4",
       "config": {
         "googleMapsApiKey": "AIzaSyD3kyMh4P3uCTWP-tlbi4Lq2aYdFnvVSpA"
       }
