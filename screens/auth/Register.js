@@ -24,19 +24,16 @@ export default function Register({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [phone, setPhone] = useState("");
+  const [id, setId] = useState("");
   const dispatch = useDispatch();
   const { user, authError } = useSelector((state) => state.auth);
   const [checked, setChecked] = useState(false);
   const [isPasswordSecure, setIsPasswordSecure] = useState(true);
 
-
-  // console.log({ user });
-  // console.log({ authError });
-
   useEffect(() => {
     if (authError) {
       danger("could not register!", 2000);
-      // console.log(authError);
     }
   }, [authError]);
 
@@ -57,15 +54,23 @@ export default function Register({ navigation }) {
       lastName === "" ||
       password === "" ||
       confirmPassword === "" ||
-      email === ""
+      email === "" ||
+      id === "" ||
+      phone === "" ||
+      checked === ""
     ) {
       warning("All fields are required!");
       return;
     }
 
+    if(phone.length < 10) {
+      warning('Phone number must be 10 digits long', 2000);
+      return;
+    }
+
+
     if (password !== confirmPassword) {
-      danger("PINs do not match", 2000);
-      console.log("PINs do not match");
+      danger("Passwords do not match", 2000);
       return;
     }
 
@@ -75,9 +80,12 @@ export default function Register({ navigation }) {
       password2: confirmPassword,
       email: email,
       tc: checked,
+      phone: phone,
+      id: id
     };
     dispatch(register(registerData));
   };
+
   return (
     <ImageBackground source={background} style={styles.backgroundImage}>
         <View style={styles.logoContainer}>
@@ -113,7 +121,7 @@ export default function Register({ navigation }) {
               theme={true}
               onChange={(pin) => setPassword(pin)}
               inputStyle={{ ...styles.input, width: "100%" }}
-              defaultValue={"password"}
+              defaultValue={"Password"}
               secureTextEntry={isPasswordSecure}
               typePassword={true}
               isPasswordSecure={isPasswordSecure}
@@ -128,11 +136,33 @@ export default function Register({ navigation }) {
                 ...styles.input,
                 width: "100%",
               }}
-              defaultValue={"confirm password"}
+              defaultValue={"Confirm Password"}
               secureTextEntry={isPasswordSecure}
               typePassword={true}
               isPasswordSecure={isPasswordSecure}
               setIsPasswordSecure={setIsPasswordSecure}
+            />
+          </View>
+          <View style={styles.row}>
+            <Input
+              theme={true}
+              onChange={(id) => setId(id)}
+              inputStyle={{ ...styles.input, width: "100%" }}
+              defaultValue={" Identity Document"}
+              type="numeric"
+            />
+          </View>
+          <View style={styles.row}>
+            <Input
+              theme={true}
+              // onChange={validatePhone()}
+              onChange={(phone) => {
+                const numericPhone = phone.replace(/[^0-9]/g, '');
+                setPhone(numericPhone);
+              }}
+              inputStyle={{ ...styles.input, width: "100%" }}
+              defaultValue={"Phone"}
+              type="numeric"
             />
           </View>
           {Platform.OS === "android" && (

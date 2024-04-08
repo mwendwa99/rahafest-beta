@@ -65,7 +65,7 @@ export default function Home({ navigation }) {
             <TouchableOpacity onPress={() => handleNavigate("Chat")}>
               <ImageBackground source={blob} style={styles.blob}>
                 <MaterialCommunityIcons name="chat" size={40} color="#fff" />
-                <Text variant="small" value={"Chat"} color="#fff" />
+                <Text variant="small" value={"Club"} color="#fff" />
               </ImageBackground>
             </TouchableOpacity>
           </View>

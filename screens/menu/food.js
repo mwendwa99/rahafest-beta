@@ -73,25 +73,31 @@ const continental = [
 
 const vanguardLogo = require("../../assets/images/VANGUARDLOGOFINAL.jpeg");
 const Bg = require("../../assets/images/istockphoto-518037033-170667a-1.webp");
+
 const Food = () => {
   const { menu } = useSelector((state) => state.menu);
   // console.log(menu);
-  const itemsBySubcategory = {};
-  menu.forEach(item => {
-      const subcategoryName = item.subcategory.name;
-      if (!itemsBySubcategory[subcategoryName]) {
-          itemsBySubcategory[subcategoryName] = [];
-      }
-      itemsBySubcategory[subcategoryName].push(item);
-  });
+  // const itemsBySubcategory = {};
+  // menu.forEach(item => {
+  //     const subcategoryName = item.subcategory.name;
+  //     if(!itemsBySubcategory[subcategoryName]) {
+  //       itemsBySubcategory[subcategoryName] = [];
+  //     }
+  //     itemsBySubcategory[subcategoryName].push(item);
+  // });
 
   // Log the items grouped by subcategory
-  Object.keys(itemsBySubcategory).forEach(subcategory => {
-      console.log(`Subcategory: ${subcategory}`);
-      itemsBySubcategory[subcategory].forEach(item => {
-          console.log(`- ${item.name}`);
-      });
-  });
+  // Object.keys(itemsBySubcategory).forEach(subcategory => {
+  //   console.log(`Subcategory: \t${subcategory}`);
+  //   itemsBySubcategory[subcategory].forEach(item => {
+  //     console.log("Category::", item.category.name)
+  //     console.log(`- ${item.name}`);
+  //   });
+  // });
+  const food = menu.filter(item => item.category.name === "Food");
+  const drinks = menu.filter(item => item.category.name === "Drinks");
+  console.log("FOOD::\t", food)
+  console.log("DRINKS::\t", drinks)
 
   return (
     <ImageBackground

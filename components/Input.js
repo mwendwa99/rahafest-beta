@@ -30,11 +30,11 @@ export default function Input({
       secureTextEntry={secureTextEntry}
       right={typePassword && 
         <TextInput.Icon
-        icon={isPasswordSecure ? "eye-off" : "eye"}
-        onPress={() => setIsPasswordSecure(!isPasswordSecure)}
-        size={28}
-        color="salmon"
-      />
+          icon={isPasswordSecure ? "eye-off" : "eye"}
+          onPress={() => setIsPasswordSecure(!isPasswordSecure)}
+          size={28}
+          color="salmon"
+        />
       }
     />
   );
