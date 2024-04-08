@@ -12,7 +12,7 @@ import {
 import {
   FontAwesome5,
   Entypo,
-  MaterialCommunityIcons,
+  Ionicons,
 } from "@expo/vector-icons";
 import { useState } from "react";
 import { Portal, Modal } from "react-native-paper";
@@ -64,7 +64,7 @@ export default function Home({ navigation }) {
             </TouchableOpacity>
             <TouchableOpacity onPress={() => handleNavigate("Chat")}>
               <ImageBackground source={blob} style={styles.blob}>
-                <MaterialCommunityIcons name="chat" size={40} color="#fff" />
+                <Ionicons name="wine-sharp" size={40} color="#fff" />
                 <Text variant="small" value={"Club"} color="#fff" />
               </ImageBackground>
             </TouchableOpacity>
