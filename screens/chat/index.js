@@ -1,192 +1,104 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useSelector } from "react-redux";
-import { View, TouchableOpacity } from "react-native";
-import { FontAwesome5 } from "@expo/vector-icons";
+import { View, Text } from "react-native";
+import { createDrawerNavigator, DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
+import {  Ionicons, MaterialIcons } from "@expo/vector-icons";
 
-import { Text } from "../../components";
+import { Avatar } from "../../components";
 import DirectMessage from "./DirectMessage";
 import Feed from "./Feed";
 import Friends from "./Friends";
 import AllUsers from "./AllUsers";
 import Messages from "./Messages";
 import { Register, Login } from "../auth";
-import Chats from "./Chats";
 import AllFriends from "./AllFriends";
+import Dashboard from "./Dashboard";
+import Event from "./Event";
+import Wallet from "./Wallet";
+import Tickets from "./Tickets";
+import Transaction from "./Transaction";
+import Ticket from "./Ticket";
 
 const Stack = createNativeStackNavigator();
+const Drawer = createDrawerNavigator();
+
+function CustomDrawerContent({navigation}){
+  const { user } = useSelector((state) => state.auth);
+  const drawerItems = [
+    { label: "Dashboard", screen: "Dashboard", iconName: "dashboard" },
+    { label: "Feed", screen: "Feed", iconName: "feed" },
+    { label: "Messages", screen: "Messages", iconName: "message" },
+    // { label: "Direct Message", screen: "DirectMessage", iconName: "mail" },
+    { label: "Friends", screen: "Friends", iconName: "verified" },
+    { label: "All Users", screen: "AllUsers", iconName: "supervised-user-circle" },
+    // { label: "Events", screen: "Events", iconName: "event" },
+    { label: "Tickets", screen: "Tickets", iconName: "event" },
+    { label: "Wallet", screen: "Wallet", iconName: "wallet" }
+  ];
+
+  return (
+    <DrawerContentScrollView>
+      <View style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        marginTop: 20,
+        flex: 1
+      }}>
+        <Avatar size={140}/>
+        <Text>{user?.name}</Text>
+        <Text>{user?.email}</Text>
+      </View>
+      {drawerItems.map((item, index) => (
+        <DrawerItem
+          key={index}
+          label={item.label}
+          icon={({ color, size }) => (
+            <MaterialIcons name={item.iconName} size={size} color={color} />
+          )}
+          onPress={() => navigation.navigate(item.screen)}
+        />
+      ))}
+    </DrawerContentScrollView>
+  );
+};
 
 export default function ChatNavigator() {
-  const { user, token } = useSelector((state) => state.auth);
+  const { token } = useSelector((state) => state.auth);
 
   return token ? (
-    <Stack.Navigator initialRouteName="Feed">
-    {/* // <Stack.Navigator initialRouteName="DirectMessage"> */}
-      <Stack.Screen
-        name="Feed"
-        component={Feed}
-        options={({ navigation }) => ({
-          headerShown: true,
-          headerShadowVisible: false,
-          headerTintColor: "#fff",
-          headerStyle: {
-            backgroundColor: "#212529",
-          },
-          headerTitle: (props) => (
-            <Text value={"Global Chat"} {...props} variant={"subtitle"} />
-          ),
-          headerTitleAlign: "center",
-          headerRight: () => (
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                marginRight: 10,
-              }}
-            >
-              {/* You can add multiple icons or components here */}
-              <TouchableOpacity onPress={() => navigation.navigate("Messages")}>
-                <FontAwesome5
-                  name="inbox"
-                  size={24}
-                  color="white"
-                  style={{ marginRight: 15 }}
-                />
-              </TouchableOpacity>
-              {/* <TouchableOpacity onPress={() => navigation.navigate("Friends")}>
-                <FontAwesome5
-                  name="user-friends"
-                  size={24}
-                  color="white"
-                  style={{ marginRight: 15 }}
-                />
-              </TouchableOpacity> */}
-              {/* <TouchableOpacity onPress={() => navigation.navigate("AllUsers")}>
-                <FontAwesome5
-                  name="globe"
-                  size={24}
-                  color="white"
-                  style={{ marginRight: 15 }}
-                />
-              </TouchableOpacity> */}
-            </View>
-          ),
-        })}
-      />
-      <Stack.Screen
-        name="Messages"
-        component={Messages}
-        options={{
-          headerShown: true,
-          headerShadowVisible: false,
-          headerTintColor: "#fff",
-          headerStyle: {
-            backgroundColor: "#212529",
-          },
-          headerTitle: (props) => (
-            <Text value={"Direct messages"} {...props} variant={"subtitle"} />
-          ),
-          headerTitleAlign: "center",
-        }}
-      />
-      <Stack.Screen
-        name="DirectMessage"
-        component={DirectMessage}
-        options={{
-          headerShown: true,
-          headerShadowVisible: false,
-          headerTintColor: "#fff",
-          headerStyle: {
-            backgroundColor: "#212529",
-          },
-          headerTitle: (props) => (
-            <Text value={"Direct Messages"} {...props} variant={"subtitle"} />
-          ),
-          headerTitleAlign: "center",
-        }}
-      />
-            <Stack.Screen
-        name="Allusers"
-        component={AllFriends}
-        options={{
-          headerShown: true,
-          headerShadowVisible: false,
-          headerTintColor: "#fff",
-          headerStyle: {
-            backgroundColor: "#212529",
-          },
-          headerTitle: (props) => (
-            <Text value={"All users"} {...props} variant={"subtitle"} />
-          ),
-          headerTitleAlign: "center",
-        }}
-      />
-      <Stack.Screen
-        name="Friends"
-        component={Friends}
-        options={{
-          headerShown: true,
-          headerShadowVisible: false,
-          headerTintColor: "#fff",
-          headerStyle: {
-            backgroundColor: "#212529",
-          },
-          headerTitle: (props) => (
-            <Text value={"Friends"} {...props} variant={"subtitle"} />
-          ),
-          headerTitleAlign: "center",
-        }}
-      />
-      <Stack.Screen
-        name="AllUsers"
-        component={AllUsers}
-        options={{
-          headerShown: true,
-          headerShadowVisible: false,
-          headerTintColor: "#fff",
-          headerStyle: {
-            backgroundColor: "#212529",
-          },
-          headerTitle: (props) => (
-            <Text value={"AllUsers"} {...props} variant={"subtitle"} />
-          ),
-          headerTitleAlign: "center",
-        }}
-      />
-    </Stack.Navigator>
+    <Drawer.Navigator
+      initialRouteName="Dashboard"
+      drawerContent={(props) => <CustomDrawerContent {...props} />}
+    >
+      <Drawer.Screen name="Dashboard" component={Dashboard} />
+      <Drawer.Screen name="Feed" component={Feed} />
+      <Drawer.Screen name="Messages" component={Messages} />
+      <Drawer.Screen name="DirectMessage" component={DirectMessage} />
+      <Drawer.Screen name="Friends" component={Friends} />
+      <Drawer.Screen name="AllUsers" component={AllUsers} />
+      <Drawer.Screen name="Event" component={Event} />
+      <Drawer.Screen name="Tickets" component={Tickets} />
+      <Drawer.Screen name="Ticket" component={Ticket} />
+      <Drawer.Screen name="Wallet" component={Wallet} />
+      <Drawer.Screen name="Transaction" component={Transaction} />
+    </Drawer.Navigator>
   ) : (
     <Stack.Navigator initialRouteName="Login">
       <Stack.Screen
         name="Login"
         component={Login}
         options={{
-          headerShown: true,
-          headerShadowVisible: false,
-          headerTintColor: "#fff",
-          headerStyle: {
-            backgroundColor: "#212529",
-          },
-          headerTitle: (props) => (
-            <Text value={"Login"} {...props} variant={"subtitle"} />
-          ),
-          headerTitleAlign: "center",
+          headerShown: false,
         }}
       />
       <Stack.Screen
         name="Register"
         component={Register}
         options={{
-          headerShown: true,
-          headerShadowVisible: false,
-          headerTintColor: "#fff",
-          headerStyle: {
-            backgroundColor: "#212529",
-          },
-          headerTitle: (props) => (
-            <Text value={"Register"} {...props} variant={"subtitle"} />
-          ),
-          headerTitleAlign: "center",
+          headerShown: false,
         }}
       />
     </Stack.Navigator>
-  );
+  )
 }

@@ -9,8 +9,7 @@ export default function AllFriends() {
   const { token, user } = useSelector((state) => state.auth);
   const { users } = useSelector((state) => state.users);
   const dispatch = useDispatch();
-  // const [users, setUser] = useState([]);
-  // console.log("USERS::\t", token);
+  
   useEffect(() => {
     dispatch(getAllUsers(token));
   }, [token]);

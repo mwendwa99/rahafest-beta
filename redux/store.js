@@ -9,6 +9,11 @@ import newsSlice from "./news/newsSlice";
 import menuSlice from "./menu/menuSlice";
 import chatSlice from "./chat/chatSlice";
 import friendSlice from "./friends/friendSlice";
+import eventsSlice from "./events/eventsSlice"
+import ticketsSlice from "./tickets/ticketsSlice";
+import walletSlice from "./wallet/walletSlice";
+import transactionsSlice from "./transactions/transactionsSlice";
+import pointsSlice from "./points/pointsSlice";
 
 const rootPersistConfig = {
   key: "root",
@@ -25,6 +30,11 @@ const rootReducer = combineReducers({
   menu: menuSlice,
   chat: chatSlice,
   friends: friendSlice,
+  events: eventsSlice,
+  tickets: ticketsSlice,
+  wallet: walletSlice,
+  transactions: transactionsSlice,
+  points: pointsSlice
 });
 
 const persistedReducer = persistReducer(rootPersistConfig, rootReducer);

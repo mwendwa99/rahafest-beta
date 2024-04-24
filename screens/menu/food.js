@@ -96,8 +96,8 @@ const Food = () => {
   // });
   const food = menu.filter(item => item.category.name === "Food");
   const drinks = menu.filter(item => item.category.name === "Drinks");
-  console.log("FOOD::\t", food)
-  console.log("DRINKS::\t", drinks)
+  // console.log("FOOD::\t", food)
+  // console.log("DRINKS::\t", drinks)
 
   return (
     <ImageBackground

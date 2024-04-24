@@ -4,6 +4,7 @@ export default function Button({ onPress, label, color, disabled }) {
   return (
     <TouchableOpacity
       disabled={disabled}
+      showsVerticalScrollIndicator={false}
       onPress={onPress}
       style={{ ...styles.button, backgroundColor: color }}
     >

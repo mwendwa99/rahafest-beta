@@ -12,7 +12,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { login } from "../../redux/auth/authActions";
 import { Input, Button, Text } from "../../components";
 import { danger, warning } from "../../utils/toast";
-import { TextInput } from "react-native-paper";
 
 const background = require("../../assets/pattern.png");
 const logo = require("../../assets/logo.png");
@@ -26,7 +25,6 @@ export default function Login({ navigation }) {
 
   useEffect(() => {
     if (authError) {
-      console.log(authError);
       danger("Error at login!", 2000);
     }
   }, [authError]);

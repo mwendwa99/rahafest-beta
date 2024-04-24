@@ -20,7 +20,6 @@ export default function DirectMessage({ route, navigation }) {
   const dispatch = useDispatch();
 
   const user = route?.params;
-
   useEffect(() => {
     // Filter directMessages by recipient and sender
     const allChats = directMessages?.filter(
@@ -42,7 +41,7 @@ export default function DirectMessage({ route, navigation }) {
       }));
       setMessages(data);
     }
-  }, [directMessages, currentUser, user._id]); // Update only when directMessages, currentUser, or user._id change
+  }, [directMessages, currentUser, user?._id]); // Update only when directMessages, currentUser, or user._id change
 
   const onSend = useCallback(
     (newMessages = []) => {
@@ -64,7 +63,7 @@ export default function DirectMessage({ route, navigation }) {
     <View style={styles.container}>
       <View style={styles.center}>
         <Text
-          value={`Start a conversation with ${user.name}`}
+          value={`Start a conversation with ${user?.name}`}
           variant={"small"}
           color="#000"
         />
