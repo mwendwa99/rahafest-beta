@@ -5,6 +5,7 @@ import Home from "./Home";
 import Playlist from "./Playlist";
 import Settings from "./Settings";
 import Faqs from "./Faqs";
+import Checkout from "./Checkout";
 //import Map from "./Map";
 
 import ChatNavigator from "../chat";
@@ -47,6 +48,22 @@ export const HomeNavigator = () => {
           },
           headerTitle: (props) => (
             <Text value={"Playlist"} {...props} variant={"subtitle"} />
+          ),
+          headerTitleAlign: "center",
+        }}
+      />
+      <Stack.Screen
+        name="Checkout"
+        component={Checkout}
+        options={{
+          headerShown: false,
+          headerShadowVisible: false,
+          headerTintColor: "#fff",
+          headerStyle: {
+            backgroundColor: "#212529",
+          },
+          headerTitle: (props) => (
+            <Text value={"Upcoming Event"} {...props} variant={"subtitle"} />
           ),
           headerTitleAlign: "center",
         }}
