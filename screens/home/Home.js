@@ -62,12 +62,18 @@ export default function Home({ navigation }) {
                 <Text variant="small" value={"Socials"} color="#fff" />
               </ImageBackground>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => handleNavigate("Chat")}>
+            <TouchableOpacity onPress={() => handleNavigate("Checkout")}>
+              <ImageBackground source={blob} style={styles.blob}>
+                <MaterialCommunityIcons name="ticket" size={40} color="#fff" />
+                <Text variant="small" value={"Buy Tickets"} color="#fff" />
+              </ImageBackground>
+            </TouchableOpacity>
+            {/* <TouchableOpacity onPress={() => handleNavigate("Chat")}>
               <ImageBackground source={blob} style={styles.blob}>
                 <MaterialCommunityIcons name="chat" size={40} color="#fff" />
                 <Text variant="small" value={"Chat"} color="#fff" />
               </ImageBackground>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
         </View>
       </ImageBackground>
