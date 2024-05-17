@@ -22,7 +22,7 @@ export default function Playlist() {
       {loading && (
         <ImageBackground
           source={splash}
-          style={{ flex: 1, justifyContent: "center" }}
+          style={{ flex: 1, justifyContent: "center", height: "100vh" }}
         >
           <StatusBar style="light" />
         </ImageBackground>
@@ -39,7 +39,7 @@ export default function Playlist() {
               <body style="margin: 0;">
                 <iframe
                   style="border-radius:12px; object-fit:cover; width: 100%; height: 100%;"
-                  src="https://tickoh.netlify.app"
+                  src="https://tickoh.netlify.app/raha-events"
                   frameBorder="0"
                   allow="fullscreen"
                   loading="lazy"
