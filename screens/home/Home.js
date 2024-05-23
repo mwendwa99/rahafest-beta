@@ -20,9 +20,7 @@ import { Portal, Modal } from "react-native-paper";
 
 import { Text, Avatar } from "../../components";
 
-const background = {
-  uri: "https://api.rahafest.com/media_files/banners/background.png",
-};
+const background = require("../../assets/background.png");
 const logo = require("../../assets/logo.png");
 const blob = require("../../assets/blob.png");
 
@@ -46,9 +44,6 @@ export default function Home({ navigation }) {
           <Pressable onPress={() => navigation.navigate("Settings")}>
             <Avatar icon="menu" color={"white"} size={50} bgColor="#212529" />
           </Pressable>
-        </View>
-        <View style={styles.logoContainer}>
-          <Image source={logo} style={styles.logo} />
         </View>
 
         <View style={styles.section}>
@@ -128,27 +123,13 @@ export default function Home({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: "100%",
   },
   background: {
     flex: 1,
-    justifyContent: "center", // Optional: Use to center children
-    alignItems: "center", // Optional: Use to center children
-    width: Dimensions.get("window").width,
-    height: Dimensions.get("window").height,
-  },
-  logoContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  logo: {
-    width: 200,
-    height: 200,
-    objectFit: "contain",
   },
   section: {
     flex: 1,
+    marginTop: 400,
     justifyContent: "center",
     alignItems: "center",
   },
