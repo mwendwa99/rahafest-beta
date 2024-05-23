@@ -14,9 +14,13 @@ import { Register, Login } from "../auth";
 const Stack = createNativeStackNavigator();
 
 export default function ChatNavigator() {
-  const { user, token } = useSelector((state) => state.auth);
+  const { user, token, authError } = useSelector((state) => state.auth);
 
-  return token ? (
+  // console.log("user", user);
+  // console.log("token", token);
+  // console.log("authError", authError);
+
+  return false ? (
     <Stack.Navigator initialRouteName="Feed">
       <Stack.Screen
         name="Feed"

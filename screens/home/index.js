@@ -5,7 +5,7 @@ import Home from "./Home";
 import Playlist from "./Playlist";
 import Settings from "./Settings";
 import Faqs from "./Faqs";
-import Checkout from "./Checkout";
+import Checkout from "./Events";
 //import Map from "./Map";
 
 import ChatNavigator from "../chat";

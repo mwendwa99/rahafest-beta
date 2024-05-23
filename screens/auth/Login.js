@@ -13,23 +13,25 @@ import { useDispatch, useSelector } from "react-redux";
 import { login } from "../../redux/auth/authActions";
 import { Input, Button, Text } from "../../components";
 import { danger, warning } from "../../utils/toast";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const background = require("../../assets/pattern.png");
+import background from "../../assets/pattern.png";
+// const background = require("../../assets/pattern.png");
 const logo = require("../../assets/logo.png");
 
 export default function Login({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { authError, loading } = useSelector((state) => state.auth);
+  const { error, loading } = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (authError) {
-      console.log(authError);
-      danger("Error at login!", 2000);
+    if (error) {
+      console.log(error);
+      danger(error, 2000);
     }
-  }, [authError]);
+  }, [error]);
 
   const handleNavigate = (screen) => {
     navigation.navigate(screen);
@@ -37,7 +39,7 @@ export default function Login({ navigation }) {
 
   const handleLogin = () => {
     if (password === "" || email === "") {
-      warning("All fields are required!");
+      warning("Please fill in all fields");
       return;
     }
 
@@ -49,7 +51,11 @@ export default function Login({ navigation }) {
     dispatch(login(loginData));
   };
   return (
-    <ImageBackground source={background} style={styles.backgroundImage}>
+    <ImageBackground
+      source={background}
+      resizeMode="cover"
+      style={styles.backgroundImage}
+    >
       <KeyboardAwareScrollView style={styles.container}>
         <View style={styles.logoContainer}>
           <Image source={logo} style={styles.logo} />

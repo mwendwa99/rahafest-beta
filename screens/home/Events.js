@@ -6,7 +6,7 @@ import { useState } from "react";
 
 const splash = require("../../assets/splash.png");
 
-export default function Playlist() {
+export default function Checkout() {
   const [loading, setLoading] = useState(true);
 
   const handleLoadStart = () => {

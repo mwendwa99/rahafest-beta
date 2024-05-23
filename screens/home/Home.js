@@ -7,8 +7,9 @@ import {
   TouchableOpacity,
   Linking,
   Pressable,
-  StatusBar,
+  Dimensions,
 } from "react-native";
+import { StatusBar } from "expo-status-bar";
 import {
   FontAwesome5,
   Entypo,
@@ -19,7 +20,9 @@ import { Portal, Modal } from "react-native-paper";
 
 import { Text, Avatar } from "../../components";
 
-const image = require("../../assets/background.webp");
+const background = {
+  uri: "https://api.rahafest.com/media_files/banners/background.png",
+};
 const logo = require("../../assets/logo.png");
 const blob = require("../../assets/blob.png");
 
@@ -33,9 +36,9 @@ export default function Home({ navigation }) {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <ImageBackground
-        source={image}
+        source={background}
         resizeMode="cover"
         style={styles.background}
       >
@@ -68,12 +71,6 @@ export default function Home({ navigation }) {
                 <Text variant="small" value={"Buy Tickets"} color="#fff" />
               </ImageBackground>
             </TouchableOpacity>
-            {/* <TouchableOpacity onPress={() => handleNavigate("Chat")}>
-              <ImageBackground source={blob} style={styles.blob}>
-                <MaterialCommunityIcons name="chat" size={40} color="#fff" />
-                <Text variant="small" value={"Chat"} color="#fff" />
-              </ImageBackground>
-            </TouchableOpacity> */}
           </View>
         </View>
       </ImageBackground>
@@ -123,8 +120,8 @@ export default function Home({ navigation }) {
           </View>
         </Modal>
       </Portal>
-      <StatusBar barStyle="dark-content" />
-    </View>
+      <StatusBar style="dark" />
+    </SafeAreaView>
   );
 }
 
@@ -135,6 +132,10 @@ const styles = StyleSheet.create({
   },
   background: {
     flex: 1,
+    justifyContent: "center", // Optional: Use to center children
+    alignItems: "center", // Optional: Use to center children
+    width: Dimensions.get("window").width,
+    height: Dimensions.get("window").height,
   },
   logoContainer: {
     flex: 1,

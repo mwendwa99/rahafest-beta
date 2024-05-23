@@ -4,10 +4,11 @@ import { PURGE } from "redux-persist";
 
 const initialState = {
   user: null,
-  authError: null,
+  error: null,
   loading: false,
   token: null,
   roles: null,
+  message: null,
 };
 
 const authSlice = createSlice({
@@ -21,24 +22,24 @@ const authSlice = createSlice({
     builder.addCase(register.fulfilled, (state, action) => {
       state.loading = false;
       state.user = action.payload;
-      state.authError = null;
+      state.error = null;
     });
     builder.addCase(register.rejected, (state, action) => {
       state.loading = false;
-      state.authError = action.error;
+      state.error = action.error;
     });
     builder.addCase(login.pending, (state) => {
       state.loading = true;
     });
     builder.addCase(login.fulfilled, (state, action) => {
       state.loading = false;
-      state.token = action.payload.token.access;
-      state.roles = action.payload.roles;
-      state.authError = null;
+      state.token = action.payload.token["access"];
+      state.message = action.payload["msg"];
+      state.error = null;
     });
     builder.addCase(login.rejected, (state, action) => {
       state.loading = false;
-      state.authError = action.error;
+      state.error = action.payload;
     });
     builder.addCase(getUser.pending, (state) => {
       state.loading = true;
@@ -46,11 +47,11 @@ const authSlice = createSlice({
     builder.addCase(getUser.fulfilled, (state, action) => {
       state.loading = false;
       state.user = action.payload;
-      state.authError = null;
+      state.error = null;
     });
     builder.addCase(getUser.rejected, (state, action) => {
       state.loading = false;
-      state.authError = action.error;
+      state.error = action.error;
     });
     builder.addCase(logout.pending, (state) => {
       state.loading = true;
@@ -60,11 +61,11 @@ const authSlice = createSlice({
       state.user = null;
       state.token = null;
       state.roles = null;
-      state.authError = null;
+      state.error = null;
     });
     builder.addCase(logout.rejected, (state, action) => {
       state.loading = false;
-      state.authError = action.error;
+      state.error = action.error;
     });
     builder.addCase(PURGE, () => {
       return initialState;
