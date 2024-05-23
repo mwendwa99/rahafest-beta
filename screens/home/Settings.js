@@ -73,6 +73,12 @@ export default function Settings({ navigation }) {
           iconRight={"chevron-right"}
           handlePressLink={() => Linking.openURL("https://linktr.ee/rahafest")}
         />
+        <ListItem
+          title="Menu"
+          iconLeft={"ticket"}
+          iconRight={"chevron-right"}
+          handlePressLink={() => Linking.openURL("https://linktr.ee/rahafest")}
+        />
 
         {token && (
           <View>

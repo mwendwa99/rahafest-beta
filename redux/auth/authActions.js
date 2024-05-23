@@ -5,6 +5,8 @@ import {
   GetUserApi,
   DeleteAccountApi,
 } from "../../services/auth.service";
+import { chatApi } from "../../services/api.service";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const register = createAsyncThunk(
   "auth/register",
@@ -19,11 +21,37 @@ export const register = createAsyncThunk(
 
 export const login = createAsyncThunk(
   "auth/login",
-  (userData, { rejectWithValue }) => {
+  async (userData, { rejectWithValue }) => {
     try {
-      return LoginApi(userData);
+      // return LoginApi(userData);
+      const response = await chatApi.post("/login", userData);
+
+      // save token to async storage
+      await AsyncStorage.setItem("token", response.data.token.access);
+
+      return response.data;
     } catch (error) {
-      return rejectWithValue(error);
+      // Default error message
+      let errorMessage = "An error occurred";
+
+      // Check if response data has an errors object
+      if (error.response && error.response.data && error.response.data.errors) {
+        const errors = error.response.data.errors;
+        // Iterate through the keys of the errors object
+        for (let key in errors) {
+          if (
+            errors[key] &&
+            Array.isArray(errors[key]) &&
+            errors[key].length > 0
+          ) {
+            // Extract the first error message
+            errorMessage = errors[key][0];
+            break;
+          }
+        }
+      }
+
+      return rejectWithValue(errorMessage);
     }
   }
 );
