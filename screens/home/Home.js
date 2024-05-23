@@ -34,7 +34,7 @@ export default function Home({ navigation }) {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <ImageBackground
         source={background}
         resizeMode="cover"
@@ -68,64 +68,70 @@ export default function Home({ navigation }) {
             </TouchableOpacity>
           </View>
         </View>
-      </ImageBackground>
-      <Portal>
-        <Modal
-          visible={visible}
-          onDismiss={toggleModal}
-          contentContainerStyle={styles.modalStyle}
-        >
-          <View
-            style={{ flexDirection: "row", justifyContent: "space-evenly" }}
+
+        <Portal>
+          <Modal
+            visible={visible}
+            onDismiss={toggleModal}
+            contentContainerStyle={styles.modalStyle}
           >
-            <FontAwesome5
-              name="tiktok"
-              size={38}
-              color="#fff"
-              style={{ marginHorizontal: 10 }}
-              onPress={() =>
-                Linking.openURL("https://www.tiktok.com/@rahafest/")
-              }
-            />
-            <Entypo
-              name="twitter"
-              size={40}
-              color="#4267B2"
-              style={{ marginHorizontal: 10 }}
-              onPress={() => Linking.openURL("https://twitter.com/raha_fest")}
-            />
-            <Entypo
-              name="instagram"
-              size={40}
-              color="#C13584"
-              style={{ marginHorizontal: 10 }}
-              onPress={() =>
-                Linking.openURL("https://www.instagram.com/rahafest/")
-              }
-            />
-            <Entypo
-              name="youtube"
-              size={40}
-              color="#FF0000"
-              style={{ marginHorizontal: 10 }}
-              onPress={() =>
-                Linking.openURL("https://www.youtube.com/@rahafest")
-              }
-            />
-          </View>
-        </Modal>
-      </Portal>
-      <StatusBar style="dark" />
-    </SafeAreaView>
+            <View
+              style={{ flexDirection: "row", justifyContent: "space-evenly" }}
+            >
+              <FontAwesome5
+                name="tiktok"
+                size={38}
+                color="#fff"
+                style={{ marginHorizontal: 10 }}
+                onPress={() =>
+                  Linking.openURL("https://www.tiktok.com/@rahafest/")
+                }
+              />
+              <Entypo
+                name="twitter"
+                size={40}
+                color="#4267B2"
+                style={{ marginHorizontal: 10 }}
+                onPress={() => Linking.openURL("https://twitter.com/raha_fest")}
+              />
+              <Entypo
+                name="instagram"
+                size={40}
+                color="#C13584"
+                style={{ marginHorizontal: 10 }}
+                onPress={() =>
+                  Linking.openURL("https://www.instagram.com/rahafest/")
+                }
+              />
+              <Entypo
+                name="youtube"
+                size={40}
+                color="#FF0000"
+                style={{ marginHorizontal: 10 }}
+                onPress={() =>
+                  Linking.openURL("https://www.youtube.com/@rahafest")
+                }
+              />
+            </View>
+          </Modal>
+        </Portal>
+        <StatusBar style="light" />
+      </ImageBackground>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#212529",
   },
   background: {
     flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    width: Dimensions.get("window").width,
+    height: Dimensions.get("window").height,
   },
   section: {
     flex: 1,
