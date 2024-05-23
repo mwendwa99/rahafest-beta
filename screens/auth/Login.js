@@ -5,6 +5,7 @@ import {
   Image,
   TouchableOpacity,
   StatusBar,
+  Dimensions,
 } from "react-native";
 import { ImageBackground } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
@@ -15,8 +16,8 @@ import { Input, Button, Text } from "../../components";
 import { danger, warning } from "../../utils/toast";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import background from "../../assets/pattern.png";
-// const background = require("../../assets/pattern.png");
+import pattern from "../../assets/pattern.png";
+// const pattern = require("../../assets/pattern.png");
 const logo = require("../../assets/logo.png");
 
 export default function Login({ navigation }) {
@@ -51,51 +52,53 @@ export default function Login({ navigation }) {
     dispatch(login(loginData));
   };
   return (
-    <ImageBackground
-      source={background}
-      resizeMode="cover"
-      style={styles.backgroundImage}
-    >
-      <KeyboardAwareScrollView style={styles.container}>
-        <View style={styles.logoContainer}>
-          <Image source={logo} style={styles.logo} />
-        </View>
+    <View style={styles.container}>
+      <ImageBackground
+        source={pattern}
+        resizeMode="repeat"
+        style={styles.pattern}
+      >
         <View style={styles.section}>
-          <Text value={"Login"} variant={"subtitle"} />
+          <View style={styles.logoContainer}>
+            <Image source={logo} style={styles.logo} />
+          </View>
+          <View style={styles.section}>
+            <Text value={"Login"} variant={"subtitle"} />
 
-          <View style={styles.row}>
-            <Input
-              theme={true}
-              onChange={setEmail}
-              inputStyle={{ ...styles.input, width: "100%" }}
-              defaultValue={"Email"}
-              type="email-address"
+            <View style={styles.row}>
+              <Input
+                theme={true}
+                onChange={setEmail}
+                inputStyle={{ ...styles.input, width: "100%" }}
+                defaultValue={"Email"}
+                type="email-address"
+              />
+            </View>
+            <View style={styles.row}>
+              <Input
+                theme={true}
+                onChange={(pin) => setPassword(pin)}
+                inputStyle={{ ...styles.input, width: "100%" }}
+                defaultValue={"password"}
+              />
+            </View>
+
+            <Button
+              label={loading ? `loggin in...` : "Login"}
+              onPress={handleLogin}
+              theme="dark"
+              color="#483248"
             />
           </View>
-          <View style={styles.row}>
-            <Input
-              theme={true}
-              onChange={(pin) => setPassword(pin)}
-              inputStyle={{ ...styles.input, width: "100%" }}
-              defaultValue={"password"}
-            />
+          <View style={{ ...styles.row, marginTop: 10 }}>
+            <TouchableOpacity onPress={() => handleNavigate("Register")}>
+              <Text value={"Signup"} variant={"body"} />
+            </TouchableOpacity>
           </View>
-
-          <Button
-            label={loading ? `loggin in...` : "Login"}
-            onPress={handleLogin}
-            theme="dark"
-            color="#483248"
-          />
         </View>
-        <View style={{ ...styles.row, marginTop: 10 }}>
-          <TouchableOpacity onPress={() => handleNavigate("Register")}>
-            <Text value={"Signup"} variant={"body"} />
-          </TouchableOpacity>
-        </View>
-      </KeyboardAwareScrollView>
-      <StatusBar barStyle="light-content" />
-    </ImageBackground>
+        <StatusBar barStyle="light-content" />
+      </ImageBackground>
+    </View>
   );
 }
 
@@ -103,11 +106,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  backgroundImage: {
+  pattern: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: "flex-start",
     alignItems: "center",
-    position: "relative",
+    width: Dimensions.get("window").width,
+    height: Dimensions.get("window").height,
   },
   logoContainer: {
     alignItems: "center",
@@ -118,7 +122,7 @@ const styles = StyleSheet.create({
     objectFit: "contain",
   },
   section: {
-    // height: "100%",
+    // margin: 20,
   },
   row: {
     position: "relative",
