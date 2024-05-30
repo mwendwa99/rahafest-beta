@@ -18,7 +18,7 @@ import ChatNavigator from "../screens/chat";
 
 const BottomTab = createBottomTabNavigator();
 
-export default function AppNav() {
+export default function AppNav({ routes }) {
   return (
     <BottomTab.Navigator
       screenOptions={{ headerShown: false }}
