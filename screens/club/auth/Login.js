@@ -11,14 +11,15 @@ import { ImageBackground } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useDispatch, useSelector } from "react-redux";
 
-import { login } from "../../redux/auth/authActions";
-import { Input, Button, Text } from "../../components";
-import { danger, warning } from "../../utils/toast";
+// import { login } from "../../redux/auth/authActions";
+import { login } from "../../../redux/auth/authActions";
+import { Input, Button, Text } from "../../../components";
+import { danger, warning } from "../../../utils/toast";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import pattern from "../../assets/pattern.png";
+import pattern from "../../../assets/pattern.png";
 // const pattern = require("../../assets/pattern.png");
-const logo = require("../../assets/logo.png");
+const logo = require("../../../assets/logo.png");
 
 export default function Login({ navigation }) {
   const [email, setEmail] = useState("");

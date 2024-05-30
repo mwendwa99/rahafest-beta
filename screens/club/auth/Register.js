@@ -13,12 +13,12 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import { useDispatch, useSelector } from "react-redux";
 import { Checkbox } from "react-native-paper";
 
-import { Input, Button, Text } from "../../components";
-import { danger, success, warning } from "../../utils/toast";
-import { register } from "../../redux/auth/authActions";
+import { Input, Button, Text } from "../../../components";
+import { danger, success, warning } from "../../../utils/toast";
+import { register } from "../../../redux/auth/authActions";
 
-const background = require("../../assets/pattern.png");
-const logo = require("../../assets/logo.png");
+const background = require("../../../assets/pattern.png");
+const logo = require("../../../assets/logo.png");
 
 export default function Register({ navigation }) {
   const [firstName, setFirstName] = useState("");

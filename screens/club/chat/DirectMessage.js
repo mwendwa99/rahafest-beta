@@ -1,10 +1,10 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { GiftedChat } from "react-native-gifted-chat";
 import { View, StyleSheet } from "react-native";
-import { Text } from "../../components";
+import { Text } from "../../../components";
 import { StatusBar } from "expo-status-bar";
 import { useDispatch, useSelector } from "react-redux";
-import { sendDirectMessage } from "../../redux/chat/chatActions";
+import { sendDirectMessage } from "../../../redux/chat/chatActions";
 
 export default function DirectMessage({ route, navigation }) {
   const [messages, setMessages] = useState([]);
