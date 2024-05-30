@@ -12,7 +12,7 @@ import ChatNavigator from "../chat";
 
 const Stack = createNativeStackNavigator();
 
-export const HomeNavigator = () => {
+export default function HomeNavigator() {
   return (
     <Stack.Navigator initialRouteName="Home">
       <Stack.Screen
@@ -109,4 +109,4 @@ export const HomeNavigator = () => {
       />
     </Stack.Navigator>
   );
-};
+}

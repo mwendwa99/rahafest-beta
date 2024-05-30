@@ -1,13 +1,12 @@
-// import { AuthNavigator, AppNavigator } from "./navigation";
 import AppNav from "./AppNav";
-import { Home } from "../screens/home";
-import { Chat } from "../screens/chat";
+import HomeNavigator from "../screens/home";
+import EventNavigator from "../screens/events";
+import ChatNavigator from "../screens/chat";
 import { useSelector } from "react-redux";
+import AuthNavigator from "./AuthNav";
 
 export default function Routes() {
-  const { user, token, authError, message } = useSelector(
-    (state) => state.auth
-  );
+  const { token, message } = useSelector((state) => state.auth);
 
   // console.log("user", user);
   // console.log("token", token);
@@ -23,12 +22,25 @@ export default function Routes() {
 
   const routes = [
     {
+      key: "HomeNav",
       name: "Home",
-      component: Home,
+      component: HomeNavigator,
+      icon_focused: "home",
+      icon_default: "home-outline",
     },
     {
-      name: "Chat",
-      component: Chat,
+      key: "EventNav",
+      name: "Events",
+      component: EventNavigator,
+      icon_focused: "calendar-multiple-check",
+      icon_default: "calendar-multiple",
+    },
+    {
+      key: "Club",
+      name: "Raha Club",
+      component: ChatNavigator,
+      icon_focused: "cards-club",
+      icon_default: "cards-club-outline",
     },
   ];
 
