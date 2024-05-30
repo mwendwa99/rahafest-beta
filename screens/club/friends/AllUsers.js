@@ -1,8 +1,8 @@
 import { StyleSheet, View, FlatList, RefreshControl } from "react-native";
-import { UserList } from "../../components";
+import { UserList } from "../../../components";
 import { useDispatch, useSelector } from "react-redux";
-import { getUsers } from "../../redux/chat/chatActions";
-import { sendFriendRequest } from "../../redux/friends/friendActions";
+import { getUsers } from "../../../redux/chat/chatActions";
+import { sendFriendRequest } from "../../../redux/friends/friendActions";
 import { useEffect, useState } from "react";
 import { ActivityIndicator } from "react-native";
 

@@ -1,16 +1,12 @@
 import { useSelector } from "react-redux";
+
 import AppNav from "./AppNav";
-import AuthNavigator from "./AuthNav";
 import HomeNavigator from "../screens/home";
 import EventNavigator from "../screens/events";
-import ChatNavigator from "../screens/chat";
+import ClubNavigator from "../screens/club";
 
 export default function Routes() {
   const { token, message } = useSelector((state) => state.auth);
-
-  // console.log("user", user);
-  // console.log("token", token);
-  // console.log("authError", authError);
 
   const isAuthenticated = () => {
     if (token && message === "Login Success") {
@@ -20,7 +16,7 @@ export default function Routes() {
     }
   };
 
-  const routes = [
+  const appRoutes = [
     {
       key: "HomeNav",
       name: "Home",
@@ -38,11 +34,11 @@ export default function Routes() {
     {
       key: "Club",
       name: "Raha Club",
-      component: ChatNavigator,
+      component: ClubNavigator,
       icon_focused: "cards-club",
       icon_default: "cards-club-outline",
     },
   ];
 
-  return isAuthenticated ? <AppNav routes={routes} /> : <AuthNavigator />;
+  return <AppNav routes={appRoutes} />;
 }

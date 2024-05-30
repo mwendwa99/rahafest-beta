@@ -1,6 +1,6 @@
 import { FlatList, SafeAreaView, Text, View } from "react-native";
-import FriendRequest from "../../components";
-import AcceptedFriend from "../../components";
+import FriendRequest from "../../../components";
+import AcceptedFriend from "../../../components";
 import { useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 // const scrollViewRef = useRef(null);

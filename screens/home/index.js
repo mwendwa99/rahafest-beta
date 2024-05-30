@@ -8,7 +8,7 @@ import Faqs from "./Faqs";
 import Checkout from "./Events";
 //import Map from "./Map";
 
-import ChatNavigator from "../chat";
+import ChatNavigator from "../club";
 
 const Stack = createNativeStackNavigator();
 

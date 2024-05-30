@@ -15,6 +15,7 @@ import { logout, deleteAccount } from "../../redux/auth/authActions";
 export default function Settings({ navigation }) {
   const dispatch = useDispatch();
   const { token } = useSelector((state) => state.auth);
+  console.log(token);
 
   const handleLogout = () => {
     persistor.purge();

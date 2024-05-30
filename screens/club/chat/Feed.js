@@ -1,8 +1,8 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { GiftedChat } from "react-native-gifted-chat";
 import { View, StyleSheet, StatusBar } from "react-native";
-import { getAllChats, postMessage } from "../../redux/chat/chatActions";
-import { getUser } from "../../redux/auth/authActions";
+import { getAllChats, postMessage } from "../../../redux/chat/chatActions";
+import { getUser } from "../../../redux/auth/authActions";
 import { useSelector, useDispatch } from "react-redux";
 
 export default function Feed({ navigation }) {

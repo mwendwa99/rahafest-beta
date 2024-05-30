@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
-import { Text, MessageList } from "../../components";
+import { Text, MessageList } from "../../../components";
 import { StatusBar } from "expo-status-bar";
 import { useDispatch, useSelector, shallowEqual } from "react-redux";
-import { getDirectMessages } from "../../redux/chat/chatActions";
+import { getDirectMessages } from "../../../redux/chat/chatActions";
 
 export default function Messages({ navigation }) {
   const { token, user, directMessages } = useSelector(
