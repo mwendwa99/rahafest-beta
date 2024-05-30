@@ -56,7 +56,7 @@ export default function Login({ navigation }) {
       <ImageBackground
         source={pattern}
         resizeMode="repeat"
-        style={styles.pattern}
+        style={styles.container}
       >
         <View style={styles.section}>
           <View style={styles.logoContainer}>

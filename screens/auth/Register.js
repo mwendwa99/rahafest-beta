@@ -5,6 +5,7 @@ import {
   Image,
   TouchableOpacity,
   Platform,
+  Dimensions,
 } from "react-native";
 import { ImageBackground } from "react-native";
 import { StatusBar } from "expo-status-bar";
@@ -79,109 +80,111 @@ export default function Register({ navigation }) {
     dispatch(register(registerData));
   };
   return (
-    <ImageBackground source={background} style={styles.backgroundImage}>
-      <KeyboardAwareScrollView style={styles.container}>
-        <View style={styles.logoContainer}>
-          <Image source={logo} style={styles.logo} />
-        </View>
-        <View style={styles.section}>
-          <Text value={"create account"} variant={"subtitle"} />
-          <View style={styles.row}>
-            <Input
-              theme={true}
-              onChange={setFirstName}
-              inputStyle={{ ...styles.input, width: "100%" }}
-              defaultValue={"First Name"}
-            />
-            <Input
-              theme={true}
-              onChange={setLastName}
-              inputStyle={{ ...styles.input, width: "100%" }}
-              defaultValue={"Last Name"}
-            />
+    <View style={styles.container}>
+      <ImageBackground source={background} style={styles.pattern}>
+        <KeyboardAwareScrollView style={styles.container}>
+          <View style={styles.logoContainer}>
+            <Image source={logo} style={styles.logo} />
           </View>
-          <View style={styles.row}>
-            <Input
-              theme={true}
-              onChange={setEmail}
-              inputStyle={{ ...styles.input, width: "100%" }}
-              defaultValue={"Email"}
-              type="email-address"
-            />
-          </View>
-          <View style={styles.row}>
-            <Input
-              theme={true}
-              onChange={(pin) => setPassword(pin)}
-              inputStyle={{ ...styles.input, width: "100%" }}
-              defaultValue={"password"}
-            />
-          </View>
-          <View style={styles.row}>
-            <Input
-              theme={true}
-              onChange={(pin) => setConfirmPassword(pin)}
-              inputStyle={{
-                ...styles.input,
-                width: "100%",
-              }}
-              defaultValue={"confirm password"}
-            />
-          </View>
-          {Platform.OS === "android" && (
+          <View style={styles.section}>
+            <Text value={"create account"} variant={"subtitle"} />
             <View style={styles.row}>
-              <Checkbox
+              <Input
+                theme={true}
+                onChange={setFirstName}
+                inputStyle={{ ...styles.input, width: "100%" }}
+                defaultValue={"First Name"}
+              />
+              <Input
+                theme={true}
+                onChange={setLastName}
+                inputStyle={{ ...styles.input, width: "100%" }}
+                defaultValue={"Last Name"}
+              />
+            </View>
+            <View style={styles.row}>
+              <Input
+                theme={true}
+                onChange={setEmail}
+                inputStyle={{ ...styles.input, width: "100%" }}
+                defaultValue={"Email"}
+                type="email-address"
+              />
+            </View>
+            <View style={styles.row}>
+              <Input
+                theme={true}
+                onChange={(pin) => setPassword(pin)}
+                inputStyle={{ ...styles.input, width: "100%" }}
+                defaultValue={"password"}
+              />
+            </View>
+            <View style={styles.row}>
+              <Input
+                theme={true}
+                onChange={(pin) => setConfirmPassword(pin)}
+                inputStyle={{
+                  ...styles.input,
+                  width: "100%",
+                }}
+                defaultValue={"confirm password"}
+              />
+            </View>
+            {Platform.OS === "android" && (
+              <View style={styles.row}>
+                <Checkbox
+                  status={checked ? "checked" : "unchecked"}
+                  color="#fff"
+                  onPress={() => {
+                    setChecked(!checked);
+                  }}
+                />
+                <Text
+                  value={"Agree to the terms and conditions"}
+                  variant={"body"}
+                  color="#fff"
+                />
+              </View>
+            )}
+            {Platform.OS === "ios" && (
+              <Checkbox.Item
                 status={checked ? "checked" : "unchecked"}
                 color="#fff"
+                label="Agree to the terms and conditions"
                 onPress={() => {
                   setChecked(!checked);
                 }}
               />
-              <Text
-                value={"Agree to the terms and conditions"}
-                variant={"body"}
-                color="#fff"
-              />
-            </View>
-          )}
-          {Platform.OS === "ios" && (
-            <Checkbox.Item
-              status={checked ? "checked" : "unchecked"}
-              color="#fff"
-              label="Agree to the terms and conditions"
-              onPress={() => {
-                setChecked(!checked);
-              }}
+            )}
+            <Button
+              label="Register"
+              color="#483248"
+              onPress={handleSignup}
+              theme="dark"
             />
-          )}
-          <Button
-            label="Register"
-            color="#483248"
-            onPress={handleSignup}
-            theme="dark"
-          />
-        </View>
-        <View style={styles.row}>
-          <TouchableOpacity onPress={() => handleNavigate("Login")}>
-            <Text value={"Login"} variant={"body"} />
-          </TouchableOpacity>
-        </View>
-      </KeyboardAwareScrollView>
-      <StatusBar style="light" />
-    </ImageBackground>
+          </View>
+          <View style={styles.row}>
+            <TouchableOpacity onPress={() => handleNavigate("Login")}>
+              <Text value={"Login"} variant={"body"} />
+            </TouchableOpacity>
+          </View>
+        </KeyboardAwareScrollView>
+        <StatusBar style="light" />
+      </ImageBackground>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    margin: 10,
   },
-  backgroundImage: {
+  pattern: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: "flex-start",
     alignItems: "center",
-    position: "relative",
+    width: Dimensions.get("window").width,
+    height: Dimensions.get("window").height,
   },
   logoContainer: {
     alignItems: "center",
