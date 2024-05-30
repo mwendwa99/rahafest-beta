@@ -1,20 +1,7 @@
-import {
-  MaterialCommunityIcons,
-  FontAwesome5,
-  Ionicons,
-} from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { BottomNavigation } from "react-native-paper";
 import { CommonActions } from "@react-navigation/native";
-
-import { Text } from "../components";
-
-import { HomeNavigator } from "../screens/home";
-import Events from "../screens/home/Events";
-import { MenuNavigator } from "../screens/menu";
-import { ScheduleNavigator } from "../screens/schedule";
-import { NewsfeedNavigator } from "../screens/news";
-import ChatNavigator from "../screens/chat";
 
 const BottomTab = createBottomTabNavigator();
 
@@ -75,48 +62,23 @@ export default function AppNav({ routes }) {
         />
       )}
     >
-      <BottomTab.Screen
-        name="HomeNav"
-        component={HomeNavigator}
-        options={{
-          title: "Home",
-          tabBarIcon: ({ size, focused }) => (
-            <MaterialCommunityIcons
-              name={focused ? `home` : `home-outline`}
-              color={focused ? "orange" : "#fafafa"}
-              size={size}
-            />
-          ),
-        }}
-      />
-      <BottomTab.Screen
-        name="Events"
-        component={Events}
-        options={{
-          title: "Events",
-          tabBarIcon: ({ size, focused }) => (
-            <MaterialCommunityIcons
-              name={focused ? "calendar-multiple-check" : "calendar-multiple"}
-              color={focused ? "orange" : "#fafafa"}
-              size={size}
-            />
-          ),
-        }}
-      />
-      <BottomTab.Screen
-        name="Club"
-        component={ChatNavigator}
-        options={{
-          title: "Raha Club",
-          tabBarIcon: ({ size, focused }) => (
-            <MaterialCommunityIcons
-              name="cards-club-outline"
-              color={focused ? "orange" : "#fafafa"}
-              size={size}
-            />
-          ),
-        }}
-      />
+      {routes.map((route) => (
+        <BottomTab.Screen
+          key={route.key}
+          name={route.name}
+          component={route.component}
+          options={{
+            title: route.name,
+            tabBarIcon: ({ size, focused }) => (
+              <MaterialCommunityIcons
+                name={focused ? route.icon_focused : route.icon_default}
+                color={focused ? "orange" : "#fafafa"}
+                size={size}
+              />
+            ),
+          }}
+        />
+      ))}
     </BottomTab.Navigator>
   );
 }
