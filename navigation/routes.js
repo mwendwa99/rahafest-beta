@@ -1,9 +1,9 @@
+import { useSelector } from "react-redux";
 import AppNav from "./AppNav";
+import AuthNavigator from "./AuthNav";
 import HomeNavigator from "../screens/home";
 import EventNavigator from "../screens/events";
 import ChatNavigator from "../screens/chat";
-import { useSelector } from "react-redux";
-import AuthNavigator from "./AuthNav";
 
 export default function Routes() {
   const { token, message } = useSelector((state) => state.auth);
