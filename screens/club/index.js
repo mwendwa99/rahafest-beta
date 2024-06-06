@@ -12,6 +12,8 @@ import AllUsers from "./friends/AllUsers";
 import Messages from "./chat/Messages";
 import Login from "./auth/Login";
 import Register from "./auth/Register";
+import Landing from "./landing/Landing";
+import Merchandise from "./landing/Merchandise";
 
 const Stack = createNativeStackNavigator();
 
@@ -32,7 +34,23 @@ export default function ClubNavigator({ navigation }) {
   };
 
   return isAuthenticated ? (
-    <Stack.Navigator initialRouteName="Feed">
+    <Stack.Navigator initialRouteName="Landing">
+      <Stack.Screen
+        name="Landing"
+        component={Landing}
+        options={{
+          headerShown: true,
+          headerShadowVisible: false,
+          headerTintColor: "#fff",
+          headerStyle: {
+            backgroundColor: "#212529",
+          },
+          headerTitle: (props) => (
+            <Text value={"Raha Club"} {...props} variant={"subtitle"} />
+          ),
+          headerTitleAlign: "center",
+        }}
+      />
       <Stack.Screen
         name="Feed"
         component={Feed}
@@ -144,6 +162,22 @@ export default function ClubNavigator({ navigation }) {
           },
           headerTitle: (props) => (
             <Text value={"AllUsers"} {...props} variant={"subtitle"} />
+          ),
+          headerTitleAlign: "center",
+        }}
+      />
+      <Stack.Screen
+        name="Merchandise"
+        component={Merchandise}
+        options={{
+          headerShown: true,
+          headerShadowVisible: false,
+          headerTintColor: "#fff",
+          headerStyle: {
+            backgroundColor: "#212529",
+          },
+          headerTitle: (props) => (
+            <Text value={"Merchandise"} {...props} variant={"subtitle"} />
           ),
           headerTitleAlign: "center",
         }}

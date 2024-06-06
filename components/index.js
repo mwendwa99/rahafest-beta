@@ -11,3 +11,5 @@ export { default as FriendRequest } from "./FriendRequest";
 export { default as AcceptedFriend } from "./AcceptedFriend";
 export { default as UserList } from "./UserList";
 export { default as MessageList } from "./MessageList";
+export { default as NavCard } from "./NavCard";
+export { default as MerchCard } from "./MerchCard";

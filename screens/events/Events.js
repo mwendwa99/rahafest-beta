@@ -40,7 +40,7 @@ export default function Checkout() {
                 <body style="margin: 0;">
                   <iframe
                     style="border-radius:12px; object-fit:cover; width: 100%; height: 100%;"
-                    src="https://tickoh.netlify.app/raha-events"
+                    src="https://ticketraha.com"
                     frameBorder="0"
                     allow="fullscreen"
                     loading="lazy"

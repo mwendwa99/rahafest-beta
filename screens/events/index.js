@@ -9,7 +9,7 @@ export default function EventNavigator() {
   return (
     <Stack.Navigator initialRouteName="Feed">
       <Stack.Screen
-        name="Events"
+        name="EventScreen"
         component={Events}
         options={({ navigation }) => ({
           headerShown: true,
