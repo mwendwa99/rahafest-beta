@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { Text } from "../../components";
 import DirectMessage from "./chat/DirectMessage";
 import Feed from "./chat/Feed";
+import Checkout from "../events/Events";
 import Friends from "./friends/Friends";
 import AllUsers from "./friends/AllUsers";
 import Messages from "./chat/Messages";
@@ -14,6 +15,7 @@ import Login from "./auth/Login";
 import Register from "./auth/Register";
 import Landing from "./landing/Landing";
 import Merchandise from "./landing/Merchandise";
+import Media from "./landing/Media";
 
 const Stack = createNativeStackNavigator();
 
@@ -178,6 +180,38 @@ export default function ClubNavigator({ navigation }) {
           },
           headerTitle: (props) => (
             <Text value={"Merchandise"} {...props} variant={"subtitle"} />
+          ),
+          headerTitleAlign: "center",
+        }}
+      />
+      <Stack.Screen
+        name="Media"
+        component={Media}
+        options={{
+          headerShown: true,
+          headerShadowVisible: false,
+          headerTintColor: "#fff",
+          headerStyle: {
+            backgroundColor: "#212529",
+          },
+          headerTitle: (props) => (
+            <Text value={"Raha Fest Media"} {...props} variant={"subtitle"} />
+          ),
+          headerTitleAlign: "center",
+        }}
+      />
+       <Stack.Screen
+        name="Checkout"
+        component={Checkout}
+        options={{
+          headerShown: true,
+          headerShadowVisible: false,
+          headerTintColor: "#fff",
+          headerStyle: {
+            backgroundColor: "#212529",
+          },
+          headerTitle: (props) => (
+            <Text value={""} {...props} variant={"subtitle"} />
           ),
           headerTitleAlign: "center",
         }}

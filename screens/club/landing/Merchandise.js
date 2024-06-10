@@ -11,6 +11,7 @@ export default function Merchandise() {
         keyExtractor={(item) => item.id}
         numColumns={2}
         contentContainerStyle={styles.grid}
+        showsVerticalScrollIndicator={false}
       />
     </View>
   );
