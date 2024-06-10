@@ -9,7 +9,7 @@ export default function MerchCard({ product }) {
         <Text style={styles.price}>KES {product.price}</Text>
         <TouchableOpacity
           style={styles.button}
-          onPress={() => alert(`Buying ${product.name}`)}
+          onPress={() => alert(`You'll be able to buy ${product.name} soon`)}
         >
           <Text style={styles.buttonText}>Buy</Text>
         </TouchableOpacity>
@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     color: "#fafafa",
     borderRadius: 6,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   image: {
     width: "100%",
@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
   },
   infoContainer: {
     padding: 16,
-    width: '100%',
+    width: "100%",
   },
   name: {
     fontSize: 16,

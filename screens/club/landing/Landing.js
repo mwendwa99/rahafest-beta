@@ -6,19 +6,23 @@ const navigationItems = [
   { id: "2", icon: "users", title: "Friends", link: "Friends" },
   { id: "3", icon: "tags", title: "Merchandise", link: "Merchandise" },
   { id: "4", icon: "camera-retro", title: "Media", link: "Media" },
-  { id: "5", icon: "ticket", title: "Event Deals", link: "Deals" },
+  { id: "5", icon: "ticket", title: "Event Deals", link: "Checkout" },
   { id: "6", icon: "newspaper-o", title: "News", link: "News" },
 ];
+
+const userName = "Brian Mwendwa"
+const memberDate = "2024"
+const rahaClubDescription = "Welcome to Raha Club, your exclusive RahaFest companion"
 
 
 export default function Landing({navigation}) {
   return (
     <View style={styles.container}>
       <View>
-        <Text style={{ fontSize: 24, fontWeight: "bold" }}>Hi Brian</Text>
-        <Text style={{ fontSize: 12, color: "gray" }}>Member since 2023</Text>
+        <Text style={{ fontSize: 24, fontWeight: "bold" }}>Hi {userName}</Text>
+        <Text style={{ fontSize: 12, color: "gray" }}>Member since {memberDate}</Text>
         <Text style={{ fontSize: 16, marginTop: 16 }}>
-          Welcome to Raha Club, your exclusive RahaFest companion
+         {rahaClubDescription}
         </Text>
       </View>
 
@@ -49,6 +53,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   cardList: {
-    marginTop: 48,
+    marginTop: 24,
   },
 });
