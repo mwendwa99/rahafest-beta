@@ -13,3 +13,5 @@ export { default as UserList } from "./UserList";
 export { default as MessageList } from "./MessageList";
 export { default as NavCard } from "./NavCard";
 export { default as MerchCard } from "./MerchCard";
+export { default as EventCard } from "./EventDealCard";
+export { default as Article } from "./Article";

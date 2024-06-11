@@ -43,6 +43,8 @@ const styles = StyleSheet.create({
   banner: {
     width: 100,
     height: 100,
+    borderRadius: 4,
+    objectFit: "cover",
   },
   detailsContainer: {
     flex: 2,
