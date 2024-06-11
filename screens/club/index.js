@@ -17,6 +17,7 @@ import Landing from "./landing/Landing";
 import Merchandise from "./landing/Merchandise";
 import Media from "./landing/Media";
 import EventDeals from "./landing/Deals";
+import News from "./landing/News";
 
 const Stack = createNativeStackNavigator();
 
@@ -229,6 +230,22 @@ export default function ClubNavigator({ navigation }) {
           },
           headerTitle: (props) => (
             <Text value={"Event Deals"} {...props} variant={"subtitle"} />
+          ),
+          headerTitleAlign: "center",
+        }}
+      />
+      <Stack.Screen
+        name="News"
+        component={News}
+        options={{
+          headerShown: true,
+          headerShadowVisible: false,
+          headerTintColor: "#fff",
+          headerStyle: {
+            backgroundColor: "#212529",
+          },
+          headerTitle: (props) => (
+            <Text value={"Raha Fest News"} {...props} variant={"subtitle"} />
           ),
           headerTitleAlign: "center",
         }}
