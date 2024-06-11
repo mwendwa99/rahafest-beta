@@ -79,3 +79,74 @@ export const RahaMedia = [
     image: require("../../../assets/davido-head.jpeg"),
   },
 ];
+
+export const DealData = [
+  {
+    id: "1",
+    image: require("../../../assets/davido-head.jpeg"),
+    name: "Raha Rave",
+    time: "4:00pm - 10:00pm",
+    location: "Sarit Expo Center",
+    discount: "50%",
+    ticketType: "Early Bird",
+    oldPrice: "2,000",
+    newPrice: "1,000"
+  }, 
+  {
+    id: "2",
+    image: require("../../../assets/davido-head.jpeg"),
+    name: "Raha Rave",
+    time: "4:00pm - 10:00pm",
+    location: "Sarit Expo Center",
+    discount: "50%",
+    ticketType: "Advance",
+    oldPrice: "2,500",
+    newPrice: "1,250"
+  }, 
+  {
+    id: "3",
+    image: require("../../../assets/davido-head.jpeg"),
+    name: "Raha December",
+    time: "4:00pm - 10:00pm",
+    location: "Sarit Expo Center",
+    discount: "50%",
+    ticketType: "Early Bird",
+    oldPrice: "2,500",
+    newPrice: "1,250"
+  }, 
+  {
+    id: "4",
+    image: require("../../../assets/davido-head.jpeg"),
+    name: "Raha December",
+    time: "4:00pm - 10:00pm",
+    location: "Sarit Expo Center",
+    discount: "50%",
+    ticketType: "Advance",
+    oldPrice: "2,500",
+    newPrice: "1,250"
+  }, 
+  {
+    id: "5",
+    image: require("../../../assets/davido-head.jpeg"),
+    name: "Raha Rave",
+    time: "4:00pm - 10:00pm",
+    location: "Sarit Expo Center",
+    discount: "50%",
+    ticketType: "Advance",
+    oldPrice: "2,500",
+    newPrice: "1,250"
+  }, 
+  {
+    id: "6",
+    image: require("../../../assets/davido-head.jpeg"),
+    name: "Raha December",
+    time: "4:00pm - 10:00pm",
+    location: "Sarit Expo Center",
+    discount: "50%",
+    ticketType: "Advance",
+    oldPrice: "2,500",
+    newPrice: "1,250"
+  }, 
+
+
+]

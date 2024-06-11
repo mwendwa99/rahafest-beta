@@ -16,6 +16,7 @@ import Register from "./auth/Register";
 import Landing from "./landing/Landing";
 import Merchandise from "./landing/Merchandise";
 import Media from "./landing/Media";
+import EventDeals from "./landing/Deals";
 
 const Stack = createNativeStackNavigator();
 
@@ -200,7 +201,7 @@ export default function ClubNavigator({ navigation }) {
           headerTitleAlign: "center",
         }}
       />
-       <Stack.Screen
+      <Stack.Screen
         name="Checkout"
         component={Checkout}
         options={{
@@ -212,6 +213,22 @@ export default function ClubNavigator({ navigation }) {
           },
           headerTitle: (props) => (
             <Text value={""} {...props} variant={"subtitle"} />
+          ),
+          headerTitleAlign: "center",
+        }}
+      />
+      <Stack.Screen
+        name="EventDeals"
+        component={EventDeals}
+        options={{
+          headerShown: true,
+          headerShadowVisible: false,
+          headerTintColor: "#fff",
+          headerStyle: {
+            backgroundColor: "#212529",
+          },
+          headerTitle: (props) => (
+            <Text value={"Event Deals"} {...props} variant={"subtitle"} />
           ),
           headerTitleAlign: "center",
         }}
