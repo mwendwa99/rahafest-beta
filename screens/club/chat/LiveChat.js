@@ -4,10 +4,21 @@ import { StatusBar } from "expo-status-bar";
 import { WebView } from "react-native-webview";
 import { useState, useEffect } from "react";
 
-const splash = require("../../assets/splash.png");
+const splash = require("../../../assets/splash.png");
 
 export default function Checkout() {
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // This ensures that the loading state is eventually reset in case of errors
+    const timeout = setTimeout(() => {
+      if (loading) {
+        setLoading(false);
+      }
+    }, 10000); // Set a timeout for 10 seconds
+
+    return () => clearTimeout(timeout);
+  }, [loading]);
 
   const handleLoadEnd = () => {
     setLoading(false);
@@ -22,14 +33,13 @@ export default function Checkout() {
       {loading ? (
         <ImageBackground
           source={splash}
-          style={{ flex: 1, justifyContent: "center", height: "100vh" }}
+          style={{ flex: 1, justifyContent: "center" }}
         >
           <StatusBar style="light" />
         </ImageBackground>
       ) : (
-        // Display the iframe after loading is complete
         <WebView
-          onLoad={handleLoadEnd}
+          onLoadEnd={handleLoadEnd}
           onError={handleLoadError}
           source={{
             html: `
@@ -39,8 +49,8 @@ export default function Checkout() {
                 </head>
                 <body style="margin: 0;">
                   <iframe
-                    style="border-radius:12px; object-fit:cover; width: 100%; height: 100%;"
-                    src="https://ticketraha.com/events"
+                    style="object-fit:cover; width: 100%; height: 100%;"
+                    src="https://rahafest.com/raha-club"
                     frameBorder="0"
                     allow="fullscreen"
                     loading="lazy"
@@ -49,6 +59,7 @@ export default function Checkout() {
               </html>
             `,
           }}
+          style={{ flex: 1 }}
         />
       )}
       <StatusBar style="light" />

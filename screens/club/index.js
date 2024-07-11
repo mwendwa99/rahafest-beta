@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { Text } from "../../components";
 import DirectMessage from "./chat/DirectMessage";
 import Feed from "./chat/Feed";
+import LiveChat from "./chat/LiveChat";
 import Checkout from "../events/Events";
 import Friends from "./friends/Friends";
 import AllUsers from "./friends/AllUsers";
@@ -36,9 +37,9 @@ export default function ClubNavigator({ navigation }) {
   };
 
   return isAuthenticated ? (
-    <Stack.Navigator initialRouteName="Landing">
+    <Stack.Navigator initialRouteName="Club">
       <Stack.Screen
-        name="Landing"
+        name="Club"
         component={Landing}
         options={{
           headerShown: true,
@@ -53,9 +54,9 @@ export default function ClubNavigator({ navigation }) {
           headerTitleAlign: "center",
         }}
       />
-      <Stack.Screen
+      {/* <Stack.Screen
         name="Feed"
-        component={Feed}
+        component={LiveChat}
         options={({ navigation }) => ({
           headerShown: true,
           headerShadowVisible: false,
@@ -63,9 +64,7 @@ export default function ClubNavigator({ navigation }) {
           headerStyle: {
             backgroundColor: "#212529",
           },
-          headerTitle: (props) => (
-            <Text value={"Global Chat"} {...props} variant={"subtitle"} />
-          ),
+          headerTitle: (props) => <Text value={""} {...props} />,
           headerTitleAlign: "center",
           headerRight: () => (
             <View
@@ -75,7 +74,6 @@ export default function ClubNavigator({ navigation }) {
                 marginRight: 10,
               }}
             >
-              {/* You can add multiple icons or components here */}
               <TouchableOpacity onPress={() => navigation.navigate("Messages")}>
                 <FontAwesome5
                   name="inbox"
@@ -83,25 +81,39 @@ export default function ClubNavigator({ navigation }) {
                   color="white"
                   style={{ marginRight: 15 }}
                 />
-              </TouchableOpacity>
-              {/* <TouchableOpacity onPress={() => navigation.navigate("Friends")}>
+              </TouchableOpacity> 
+               <TouchableOpacity onPress={() => navigation.navigate("Friends")}>
                 <FontAwesome5
                   name="user-friends"
                   size={24}
                   color="white"
                   style={{ marginRight: 15 }}
                 />
-              </TouchableOpacity> */}
-              {/* <TouchableOpacity onPress={() => navigation.navigate("AllUsers")}>
+              </TouchableOpacity>
+               <TouchableOpacity onPress={() => navigation.navigate("AllUsers")}>
                 <FontAwesome5
                   name="globe"
                   size={24}
                   color="white"
                   style={{ marginRight: 15 }}
                 />
-              </TouchableOpacity> */}
+              </TouchableOpacity> 
             </View>
           ),
+        })}
+      /> */}
+      <Stack.Screen
+        name="Feed"
+        component={LiveChat}
+        options={({ navigation }) => ({
+          headerShown: false,
+          headerShadowVisible: false,
+          headerTintColor: "#fff",
+          headerStyle: {
+            backgroundColor: "#212529",
+          },
+          headerTitle: (props) => <Text value={""} {...props} />,
+          headerTitleAlign: "center",
         })}
       />
       <Stack.Screen
@@ -200,7 +212,7 @@ export default function ClubNavigator({ navigation }) {
           headerTitleAlign: "center",
         }}
       />
-       <Stack.Screen
+      <Stack.Screen
         name="Checkout"
         component={Checkout}
         options={{
