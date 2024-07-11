@@ -1,28 +1,41 @@
-import { StyleSheet, View, Text, FlatList } from "react-native";
+import { StyleSheet, View, Text, FlatList, Alert } from "react-native";
 import NavCard from "../../../components/NavCard";
 
 const navigationItems = [
-  { id: "1", icon: "globe", title: "Global Chat", link: "Feed" },
+  { id: "1", icon: "globe", title: "Live Chat", link: "Feed" },
   { id: "2", icon: "users", title: "Friends", link: "Friends" },
   { id: "3", icon: "tags", title: "Merchandise", link: "Merchandise" },
   { id: "4", icon: "camera-retro", title: "Media", link: "Media" },
   { id: "5", icon: "ticket", title: "Event Deals", link: "Checkout" },
-  { id: "6", icon: "newspaper-o", title: "News", link: "News" },
+  // { id: "6", icon: "newspaper-o", title: "News", link: "News" },
 ];
 
-const userName = "Brian Mwendwa"
-const memberDate = "2024"
-const rahaClubDescription = "Welcome to Raha Club, your exclusive RahaFest companion"
+const userName = "Raha Fan";
+const memberDate = "2024";
+const rahaClubDescription =
+  "Welcome to Raha Club, your exclusive RahaFest companion";
 
+export default function Landing({ navigation }) {
+  const handlePress = (link) => {
+    if (link === "Friends" || link === "Media") {
+      Alert.alert(
+        "Coming Soon!",
+        "You will be able to interact with friends stay tuned for updates!"
+      );
+    } else {
+      navigation.navigate(link);
+    }
+  };
 
-export default function Landing({navigation}) {
   return (
     <View style={styles.container}>
       <View>
-        <Text style={{ fontSize: 24, fontWeight: "bold" }}>Hi {userName}</Text>
-        <Text style={{ fontSize: 12, color: "gray" }}>Member since {memberDate}</Text>
+        <Text style={{ fontSize: 24, fontWeight: "bold" }}>
+          Hello there {userName}
+        </Text>
+
         <Text style={{ fontSize: 16, marginTop: 16 }}>
-         {rahaClubDescription}
+          {rahaClubDescription}
         </Text>
       </View>
 
@@ -33,7 +46,7 @@ export default function Landing({navigation}) {
           <NavCard
             icon={item.icon}
             title={item.title}
-            onPress={() => navigation.navigate(item.link)}
+            onPress={() => handlePress(item.link)}
           />
         )}
         keyExtractor={(item) => item.id}
