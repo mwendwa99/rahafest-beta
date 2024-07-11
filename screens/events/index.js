@@ -12,7 +12,7 @@ export default function EventNavigator() {
         name="EventScreen"
         component={Events}
         options={({ navigation }) => ({
-          headerShown: true,
+          headerShown: false,
           headerShadowVisible: false,
           headerTintColor: "#fff",
           headerStyle: {
