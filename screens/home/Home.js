@@ -60,7 +60,9 @@ export default function Home({ navigation }) {
                 <Text variant="small" value={"Socials"} color="#fff" />
               </ImageBackground>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => handleNavigate("Checkout")}>
+            <TouchableOpacity
+              onPress={() => Linking.openURL("https://linktr.ee/rahafest")}
+            >
               <ImageBackground source={blob} style={styles.blob}>
                 <MaterialCommunityIcons name="ticket" size={40} color="#fff" />
                 <Text variant="small" value={"Buy Tickets"} color="#fff" />
