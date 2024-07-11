@@ -40,7 +40,7 @@ export default function HomeNavigator() {
         name="Playlist"
         component={Playlist}
         options={{
-          headerShown: true,
+          headerShown: false,
           headerShadowVisible: false,
           headerTintColor: "#fff",
           headerStyle: {
