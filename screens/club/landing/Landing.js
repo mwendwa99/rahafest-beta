@@ -6,7 +6,7 @@ const navigationItems = [
   { id: "2", icon: "users", title: "Friends", link: "Friends" },
   { id: "3", icon: "tags", title: "Merchandise", link: "Merchandise" },
   { id: "4", icon: "camera-retro", title: "Media", link: "Media" },
-  { id: "5", icon: "ticket", title: "Event Deals", link: "Checkout" },
+  // { id: "5", icon: "ticket", title: "Event Deals", link: "Checkout" },
   // { id: "6", icon: "newspaper-o", title: "News", link: "News" },
 ];
 

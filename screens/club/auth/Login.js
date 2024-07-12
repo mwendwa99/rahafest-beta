@@ -30,7 +30,7 @@ export default function Login({ navigation }) {
 
   useEffect(() => {
     if (error) {
-      console.log(error);
+      // console.log(error);
       danger(error, 2000);
     }
   }, [error]);
