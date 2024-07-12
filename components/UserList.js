@@ -9,7 +9,7 @@ export default function UserList({
   onSendFriendReq,
   sentFriendRequest,
 }) {
-  console.log(sentFriendRequest);
+  // console.log(sentFriendRequest);
   return (
     <View style={styles.container}>
       <View style={styles.row}>

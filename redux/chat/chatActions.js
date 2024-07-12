@@ -46,7 +46,7 @@ export const getDirectMessages = createAsyncThunk(
 export const getDirectMessage = createAsyncThunk(
   "chat/getDirectMessage",
   ({ token, messageId }, { rejectWithValue }) => {
-    console.log(messageId);
+    // console.log(messageId);
     try {
       return GetDirectMessage(token, messageId);
     } catch (error) {
