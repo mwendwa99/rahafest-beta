@@ -2,7 +2,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Text } from "../../components";
 
 import Home from "./Home";
-import Playlist from "./Playlist";
+// import Playlist from "./Playlist";
 import Settings from "./Settings";
 import Faqs from "./Faqs";
 import Checkout from "./Events";
@@ -36,7 +36,7 @@ export default function HomeNavigator() {
           headerTitleAlign: "center",
         }}
       />
-      <Stack.Screen
+      {/* <Stack.Screen
         name="Playlist"
         component={Playlist}
         options={{
@@ -51,7 +51,7 @@ export default function HomeNavigator() {
           ),
           headerTitleAlign: "center",
         }}
-      />
+      /> */}
       <Stack.Screen
         name="Checkout"
         component={Checkout}
