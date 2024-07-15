@@ -1,90 +1,67 @@
+import { authInstance } from "../../services/api.service";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import {
-  RegisterApi,
-  LoginApi,
-  GetUserApi,
-  DeleteAccountApi,
-} from "../../services/auth.service";
-import { chatApi } from "../../services/api.service";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export const register = createAsyncThunk(
-  "auth/register",
-  (userData, { rejectWithValue }) => {
+export const registerUser = createAsyncThunk(
+  "auth/registerUser",
+  async (user, { rejectWithValue }) => {
     try {
-      return RegisterApi(userData);
-    } catch (error) {
-      return rejectWithValue(error);
-    }
-  }
-);
-
-export const login = createAsyncThunk(
-  "auth/login",
-  async (userData, { rejectWithValue }) => {
-    try {
-      // return LoginApi(userData);
-      const response = await chatApi.post("/login", userData);
-
-      // save token to async storage
-      await AsyncStorage.setItem("token", response.data.token.access);
-
+      const response = await authInstance.post("register", user);
       return response.data;
     } catch (error) {
-      // Default error message
-      let errorMessage = "An error occurred";
-
-      // Check if response data has an errors object
-      if (error.response && error.response.data && error.response.data.errors) {
-        const errors = error.response.data.errors;
-        // Iterate through the keys of the errors object
-        for (let key in errors) {
-          if (
-            errors[key] &&
-            Array.isArray(errors[key]) &&
-            errors[key].length > 0
-          ) {
-            // Extract the first error message
-            errorMessage = errors[key][0];
-            break;
-          }
-        }
-      }
-
-      return rejectWithValue(errorMessage);
+      return rejectWithValue(error.response.data);
     }
   }
 );
 
-export const getUser = createAsyncThunk(
-  "auth/getUser",
-  (token, { rejectWithValue }) => {
+export const loginUser = createAsyncThunk(
+  "auth/loginUser",
+  async (user, { rejectWithValue }) => {
     try {
-      return GetUserApi(token);
+      const response = await authInstance.post("login", user);
+      // console.log(response.data.data);
+      // save token to local storage
+      localStorage.setItem("token", response.data.data.token);
+      return response.data.data;
     } catch (error) {
-      return rejectWithValue(error);
+      return rejectWithValue(error.response.data);
     }
   }
 );
 
-export const logout = createAsyncThunk(
-  "auth/logout",
-  (_, { rejectWithValue }) => {
+export const fetchUser = createAsyncThunk(
+  "auth/fetchUser",
+  async (_, { rejectWithValue }) => {
     try {
-      return null;
+      const response = await authInstance.get("user");
+      return response.data.data;
     } catch (error) {
-      return rejectWithValue(error);
+      return rejectWithValue(error.response.data);
     }
   }
 );
 
-export const deleteAccount = createAsyncThunk(
-  "auth/deleteAccount",
-  (token, { rejectWithValue }) => {
+export const fetchAllUsers = createAsyncThunk(
+  "chat/fetchUsers",
+  async (_, { rejectWithValue }) => {
     try {
-      return DeleteAccountApi(token);
-    } catch (error) {
-      return rejectWithValue(error);
+      const response = await authInstance.get("all-users");
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export const filterUserById = createAsyncThunk(
+  "chat/filterUserById",
+  async (id, { rejectWithValue }) => {
+    try {
+      // fetchAllUsers then filter by id
+      const allUsers = fetchAllUsers();
+      const user = allUsers.find((user) => user.id === id);
+      return user;
+    } catch (err) {
+      return rejectWithValue(err.response.data);
     }
   }
 );

@@ -1,71 +1,108 @@
 import axios from "axios";
+// import Cookies from "js-cookie";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 //export an unprotected instance of axios
-export const chatApi = axios.create({
-  baseURL: "https://rahachat.stackthon.com/api",
+export const ticketApi = axios.create({
+  baseURL: "https://tickoh.stackthon.com/api/",
 });
+
+export const rahaApi = axios.create({
+  baseURL: "https://api.rahafest.com/api/",
+});
+
+export const rahaImageApi = "https://api.rahafest.com";
+export const tickohImageApi = "https://tickoh.stackthon.com";
 
 const instance = axios.create({
-  baseURL: "https://rahachat.stackthon.com/api",
+  baseURL: "https://tickoh.stackthon.com/api/",
 });
 
-// Add a request interceptor
+const authInstance = axios.create({
+  baseURL: "https://rahaclub.rahafest.com/api/",
+});
+
+async function refreshTokenAndRetryRequest(error, instance) {
+  const originalRequest = error.config;
+  // const refreshToken = Cookies.get("refresh_token"); // Get refresh token from cookies
+  const refreshToken = await AsyncStorage.getItem("refresh_token");
+
+  if (refreshToken) {
+    try {
+      const refreshResponse = await axios.get(
+        `${originalRequest.baseURL}/refresh`
+      );
+      const newToken = refreshResponse.data.token;
+      // localStorage.setItem("token", newToken);
+      await AsyncStorage.setItem("token", newToken);
+      originalRequest.headers.Authorization = `Bearer ${newToken}`;
+      return instance(originalRequest);
+    } catch (refreshError) {
+      return Promise.reject(refreshError);
+    }
+  } else {
+    // Handle the case when there's no refresh token
+    return Promise.reject(error);
+  }
+}
+
 instance.interceptors.request.use(
   async (config) => {
-    // Get the access token from localStorage
-    const token = localStorage.getItem("token");
-    // If the access token is available, add it to the request headers
+    // const token = localStorage.getItem("token");
+    const token = await AsyncStorage.getItem("token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
   (error) => {
-    // Do something with request error
     return Promise.reject(error);
   }
 );
 
-// Add a response interceptor
 instance.interceptors.response.use(
   (response) => {
-    // Return a successful response directly
     return response;
   },
   async (error) => {
-    // Handle 403 or 401 errors and refresh the token
-    const originalRequest = error.config;
-    if (error.response.status === 403 || error.response.status === 401) {
-      // Perform token refresh and update the original request
-      const refreshToken = localStorage.getItem("refreshToken");
-      if (refreshToken) {
-        // Call your refresh token endpoint
-        const refreshResponse = await instance.get("/refresh", {
-          refresh_token: refreshToken,
-        });
-        const newToken = refreshResponse.data.token;
-        // Save the new access token to localStorage
-        localStorage.setItem("token", newToken);
-        // Update the original request with the new access token
-        originalRequest.headers.Authorization = `Bearer ${newToken}`;
-        // Retry the original request
-        return instance(originalRequest);
-      } else {
-        // No refresh token available, redirect to login or handle the situation accordingly
-        // return Promise.reject(error);
-        // const refreshResponse = await instance.get("/refresh");
-        const refreshResponse = await axios.get(
-          "https://rahachat.stackthon.com/apirefresh"
-        );
-        const newToken = refreshResponse.data.token;
-        localStorage.setItem("token", newToken);
-        originalRequest.headers.Authorization = `Bearer ${newToken}`;
-        return instance(originalRequest);
-      }
+    if (
+      error.response &&
+      (error.response.status === 401 || error.response.status === 403)
+    ) {
+      return refreshTokenAndRetryRequest(error, instance);
     }
-    // For other errors, just reject with the error
+    return Promise.reject(error);
+  }
+);
+
+authInstance.interceptors.request.use(
+  async (config) => {
+    // const token = localStorage.getItem("token");
+    const token = await AsyncStorage.getItem("token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+authInstance.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  async (error) => {
+    if (
+      error.response &&
+      (error.response.status === 401 || error.response.status === 403)
+    ) {
+      return refreshTokenAndRetryRequest(error, authInstance);
+    }
     return Promise.reject(error);
   }
 );
 
 export default instance;
+export { authInstance };

@@ -1,111 +1,26 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import {
-  GetAllMessages,
-  PostMessageApi,
-  GetDirectMessages,
-  AcceptFriendRequest,
-  RejectFriendRequest,
-  GetUsersApi,
-  SendFriendRequestApi,
-  GetDirectMessage,
-  SendDirectMessage,
-} from "../../services/chat.service";
+import { authInstance } from "../../services/api.service";
 
-export const getAllChats = createAsyncThunk(
-  "chat/getAllChats",
-  (token, { rejectWithValue }) => {
+export const fetchLiveMessages = createAsyncThunk(
+  "chat/fetchLiveMessages",
+  async (_, { rejectWithValue }) => {
     try {
-      return GetAllMessages(token);
-    } catch (error) {
-      return rejectWithValue(error);
+      const response = await authInstance.get(`messages`);
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(err.response.data);
     }
   }
 );
 
-export const postMessage = createAsyncThunk(
-  "chat/postMessage",
-  ({ token, message }, { rejectWithValue }) => {
+export const sendLiveMessage = createAsyncThunk(
+  "chat/sendLiveMessage",
+  async (message, { rejectWithValue }) => {
     try {
-      return PostMessageApi(token, message);
-    } catch (error) {
-      return rejectWithValue(error);
-    }
-  }
-);
-
-export const getDirectMessages = createAsyncThunk(
-  "chat/getDirectMessages",
-  (token, { rejectWithValue }) => {
-    try {
-      return GetDirectMessages(token);
-    } catch (error) {
-      return rejectWithValue(error);
-    }
-  }
-);
-export const getDirectMessage = createAsyncThunk(
-  "chat/getDirectMessage",
-  ({ token, messageId }, { rejectWithValue }) => {
-    // console.log(messageId);
-    try {
-      return GetDirectMessage(token, messageId);
-    } catch (error) {
-      return rejectWithValue(error);
-    }
-  }
-);
-
-export const sendDirectMessage = createAsyncThunk(
-  "chat/sendDirectMessage",
-  ({ token, message }, { rejectWithValue }) => {
-    try {
-      return SendDirectMessage(token, message);
-    } catch (error) {
-      return rejectWithValue(error);
-    }
-  }
-);
-
-export const acceptFriendRequest = createAsyncThunk(
-  "chat/acceptFriendRequest",
-  ({ token, data }, { rejectWithValue }) => {
-    try {
-      return AcceptFriendRequest(token, data);
-    } catch (error) {
-      return rejectWithValue(error);
-    }
-  }
-);
-
-export const rejectFriendRequest = createAsyncThunk(
-  "chat/rejectFriendRequest",
-  ({ token, data }, { rejectWithValue }) => {
-    try {
-      return RejectFriendRequest(token, data);
-    } catch (error) {
-      return rejectWithValue(error);
-    }
-  }
-);
-
-export const getUsers = createAsyncThunk(
-  "chat/getUsers",
-  (token, { rejectWithValue }) => {
-    try {
-      return GetUsersApi(token);
-    } catch (error) {
-      return rejectWithValue(error);
-    }
-  }
-);
-
-export const sendFriendRequest = createAsyncThunk(
-  "chat/sendFriendRequest",
-  ({ token, data }, { rejectWithValue }) => {
-    try {
-      return SendFriendRequestApi(token, data);
-    } catch (error) {
-      return rejectWithValue(error);
+      const response = await authInstance.post(`messages`, message);
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(err.response.data);
     }
   }
 );
