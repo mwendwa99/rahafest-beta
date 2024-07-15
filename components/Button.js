@@ -1,29 +1,36 @@
-import { TouchableOpacity, Text, StyleSheet } from "react-native";
+import { Button } from "react-native-paper";
+import { StyleSheet } from "react-native";
 
-export default function Button({ onPress, label, color, disabled }) {
+export default function ButtonComponent({
+  onPress,
+  label,
+  disabled,
+  variant,
+  ...props
+}) {
   return (
-    <TouchableOpacity
-      disabled={disabled}
+    <Button
+      {...props}
       onPress={onPress}
-      style={{ ...styles.button, backgroundColor: color }}
+      disabled={disabled}
+      mode={variant}
+      style={styles[variant]}
+      labelStyle={styles[`${variant}Label`]}
     >
-      <Text style={styles.text}>{label}</Text>
-    </TouchableOpacity>
+      {label}
+    </Button>
   );
 }
 
 const styles = StyleSheet.create({
-  button: {
-    backgroundColor: "orange",
-    padding: 10,
+  contained: {
+    backgroundColor: "#B9052C",
     margin: 10,
-    borderRadius: 5,
-    width: 100,
-    alignSelf: "center",
   },
   text: {
+    margin: 10,
+  },
+  textLabel: {
     color: "white",
-    fontWeight: "bold",
-    textAlign: "center",
   },
 });

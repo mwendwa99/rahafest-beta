@@ -12,6 +12,7 @@ import { PersistGate } from "redux-persist/integration/react";
 import splash from "./assets/splash.png";
 import { ImageBackground } from "react-native";
 import { StatusBar } from "expo-status-bar";
+import { theme } from "./theme";
 
 export default function App() {
   return (
@@ -28,7 +29,7 @@ export default function App() {
         }
       >
         <NavigationContainer>
-          <PaperProvider>
+          <PaperProvider theme={theme}>
             <SafeAreaProvider>
               <RootSiblingParent>
                 <Main />

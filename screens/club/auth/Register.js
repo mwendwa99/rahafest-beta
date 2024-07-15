@@ -17,7 +17,7 @@ import { Input, Button, Text } from "../../../components";
 import { danger, success, warning } from "../../../utils/toast";
 import { register } from "../../../redux/auth/authActions";
 
-const background = require("../../../assets/pattern.png");
+const pattern = require("../../../assets/pattern.png");
 const logo = require("../../../assets/logo.png");
 
 export default function Register({ navigation }) {
@@ -80,112 +80,108 @@ export default function Register({ navigation }) {
     dispatch(register(registerData));
   };
   return (
-    <View style={styles.container}>
-      <ImageBackground source={background} style={styles.pattern}>
-        <KeyboardAwareScrollView style={styles.container}>
-          <View style={styles.logoContainer}>
-            <Image source={logo} style={styles.logo} />
+    <ImageBackground
+      source={pattern}
+      resizeMode="repeat"
+      style={styles.container}
+    >
+      <View style={styles.section}>
+        <View style={styles.logoContainer}>
+          <Image source={logo} style={styles.logo} />
+        </View>
+        <View style={styles.section}>
+          <View style={styles.row}>
+            <Input
+              theme={true}
+              onChange={setFirstName}
+              style={{ ...styles.input, width: "100%" }}
+              placeholder={"First Name"}
+            />
+            <Input
+              theme={true}
+              onChange={setLastName}
+              style={{ ...styles.input, width: "100%" }}
+              placeholder={"Last Name"}
+            />
           </View>
-          <View style={styles.section}>
-            <Text value={"create account"} variant={"subtitle"} />
+          <View style={styles.row}>
+            <Input
+              theme={true}
+              onChange={setEmail}
+              style={{ ...styles.input, width: "100%" }}
+              placeholder={"Email"}
+              type="email-address"
+            />
+          </View>
+          <View style={styles.row}>
+            <Input
+              theme={true}
+              onChange={(pin) => setPassword(pin)}
+              style={{ ...styles.input, width: "100%" }}
+              placeholder={"Password"}
+            />
+          </View>
+          <View style={styles.row}>
+            <Input
+              theme={true}
+              onChange={(pin) => setConfirmPassword(pin)}
+              style={{
+                ...styles.input,
+                width: "100%",
+              }}
+              placeholder={"Confirm Password"}
+            />
+          </View>
+          {Platform.OS === "android" && (
             <View style={styles.row}>
-              <Input
-                theme={true}
-                onChange={setFirstName}
-                inputStyle={{ ...styles.input, width: "100%" }}
-                defaultValue={"First Name"}
-              />
-              <Input
-                theme={true}
-                onChange={setLastName}
-                inputStyle={{ ...styles.input, width: "100%" }}
-                defaultValue={"Last Name"}
-              />
-            </View>
-            <View style={styles.row}>
-              <Input
-                theme={true}
-                onChange={setEmail}
-                inputStyle={{ ...styles.input, width: "100%" }}
-                defaultValue={"Email"}
-                type="email-address"
-              />
-            </View>
-            <View style={styles.row}>
-              <Input
-                theme={true}
-                onChange={(pin) => setPassword(pin)}
-                inputStyle={{ ...styles.input, width: "100%" }}
-                defaultValue={"password"}
-              />
-            </View>
-            <View style={styles.row}>
-              <Input
-                theme={true}
-                onChange={(pin) => setConfirmPassword(pin)}
-                inputStyle={{
-                  ...styles.input,
-                  width: "100%",
-                }}
-                defaultValue={"confirm password"}
-              />
-            </View>
-            {Platform.OS === "android" && (
-              <View style={styles.row}>
-                <Checkbox
-                  status={checked ? "checked" : "unchecked"}
-                  color="#fff"
-                  onPress={() => {
-                    setChecked(!checked);
-                  }}
-                />
-                <Text
-                  value={"Agree to the terms and conditions"}
-                  variant={"body"}
-                  color="#fff"
-                />
-              </View>
-            )}
-            {Platform.OS === "ios" && (
-              <Checkbox.Item
+              <Checkbox
                 status={checked ? "checked" : "unchecked"}
                 color="#fff"
-                label="Agree to the terms and conditions"
                 onPress={() => {
                   setChecked(!checked);
                 }}
               />
-            )}
-            <Button
-              label="Register"
-              color="#483248"
-              onPress={handleSignup}
-              theme="dark"
+              <Text
+                value={"Agree to the terms and conditions"}
+                variant={"body"}
+                color="#fff"
+              />
+            </View>
+          )}
+          {Platform.OS === "ios" && (
+            <Checkbox.Item
+              status={checked ? "checked" : "unchecked"}
+              color="#fff"
+              label="Agree to the terms and conditions"
+              onPress={() => {
+                setChecked(!checked);
+              }}
             />
-          </View>
-          <View style={styles.row}>
-            <TouchableOpacity onPress={() => handleNavigate("Login")}>
-              <Text value={"Login"} variant={"body"} />
-            </TouchableOpacity>
-          </View>
-        </KeyboardAwareScrollView>
-        <StatusBar style="light" />
-      </ImageBackground>
-    </View>
+          )}
+          <Button
+            label="Register"
+            onPress={handleSignup}
+            variant={"contained"}
+          />
+          <Button
+            label="Already have an account? Login"
+            onPress={() => handleNavigate("Login")}
+            variant={"text"}
+          />
+        </View>
+      </View>
+      <StatusBar style="light" />
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  pattern: {
-    flex: 1,
-    justifyContent: "flex-start",
-    alignItems: "center",
     width: Dimensions.get("window").width,
     height: Dimensions.get("window").height,
   },
+
   logoContainer: {
     alignItems: "center",
   },
@@ -195,17 +191,17 @@ const styles = StyleSheet.create({
     objectFit: "contain",
   },
   section: {
-    // height: "100%",
+    flex: 1,
+    width: "100%",
+    height: "100%",
+    padding: 20,
+    backgroundColor: "rgba(0,0,0, 0.7)",
   },
   row: {
     position: "relative",
     flexDirection: "row",
-    justifyContent: "space-around",
+    justifyContent: "center",
     alignItems: "center",
-    // width: "100%",
-  },
-  input: {
-    flex: 1,
-    margin: 5,
+    width: "100%",
   },
 });

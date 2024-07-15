@@ -226,24 +226,50 @@ export default function ClubNavigator() {
           />
         </>
       ) : (
-        <Stack.Screen
-          name="Login"
-          component={Login}
-          options={{
-            headerShown: true,
-            headerShadowVisible: false,
-            headerTintColor: "#fff",
-            headerStyle: {
-              backgroundColor: "#212529",
-            },
-            headerTitle: (props) => (
-              <Text {...props} style={{ fontWeight: "bold", fontSize: 18 }}>
-                Raha Fest Login
-              </Text>
-            ),
-            headerTitleAlign: "center",
-          }}
-        />
+        <>
+          <Stack.Screen
+            name="Login"
+            component={Login}
+            options={{
+              headerShown: true,
+              headerShadowVisible: false,
+              headerTintColor: "#fff",
+              headerStyle: {
+                backgroundColor: "#212529",
+              },
+              headerTitle: (props) => (
+                <Text
+                  {...props}
+                  style={{ fontWeight: "bold", color: "#fff", fontSize: 18 }}
+                >
+                  Login
+                </Text>
+              ),
+              headerTitleAlign: "center",
+            }}
+          />
+          <Stack.Screen
+            name="Register"
+            component={Register}
+            options={{
+              headerShown: true,
+              headerShadowVisible: false,
+              headerTintColor: "#fff",
+              headerStyle: {
+                backgroundColor: "#212529",
+              },
+              headerTitle: (props) => (
+                <Text
+                  {...props}
+                  style={{ fontWeight: "bold", color: "#fff", fontSize: 18 }}
+                >
+                  Register
+                </Text>
+              ),
+              headerTitleAlign: "center",
+            }}
+          />
+        </>
       )}
     </Stack.Navigator>
   );
