@@ -1,4 +1,11 @@
-import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  StyleSheet,
+  Alert,
+} from "react-native";
 
 export default function MerchCard({ product }) {
   return (
@@ -9,7 +16,9 @@ export default function MerchCard({ product }) {
         <Text style={styles.price}>KES {product.price}</Text>
         <TouchableOpacity
           style={styles.button}
-          onPress={() => alert(`You'll be able to buy ${product.name} soon`)}
+          onPress={() =>
+            Alert.alert(`You'll be able to buy ${product.name} soon`)
+          }
         >
           <Text style={styles.buttonText}>Buy</Text>
         </TouchableOpacity>

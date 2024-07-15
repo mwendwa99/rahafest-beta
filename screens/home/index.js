@@ -2,7 +2,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Text } from "../../components";
 
 import Home from "./Home";
-import Playlist from "./Playlist";
+// import Playlist from "./Playlist";
 import Settings from "./Settings";
 import Faqs from "./Faqs";
 import Checkout from "./Events";
@@ -14,9 +14,9 @@ const Stack = createNativeStackNavigator();
 
 export default function HomeNavigator() {
   return (
-    <Stack.Navigator initialRouteName="Home">
+    <Stack.Navigator initialRouteName="HomePage">
       <Stack.Screen
-        name="Home"
+        name="HomePage"
         component={Home}
         options={{ headerShown: false, headerShadowVisible: false }}
       />
@@ -36,11 +36,11 @@ export default function HomeNavigator() {
           headerTitleAlign: "center",
         }}
       />
-      <Stack.Screen
+      {/* <Stack.Screen
         name="Playlist"
         component={Playlist}
         options={{
-          headerShown: true,
+          headerShown: false,
           headerShadowVisible: false,
           headerTintColor: "#fff",
           headerStyle: {
@@ -51,7 +51,7 @@ export default function HomeNavigator() {
           ),
           headerTitleAlign: "center",
         }}
-      />
+      /> */}
       <Stack.Screen
         name="Checkout"
         component={Checkout}
