@@ -1,6 +1,6 @@
 import "react-native-gesture-handler";
 
-import Routes from "./navigation/routes";
+import Main from "./screens";
 import { NavigationContainer } from "@react-navigation/native";
 import { PaperProvider } from "react-native-paper";
 import { Provider } from "react-redux";
@@ -21,7 +21,7 @@ export default function App() {
         loading={
           <ImageBackground
             source={splash}
-            style={{ flex: 1, justifyContent: "center", height: "100vh" }}
+            style={{ flex: 1, justifyContent: "center" }}
           >
             <StatusBar style="light" />
           </ImageBackground>
@@ -31,7 +31,7 @@ export default function App() {
           <PaperProvider>
             <SafeAreaProvider>
               <RootSiblingParent>
-                <Routes />
+                <Main />
               </RootSiblingParent>
             </SafeAreaProvider>
           </PaperProvider>

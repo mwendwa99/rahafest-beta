@@ -3,9 +3,41 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { BottomNavigation } from "react-native-paper";
 import { CommonActions } from "@react-navigation/native";
 
+import HomeNavigator from "./home";
+import EventNavigator from "./events";
+import ClubNavigator from "./club";
+
 const BottomTab = createBottomTabNavigator();
 
-export default function AppNav({ routes }) {
+export default function App() {
+  const appRoutes = [
+    {
+      key: "HomeNav",
+      name: "Home",
+      component: HomeNavigator,
+      icon_focused: "home",
+      icon_default: "home-outline",
+    },
+    {
+      key: "EventNav",
+      name: "Events",
+      component: EventNavigator,
+      icon_focused: "calendar-multiple-check",
+      icon_default: "calendar-multiple",
+    },
+    {
+      key: "Club",
+      name: "Raha Club",
+      component: ClubNavigator,
+      icon_focused: "cards-club",
+      icon_default: "cards-club-outline",
+    },
+  ];
+
+  return <AppNav routes={appRoutes} />;
+}
+
+function AppNav({ routes }) {
   return (
     <BottomTab.Navigator
       screenOptions={{ headerShown: false }}

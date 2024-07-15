@@ -15,7 +15,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { login } from "../../../redux/auth/authActions";
 import { Input, Button, Text } from "../../../components";
 import { danger, warning } from "../../../utils/toast";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import pattern from "../../../assets/pattern.png";
 // const pattern = require("../../assets/pattern.png");
@@ -31,7 +30,7 @@ export default function Login({ navigation }) {
   useEffect(() => {
     if (error) {
       // console.log(error);
-      danger(error, 2000);
+      danger("error", 2000);
     }
   }, [error]);
 
