@@ -1,9 +1,9 @@
-import { Pressable, Image, Text, StyleSheet } from "react-native";
+import { Pressable, Image, Text, StyleSheet, Alert } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
 
 const AcceptedFriend = ({ index, item, isLoading, Unfriend }) => {
   const goToChat = () => {
-    alert("Chat with " + item.name);
+    Alert.alert("Chat with " + item.name);
     // console.log(item);
   };
 

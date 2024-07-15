@@ -1,12 +1,12 @@
+import React, { useState, useEffect } from "react";
 import { StyleSheet, ImageBackground, View, Text, Button } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { WebView } from "react-native-webview";
-import { useState, useEffect } from "react";
 
-const splash = require("../../assets/splash.png");
+const splash = require("../../../assets/splash.png");
 
-export default function Events() {
+export default function Checkout() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
@@ -48,7 +48,7 @@ export default function Events() {
           <Button title="Retry" onPress={handleLoadStart} />
         </View>
       )}
-      {!loading && !error && (
+      {!error && (
         <View style={styles.webviewContainer}>
           <WebView
             onLoadStart={handleLoadStart}
@@ -56,10 +56,7 @@ export default function Events() {
             onLoadEnd={handleLoad}
             onError={handleError}
             cacheEnabled={true}
-            domStorageEnabled={true}
-            javaScriptEnabled={true}
             originWhitelist={["*"]}
-            androidLayerType="hardware"
             source={{
               html: `
                 <html>
@@ -68,17 +65,20 @@ export default function Events() {
                   </head>
                   <body style="margin: 0;">
                     <iframe
-                      style="border-radius:12px; object-fit:cover; width: 100%; height: 100%;"
-                      src="https://ticketraha.com/events"
+                      style="object-fit:cover; width: 100%; height: 100%;"
+                      src="https://rahafest.com/raha-club"
                       frameBorder="0"
                       allow="fullscreen"
                       loading="lazy"
                     ></iframe>
                   </body>
-                </html>
-              `,
+                </html>`,
             }}
             style={styles.webview}
+            domStorageEnabled={true}
+            javaScriptEnabled={true}
+            renderToHardwareTextureAndroid={true}
+            androidLayerType="hardware"
           />
         </View>
       )}
@@ -96,7 +96,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    height: "100%",
   },
   webviewContainer: {
     flex: 1,

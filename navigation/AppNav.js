@@ -14,6 +14,8 @@ export default function AppNav({ routes }) {
           version={3}
           style={{
             backgroundColor: "#212529",
+            margin: 0,
+            padding: 0,
           }}
           activeIndicatorStyle={{
             backgroundColor: "#212529",
