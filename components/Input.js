@@ -19,7 +19,6 @@ export default function Input({ onChange, type, ...props }) {
 const inputTheme = {
   colors: {
     background: "#e5e4e2",
-    textTransform: "capitalize",
   },
 };
 
