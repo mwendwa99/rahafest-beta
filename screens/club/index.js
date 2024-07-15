@@ -8,6 +8,7 @@ import { Text } from "../../components";
 import DirectMessage from "./chat/DirectMessage";
 import Feed from "./chat/Feed";
 import LiveChat from "./chat/LiveChat";
+import Live from "./chat/Live";
 import Checkout from "../events/Events";
 import Friends from "./friends/Friends";
 import AllUsers from "./friends/AllUsers";
@@ -106,7 +107,7 @@ export default function ClubNavigator({ navigation }) {
       /> */}
       <Stack.Screen
         name="Feed"
-        component={LiveChat}
+        component={Live}
         options={({ navigation }) => ({
           headerShown: false,
           headerShadowVisible: false,

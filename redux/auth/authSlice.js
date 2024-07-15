@@ -1,76 +1,103 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { register, login, getUser, logout } from "./authActions";
+import {
+  registerUser,
+  loginUser,
+  fetchUser,
+  filterUserById,
+  fetchAllUsers,
+} from "./authActions";
 import { PURGE } from "redux-persist";
+// import { toast } from "react-toastify";
 
 const initialState = {
+  allUsers: [],
   user: null,
+  token: null,
   error: null,
   loading: false,
-  token: null,
-  roles: null,
-  message: null,
+  userById: null,
 };
 
 const authSlice = createSlice({
   name: "auth",
   initialState,
-  reducers: {},
+  reducers: {
+    clearError: (state) => {
+      state.error = null;
+    },
+  },
   extraReducers: (builder) => {
-    builder.addCase(register.pending, (state) => {
-      state.loading = true;
-    });
-    builder.addCase(register.fulfilled, (state, action) => {
-      state.loading = false;
-      state.user = action.payload;
-      state.error = null;
-    });
-    builder.addCase(register.rejected, (state, action) => {
-      state.loading = false;
-      state.error = action.error;
-    });
-    builder.addCase(login.pending, (state) => {
-      state.loading = true;
-    });
-    builder.addCase(login.fulfilled, (state, action) => {
-      state.loading = false;
-      state.token = action.payload.token["access"];
-      state.message = action.payload["msg"];
-      state.error = null;
-    });
-    builder.addCase(login.rejected, (state, action) => {
-      state.loading = false;
-      state.error = action.payload;
-    });
-    builder.addCase(getUser.pending, (state) => {
-      state.loading = true;
-    });
-    builder.addCase(getUser.fulfilled, (state, action) => {
-      state.loading = false;
-      state.user = action.payload;
-      state.error = null;
-    });
-    builder.addCase(getUser.rejected, (state, action) => {
-      state.loading = false;
-      state.error = action.error;
-    });
-    builder.addCase(logout.pending, (state) => {
-      state.loading = true;
-    });
-    builder.addCase(logout.fulfilled, (state) => {
-      state.loading = false;
-      state.user = null;
-      state.token = null;
-      state.roles = null;
-      state.error = null;
-    });
-    builder.addCase(logout.rejected, (state, action) => {
-      state.loading = false;
-      state.error = action.error;
-    });
-    builder.addCase(PURGE, () => {
-      return initialState;
-    });
+    builder
+      .addCase(registerUser.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(registerUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload.user;
+        state.token = action.payload.token;
+        state.error = null;
+      })
+      .addCase(registerUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(loginUser.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(loginUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.token = action.payload.token;
+        state.error = null;
+      })
+      .addCase(loginUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(fetchUser.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload;
+        state.error = null;
+      })
+      .addCase(fetchUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(filterUserById.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(filterUserById.fulfilled, (state, action) => {
+        state.loading = false;
+        state.userById = action.payload;
+        state.error = null;
+      })
+      .addCase(filterUserById.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(fetchAllUsers.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchAllUsers.fulfilled, (state, action) => {
+        state.loading = false;
+        state.allUsers = action.payload;
+        state.error = null;
+      })
+      .addCase(fetchAllUsers.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(PURGE, () => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("persist:root");
+        // toast.info("You have been logged out");
+        return initialState;
+      });
   },
 });
+
+export const { clearError } = authSlice.actions;
 
 export default authSlice.reducer;
