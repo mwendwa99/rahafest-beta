@@ -2,27 +2,16 @@ import React from "react";
 import { StyleSheet } from "react-native";
 import { TextInput } from "react-native-paper";
 
-export default function Input({
-  onChange,
-  defaultValue,
-  type,
-  inputStyle,
-  multiline,
-  numberOfLines,
-}) {
+export default function Input({ onChange, type, ...props }) {
   return (
     <TextInput
+      {...props}
+      style={styles.container}
       mode="outlined"
-      placeholder={defaultValue}
-      outlineColor="#fff"
-      textColor="#000000"
-      placeholderTextColor="#71797e"
-      style={inputStyle}
       theme={inputTheme}
       onChangeText={onChange}
       keyboardType={type}
-      multiline={multiline}
-      numberOfLines={numberOfLines}
+      outlineStyle={styles.outline}
     />
   );
 }
@@ -30,5 +19,16 @@ export default function Input({
 const inputTheme = {
   colors: {
     background: "#e5e4e2",
+    textTransform: "capitalize",
   },
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    margin: 5,
+  },
+  outline: {
+    borderRadius: 10,
+  },
+});
