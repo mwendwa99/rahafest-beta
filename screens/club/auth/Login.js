@@ -15,18 +15,19 @@ import { Input, Button, Text } from "../../../components";
 import { danger, warning } from "../../../utils/toast";
 
 import pattern from "../../../assets/pattern.png";
+import { TextInput } from "react-native-paper";
 const logo = require("../../../assets/logo.png");
 
 export default function Login({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const { error, loading } = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
 
   useEffect(() => {
     if (error) {
-      // console.log(error);
       danger("error", 2000);
     }
   }, [error]);
@@ -50,6 +51,7 @@ export default function Login({ navigation }) {
 
     // dispatch(login(loginData));
   };
+
   return (
     <ImageBackground
       source={pattern}
@@ -63,29 +65,37 @@ export default function Login({ navigation }) {
         <View style={styles.section}>
           <View style={styles.row}>
             <Input
-              theme={true}
               onChange={setEmail}
-              inputStyle={{ ...styles.input, width: "100%" }}
               placeholder={"Email"}
-              type="email-address"
+              keyboardType="email-address"
+              inputMode="email"
+              autoComplete="email"
             />
           </View>
           <View style={styles.row}>
             <Input
-              theme={true}
               onChange={(pin) => setPassword(pin)}
-              inputStyle={{ ...styles.input, width: "100%" }}
               placeholder={"Password"}
+              keyboardType="default"
+              autoComplete="password"
+              secureTextEntry={!showPassword}
+              right={
+                <TextInput.Icon
+                  icon={showPassword ? "eye" : "eye-off"}
+                  onPress={() => setShowPassword(!showPassword)}
+                  size={24}
+                />
+              }
             />
           </View>
 
           <Button
-            label={loading ? `loggin in...` : "Login"}
+            label={loading ? `logging in...` : "Login"}
             onPress={handleLogin}
             variant={"contained"}
           />
           <Button
-            label="New here? Login"
+            label="New here? Register"
             onPress={() => handleNavigate("Register")}
             variant={"text"}
           />
@@ -102,7 +112,6 @@ const styles = StyleSheet.create({
     width: Dimensions.get("window").width,
     height: Dimensions.get("window").height,
   },
-
   logoContainer: {
     alignItems: "center",
   },

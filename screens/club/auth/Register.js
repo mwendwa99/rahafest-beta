@@ -9,9 +9,8 @@ import {
 } from "react-native";
 import { ImageBackground } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useDispatch, useSelector } from "react-redux";
-import { Checkbox } from "react-native-paper";
+import { Checkbox, Icon, TextInput } from "react-native-paper";
 
 import { Input, Button, Text } from "../../../components";
 import { danger, success, warning } from "../../../utils/toast";
@@ -26,6 +25,7 @@ export default function Register({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
   const { user, authError } = useSelector((state) => state.auth);
   const [checked, setChecked] = useState(false);
@@ -64,20 +64,23 @@ export default function Register({ navigation }) {
     }
 
     if (password !== confirmPassword) {
-      danger("PINs do not match", 2000);
-      console.log("PINs do not match");
+      danger("passwords do not match", 2000);
+      console.log("passwords do not match");
       return;
     }
 
     const registerData = {
-      name: `${firstName} ${lastName}`,
+      first_name: firstName,
+      last_name: lastName,
       password: password,
-      password2: confirmPassword,
+      password_confirm: confirmPassword,
       email: email,
       tc: checked,
     };
 
-    dispatch(register(registerData));
+    console.log(registerData);
+
+    // dispatch(register(registerData));
   };
   return (
     <ImageBackground
@@ -91,45 +94,46 @@ export default function Register({ navigation }) {
         </View>
         <View style={styles.section}>
           <View style={styles.row}>
-            <Input
-              theme={true}
-              onChange={setFirstName}
-              style={{ ...styles.input, width: "100%" }}
-              placeholder={"First Name"}
-            />
-            <Input
-              theme={true}
-              onChange={setLastName}
-              style={{ ...styles.input, width: "100%" }}
-              placeholder={"Last Name"}
-            />
+            <Input onChange={setFirstName} placeholder={"First Name"} />
+            <Input onChange={setLastName} placeholder={"Last Name"} />
           </View>
           <View style={styles.row}>
             <Input
-              theme={true}
               onChange={setEmail}
-              style={{ ...styles.input, width: "100%" }}
               placeholder={"Email"}
-              type="email-address"
+              keyboardType="email-address"
+              inputMode="email"
+              autoComplete="email"
             />
           </View>
           <View style={styles.row}>
             <Input
-              theme={true}
               onChange={(pin) => setPassword(pin)}
-              style={{ ...styles.input, width: "100%" }}
               placeholder={"Password"}
+              keyboardType="default"
+              secureTextEntry={true}
+              autoComplete="password"
+              right={
+                <TextInput.Icon
+                  icon={showPassword ? "eye" : "eye-off"}
+                  onPress={() => setShowPassword(!showPassword)}
+                />
+              }
             />
           </View>
           <View style={styles.row}>
             <Input
-              theme={true}
               onChange={(pin) => setConfirmPassword(pin)}
-              style={{
-                ...styles.input,
-                width: "100%",
-              }}
               placeholder={"Confirm Password"}
+              keyboardType="default"
+              autoComplete="password"
+              secureTextEntry={showPassword}
+              right={
+                <TextInput.Icon
+                  icon={showPassword ? "eye" : "eye-off"}
+                  onPress={() => setShowPassword(!showPassword)}
+                />
+              }
             />
           </View>
           {Platform.OS === "android" && (
