@@ -1,17 +1,11 @@
 import { useState, useEffect } from "react";
-import {
-  StyleSheet,
-  View,
-  Image,
-  TouchableOpacity,
-  StatusBar,
-  Dimensions,
-} from "react-native";
+import { StyleSheet, View, Image, StatusBar, Dimensions } from "react-native";
 import { ImageBackground } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
-import { login } from "../../../redux/auth/authActions";
-import { Input, Button, Text } from "../../../components";
+import { loginUser } from "../../../redux/auth/authActions";
+import { clearError } from "../../../redux/auth/authSlice";
+import { Input, Button } from "../../../components";
 import { danger, warning } from "../../../utils/toast";
 
 import pattern from "../../../assets/pattern.png";
@@ -22,13 +16,18 @@ export default function Login({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const { error, loading } = useSelector((state) => state.auth);
+  const { error, loading, user, token } = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
 
   useEffect(() => {
+    dispatch(clearError());
+  }, []);
+
+  useEffect(() => {
     if (error) {
-      danger("error", 2000);
+      console.log(error);
+      danger(error["message"], 2000);
     }
   }, [error]);
 
@@ -47,10 +46,12 @@ export default function Login({ navigation }) {
       password: password,
     };
 
-    console.log(loginData);
+    // console.log(loginData);
 
-    // dispatch(login(loginData));
+    dispatch(loginUser(loginData));
   };
+
+  console.log({ user, error, token });
 
   return (
     <ImageBackground

@@ -5,14 +5,16 @@ export const fetchLiveMessages = createAsyncThunk(
   "chat/fetchLiveMessages",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await authInstance.get(`messages`);
-      return response.data;
+      const response = await authInstance.get("messages");
+      const activeMessages = response.data.filter(
+        (message) => message.is_active
+      );
+      return activeMessages;
     } catch (err) {
       return rejectWithValue(err.response.data);
     }
   }
 );
-
 export const sendLiveMessage = createAsyncThunk(
   "chat/sendLiveMessage",
   async (message, { rejectWithValue }) => {

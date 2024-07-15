@@ -1,8 +1,11 @@
-import { StyleSheet, View, Text, FlatList, Alert } from "react-native";
-import NavCard from "../../../components/NavCard";
+import { StyleSheet, View, FlatList, Alert } from "react-native";
+import { NavCard, Text } from "../../../components";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { fetchUser } from "../../../redux/auth/authActions";
 
 const navigationItems = [
-  { id: "1", icon: "globe", title: "Live Chat", link: "Feed" },
+  { id: "1", icon: "globe", title: "Live Chat", link: "Live" },
   { id: "2", icon: "users", title: "Friends", link: "Friends" },
   { id: "3", icon: "tags", title: "Merchandise", link: "Merchandise" },
   { id: "4", icon: "camera-retro", title: "Media", link: "Media" },
@@ -10,12 +13,25 @@ const navigationItems = [
   // { id: "6", icon: "newspaper-o", title: "News", link: "News" },
 ];
 
-const userName = "Raha Fan";
-const memberDate = "2024";
 const rahaClubDescription =
   "Welcome to Raha Club, your exclusive RahaFest companion";
 
 export default function Landing({ navigation }) {
+  const { user, token } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (!token) {
+      navigation.navigate("Login");
+    }
+  }, [token]);
+
+  useEffect(() => {
+    if (!user && token) {
+      dispatch(fetchUser());
+    }
+  }, [token]);
+
   const handlePress = (link) => {
     if (link === "Friends" || link === "Media") {
       Alert.alert(
@@ -27,16 +43,18 @@ export default function Landing({ navigation }) {
     }
   };
 
+  // console.log(user);
+
   return (
     <View style={styles.container}>
       <View>
-        <Text style={{ fontSize: 24, fontWeight: "bold" }}>
-          Hello there {userName}
-        </Text>
+        <Text
+          value={`Hello, ${user["first_name"]}`}
+          variant="subtitle"
+          color="#000"
+        />
 
-        <Text style={{ fontSize: 16, marginTop: 16 }}>
-          {rahaClubDescription}
-        </Text>
+        <Text value={rahaClubDescription} variant="body" color="#000" />
       </View>
 
       <FlatList

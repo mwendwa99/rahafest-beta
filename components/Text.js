@@ -1,14 +1,9 @@
-import { Text, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
+import { Text } from "react-native-paper";
 
-export default function RNText({ value, variant, color, textStyle }) {
+export default function RNText({ value, variant, style, ...props }) {
   return (
-    <Text
-      style={{
-        ...styles[variant],
-        color: color ? color : "#fafafa",
-        ...textStyle,
-      }}
-    >
+    <Text {...props} style={[styles[variant], style]}>
       {value}
     </Text>
   );
