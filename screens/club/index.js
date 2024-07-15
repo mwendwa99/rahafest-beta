@@ -1,9 +1,11 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
-import { Text } from "react-native";
-import { FontAwesome5 } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { fetchUser } from "../../redux/auth/authActions";
+import { StyleSheet, View } from "react-native";
+
+import { Text } from "../../components";
 
 import DirectMessage from "./chat/DirectMessage";
 import Live from "./chat/Live";
@@ -16,7 +18,6 @@ import Merchandise from "./landing/Merchandise";
 import Media from "./landing/Media";
 import EventDeals from "./landing/Deals";
 import News from "./landing/News";
-import AuthNav from "./auth";
 import Login from "./auth/Login";
 import Register from "./auth/Register";
 
@@ -24,11 +25,18 @@ const Stack = createNativeStackNavigator();
 
 export default function ClubNavigator() {
   const navigation = useNavigation();
-  const { token } = useSelector((state) => state.auth);
+  const { token, allUsers } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (!token) {
       navigation.navigate("Login");
+    }
+  }, [token]);
+
+  useEffect(() => {
+    if (token) {
+      dispatch(fetchUser());
     }
   }, [token]);
 
@@ -47,24 +55,36 @@ export default function ClubNavigator() {
                 backgroundColor: "#212529",
               },
               headerTitle: (props) => (
-                <Text {...props} style={{ fontWeight: "bold", fontSize: 18 }}>
-                  Raha Club
-                </Text>
+                <Text value={"Raha Club"} {...props} variant={"subtitle"} />
               ),
               headerTitleAlign: "center",
             }}
           />
           <Stack.Screen
-            name="Feed"
+            name="Live"
             component={Live}
             options={({ navigation }) => ({
-              headerShown: false,
+              headerShown: true,
               headerShadowVisible: false,
               headerTintColor: "#fff",
               headerStyle: {
                 backgroundColor: "#212529",
               },
               headerTitleAlign: "center",
+              headerTitle: (props) => (
+                <View style={styles.row}>
+                  <Text
+                    value={"Live Chat"}
+                    variant={"subtitle"}
+                    style={styles.headerTitleText}
+                  />
+                  <Text
+                    value={`(${allUsers.length} online)`}
+                    style={styles.onlineCount}
+                    variant={"body"}
+                  />
+                </View>
+              ),
             })}
           />
           <Stack.Screen
@@ -274,3 +294,24 @@ export default function ClubNavigator() {
     </Stack.Navigator>
   );
 }
+
+const styles = StyleSheet.create({
+  row: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    // width: "100%",
+    // paddingHorizontal: 16,
+  },
+  headerTitleText: {
+    color: "#fff",
+    // flex: 1,
+    textAlign: "center",
+    // marginRight: "auto",
+  },
+  onlineCount: {
+    color: "#fff",
+    textAlign: "right",
+  },
+});

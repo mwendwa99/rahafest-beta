@@ -1,5 +1,6 @@
 import { authInstance } from "../../services/api.service";
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const registerUser = createAsyncThunk(
   "auth/registerUser",
@@ -20,7 +21,8 @@ export const loginUser = createAsyncThunk(
       const response = await authInstance.post("login", user);
       // console.log(response.data.data);
       // save token to local storage
-      localStorage.setItem("token", response.data.data.token);
+      // localStorage.setItem("token", response.data.data.token);
+      await AsyncStorage.setItem("token", response.data.data.token);
       return response.data.data;
     } catch (error) {
       return rejectWithValue(error.response.data);

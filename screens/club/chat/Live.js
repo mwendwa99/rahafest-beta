@@ -93,12 +93,10 @@ export default function LiveMessages({ sessionId }) {
     scrollToBottom();
   }, [liveMessages]);
 
+  // console.log(liveMessages);
+
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Live Chat</Text>
-        <Text style={styles.activeText}>active ({liveMessages?.length})</Text>
-      </View>
       <FlatList
         ref={listRef}
         data={liveMessages}
@@ -157,6 +155,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    margin: 16,
   },
   headerText: {
     fontSize: 24,
