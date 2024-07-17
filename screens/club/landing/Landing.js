@@ -1,4 +1,5 @@
 import { StyleSheet, View, FlatList, Alert } from "react-native";
+import { ActivityIndicator } from "react-native-paper";
 import { NavCard, Text } from "../../../components";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
@@ -9,7 +10,7 @@ const navigationItems = [
   { id: "2", icon: "users", title: "Friends", link: "Friends" },
   { id: "3", icon: "tags", title: "Merchandise", link: "Merchandise" },
   { id: "4", icon: "camera-retro", title: "Media", link: "Media" },
-  // { id: "5", icon: "ticket", title: "Event Deals", link: "Checkout" },
+  { id: "5", icon: "user", title: "Account", link: "Profile" },
   // { id: "6", icon: "newspaper-o", title: "News", link: "News" },
 ];
 
@@ -17,8 +18,10 @@ const rahaClubDescription =
   "Welcome to Raha Club, your exclusive RahaFest companion";
 
 export default function Landing({ navigation }) {
-  const { user, token } = useSelector((state) => state.auth);
+  const { user, token, loading } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
+
+  // console.log(user);
 
   useEffect(() => {
     if (!token) {
@@ -43,13 +46,21 @@ export default function Landing({ navigation }) {
     }
   };
 
+  if (loading) {
+    return (
+      <View style={styles.loader}>
+        <ActivityIndicator size="large" color="orange" />
+      </View>
+    );
+  }
+
   // console.log(user);
 
   return (
     <View style={styles.container}>
       <View>
         <Text
-          value={`Hello, ${user["first_name"]}`}
+          value={`Hello, ${user?.first_name || ""}`}
           variant="subtitle"
           color="#000"
         />
@@ -79,6 +90,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
+  },
+  loader: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
   grid: {
     justifyContent: "center",
