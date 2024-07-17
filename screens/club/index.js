@@ -10,7 +10,8 @@ import { Text } from "../../components";
 import DirectMessage from "./chat/DirectMessage";
 import Live from "./chat/Live";
 import Checkout from "../events/Events";
-import Friends from "./friends/Friends";
+import Friends from "./friends";
+import Account from "../account";
 import AllUsers from "./friends/AllUsers";
 import Messages from "./chat/Messages";
 import Landing from "./landing/Landing";
@@ -249,6 +250,27 @@ export default function ClubNavigator() {
                 <Text {...props} style={{ fontWeight: "bold", fontSize: 18 }}>
                   Raha Fest News
                 </Text>
+              ),
+              headerTitleAlign: "center",
+            }}
+          />
+          <Stack.Screen
+            name="Account"
+            component={Account}
+            options={{
+              headerShown: true,
+              headerShadowVisible: false,
+              headerTintColor: "#fff",
+              headerStyle: {
+                backgroundColor: "#212529",
+              },
+              headerTitle: (props) => (
+                <Text
+                  value={"Account"}
+                  {...props}
+                  variant={"subtitle"}
+                  style={{ color: "#fff" }}
+                />
               ),
               headerTitleAlign: "center",
             }}

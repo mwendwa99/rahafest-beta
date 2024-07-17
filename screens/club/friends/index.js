@@ -1,15 +1,23 @@
 import { FlatList, SafeAreaView, Text, View } from "react-native";
 import FriendRequest from "../../../components";
 import AcceptedFriend from "../../../components";
-import { useRef, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useRef, useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchPendingFriendRequests } from "../../../redux/friends/friendActions";
 // const scrollViewRef = useRef(null);
 
 export default function Friends() {
   const [isAccepted, setIsAccepted] = useState(false);
   const [friendRequests, setFriendRequests] = useState([]);
   const [friends, setFriends] = useState([]);
+  const { pendingRequests } = useSelector((state) => state.friends);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchPendingFriendRequests());
+  }, []);
+
+  console.log(pendingRequests);
 
   const scrollToBottom = () => {
     if (scrollViewRef.current) {

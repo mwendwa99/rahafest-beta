@@ -10,7 +10,7 @@ const navigationItems = [
   { id: "2", icon: "users", title: "Friends", link: "Friends" },
   { id: "3", icon: "tags", title: "Merchandise", link: "Merchandise" },
   { id: "4", icon: "camera-retro", title: "Media", link: "Media" },
-  { id: "5", icon: "user", title: "Account", link: "Profile" },
+  { id: "5", icon: "user", title: "Account", link: "Account" },
   // { id: "6", icon: "newspaper-o", title: "News", link: "News" },
 ];
 
@@ -36,7 +36,7 @@ export default function Landing({ navigation }) {
   }, [token]);
 
   const handlePress = (link) => {
-    if (link === "Friends" || link === "Media") {
+    if (link === "Media") {
       Alert.alert(
         "Coming Soon!",
         "You will be able to interact with friends stay tuned for updates!"

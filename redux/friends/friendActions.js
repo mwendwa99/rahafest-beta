@@ -1,40 +1,37 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import {
-  GetAcceptedFriends,
-  GetFriendRequest,
-  SendFriendRequestApi,
-} from "../../services/friend.service";
+import { authInstance } from "../../services/api.service";
 
-export const getFriends = createAsyncThunk(
-  "friends/getFriends",
-  (token, { rejectWithValue }) => {
+export const fetchPendingFriendRequests = createAsyncThunk(
+  "friends/fetchPendingFriendRequests",
+  async (_, { rejectWithValue }) => {
     try {
-      return GetAcceptedFriends(token);
-    } catch (error) {
-      return rejectWithValue(error.message);
+      const response = await authInstance.get("unaccepted-friendship-requests");
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(err.response.data);
     }
   }
 );
-
-export const getFriendsRequests = createAsyncThunk(
-  "friends/getFriendRequest",
-  (token, { rejectWithValue }) => {
-    try {
-      return GetFriendRequest(token);
-    } catch (error) {
-      return rejectWithValue(error.message);
-    }
-  }
-);
-
 export const sendFriendRequest = createAsyncThunk(
   "friends/sendFriendRequest",
-  ({ token, data }, { rejectWithValue }) => {
+  async (data, { rejectWithValue }) => {
     try {
-      //   console.log("data", data);
-      return SendFriendRequestApi(token, data);
-    } catch (error) {
-      return rejectWithValue(error.message);
+      const response = await authInstance.post(`request-friendship`, data);
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export const fetchFriends = createAsyncThunk(
+  "friends/fetchFriends",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await authInstance.get("accepted-friendships");
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(err.response.data);
     }
   }
 );
