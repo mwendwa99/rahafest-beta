@@ -4,13 +4,11 @@ import {
   Text,
   StyleSheet,
   TextInput,
-  Button,
-  ScrollView,
   SafeAreaView,
   FlatList,
   TouchableOpacity,
 } from "react-native";
-import { Avatar } from "react-native-paper";
+import { Avatar, IconButton } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchLiveMessages,
@@ -19,15 +17,20 @@ import {
 import { fetchAllUsers } from "../../../redux/auth/authActions";
 import { formatDate } from "../../../utils/helper";
 import { useNavigation } from "@react-navigation/native";
+import { clearError } from "../../../redux/auth/authSlice";
 
 export default function LiveMessages({ sessionId }) {
   const dispatch = useDispatch();
-  const { liveMessages } = useSelector((state) => state.chat);
+  const { liveMessages, loading } = useSelector((state) => state.chat);
   const [currentMessage, setCurrentMessage] = useState("");
   const user = useSelector((state) => state.auth.user);
   const allUsers = useSelector((state) => state.auth.allUsers);
   const navigation = useNavigation();
   const listRef = useRef(null); // Ref for scrolling
+
+  useEffect(() => {
+    dispatch(clearError());
+  }, []);
 
   // If no user is present, redirect to login
   useEffect(() => {
@@ -71,6 +74,8 @@ export default function LiveMessages({ sessionId }) {
       sender: user.id,
       content: currentMessage,
     };
+
+    // console.log(newLiveMessage);
 
     dispatch(sendLiveMessage(newLiveMessage));
     setCurrentMessage("");
@@ -138,8 +143,14 @@ export default function LiveMessages({ sessionId }) {
           placeholderTextColor="#999"
           value={currentMessage}
           onChangeText={setCurrentMessage}
+          disabled={loading}
         />
-        <Button title="Send" onPress={handleSubmit} />
+        <IconButton
+          mode="contained-tonal"
+          icon={loading ? "timer-sand" : "send"}
+          size={20}
+          onPress={handleSubmit}
+        />
       </View>
     </SafeAreaView>
   );

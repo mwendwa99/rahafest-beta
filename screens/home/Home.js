@@ -57,7 +57,11 @@ export default function Home({ navigation }) {
             <TouchableOpacity onPress={toggleModal}>
               <ImageBackground source={blob} style={styles.blob}>
                 <Entypo name="mobile" size={40} color="#fff" />
-                <Text variant="small" value={"Socials"} color="#fff" />
+                <Text
+                  variant="small"
+                  value={"Socials"}
+                  style={{ color: "#fff" }}
+                />
               </ImageBackground>
             </TouchableOpacity>
             <TouchableOpacity
@@ -65,7 +69,11 @@ export default function Home({ navigation }) {
             >
               <ImageBackground source={blob} style={styles.blob}>
                 <MaterialCommunityIcons name="ticket" size={40} color="#fff" />
-                <Text variant="small" value={"Buy Tickets"} color="#fff" />
+                <Text
+                  variant="small"
+                  value={"Buy Tickets"}
+                  style={{ color: "#fff" }}
+                />
               </ImageBackground>
             </TouchableOpacity>
           </View>

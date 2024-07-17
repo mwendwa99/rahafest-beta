@@ -55,7 +55,12 @@ export default function ClubNavigator() {
                 backgroundColor: "#212529",
               },
               headerTitle: (props) => (
-                <Text value={"Raha Club"} {...props} variant={"subtitle"} />
+                <Text
+                  value={"Raha Club"}
+                  {...props}
+                  variant={"subtitle"}
+                  style={{ color: "#fff" }}
+                />
               ),
               headerTitleAlign: "center",
             }}
@@ -78,8 +83,12 @@ export default function ClubNavigator() {
                     variant={"subtitle"}
                     style={styles.headerTitleText}
                   />
+                </View>
+              ),
+              headerRight: () => (
+                <View style={styles.row}>
                   <Text
-                    value={`(${allUsers.length} online)`}
+                    value={`${allUsers.length} members`}
                     style={styles.onlineCount}
                     variant={"body"}
                   />
@@ -301,17 +310,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    // width: "100%",
-    // paddingHorizontal: 16,
   },
   headerTitleText: {
     color: "#fff",
-    // flex: 1,
     textAlign: "center",
-    // marginRight: "auto",
   },
   onlineCount: {
-    color: "#fff",
+    color: "limegreen",
     textAlign: "right",
   },
 });
