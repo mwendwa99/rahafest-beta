@@ -1,14 +1,15 @@
 import { createSlice } from "@reduxjs/toolkit";
 import {
-  getFriends,
-  getFriendsRequests,
+  fetchFriends,
+  fetchPendingFriendRequests,
   sendFriendRequest,
 } from "./friendActions";
 
 const initialState = {
   friends: null,
+  pendingRequests: null,
   sentFriendRequest: null,
-  friendError: null,
+  error: null,
   loading: false,
 };
 
@@ -17,44 +18,44 @@ const friendsSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(getFriends.pending, (state) => {
+    builder.addCase(fetchFriends.pending, (state) => {
       state.loading = true;
-      state.friendError = null;
+      state.error = null;
     });
-    builder.addCase(getFriends.fulfilled, (state, action) => {
+    builder.addCase(fetchFriends.fulfilled, (state, action) => {
       state.loading = false;
       state.friends = action.payload;
-      state.friendError = null;
+      state.error = null;
     });
-    builder.addCase(getFriends.rejected, (state, action) => {
+    builder.addCase(fetchFriends.rejected, (state, action) => {
       state.loading = false;
-      state.friendError = action.payload;
+      state.error = action.payload;
     });
-    builder.addCase(getFriendsRequests.pending, (state) => {
+    builder.addCase(fetchPendingFriendRequests.pending, (state) => {
       state.loading = true;
-      state.friendError = null;
+      state.error = null;
     });
-    builder.addCase(getFriendsRequests.fulfilled, (state, action) => {
+    builder.addCase(fetchPendingFriendRequests.fulfilled, (state, action) => {
       state.loading = false;
-      state.friends = action.payload;
-      state.friendError = null;
+      state.pendingRequests = action.payload;
+      state.error = null;
     });
-    builder.addCase(getFriendsRequests.rejected, (state, action) => {
+    builder.addCase(fetchPendingFriendRequests.rejected, (state, action) => {
       state.loading = false;
-      state.friendError = action.payload;
+      state.error = action.payload;
     });
     builder.addCase(sendFriendRequest.pending, (state) => {
       state.loading = true;
-      state.friendError = null;
+      state.error = null;
     });
     builder.addCase(sendFriendRequest.fulfilled, (state, action) => {
       state.loading = false;
       state.sentFriendRequest = action.payload;
-      state.friendError = null;
+      state.error = null;
     });
     builder.addCase(sendFriendRequest.rejected, (state, action) => {
       state.loading = false;
-      state.friendError = action.payload;
+      state.error = action.payload;
     });
   },
 });

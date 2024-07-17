@@ -26,9 +26,13 @@ const styles = StyleSheet.create({
   contained: {
     backgroundColor: "#B9052C",
     margin: 10,
+    color: "#fff",
   },
   text: {
     margin: 10,
+  },
+  containedLabel: {
+    color: "white",
   },
   textLabel: {
     color: "white",
