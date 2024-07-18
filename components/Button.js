@@ -25,11 +25,14 @@ export default function ButtonComponent({
 const styles = StyleSheet.create({
   contained: {
     backgroundColor: "#B9052C",
-    margin: 10,
+    marginVertical: 10,
     color: "#fff",
   },
   text: {
-    margin: 10,
+    marginVertical: 10,
+  },
+  outlined: {
+    marginVertical: 10,
   },
   containedLabel: {
     color: "white",

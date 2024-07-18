@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { fetchUser } from "../../redux/auth/authActions";
 import { StyleSheet, View } from "react-native";
+import { clearError } from "../../redux/auth/authSlice";
 
 import { Text } from "../../components";
 
@@ -21,13 +22,26 @@ import EventDeals from "./landing/Deals";
 import News from "./landing/News";
 import Login from "./auth/Login";
 import Register from "./auth/Register";
+import { persistor } from "../../redux/store";
+import { warning } from "../../utils/toast";
 
 const Stack = createNativeStackNavigator();
 
 export default function ClubNavigator() {
   const navigation = useNavigation();
-  const { token, allUsers } = useSelector((state) => state.auth);
+  const { token, allUsers, error } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(clearError());
+  }, []);
+
+  useEffect(() => {
+    if (error && error.message === "Permission denied") {
+      warning("please login again!", 2000);
+      persistor.purge();
+    }
+  }, [error]);
 
   useEffect(() => {
     if (!token) {

@@ -7,6 +7,7 @@ import {
   fetchAllUsers,
 } from "./authActions";
 import { PURGE } from "redux-persist";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 // import { toast } from "react-toastify";
 
 const initialState = {
@@ -90,8 +91,8 @@ const authSlice = createSlice({
         state.error = action.payload;
       })
       .addCase(PURGE, () => {
-        localStorage.removeItem("token");
-        localStorage.removeItem("persist:root");
+        AsyncStorage.removeItem("token");
+        AsyncStorage.removeItem("persist:root");
         // toast.info("You have been logged out");
         return initialState;
       });

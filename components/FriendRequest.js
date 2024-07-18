@@ -1,15 +1,24 @@
 // import { useNavigation } from "@react-navigation/native";
 import React from "react";
-import { Text, Pressable, Image } from "react-native";
+import { Text, Pressable, View, StyleSheet } from "react-native";
+import { Avatar, IconButton } from "react-native-paper";
 
-const FriendRequest = ({
-  item,
-  friendRequests,
-  setFriendRequests,
-  acceptRequest,
-  isAccepted,
-  Unfriend,
-}) => {
+const FriendRequest = ({ data }) => {
+  console.log("s", data);
+
+  const firstName = data?.friendDetails["first_name"] || "";
+  const lastName = data?.friendDetails["last_name"] || "";
+  const initials = (firstName[0] || "") + (lastName[0] || "");
+  // const isAccepted = data?.is_accepted || false;
+  const isAccepted = false;
+
+  const handleAcceptFriend = () => {
+    console.log("accepted");
+  };
+  const handleCancelFriend = () => {
+    console.log("cancelled");
+  };
+
   return (
     <Pressable
       style={{
@@ -19,34 +28,42 @@ const FriendRequest = ({
         marginVertical: 10,
       }}
     >
-      <Image
-        style={{ width: 50, height: 50, borderRadius: 25 }}
-        source={{ uri: item.image }}
-      />
+      <Avatar.Text size={50} label={initials} />
 
       <Text
         style={{ fontSize: 15, fontWeight: "bold", marginLeft: 10, flex: 1 }}
       >
-        {item?.name} sent you a friend request!!
+        {firstName} sent you a friend request!
       </Text>
 
       {isAccepted ? (
-        <Pressable
-          onPress={() => Unfriend(item._id)}
-          style={{ backgroundColor: "#FF6347", padding: 10, borderRadius: 6 }}
-        >
-          <Text style={{ textAlign: "center", color: "white" }}>Unfriend</Text>
-        </Pressable>
+        <View>
+          <IconButton icon={"cancel"} mode="contained" />
+        </View>
       ) : (
-        <Pressable
-          onPress={() => acceptRequest(item._id)}
-          style={{ backgroundColor: "#0066b2", padding: 10, borderRadius: 6 }}
-        >
-          <Text style={{ textAlign: "center", color: "white" }}>Accept</Text>
-        </Pressable>
+        <View style={styles.row}>
+          <IconButton
+            icon={"check"}
+            mode="contained"
+            iconColor="green"
+            onPress={handleAcceptFriend}
+          />
+          <IconButton
+            icon={"cancel"}
+            mode="contained"
+            onPress={handleCancelFriend}
+          />
+        </View>
+        // <ButtonComponent variant={"contained"} icon="check" />
       )}
     </Pressable>
   );
 };
 
 export default FriendRequest;
+
+const styles = StyleSheet.create({
+  row: {
+    flexDirection: "row",
+  },
+});
