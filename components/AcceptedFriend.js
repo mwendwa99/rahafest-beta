@@ -1,61 +1,70 @@
-import { Pressable, Image, Text, StyleSheet, Alert } from "react-native";
-import { ActivityIndicator } from "react-native-paper";
+// import { useNavigation } from "@react-navigation/native";
+import React from "react";
+import { View, StyleSheet, Alert } from "react-native";
+import { Avatar, IconButton } from "react-native-paper";
+import { acceptFriendRequest } from "../redux/friends/friendActions";
+import { useDispatch } from "react-redux";
+import { success } from "../utils/toast";
+import Text from "./Text";
+import { formatDate } from "../utils/helper";
 
-const AcceptedFriend = ({ index, item, isLoading, Unfriend }) => {
-  const goToChat = () => {
-    Alert.alert("Chat with " + item.name);
-    // console.log(item);
+const FriendRequest = ({ data }) => {
+  const dispatch = useDispatch();
+  console.log("s", data);
+
+  const firstName = data?.friendDetails["first_name"] || "";
+  const lastName = data?.friendDetails["last_name"] || "";
+  const email = data?.friendDetails["email"] || "";
+  const createdAt = data?.created_at || "";
+  const initials = (firstName[0] || "") + (lastName[0] || "");
+  const isAccepted = data?.is_accepted || false;
+  const friendId = data?.friend || null;
+  // const isAccepted = false;
+
+  console.log();
+
+  const handleCancelFriend = () => {
+    console.log("cancelled", friendId);
+    Alert.alert(
+      "Cancel Friend Request",
+      `friend with ID ${friendId} will be removed from your friend list`
+    );
   };
 
   return (
-    <Pressable key={index} style={styles.mainPressable} onPress={goToChat}>
-      <Image
-        style={{
-          width: 50,
-          height: 50,
-          borderRadius: 25,
-          backgroundColor: "wheat",
-        }}
-        source={{ uri: item.image }}
-      />
-
-      <Text style={{ fontSize: 15, marginLeft: 10, flex: 1 }}>
-        {item?.name}
-      </Text>
-
-      <Pressable
-        onPress={() => Unfriend(item)}
-        style={styles.unfriendPressable}
-      >
-        {isLoading ? (
-          <ActivityIndicator
-            size="small"
-            color="white"
-            style={{ marginRight: 10 }}
-          />
-        ) : (
-          <Text style={{ textAlign: "center", color: "white" }}>Unfriend</Text>
-        )}
-      </Pressable>
-    </Pressable>
+    <View
+      style={{
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        width: "100%",
+        marginVertical: 10,
+      }}
+    >
+      <Avatar.Text size={50} label={initials} />
+      <View>
+        <Text value={`${firstName} ${lastName}`} variant={"body"} />
+        <Text value={`${email}`} variant={"small"} />
+        <Text
+          value={`friend since ${formatDate(createdAt)}`}
+          variant={"small"}
+        />
+      </View>
+      {isAccepted && (
+        <IconButton
+          icon={"delete"}
+          mode="contained"
+          onPress={handleCancelFriend}
+        />
+      )}
+    </View>
   );
 };
 
+export default FriendRequest;
+
 const styles = StyleSheet.create({
-  mainPressable: {
+  row: {
     flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginVertical: 10,
-    borderBottomWidth: 0.34,
-    borderBottomColor: "gray",
-    paddingBottom: 10,
-  },
-  unfriendPressable: {
-    backgroundColor: "#FF6347",
-    padding: 10,
-    borderRadius: 6,
   },
 });
-
-export default AcceptedFriend;

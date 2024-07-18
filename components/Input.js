@@ -24,8 +24,8 @@ const inputTheme = {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    margin: 5,
+    width: "100%",
+    marginVertical: 5,
   },
   outline: {
     borderRadius: 10,
