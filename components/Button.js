@@ -26,13 +26,16 @@ const styles = StyleSheet.create({
   contained: {
     backgroundColor: "#B9052C",
     marginVertical: 10,
+    marginHorizontal: 2,
     color: "#fff",
   },
   text: {
     marginVertical: 10,
+    marginHorizontal: 2,
   },
   outlined: {
     marginVertical: 10,
+    marginHorizontal: 2,
   },
   containedLabel: {
     color: "white",

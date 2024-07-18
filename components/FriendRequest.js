@@ -1,26 +1,35 @@
 // import { useNavigation } from "@react-navigation/native";
 import React from "react";
-import { Text, Pressable, View, StyleSheet } from "react-native";
+import { Text, View, StyleSheet } from "react-native";
 import { Avatar, IconButton } from "react-native-paper";
+import { acceptFriendRequest } from "../redux/friends/friendActions";
+import { useDispatch } from "react-redux";
+import { success } from "../utils/toast";
 
 const FriendRequest = ({ data }) => {
-  console.log("s", data);
+  const dispatch = useDispatch();
+  // console.log("s", data);
 
   const firstName = data?.friendDetails["first_name"] || "";
   const lastName = data?.friendDetails["last_name"] || "";
   const initials = (firstName[0] || "") + (lastName[0] || "");
-  // const isAccepted = data?.is_accepted || false;
-  const isAccepted = false;
+  const isAccepted = data?.is_accepted || false;
+  const friendId = data?.friend || null;
+  // const isAccepted = false;
+
+  console.log();
 
   const handleAcceptFriend = () => {
-    console.log("accepted");
+    dispatch(acceptFriendRequest({ id: friendId }));
+    success("Friend request accepted", 2000);
+    // console.log("accepted", friendId);
   };
   const handleCancelFriend = () => {
     console.log("cancelled");
   };
 
   return (
-    <Pressable
+    <View
       style={{
         flexDirection: "row",
         alignItems: "center",
@@ -56,7 +65,7 @@ const FriendRequest = ({ data }) => {
         </View>
         // <ButtonComponent variant={"contained"} icon="check" />
       )}
-    </Pressable>
+    </View>
   );
 };
 

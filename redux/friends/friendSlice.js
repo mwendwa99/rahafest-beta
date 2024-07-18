@@ -3,12 +3,14 @@ import {
   fetchFriends,
   fetchPendingFriendRequests,
   sendFriendRequest,
+  acceptFriendRequest,
 } from "./friendActions";
 
 const initialState = {
   friends: null,
   pendingRequests: null,
   sentFriendRequest: null,
+  acceptedRequest: null,
   error: null,
   loading: false,
 };
@@ -54,6 +56,19 @@ const friendsSlice = createSlice({
       state.error = null;
     });
     builder.addCase(sendFriendRequest.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    });
+    builder.addCase(acceptFriendRequest.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    });
+    builder.addCase(acceptFriendRequest.fulfilled, (state, action) => {
+      state.loading = false;
+      state.acceptedRequest = action.payload;
+      state.error = null;
+    });
+    builder.addCase(acceptFriendRequest.rejected, (state, action) => {
       state.loading = false;
       state.error = action.payload;
     });
