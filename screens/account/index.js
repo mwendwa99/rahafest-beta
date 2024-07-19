@@ -218,35 +218,33 @@ export default function Account({ navigation }) {
         </View>
         <View style={styles.column}>
           <Text value={`Friends`} variant={"subtitle"} />
+          <ScrollView
+            nestedScrollEnabled
+            style={{ maxHeight: 200, width: "100%" }}
+          >
+            {friends && friends.length > 0 ? (
+              friends.map((item, index) => (
+                <AcceptedFriend key={index} data={item} />
+              ))
+            ) : (
+              <Text value={"You have no friends"} variant={"body"} />
+            )}
+          </ScrollView>
 
-          {friends && friends.length > 0 ? (
-            <FlatList
-              data={friends}
-              renderItem={renderFriend}
-              keyExtractor={(item, index) => index}
-              // horizontal
-              ListEmptyComponent={
-                <Text value={"You have no friends"} variant={"body"} />
-              }
-              nestedScrollEnabled
-            />
-          ) : (
-            <Text value={"You have no friends"} variant={"body"} />
-          )}
           <Divider />
-          {pendingRequests && pendingRequests.length > 0 ? (
-            <FlatList
-              data={pendingRequests}
-              renderItem={renderPendingRequest}
-              keyExtractor={(item, index) => index}
-              ListEmptyComponent={
-                <Text value={"You have no pending requests"} variant={"body"} />
-              }
-              nestedScrollEnabled
-            />
-          ) : (
-            <Text value={"You have no pending requests"} variant={"body"} />
-          )}
+          <ScrollView
+            nestedScrollEnabled
+            style={{ maxHeight: 200, width: "100%" }}
+          >
+            <Text value={`Pending Requests`} variant={"subtitle"} />
+            {pendingRequests && pendingRequests.length > 0 ? (
+              pendingRequests.map((item, index) => (
+                <FriendRequest key={index} data={item} />
+              ))
+            ) : (
+              <Text value={"You have no pending requests"} variant={"body"} />
+            )}
+          </ScrollView>
         </View>
         <View style={styles.button}>
           <Button
@@ -283,8 +281,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     elevation: 1,
-    height: "100%",
-    maxHeight: 300,
+    height: 400,
     width: "100%",
   },
   button: {
