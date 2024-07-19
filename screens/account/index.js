@@ -47,7 +47,7 @@ export default function Account({ navigation }) {
   const [editEmail, setEditEmail] = useState(email);
 
   // console.log({ acceptedFriendRequest });
-  console.log({ friends });
+  // console.log({ friends });
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
@@ -134,7 +134,14 @@ export default function Account({ navigation }) {
       nestedScrollEnabled
     >
       <View style={styles.container}>
-        <Avatar.Text size={100} label={initials} />
+        <Avatar.Text
+          size={100}
+          color="#fff"
+          label={initials}
+          style={{
+            backgroundColor: "#f9a826",
+          }}
+        />
         <View
           style={{ alignItems: "center", marginVertical: 10, width: "100%" }}
         >
@@ -197,29 +204,21 @@ export default function Account({ navigation }) {
             )}
             <Button
               label={editMode ? "Cancel" : "Edit Profile"}
-              variant={"outlined"}
+              variant={"contained"}
               onPress={toggleEditMode}
               icon={editMode ? "cancel" : "pencil"}
-              contentStyle={{ flexDirection: "row-reverse" }}
+              color="#F4A329"
+              contentStyle={{
+                flexDirection: "row-reverse",
+                backgroundColor: "#212529",
+                color: "#F4A329",
+              }}
             />
           </View>
         </View>
         <View style={styles.column}>
           <Text value={`Friends`} variant={"subtitle"} />
-          {pendingRequests && pendingRequests.length > 0 ? (
-            <FlatList
-              data={pendingRequests}
-              renderItem={renderPendingRequest}
-              keyExtractor={(item, index) => index}
-              ListEmptyComponent={
-                <Text value={"You have no pending requests"} variant={"body"} />
-              }
-              nestedScrollEnabled
-            />
-          ) : (
-            <Text value={"You have no pending requests"} variant={"body"} />
-          )}
-          <Divider />
+
           {friends && friends.length > 0 ? (
             <FlatList
               data={friends}
@@ -233,6 +232,20 @@ export default function Account({ navigation }) {
             />
           ) : (
             <Text value={"You have no friends"} variant={"body"} />
+          )}
+          <Divider />
+          {pendingRequests && pendingRequests.length > 0 ? (
+            <FlatList
+              data={pendingRequests}
+              renderItem={renderPendingRequest}
+              keyExtractor={(item, index) => index}
+              ListEmptyComponent={
+                <Text value={"You have no pending requests"} variant={"body"} />
+              }
+              nestedScrollEnabled
+            />
+          ) : (
+            <Text value={"You have no pending requests"} variant={"body"} />
           )}
         </View>
         <View style={styles.button}>

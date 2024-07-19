@@ -24,10 +24,10 @@ export default function ButtonComponent({
 
 const styles = StyleSheet.create({
   contained: {
-    backgroundColor: "#B9052C",
+    // backgroundColor: "#F4A329",
     marginVertical: 10,
     marginHorizontal: 2,
-    color: "#fff",
+    // color: "#fff",
   },
   text: {
     marginVertical: 10,
