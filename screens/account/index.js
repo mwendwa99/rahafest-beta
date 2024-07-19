@@ -113,14 +113,6 @@ export default function Account({ navigation }) {
     );
   }
 
-  const renderPendingRequest = ({ item, index }) => (
-    <FriendRequest key={index} data={item} />
-  );
-
-  const renderFriend = ({ item, index }) => (
-    <AcceptedFriend key={index} data={item} />
-  );
-
   return (
     <ScrollView
       refreshControl={
@@ -224,7 +216,7 @@ export default function Account({ navigation }) {
           >
             {friends && friends.length > 0 ? (
               friends.map((item, index) => (
-                <AcceptedFriend key={index} data={item} />
+                <AcceptedFriend key={index} data={item} type="profile" />
               ))
             ) : (
               <Text value={"You have no friends"} variant={"body"} />

@@ -26,3 +26,27 @@ export const sendLiveMessage = createAsyncThunk(
     }
   }
 );
+
+export const sendDirectMessage = createAsyncThunk(
+  "chat/sendDirectMessage",
+  async (message, { rejectWithValue }) => {
+    try {
+      const response = await authInstance.post(`directmessages`, message);
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export const fetchDirectMessages = createAsyncThunk(
+  "chat/fetchDirectMessages",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await authInstance.get("directmessages");
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(err.response.data);
+    }
+  }
+);

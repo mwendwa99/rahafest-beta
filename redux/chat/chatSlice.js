@@ -1,49 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { fetchLiveMessages, sendLiveMessage } from "./chatActions";
+import {
+  fetchLiveMessages,
+  sendLiveMessage,
+  sendDirectMessage,
+  fetchDirectMessages,
+} from "./chatActions";
 
 const initialState = {
-  friendRequests: [
-    { id: 1, name: "Mulunjez", avatar: "/images/avatar.jpg", status: "online" },
-    {
-      id: 2,
-      name: "Kaplemino",
-      avatar: "/images/avatar.jpg",
-      status: "offline",
-    },
-    { id: 3, name: "Oraimo", avatar: "/images/avatar.jpg", status: "online" },
-  ],
-  friendsList: [
-    {
-      id: 1,
-      name: "Luciel",
-      avatar: "/images/avatar.jpg",
-      status: "online",
-    },
-    {
-      id: 2,
-      name: "Franko",
-      avatar: "/images/avatar.jpg",
-      status: "offline",
-    },
-    {
-      id: 3,
-      name: "Supra",
-      avatar: "/images/avatar.jpg",
-      status: "online",
-    },
-    {
-      id: 4,
-      name: "Muerthjia",
-      avatar: "/images/avatar.jpg",
-      status: "offline",
-    },
-    {
-      id: 5,
-      name: "Githinji",
-      avatar: "/images/avatar.jpg",
-      status: "online",
-    },
-  ],
+  friendRequests: [],
   chatState: {
     chatId: null,
     friendId: null,
@@ -56,54 +20,13 @@ const initialState = {
     receiverId: null,
   },
   liveMessages: [],
+  directMessages: [],
 };
 
 const chatSlice = createSlice({
   name: "chat",
   initialState,
-  reducers: {
-    addFriend: (state, action) => {
-      console.log("Accepted friend with id:", action.payload.id);
-      state.friendRequests = state.friendRequests.filter(
-        (request) => request.id !== action.payload.id
-      );
-      state.friendsList = [...state.friendsList, action.payload]; // Add to friends list
-    },
-    removeFriendRequest: (state, action) => {
-      console.log("Rejected friend with id:", action.payload.id);
-      state.friendRequests = state.friendRequests.filter(
-        (request) => request.id !== action.payload.id
-      );
-    },
-    startChat: (state, action) => {
-      console.log(
-        "Started chat with chatId:",
-        action.payload.chatId,
-        "and friendId:",
-        action.payload.friendId
-      );
-      state.chatState = {
-        chatId: action.payload.chatId,
-        friendId: action.payload.friendId,
-        isChatOpen: true,
-      };
-    },
-    closeChat: (state) => {
-      state.chatState = {
-        chatId: null,
-        friendId: null,
-        isChatOpen: false,
-      };
-    },
-    sendMessage: (state, action) => {
-      state.messageState = {
-        messages: [...state.messageState.messages, action.payload],
-        chatId: action.payload.chatId,
-        userId: action.payload.userId,
-        receiverId: action.payload.receiverId,
-      };
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(fetchLiveMessages.pending, (state) => {
@@ -127,6 +50,28 @@ const chatSlice = createSlice({
       .addCase(sendLiveMessage.rejected, (state) => {
         state.loading = false;
         state.error = "Failed to send live message";
+      })
+      .addCase(sendDirectMessage.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(sendDirectMessage.fulfilled, (state, action) => {
+        state.directMessages = [...state.directMessages, action.payload];
+        state.loading = false;
+      })
+      .addCase(sendDirectMessage.rejected, (state) => {
+        state.loading = false;
+        state.error = "Failed to send direct message";
+      })
+      .addCase(fetchDirectMessages.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchDirectMessages.fulfilled, (state, action) => {
+        state.directMessages = action.payload;
+        state.loading = false;
+      })
+      .addCase(fetchDirectMessages.rejected, (state) => {
+        state.loading = false;
+        state.error = "Failed to fetch direct messages";
       });
   },
 });
