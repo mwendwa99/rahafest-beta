@@ -158,9 +158,12 @@ export default function ClubNavigator() {
                 backgroundColor: "#212529",
               },
               headerTitle: (props) => (
-                <Text {...props} style={{ fontWeight: "bold", fontSize: 18 }}>
-                  Friends
-                </Text>
+                <Text
+                  value={"Friends"}
+                  {...props}
+                  style={{ color: "#fff" }}
+                  variant={"subtitle"}
+                />
               ),
               headerTitleAlign: "center",
             }}
