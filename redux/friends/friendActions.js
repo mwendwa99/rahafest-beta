@@ -49,28 +49,58 @@ export const fetchFriends = createAsyncThunk(
       const response = await authInstance.get("accepted-friendships");
       const friends = response.data;
 
-      //ensure all users are fetched
+      // Ensure all users are fetched
       await dispatch(fetchAllUsers());
       const allUsers = getState().auth.allUsers;
+      const currentUser = getState().auth.user;
 
-      //enhance friends with user details
-      const enhancedFriends = friends.map((friend) => {
-        const userDetail = allUsers.find((user) => user.id === friend.friend);
-        return {
-          ...friend,
-          friendDetails: userDetail,
-        };
-      });
+      // Enhance friends with user details and filter out the current user
+      const enhancedFriends = friends
+        .filter((friend) => friend.friend !== currentUser.id) // Filter out the current user
+        .map((friend) => {
+          const userDetail = allUsers.find((user) => user.id === friend.friend);
+          return {
+            ...friend,
+            friendDetails: userDetail,
+          };
+        });
 
       return enhancedFriends;
-
-      // const response = await authInstance.get("accepted-friendships");
-      // return response.data;
     } catch (err) {
       return rejectWithValue(err.response.data);
     }
   }
 );
+
+// export const fetchFriends = createAsyncThunk(
+//   "friends/fetchFriends",
+//   async (_, { rejectWithValue, getState, dispatch }) => {
+//     try {
+//       const response = await authInstance.get("accepted-friendships");
+//       const friends = response.data;
+
+//       //ensure all users are fetched
+//       await dispatch(fetchAllUsers());
+//       const allUsers = getState().auth.allUsers;
+
+//       //enhance friends with user details
+//       const enhancedFriends = friends.map((friend) => {
+//         const userDetail = allUsers.find((user) => user.id === friend.friend);
+//         return {
+//           ...friend,
+//           friendDetails: userDetail,
+//         };
+//       });
+
+//       return enhancedFriends;
+
+//       // const response = await authInstance.get("accepted-friendships");
+//       // return response.data;
+//     } catch (err) {
+//       return rejectWithValue(err.response.data);
+//     }
+//   }
+// );
 
 export const acceptFriendRequest = createAsyncThunk(
   "friends/acceptFriendRequest",

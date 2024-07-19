@@ -1,16 +1,12 @@
-// import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { View, StyleSheet, Alert } from "react-native";
 import { Avatar, IconButton } from "react-native-paper";
-import { acceptFriendRequest } from "../redux/friends/friendActions";
 import { useDispatch } from "react-redux";
-import { success } from "../utils/toast";
 import Text from "./Text";
 import { formatDate } from "../utils/helper";
 
-const FriendRequest = ({ data }) => {
+const FriendRequest = ({ data, type, navigation }) => {
   const dispatch = useDispatch();
-  // console.log("s", data);
 
   const firstName = data?.friendDetails["first_name"] || "";
   const lastName = data?.friendDetails["last_name"] || "";
@@ -19,42 +15,58 @@ const FriendRequest = ({ data }) => {
   const initials = (firstName[0] || "") + (lastName[0] || "");
   const isAccepted = data?.is_accepted || false;
   const friendId = data?.friend || null;
-  // const isAccepted = false;
+  const friendDetails = data?.friendDetails || {};
 
   const handleCancelFriend = () => {
-    console.log("cancelled", friendId);
     Alert.alert(
       "Cancel Friend Request",
-      `friend with ID ${friendId} will be removed from your friend list`
+      `Friend with ID ${friendId} will be removed from your friend list`
     );
   };
 
+  const handleNavigateToDM = () => {
+    console.log("Navigate to Direct Message", friendId);
+    // Add navigation logic here
+    navigation.navigate("DirectMessage", { friendDetails });
+  };
+
+  // console.log(data);
+
+  const renderIconButton = () => {
+    switch (type) {
+      case "message":
+        return (
+          <IconButton
+            icon="send"
+            mode="contained"
+            onPress={handleNavigateToDM}
+          />
+        );
+      case "profile":
+        return (
+          <IconButton
+            icon="delete"
+            mode="contained"
+            onPress={handleCancelFriend}
+          />
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
-    <View
-      style={{
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        width: "100%",
-        marginVertical: 10,
-      }}
-    >
+    <View style={styles.container}>
       <Avatar.Text size={50} label={initials} />
-      <View>
+      <View style={styles.info}>
         <Text value={`${firstName} ${lastName}`} variant={"body"} />
         <Text value={`${email}`} variant={"small"} />
         <Text
-          value={`friend since ${formatDate(createdAt)}`}
+          value={`Friend since ${formatDate(createdAt)}`}
           variant={"small"}
         />
       </View>
-      {isAccepted && (
-        <IconButton
-          icon={"delete"}
-          mode="contained"
-          onPress={handleCancelFriend}
-        />
-      )}
+      <View style={styles.actions}>{isAccepted && renderIconButton()}</View>
     </View>
   );
 };
@@ -62,7 +74,19 @@ const FriendRequest = ({ data }) => {
 export default FriendRequest;
 
 const styles = StyleSheet.create({
-  row: {
+  container: {
     flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "100%",
+    marginVertical: 10,
+  },
+  info: {
+    flex: 1,
+    marginLeft: 10,
+  },
+  actions: {
+    flexDirection: "row",
+    alignItems: "center",
   },
 });
