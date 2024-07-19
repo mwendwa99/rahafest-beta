@@ -7,7 +7,7 @@ import { fetchUser } from "../../../redux/auth/authActions";
 
 const navigationItems = [
   { id: "1", icon: "globe", title: "Live Chat", link: "Live" },
-  { id: "2", icon: "users", title: "Friends", link: "Friends" },
+  { id: "2", icon: "inbox", title: "Messages", link: "Friends" },
   { id: "3", icon: "tags", title: "Merchandise", link: "Merchandise" },
   { id: "4", icon: "camera-retro", title: "Media", link: "Media" },
   { id: "5", icon: "user", title: "Account", link: "Account" },
