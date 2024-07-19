@@ -10,7 +10,7 @@ import { formatDate } from "../utils/helper";
 
 const FriendRequest = ({ data }) => {
   const dispatch = useDispatch();
-  console.log("s", data);
+  // console.log("s", data);
 
   const firstName = data?.friendDetails["first_name"] || "";
   const lastName = data?.friendDetails["last_name"] || "";
@@ -20,8 +20,6 @@ const FriendRequest = ({ data }) => {
   const isAccepted = data?.is_accepted || false;
   const friendId = data?.friend || null;
   // const isAccepted = false;
-
-  console.log();
 
   const handleCancelFriend = () => {
     console.log("cancelled", friendId);

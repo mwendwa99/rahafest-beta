@@ -51,7 +51,7 @@ export default function Login({ navigation }) {
     dispatch(loginUser(loginData));
   };
 
-  console.log({ user, error, token });
+  // console.log({ user, error, token });
 
   return (
     <ImageBackground
