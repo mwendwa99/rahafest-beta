@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
     // backgroundColor: "#F4A329",
     marginVertical: 10,
     marginHorizontal: 2,
-    // color: "#fff",
+    color: "#fff",
   },
   text: {
     marginVertical: 10,
@@ -38,9 +38,9 @@ const styles = StyleSheet.create({
     marginHorizontal: 2,
   },
   containedLabel: {
-    color: "white",
+    color: "#fff",
   },
   textLabel: {
-    color: "white",
+    color: "#fff",
   },
 });

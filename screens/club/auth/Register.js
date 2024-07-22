@@ -1,23 +1,15 @@
 import { useState, useEffect } from "react";
-import {
-  StyleSheet,
-  View,
-  Image,
-  TouchableOpacity,
-  Platform,
-  Dimensions,
-} from "react-native";
+import { StyleSheet, View, Platform, Dimensions } from "react-native";
 import { ImageBackground } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useDispatch, useSelector } from "react-redux";
-import { Checkbox, Icon, TextInput } from "react-native-paper";
+import { Checkbox, TextInput } from "react-native-paper";
 
 import { Input, Button, Text } from "../../../components";
 import { danger, success, warning } from "../../../utils/toast";
-import { register } from "../../../redux/auth/authActions";
+import { registerUser } from "../../../redux/auth/authActions";
 
 const pattern = require("../../../assets/pattern.png");
-const logo = require("../../../assets/logo.png");
 
 export default function Register({ navigation }) {
   const [firstName, setFirstName] = useState("");
@@ -27,8 +19,18 @@ export default function Register({ navigation }) {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
-  const { user, authError } = useSelector((state) => state.auth);
+  const {
+    user,
+    error: authError,
+    loading,
+  } = useSelector((state) => state.auth);
   const [checked, setChecked] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleInputChange = (value) => {
+    setFirstName(value);
+    setError(value ? "" : "* Field is required");
+  };
 
   // console.log({ user });
   // console.log({ authError });
@@ -80,7 +82,7 @@ export default function Register({ navigation }) {
 
     console.log(registerData);
 
-    // dispatch(register(registerData));
+    dispatch(registerUser(registerData));
   };
   return (
     <ImageBackground
@@ -89,29 +91,43 @@ export default function Register({ navigation }) {
       style={styles.container}
     >
       <View style={styles.section}>
-        <View style={styles.logoContainer}>
-          <Image source={logo} style={styles.logo} />
-        </View>
         <View style={styles.section}>
-          <View style={styles.row}>
-            <Input onChange={setFirstName} placeholder={"First Name"} />
-            <Input onChange={setLastName} placeholder={"Last Name"} />
+          <View style={styles.column}>
+            <Input
+              required
+              value={firstName}
+              onChange={handleInputChange}
+              placeholder={"First Name *"}
+              errorMessage={error}
+            />
+            {error ? <Text style={{ color: "red" }} value={error} /> : null}
           </View>
-          <View style={styles.row}>
+          <View style={styles.column}>
+            <Input
+              onChange={setLastName}
+              placeholder={"Last Name *"}
+              required
+            />
+            {error ? <Text style={{ color: "red" }} value={error} /> : null}
+          </View>
+          <View style={styles.column}>
             <Input
               onChange={setEmail}
-              placeholder={"Email"}
+              placeholder={"Email *"}
               keyboardType="email-address"
               inputMode="email"
               autoComplete="email"
+              required
             />
+            {error ? <Text style={{ color: "red" }} value={error} /> : null}
           </View>
-          <View style={styles.row}>
+          <View style={styles.column}>
             <Input
               onChange={(pin) => setPassword(pin)}
-              placeholder={"Password"}
+              placeholder={"Password *"}
+              required
               keyboardType="default"
-              secureTextEntry={true}
+              secureTextEntry={showPassword}
               autoComplete="password"
               right={
                 <TextInput.Icon
@@ -120,11 +136,13 @@ export default function Register({ navigation }) {
                 />
               }
             />
+            {error ? <Text style={{ color: "red" }} value={error} /> : null}
           </View>
-          <View style={styles.row}>
+          <View style={styles.column}>
             <Input
               onChange={(pin) => setConfirmPassword(pin)}
-              placeholder={"Confirm Password"}
+              placeholder={"Confirm Password *"}
+              required
               keyboardType="default"
               autoComplete="password"
               secureTextEntry={showPassword}
@@ -135,6 +153,7 @@ export default function Register({ navigation }) {
                 />
               }
             />
+            {error ? <Text style={{ color: "red" }} value={error} /> : null}
           </View>
           {Platform.OS === "android" && (
             <View style={styles.row}>
@@ -144,11 +163,12 @@ export default function Register({ navigation }) {
                 onPress={() => {
                   setChecked(!checked);
                 }}
+                style={{ color: "#fff" }}
               />
               <Text
                 value={"Agree to the terms and conditions"}
                 variant={"body"}
-                color="#fff"
+                style={{ color: "#fff" }}
               />
             </View>
           )}
@@ -156,6 +176,7 @@ export default function Register({ navigation }) {
             <Checkbox.Item
               status={checked ? "checked" : "unchecked"}
               color="#fff"
+              labelStyle={{ color: "#fff" }}
               label="Agree to the terms and conditions"
               onPress={() => {
                 setChecked(!checked);
@@ -163,7 +184,7 @@ export default function Register({ navigation }) {
             />
           )}
           <Button
-            label="Register"
+            label={loading ? "Registering..." : "Register"}
             onPress={handleSignup}
             variant={"contained"}
           />
@@ -171,6 +192,7 @@ export default function Register({ navigation }) {
             label="Already have an account? Login"
             onPress={() => handleNavigate("Login")}
             variant={"text"}
+            style={{ color: "#fff" }}
           />
         </View>
       </View>
@@ -186,9 +208,6 @@ const styles = StyleSheet.create({
     height: Dimensions.get("window").height,
   },
 
-  logoContainer: {
-    alignItems: "center",
-  },
   logo: {
     height: 100,
     width: 100,
