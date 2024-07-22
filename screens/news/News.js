@@ -1,64 +1,63 @@
-import { useEffect } from "react";
-import { View, StyleSheet, FlatList, ImageBackground } from "react-native";
+import { StyleSheet, View, FlatList, RefreshControl } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+
+import { Article } from "../../components";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchNews } from "../../redux/news/newsActions";
+import React, { useEffect } from "react";
+import { ActivityIndicator } from "react-native-paper";
 import { StatusBar } from "expo-status-bar";
-import { useDispatch, useSelector } from "react-redux";
-import { getNews } from "../../redux/news/newsActions";
 
-import { Card } from "../../components";
-
-const splash = require("../../assets/splash.png");
-
-export default function News({ navigation }) {
+export default function News() {
+  const { news, error, loading } = useSelector((state) => state.news);
   const dispatch = useDispatch();
-  const { news, loading } = useSelector((state) => state.news);
-
-  // console.log({ news });
 
   useEffect(() => {
-    dispatch(getNews());
-  }, []);
+    dispatch(fetchNews());
+  }, [dispatch]);
 
   if (loading) {
     return (
-      <ImageBackground
-        source={splash}
-        style={{ flex: 1, justifyContent: "center" }}
-      >
-        <StatusBar style="light" />
-      </ImageBackground>
+      <View style={styles.loader}>
+        <ActivityIndicator size="large" color="orange" />
+      </View>
     );
   }
 
+  const onRefresh = () => {
+    dispatch(fetchNews());
+  };
+
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <FlatList
-        // data={[...news].reverse()} // Create a copy of news array, reverse it, and pass to FlatList
-        data={news} // Create a copy of news array, reverse it, and pass to FlatList
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <Card
-            title={item.title}
-            image={item.image}
-            description={item.description}
-            active={item.active}
-          />
-        )}
+        style={styles.eventCardContainer}
+        data={news}
+        renderItem={({ item }) => <Article news={item} />}
+        keyExtractor={(item, index) => index.toString()}
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl refreshing={loading} onRefresh={onRefresh} />
+        }
       />
-      <StatusBar style="light" />
-    </View>
+      <StatusBar translucent />
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 20,
+    width: "100%",
+    alignItems: "center",
     backgroundColor: "#212529",
   },
-  row: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
+  eventCardContainer: {
+    flex: 1,
+  },
+  loader: {
+    flex: 1,
+    justifyContent: "center",
     alignItems: "center",
   },
 });

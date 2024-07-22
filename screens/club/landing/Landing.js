@@ -36,11 +36,8 @@ export default function Landing({ navigation }) {
   }, [token]);
 
   const handlePress = (link) => {
-    if (link === "Media") {
-      Alert.alert(
-        "Coming Soon!",
-        "You will be able to interact with friends stay tuned for updates!"
-      );
+    if (link === null || link === undefined) {
+      Alert.alert("Coming Soon!", "Stay tuned for updates!");
     } else {
       navigation.navigate(link);
     }

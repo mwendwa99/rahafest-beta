@@ -1,9 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getNews } from "./newsActions";
+import { fetchNews } from "./newsActions";
 
 const initialState = {
   news: null,
-  newsError: null,
+  error: null,
   loading: false,
 };
 
@@ -13,18 +13,18 @@ const newsSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(getNews.pending, (state) => {
+      .addCase(fetchNews.pending, (state) => {
         state.loading = true;
       })
-      .addCase(getNews.fulfilled, (state, action) => {
+      .addCase(fetchNews.fulfilled, (state, action) => {
         state.loading = false;
         state.news = action.payload.data;
-        state.newsError = null;
+        state.error = null;
       })
 
-      .addCase(getNews.rejected, (state, action) => {
+      .addCase(fetchNews.rejected, (state, action) => {
         state.loading = false;
-        state.newsError = action.error;
+        state.error = action.error;
       });
   },
 });

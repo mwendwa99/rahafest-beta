@@ -78,7 +78,7 @@ export default function DirectMessage({ route, navigation }) {
         onSend={(messages) => onSend(messages)}
         user={{
           _id: user.id,
-          name: `${user.first_name} ${user.last_name}`,
+          name: `${user?.first_name} ${user?.last_name}`,
         }}
       />
       <StatusBar style="light" />

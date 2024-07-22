@@ -6,6 +6,7 @@ import { CommonActions } from "@react-navigation/native";
 import HomeNavigator from "./home";
 import EventNavigator from "./events";
 import ClubNavigator from "./club";
+import News from "./news/News";
 
 const BottomTab = createBottomTabNavigator();
 
@@ -31,6 +32,13 @@ export default function App() {
       component: ClubNavigator,
       icon_focused: "cards-club",
       icon_default: "cards-club-outline",
+    },
+    {
+      key: "News",
+      name: "News",
+      component: News,
+      icon_focused: "newspaper-variant-multiple-outline",
+      icon_default: "newspaper-variant-outline",
     },
   ];
 
