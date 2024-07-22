@@ -27,14 +27,16 @@ export default function Media() {
     );
   }
 
-  const images = gallery.map((item) => {
-    const uri = rahaImageApi + item.image;
-    console.log("Image URL:", uri);
-    return {
-      uri,
-      id: item.id.toString(),
-    };
-  });
+  const images =
+    gallery &&
+    gallery.map((item) => {
+      const uri = rahaImageApi + item.image;
+      console.log("Image URL:", uri);
+      return {
+        uri,
+        id: item.id.toString(),
+      };
+    });
 
   return (
     <View style={styles.container}>
