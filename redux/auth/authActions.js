@@ -67,3 +67,19 @@ export const filterUserById = createAsyncThunk(
     }
   }
 );
+
+export const deleteAccount = createAsyncThunk(
+  "auth/deleteAccount",
+  async (token, { rejectWithValue }) => {
+    try {
+      const response = await authInstance.delete("delete-account", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);

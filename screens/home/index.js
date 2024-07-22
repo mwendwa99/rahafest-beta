@@ -2,13 +2,10 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Text } from "../../components";
 
 import Home from "./Home";
-// import Playlist from "./Playlist";
 import Settings from "./Settings";
 import Faqs from "./Faqs";
 import Checkout from "./Events";
-//import Map from "./Map";
-
-import ChatNavigator from "../club";
+import Gallery from "../club/landing/Gallery";
 
 const Stack = createNativeStackNavigator();
 
@@ -31,14 +28,19 @@ export default function HomeNavigator() {
             backgroundColor: "#212529",
           },
           headerTitle: (props) => (
-            <Text value={"Settings"} {...props} variant={"subtitle"} />
+            <Text
+              value={"Settings"}
+              {...props}
+              variant={"subtitle"}
+              style={{ color: "#fff" }}
+            />
           ),
           headerTitleAlign: "center",
         }}
       />
-      {/* <Stack.Screen
-        name="Playlist"
-        component={Playlist}
+      <Stack.Screen
+        name="Gallery"
+        component={Gallery}
         options={{
           headerShown: false,
           headerShadowVisible: false,
@@ -47,11 +49,11 @@ export default function HomeNavigator() {
             backgroundColor: "#212529",
           },
           headerTitle: (props) => (
-            <Text value={"Playlist"} {...props} variant={"subtitle"} />
+            <Text value={"Gallery"} {...props} variant={"subtitle"} />
           ),
           headerTitleAlign: "center",
         }}
-      /> */}
+      />
       <Stack.Screen
         name="Checkout"
         component={Checkout}
@@ -79,32 +81,14 @@ export default function HomeNavigator() {
             backgroundColor: "#212529",
           },
           headerTitle: (props) => (
-            <Text value={"Faqs"} {...props} variant={"subtitle"} />
+            <Text
+              value={"Faqs"}
+              {...props}
+              variant={"subtitle"}
+              style={{ color: "#fff" }}
+            />
           ),
           headerTitleAlign: "center",
-        }}
-      />
-      {/*<Stack.Screen
-        name="Map"
-        component={Map}
-        options={{
-          headerShown: true,
-          headerShadowVisible: false,
-          headerTintColor: "#fff",
-          headerStyle: {
-            backgroundColor: "#212529",
-          },
-          headerTitle: (props) => (
-            <Text value={"Map"} {...props} variant={"subtitle"} />
-          ),
-          headerTitleAlign: "center",
-        }}
-      />*/}
-      <Stack.Screen
-        name="Chat"
-        component={ChatNavigator}
-        options={{
-          headerShown: false,
         }}
       />
     </Stack.Navigator>

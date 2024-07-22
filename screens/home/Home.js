@@ -48,12 +48,16 @@ export default function Home({ navigation }) {
 
         <View style={styles.section}>
           <View style={styles.row}>
-            {/* <TouchableOpacity onPress={() => handleNavigate("Playlist")}>
+            <TouchableOpacity onPress={() => handleNavigate("Gallery")}>
               <ImageBackground source={blob} style={styles.blob}>
-                <FontAwesome5 name="headphones-alt" size={40} color="#fff" />
-                <Text variant="small" value={"Playlists"} color="#fff" />
+                <MaterialCommunityIcons name="image" size={40} color="#fff" />
+                <Text
+                  variant="small"
+                  value={"Gallery"}
+                  style={{ color: "#fff" }}
+                />
               </ImageBackground>
-            </TouchableOpacity> */}
+            </TouchableOpacity>
             <TouchableOpacity onPress={toggleModal}>
               <ImageBackground source={blob} style={styles.blob}>
                 <Entypo name="mobile" size={40} color="#fff" />
