@@ -1,17 +1,13 @@
-import React from "react";
-import {
-  View,
-  Text,
-  Image,
-  Touchable,
-  StyleSheet,
-  TouchableOpacity,
-} from "react-native";
+import React, { useState } from "react";
+import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import { rahaImageApi } from "../services/api.service";
 import { StatusBar } from "expo-status-bar";
 
 const Article = ({ news }) => {
+  const [showMore, setShowMore] = useState(false);
+
   const handleReadMore = () => {
+    setShowMore(!showMore);
     console.log("Read more clicked");
   };
 
@@ -29,10 +25,14 @@ const Article = ({ news }) => {
       <View style={styles.detailsContainer}>
         <Text style={styles.title}>{news.title}</Text>
         <Text style={styles.description}>
-          {`${news.description.split(" ").slice(0, 20).join(" ")}...`}
+          {showMore
+            ? news.description
+            : `${news.description.split(" ").slice(0, 20).join(" ")}...`}
         </Text>
         <TouchableOpacity onPress={handleReadMore}>
-          <Text style={styles.readMore}>Read more</Text>
+          <Text style={styles.readMore}>
+            {showMore ? "Show less" : "Read more"}
+          </Text>
         </TouchableOpacity>
       </View>
       <StatusBar style="light" />
