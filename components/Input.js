@@ -2,16 +2,17 @@ import React from "react";
 import { StyleSheet } from "react-native";
 import { TextInput } from "react-native-paper";
 
-export default function Input({ onChange, type, ...props }) {
+export default function Input({ onChange, type, errorMessage, ...props }) {
   return (
     <TextInput
       {...props}
-      style={styles.container}
+      style={[styles.container, props.style]}
       mode="outlined"
       theme={inputTheme}
       onChangeText={onChange}
       keyboardType={type}
       outlineStyle={styles.outline}
+      error={!!errorMessage}
     />
   );
 }

@@ -16,7 +16,7 @@ export default function Login({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const { error, loading } = useSelector((state) => state.auth);
+  const { error: authError, loading } = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
 
@@ -25,11 +25,11 @@ export default function Login({ navigation }) {
   }, []);
 
   useEffect(() => {
-    if (error !== null && error.message === "Invalid Credentials") {
-      console.log(error);
-      warning(error.message);
+    if (authError !== null && authError.message === "Invalid Credentials") {
+      console.log(authError);
+      warning(authError.message);
     }
-  }, [error]);
+  }, [authError]);
 
   const handleNavigate = (screen) => {
     navigation.navigate(screen);
@@ -51,7 +51,7 @@ export default function Login({ navigation }) {
     dispatch(loginUser(loginData));
   };
 
-  console.log(error);
+  // console.log(authError);
 
   return (
     <ImageBackground
