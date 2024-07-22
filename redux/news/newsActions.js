@@ -1,13 +1,20 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { GetNewsApi } from "../../services/news.service";
+import { rahaApi } from "../../services/api.service";
 
-export const getNews = createAsyncThunk(
-  "lineup/getNews",
-  (_, { rejectWithValue }) => {
+export const fetchNews = createAsyncThunk(
+  "event/fetchNews",
+  async (_, { rejectWithValue }) => {
     try {
-      return GetNewsApi();
+      const response = await rahaApi.get("media");
+
+      //filter response to only render active news
+      response.data.data = response.data.data.filter(
+        (article) => article.active === true
+      );
+
+      return response.data;
     } catch (error) {
-      return rejectWithValue(error);
+      return rejectWithValue(error.response.data);
     }
   }
 );

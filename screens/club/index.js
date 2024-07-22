@@ -19,7 +19,6 @@ import Landing from "./landing/Landing";
 import Merchandise from "./landing/Merchandise";
 import Media from "./landing/Media";
 import EventDeals from "./landing/Deals";
-import News from "./landing/News";
 import Login from "./auth/Login";
 import Register from "./auth/Register";
 import { persistor } from "../../redux/store";
@@ -215,7 +214,10 @@ export default function ClubNavigator() {
                 backgroundColor: "#212529",
               },
               headerTitle: (props) => (
-                <Text {...props} style={{ fontWeight: "bold", fontSize: 18 }}>
+                <Text
+                  {...props}
+                  style={{ fontWeight: "bold", fontSize: 18, color: "#fff" }}
+                >
                   Raha Fest Media
                 </Text>
               ),
@@ -253,24 +255,7 @@ export default function ClubNavigator() {
               headerTitleAlign: "center",
             }}
           />
-          <Stack.Screen
-            name="News"
-            component={News}
-            options={{
-              headerShown: true,
-              headerShadowVisible: false,
-              headerTintColor: "#fff",
-              headerStyle: {
-                backgroundColor: "#212529",
-              },
-              headerTitle: (props) => (
-                <Text {...props} style={{ fontWeight: "bold", fontSize: 18 }}>
-                  Raha Fest News
-                </Text>
-              ),
-              headerTitleAlign: "center",
-            }}
-          />
+
           <Stack.Screen
             name="Account"
             component={Account}
