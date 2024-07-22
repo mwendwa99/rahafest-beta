@@ -1,10 +1,19 @@
 import React, { useState } from "react";
-import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  StyleSheet,
+  Dimensions,
+} from "react-native";
 import { rahaImageApi } from "../services/api.service";
 import { StatusBar } from "expo-status-bar";
 
 const Article = ({ news }) => {
   const [showMore, setShowMore] = useState(false);
+  const { width } = Dimensions.get("window");
+  const marginHorizontal = 10; // Adjust this value as needed
 
   const handleReadMore = () => {
     setShowMore(!showMore);
@@ -12,7 +21,12 @@ const Article = ({ news }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        { width: width - marginHorizontal * 2, marginHorizontal },
+      ]}
+    >
       <View>
         <Image
           source={{
@@ -46,8 +60,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     alignItems: "center",
     padding: 12,
-    margin: 5,
-    width: 350,
+    marginVertical: 5,
     backgroundColor: "#fff",
     color: "#fafafa",
     borderRadius: 6,
