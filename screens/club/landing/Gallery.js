@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { StyleSheet, View, RefreshControl, Dimensions } from "react-native";
+import { StyleSheet, View, RefreshControl } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import MasonryList from "react-native-masonry-list";
 import { useDispatch, useSelector } from "react-redux";
