@@ -4,10 +4,9 @@ import {
   StyleSheet,
   Alert,
   RefreshControl,
-  FlatList,
   ScrollView,
 } from "react-native";
-import { fetchUser } from "../../redux/auth/authActions";
+import { deleteAccount, fetchUser } from "../../redux/auth/authActions";
 import {
   fetchFriends,
   fetchPendingFriendRequests,
@@ -22,6 +21,7 @@ import {
 import { ActivityIndicator, Avatar, Divider } from "react-native-paper";
 import { useSelector, useDispatch } from "react-redux";
 import { persistor } from "../../redux/store";
+import { success } from "../../utils/toast";
 
 export default function Account({ navigation }) {
   const { user, loading, error } = useSelector((state) => state.auth);
@@ -80,6 +80,7 @@ export default function Account({ navigation }) {
 
   const handleLogout = () => {
     persistor.purge();
+    success("You have been logged out");
     console.info("You have been logged out");
   };
 
@@ -91,7 +92,7 @@ export default function Account({ navigation }) {
         {
           text: "Yes",
           onPress: () => {
-            // dispatch(deleteAccount());
+            dispatch(deleteAccount());
             console.log("Account deleted");
           },
         },
@@ -139,14 +140,6 @@ export default function Account({ navigation }) {
         >
           {editMode ? (
             <View style={{ alignItems: "center", width: "100%" }}>
-              {/* <Input
-              onChange={setEditEmail}
-              placeholder={"Email"}
-              keyboardType="email-address"
-              inputMode="email"
-              autoComplete="email"
-              value={editEmail}
-            /> */}
               <Input
                 onChange={setEditFName}
                 placeholder={"Email"}
@@ -286,118 +279,3 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 });
-
-// const pendingRequests = [
-//   {
-//     created_at: "2024-07-17T13:01:38.787402Z",
-//     friend: 2,
-//     friendDetails: {
-//       email: "admin@gmail.com",
-//       first_name: "Brian",
-//       friendships: [[Object]],
-//       id: 2,
-//       last_name: "Mwendwa",
-//     },
-//     id: 2,
-//     is_accepted: false,
-//     user: 1,
-//   },
-//   {
-//     created_at: "2024-07-17T13:01:38.787402Z",
-//     friend: 2,
-//     friendDetails: {
-//       email: "admin@gmail.com",
-//       first_name: "Brian",
-//       friendships: [[Object]],
-//       id: 2,
-//       last_name: "Mwendwa",
-//     },
-//     id: 2,
-//     is_accepted: false,
-//     user: 1,
-//   },
-//   {
-//     created_at: "2024-07-17T13:01:38.787402Z",
-//     friend: 2,
-//     friendDetails: {
-//       email: "admin@gmail.com",
-//       first_name: "Brian",
-//       friendships: [[Object]],
-//       id: 2,
-//       last_name: "Mwendwa",
-//     },
-//     id: 2,
-//     is_accepted: false,
-//     user: 1,
-//   },
-//   {
-//     created_at: "2024-07-17T13:01:38.787402Z",
-//     friend: 2,
-//     friendDetails: {
-//       email: "admin@gmail.com",
-//       first_name: "Brian",
-//       friendships: [[Object]],
-//       id: 2,
-//       last_name: "Mwendwa",
-//     },
-//     id: 2,
-//     is_accepted: false,
-//     user: 1,
-//   },
-//   {
-//     created_at: "2024-07-17T13:01:38.787402Z",
-//     friend: 2,
-//     friendDetails: {
-//       email: "admin@gmail.com",
-//       first_name: "Brian",
-//       friendships: [[Object]],
-//       id: 2,
-//       last_name: "Mwendwa",
-//     },
-//     id: 2,
-//     is_accepted: false,
-//     user: 1,
-//   },
-//   {
-//     created_at: "2024-07-17T13:01:38.787402Z",
-//     friend: 2,
-//     friendDetails: {
-//       email: "admin@gmail.com",
-//       first_name: "Brian",
-//       friendships: [[Object]],
-//       id: 2,
-//       last_name: "Mwendwa",
-//     },
-//     id: 2,
-//     is_accepted: false,
-//     user: 1,
-//   },
-//   {
-//     created_at: "2024-07-17T13:01:38.787402Z",
-//     friend: 2,
-//     friendDetails: {
-//       email: "admin@gmail.com",
-//       first_name: "Brian",
-//       friendships: [[Object]],
-//       id: 2,
-//       last_name: "Mwendwa",
-//     },
-//     id: 2,
-//     is_accepted: false,
-//     user: 1,
-//   },
-//   {
-//     created_at: "2024-07-17T13:01:38.787402Z",
-//     friend: 2,
-//     friendDetails: {
-//       email: "admin@gmail.com",
-//       first_name: "Brian",
-//       friendships: [[Object]],
-//       id: 2,
-//       last_name: "Mwendwa",
-//     },
-//     id: 2,
-//     is_accepted: false,
-//     user: 1,
-//   },
-// ];

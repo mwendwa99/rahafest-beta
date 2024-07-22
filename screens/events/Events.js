@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    height: "100vh",
+    height: "100%",
   },
   webview: {
     flex: 1,

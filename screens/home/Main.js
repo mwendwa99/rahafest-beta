@@ -4,7 +4,7 @@ const background = {
   uri: "https://api.rahafest.com/media_files/banners/background.png",
 };
 
-export default function Home({ navigation }) {
+export default function Home() {
   return (
     <View style={styles.container}>
       <ImageBackground

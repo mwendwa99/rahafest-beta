@@ -1,26 +1,18 @@
-import {
-  View,
-  StyleSheet,
-  Alert,
-  ScrollView,
-  StatusBar,
-  Linking,
-} from "react-native";
+import { View, StyleSheet, Alert, ScrollView, StatusBar } from "react-native";
 import { ListItem } from "../../components";
 import { useSelector, useDispatch } from "react-redux";
 import { success } from "../../utils/toast";
 import { persistor } from "../../redux/store";
-import { logout, deleteAccount } from "../../redux/auth/authActions";
+import { deleteAccount } from "../../redux/auth/authActions";
 
 export default function Settings({ navigation }) {
   const dispatch = useDispatch();
   const { token } = useSelector((state) => state.auth);
-  console.log(token);
 
   const handleLogout = () => {
     persistor.purge();
-    dispatch(logout());
-    success("Logout success");
+    success("You have been logged out");
+    console.info("You have been logged out");
     navigation.navigate("Home");
   };
 
@@ -62,31 +54,12 @@ export default function Settings({ navigation }) {
           iconRight={"chevron-right"}
           handlePressLink={() => handleNavigate("Faqs")}
         />
-        {/*<ListItem
-          title="Maps"
-          iconLeft={"google-maps"}
-          iconRight={"chevron-right"}
-          handlePressLink={() => handleNavigate("Map")}
-        />*/}
-        {/* <ListItem
-          title="Buy Tickets"
-          iconLeft={"ticket"}
-          iconRight={"chevron-right"}
-          handlePressLink={() => Linking.openURL("https://linktr.ee/rahafest")}
-        /> */}
-        {/* <ListItem
-          title="Menu"
-          iconLeft={"ticket"}
-          iconRight={"chevron-right"}
-          handlePressLink={() => Linking.openURL("https://linktr.ee/rahafest")}
-        /> */}
 
         {token && (
           <View>
             <ListItem
               title="Logout"
               iconLeft={"logout"}
-              iconRight={"chevron-right"}
               handlePressLink={handleLogout}
             />
             <ListItem

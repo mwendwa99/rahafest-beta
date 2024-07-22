@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../../../redux/auth/authActions";
 import { clearError } from "../../../redux/auth/authSlice";
 import { Input, Button } from "../../../components";
-import { danger, warning } from "../../../utils/toast";
+import { warning } from "../../../utils/toast";
 
 import pattern from "../../../assets/pattern.png";
 import { TextInput } from "react-native-paper";
@@ -16,7 +16,7 @@ export default function Login({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const { error, loading, user, token } = useSelector((state) => state.auth);
+  const { error, loading } = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
 
@@ -25,9 +25,9 @@ export default function Login({ navigation }) {
   }, []);
 
   useEffect(() => {
-    if (error) {
+    if (error !== null && error.message === "Invalid Credentials") {
       console.log(error);
-      danger(error["message"], 2000);
+      warning(error.message);
     }
   }, [error]);
 
@@ -51,7 +51,7 @@ export default function Login({ navigation }) {
     dispatch(loginUser(loginData));
   };
 
-  // console.log({ user, error, token });
+  console.log(error);
 
   return (
     <ImageBackground
@@ -110,8 +110,8 @@ export default function Login({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: Dimensions.get("window").width,
-    height: Dimensions.get("window").height,
+    width: "100%",
+    height: "100%",
   },
   logoContainer: {
     alignItems: "center",
