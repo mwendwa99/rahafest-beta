@@ -1,7 +1,6 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useDispatch } from "react-redux";
 import { useEffect } from "react";
-// import { StyleSheet } from "react-native";
 import { clearError } from "../../redux/auth/authSlice";
 
 import { Text } from "../../components";
@@ -43,20 +42,3 @@ export default function ClubNavigator() {
     </Stack.Navigator>
   );
 }
-
-// const styles = StyleSheet.create({
-//   row: {
-//     display: "flex",
-//     flexDirection: "row",
-//     alignItems: "center",
-//     justifyContent: "center",
-//   },
-//   headerTitleText: {
-//     color: "#fff",
-//     textAlign: "center",
-//   },
-//   onlineCount: {
-//     color: "limegreen",
-//     textAlign: "right",
-//   },
-// });

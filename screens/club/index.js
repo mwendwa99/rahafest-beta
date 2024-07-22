@@ -17,7 +17,7 @@ import AllUsers from "./friends/AllUsers";
 import Messages from "./chat/Messages";
 import Landing from "./landing/Landing";
 import Merchandise from "./landing/Merchandise";
-import Media from "./landing/Media";
+import Gallery from "./landing/Gallery";
 import EventDeals from "./landing/Deals";
 import Login from "./auth/Login";
 import Register from "./auth/Register";
@@ -196,16 +196,18 @@ export default function ClubNavigator() {
                 backgroundColor: "#212529",
               },
               headerTitle: (props) => (
-                <Text {...props} style={{ fontWeight: "bold", fontSize: 18 }}>
-                  Merchandise
-                </Text>
+                <Text
+                  value="Merchandise"
+                  variant={"subtitle"}
+                  style={{ color: "#fff" }}
+                />
               ),
               headerTitleAlign: "center",
             }}
           />
           <Stack.Screen
-            name="Media"
-            component={Media}
+            name="Gallery"
+            component={Gallery}
             options={{
               headerShown: true,
               headerShadowVisible: false,
@@ -215,11 +217,11 @@ export default function ClubNavigator() {
               },
               headerTitle: (props) => (
                 <Text
+                  value={"Gallery"}
                   {...props}
-                  style={{ fontWeight: "bold", fontSize: 18, color: "#fff" }}
-                >
-                  Raha Fest Media
-                </Text>
+                  variant={"subtitle"}
+                  style={{ color: "#fff" }}
+                />
               ),
               headerTitleAlign: "center",
             }}
@@ -248,9 +250,12 @@ export default function ClubNavigator() {
                 backgroundColor: "#212529",
               },
               headerTitle: (props) => (
-                <Text {...props} style={{ fontWeight: "bold", fontSize: 18 }}>
-                  Event Deals
-                </Text>
+                <Text
+                  value={"Event Deals"}
+                  {...props}
+                  variant="subtitle"
+                  style={{ color: "#fff" }}
+                />
               ),
               headerTitleAlign: "center",
             }}
