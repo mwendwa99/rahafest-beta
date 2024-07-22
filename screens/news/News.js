@@ -9,7 +9,7 @@ import { ActivityIndicator } from "react-native-paper";
 import { StatusBar } from "expo-status-bar";
 
 export default function News() {
-  const { news, error, loading } = useSelector((state) => state.news);
+  const { news, loading } = useSelector((state) => state.news);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -40,7 +40,7 @@ export default function News() {
           <RefreshControl refreshing={loading} onRefresh={onRefresh} />
         }
       />
-      <StatusBar translucent />
+      <StatusBar style="light" />
     </SafeAreaView>
   );
 }
