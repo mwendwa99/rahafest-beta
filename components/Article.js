@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { rahaImageApi } from "../services/api.service";
+import { StatusBar } from "expo-status-bar";
 
 const Article = ({ news }) => {
   const handleReadMore = () => {
@@ -34,6 +35,7 @@ const Article = ({ news }) => {
           <Text style={styles.readMore}>Read more</Text>
         </TouchableOpacity>
       </View>
+      <StatusBar style="light" />
     </View>
   );
 };

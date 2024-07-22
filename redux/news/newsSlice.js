@@ -1,8 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { fetchNews } from "./newsActions";
+import { fetchNews, fetchGallery } from "./newsActions";
 
 const initialState = {
   news: null,
+  gallery: null,
   error: null,
   loading: false,
 };
@@ -23,6 +24,18 @@ const newsSlice = createSlice({
       })
 
       .addCase(fetchNews.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error;
+      })
+      .addCase(fetchGallery.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchGallery.fulfilled, (state, action) => {
+        state.loading = false;
+        state.gallery = action.payload;
+        state.error = null;
+      })
+      .addCase(fetchGallery.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error;
       });

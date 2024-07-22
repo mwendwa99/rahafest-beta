@@ -18,3 +18,16 @@ export const fetchNews = createAsyncThunk(
     }
   }
 );
+
+export const fetchGallery = createAsyncThunk(
+  "event/fetchGallery",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await rahaApi.get("gallery");
+
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);

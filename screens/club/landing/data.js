@@ -37,49 +37,6 @@ export const products = [
   },
 ];
 
-export const RahaMedia = [
-  {
-    id: "1",
-    image: require("../../../assets/davido-head.jpeg"),
-  },
-  {
-    id: "2",
-    image: require("../../../assets/bensoul.webp"),
-  },
-  {
-    id: "3",
-    image: require("../../../assets/nviiri.png"),
-  },
-  {
-    id: "4",
-    image: require("../../../assets/kingpromise.jpeg"),
-  },
-  {
-    id: "5",
-    image: require("../../../assets/femione.webp"),
-  },
-  {
-    id: "6",
-    image: require("../../../assets/nadia.webp"),
-  },
-  {
-    id: "7",
-    image: require("../../../assets/samidoh.webp"),
-  },
-  {
-    id: "8",
-    image: require("../../../assets/harttheband.webp"),
-  },
-  {
-    id: "9",
-    image: require("../../../assets/mejja.webp"),
-  },
-  {
-    id: "10",
-    image: require("../../../assets/sanaipei.webp"),
-  },
-];
-
 export const DealData = [
   {
     id: "1",

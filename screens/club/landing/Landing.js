@@ -4,14 +4,14 @@ import { NavCard, Text } from "../../../components";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { fetchUser } from "../../../redux/auth/authActions";
+import { StatusBar } from "expo-status-bar";
 
 const navigationItems = [
   { id: "1", icon: "globe", title: "Live Chat", link: "Live" },
   { id: "2", icon: "inbox", title: "Messages", link: "Friends" },
   { id: "3", icon: "tags", title: "Merchandise", link: "Merchandise" },
-  { id: "4", icon: "camera-retro", title: "Media", link: "Media" },
+  { id: "4", icon: "camera-retro", title: "Gallery", link: "Gallery" },
   { id: "5", icon: "user", title: "Account", link: "Account" },
-  // { id: "6", icon: "newspaper-o", title: "News", link: "News" },
 ];
 
 const rahaClubDescription =
@@ -79,6 +79,7 @@ export default function Landing({ navigation }) {
         numColumns={2}
         contentContainerStyle={styles.grid}
       />
+      <StatusBar style="light" />
     </View>
   );
 }
