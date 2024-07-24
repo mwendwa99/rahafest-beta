@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
   },
   accordionInner: {
     flexDirection: "row",
-    justifyContent: "space-",
+    justifyContent: "space-between",
     alignItems: "center",
     backgroundColor: "rgba(0, 0, 0, 1)",
     padding: 20,

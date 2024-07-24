@@ -1,15 +1,24 @@
-import { StyleSheet, View, FlatList, RefreshControl } from "react-native";
+import {
+  StyleSheet,
+  View,
+  FlatList,
+  RefreshControl,
+  ImageBackground,
+  TouchableOpacity,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { Article } from "../../components";
+import { Article, Text } from "../../components";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchNews } from "../../redux/news/newsActions";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { ActivityIndicator } from "react-native-paper";
 import { StatusBar } from "expo-status-bar";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 export default function News() {
   const { news, loading } = useSelector((state) => state.news);
+  const [showAccordion, setShowAccordion] = useState(false);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -30,6 +39,22 @@ export default function News() {
 
   return (
     <SafeAreaView style={styles.container}>
+      <TouchableOpacity
+        style={styles.accordionInner}
+        onPress={() => setShowAccordion(!showAccordion)}
+        disabled
+      >
+        <Text
+          value="Here is what you missed in March"
+          variant="subtitle"
+          style={{ color: "#fff" }}
+        />
+        {/* <MaterialCommunityIcons
+          name={showAccordion ? "chevron-up" : "chevron-down"}
+          size={24}
+          color="white"
+        /> */}
+      </TouchableOpacity>
       <FlatList
         style={styles.eventCardContainer}
         data={news}
@@ -51,6 +76,24 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     backgroundColor: "#212529",
+  },
+  accordionOuter: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 10,
+    margin: 10,
+    objectFit: "cover",
+    backgroundRepeat: "repeat",
+  },
+  accordionInner: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 1)",
+    padding: 20,
+    borderRadius: 10,
+    width: "100%",
   },
   eventCardContainer: {
     flex: 1,
