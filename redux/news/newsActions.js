@@ -25,7 +25,12 @@ export const fetchGallery = createAsyncThunk(
     try {
       const response = await rahaApi.get("gallery");
 
-      return response.data.data;
+      //filter response to only render active gallery
+      const filteredGallery = response.data.data.filter(
+        (item) => item.active === true
+      );
+
+      return filteredGallery;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
