@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { StyleSheet, View, Image, StatusBar, Dimensions } from "react-native";
+import { StyleSheet, View, Image } from "react-native";
+import { StatusBar } from "expo-status-bar";
 import { ImageBackground } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -102,7 +103,7 @@ export default function Login({ navigation }) {
           />
         </View>
       </View>
-      <StatusBar barStyle="light-content" />
+      <StatusBar style="light" />
     </ImageBackground>
   );
 }
