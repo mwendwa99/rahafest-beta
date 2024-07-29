@@ -8,12 +8,13 @@ import Text from "./Text";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 export default function Dropdown({
+  title = "",
   showAccordion,
   setShowAccordion,
   children,
 }) {
   return (
-    <View style={{ flex: 1, height: 500 }}>
+    <View style={{ flex: 1 }}>
       <ImageBackground
         imageStyle={{ objectFit: "cover" }}
         borderRadius={10}
@@ -24,11 +25,7 @@ export default function Dropdown({
           style={styles.accordionInner}
           onPress={() => setShowAccordion(!showAccordion)}
         >
-          <Text
-            value=" RahaFest March 2024 Recap"
-            variant="subtitle"
-            style={{ color: "#fff" }}
-          />
+          <Text value={title} variant="subtitle" style={{ color: "#fff" }} />
           <MaterialCommunityIcons
             name={showAccordion ? "chevron-up" : "chevron-down"}
             size={24}
