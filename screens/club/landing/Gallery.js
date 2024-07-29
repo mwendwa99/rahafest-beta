@@ -17,27 +17,37 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Text, Dropdown } from "../../../components";
 
 const placeholderImage = "../../../assets/placeholder.png"; // Placeholder image path
-const dropdownTitle = "RahaFest March 2024 Recap";
+
+// Dummy data array with event categories
+const eventCategories = [
+  { title: "Raha Rave 2024", key: "rave2024" },
+  { title: "Raha December", key: "december" },
+  { title: "RahaFest", key: "rahafest" },
+];
 
 export default function Media() {
   const dispatch = useDispatch();
   const { gallery, loading } = useSelector((state) => state.news);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
-  const [showAccordion, setShowAccordion] = useState(false);
+  const [accordionState, setAccordionState] = useState({});
 
   useEffect(() => {
     dispatch(fetchGallery());
   }, [dispatch]);
 
-  const formattedImages = useMemo(() => {
-    if (gallery) {
-      return gallery.map((item) => ({
-        uri: item.image ? rahaImageApi + item.image : placeholderImage,
-        id: item.id.toString(),
-      }));
-    }
-    return [];
+  const formattedGallery = useMemo(() => {
+    const categorizedGallery = {
+      rave2024: [],
+      december: [],
+      rahafest: gallery
+        ? gallery.map((item) => ({
+            uri: item.image ? rahaImageApi + item.image : placeholderImage,
+            id: item.id.toString(),
+          }))
+        : [],
+    };
+    return categorizedGallery;
   }, [gallery]);
 
   const onRefresh = useCallback(() => {
@@ -60,6 +70,13 @@ export default function Media() {
     []
   );
 
+  const toggleAccordion = (key) => {
+    setAccordionState((prevState) => ({
+      ...prevState,
+      [key]: !prevState[key],
+    }));
+  };
+
   if (loading) {
     return (
       <View style={styles.loader}>
@@ -72,7 +89,7 @@ export default function Media() {
     <SafeAreaView style={styles.container}>
       <ScrollView nestedScrollEnabled>
         <Text
-          value=" Gallery"
+          value="Gallery"
           variant="subtitle"
           style={{
             color: "#fff",
@@ -81,56 +98,60 @@ export default function Media() {
             padding: 10,
           }}
         />
-        <Dropdown
-          showAccordion={showAccordion}
-          setShowAccordion={setShowAccordion}
-          title={dropdownTitle}
-        >
-          {showAccordion && formattedImages.length > 0 ? (
-            <MasonryList
-              images={formattedImages.map((img) => ({
-                uri: img.uri,
-                id: img.id,
-                component: renderImage({ uri: img.uri, id: img.id }), // Custom render function
-              }))}
-              spacing={4}
-              columns={2}
-              backgroundColor="#212529"
-              imageContainerStyle={styles.imageContainer}
-              onPressImage={(item, index) => {
-                setSelectedImage(item.uri);
-                setModalVisible(true);
-              }}
-              onRefresh={onRefresh}
-              refreshing={loading}
-            />
-          ) : (
-            <View style={styles.noImages}>
-              <Text
-                value="No images available"
-                variant="body"
-                style={{ color: "#fff" }}
-              />
-            </View>
-          )}
-          <Modal
-            visible={modalVisible}
-            transparent={true}
-            onRequestClose={() => setModalVisible(false)}
+        {eventCategories.map((event) => (
+          <Dropdown
+            key={event.key}
+            showAccordion={accordionState[event.key]}
+            setShowAccordion={() => toggleAccordion(event.key)}
+            title={event.title}
           >
-            <View style={styles.modalBackground}>
-              <TouchableOpacity
-                style={styles.fullscreenImageContainer}
-                onPress={() => setModalVisible(false)}
-              >
-                <Image
-                  source={{ uri: selectedImage }}
-                  style={styles.fullscreenImage}
+            {accordionState[event.key] &&
+            formattedGallery[event.key].length > 0 ? (
+              <MasonryList
+                images={formattedGallery[event.key].map((img) => ({
+                  uri: img.uri,
+                  id: img.id,
+                  component: renderImage({ uri: img.uri, id: img.id }), // Custom render function
+                }))}
+                spacing={4}
+                columns={2}
+                backgroundColor="#212529"
+                imageContainerStyle={styles.imageContainer}
+                onPressImage={(item, index) => {
+                  setSelectedImage(item.uri);
+                  setModalVisible(true);
+                }}
+                onRefresh={onRefresh}
+                refreshing={loading}
+              />
+            ) : (
+              <View style={styles.noImages}>
+                <Text
+                  value="Coming soon"
+                  variant="body"
+                  style={{ color: "#fff" }}
                 />
-              </TouchableOpacity>
-            </View>
-          </Modal>
-        </Dropdown>
+              </View>
+            )}
+          </Dropdown>
+        ))}
+        <Modal
+          visible={modalVisible}
+          transparent={true}
+          onRequestClose={() => setModalVisible(false)}
+        >
+          <View style={styles.modalBackground}>
+            <TouchableOpacity
+              style={styles.fullscreenImageContainer}
+              onPress={() => setModalVisible(false)}
+            >
+              <Image
+                source={{ uri: selectedImage }}
+                style={styles.fullscreenImage}
+              />
+            </TouchableOpacity>
+          </View>
+        </Modal>
       </ScrollView>
       <StatusBar style="light" />
     </SafeAreaView>
