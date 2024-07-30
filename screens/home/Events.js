@@ -11,12 +11,11 @@ export default function Events() {
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    // This ensures that the loading state is eventually reset in case of errors
     const timeout = setTimeout(() => {
       if (loading) {
         setLoading(false);
       }
-    }, 1000); // Set a timeout for 10 seconds
+    }, 1000); // Set a timeout for 1 second
 
     return () => clearTimeout(timeout);
   }, [loading]);
@@ -38,9 +37,11 @@ export default function Events() {
   return (
     <SafeAreaView style={styles.container}>
       {loading && !error && (
-        <ImageBackground source={splash} style={styles.splash}>
-          <StatusBar style="light" />
-        </ImageBackground>
+        <View style={styles.splashContainer}>
+          <ImageBackground source={splash} style={styles.splash}>
+            <StatusBar style="light" />
+          </ImageBackground>
+        </View>
       )}
       {error && (
         <View style={styles.errorContainer}>
@@ -65,13 +66,26 @@ export default function Events() {
                 <html>
                   <head>
                     <meta name="viewport" content="width=device-width, initial-scale=1">
+                    <style>
+                      body {
+                        margin: 0;
+                        padding: 0;
+                      }
+                      iframe {
+                        border: none;
+                        width: 100%;
+                        height: 100%;
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        z-index: 1;
+                      }
+                    </style>
                   </head>
-                  <body style="margin: 0;">
+                  <body>
                     <iframe
-                      style="border-radius:12px; object-fit:cover; width: 100%; height: 100%;"
                       src="https://ticketraha.com/events"
-                      frameBorder="0"
-                      allow="fullscreen"
+                      allowfullscreen
                       loading="lazy"
                     ></iframe>
                   </body>
@@ -92,11 +106,16 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#212529",
   },
-  splash: {
+  splashContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  splash: {
+    width: "100%",
     height: "100%",
+    justifyContent: "center",
+    alignItems: "center",
   },
   webviewContainer: {
     flex: 1,
