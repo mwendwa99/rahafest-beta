@@ -9,8 +9,8 @@ import { StatusBar } from "expo-status-bar";
 const navigationItems = [
   { id: "1", icon: "globe", title: "Live Chat", link: "Live" },
   { id: "2", icon: "inbox", title: "Messages", link: "Friends" },
-  { id: "3", icon: "tags", title: "Merchandise", link: "Merchandise" },
-  { id: "4", icon: "camera-retro", title: "Gallery", link: "Gallery" },
+  // { id: "3", icon: "tags", title: "Merchandise", link: "Merchandise" },
+  // { id: "4", icon: "camera-retro", title: "Gallery", link: "Gallery" },
   { id: "5", icon: "user", title: "Account", link: "Account" },
 ];
 

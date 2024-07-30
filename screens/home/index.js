@@ -6,6 +6,7 @@ import Settings from "./Settings";
 import Faqs from "./Faqs";
 import Checkout from "./Events";
 import Gallery from "../club/landing/Gallery";
+import News from "../news/News";
 
 const Stack = createNativeStackNavigator();
 
@@ -83,6 +84,27 @@ export default function HomeNavigator() {
           headerTitle: (props) => (
             <Text
               value={"Faqs"}
+              {...props}
+              variant={"subtitle"}
+              style={{ color: "#fff" }}
+            />
+          ),
+          headerTitleAlign: "center",
+        }}
+      />
+      <Stack.Screen
+        name="News"
+        component={News}
+        options={{
+          headerShown: false,
+          headerShadowVisible: false,
+          headerTintColor: "#fff",
+          headerStyle: {
+            backgroundColor: "#212529",
+          },
+          headerTitle: (props) => (
+            <Text
+              value={"News"}
               {...props}
               variant={"subtitle"}
               style={{ color: "#fff" }}

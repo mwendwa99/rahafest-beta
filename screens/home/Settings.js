@@ -54,6 +54,12 @@ export default function Settings({ navigation }) {
           iconRight={"chevron-right"}
           handlePressLink={() => handleNavigate("Faqs")}
         />
+        <ListItem
+          title="News"
+          iconLeft={"newspaper"}
+          iconRight={"chevron-right"}
+          handlePressLink={() => handleNavigate("News")}
+        />
 
         {token && (
           <View>
