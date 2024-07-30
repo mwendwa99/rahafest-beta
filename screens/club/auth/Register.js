@@ -17,6 +17,7 @@ export default function Register({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [phone, setPhone] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
   const {
@@ -65,6 +66,20 @@ export default function Register({ navigation }) {
       return;
     }
 
+    // phone should be a valid phone number
+    if (phone.length < 10) {
+      danger("phone number is invalid", 2000);
+      console.log("phone number is invalid");
+      return;
+    }
+
+    // email should be a valid email
+    if (!email.includes("@") || !email.includes(".")) {
+      danger("email is invalid", 2000);
+      console.log("email is invalid");
+      return;
+    }
+
     if (password !== confirmPassword) {
       danger("passwords do not match", 2000);
       console.log("passwords do not match");
@@ -76,11 +91,12 @@ export default function Register({ navigation }) {
       last_name: lastName,
       password: password,
       password_confirm: confirmPassword,
+      phone: phone,
       email: email,
       tc: checked,
     };
 
-    console.log(registerData);
+    // console.log(registerData);
 
     dispatch(registerUser(registerData));
   };
@@ -117,6 +133,17 @@ export default function Register({ navigation }) {
               keyboardType="email-address"
               inputMode="email"
               autoComplete="email"
+              required
+            />
+            {error ? <Text style={{ color: "red" }} value={error} /> : null}
+          </View>
+          <View style={styles.column}>
+            <Input
+              onChange={setPhone}
+              placeholder={"Phone number *"}
+              keyboardType="phone"
+              inputMode="phone"
+              autoComplete="phone"
               required
             />
             {error ? <Text style={{ color: "red" }} value={error} /> : null}
