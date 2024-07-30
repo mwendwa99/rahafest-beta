@@ -205,7 +205,7 @@ export default function ClubNavigator() {
               headerTitleAlign: "center",
             }}
           />
-          <Stack.Screen
+          {/* <Stack.Screen
             name="Gallery"
             component={Gallery}
             options={{
@@ -225,7 +225,7 @@ export default function ClubNavigator() {
               ),
               headerTitleAlign: "center",
             }}
-          />
+          /> */}
           <Stack.Screen
             name="Checkout"
             component={Checkout}

@@ -6,7 +6,8 @@ import { CommonActions } from "@react-navigation/native";
 import HomeNavigator from "./home";
 import EventNavigator from "./events";
 import ClubNavigator from "./club";
-import News from "./news/News";
+// import News from "./news/News";
+import Merchandise from "./club/landing/Merchandise";
 
 const BottomTab = createBottomTabNavigator();
 
@@ -33,12 +34,19 @@ export default function App() {
       icon_focused: "cards-club",
       icon_default: "cards-club-outline",
     },
+    // {
+    //   key: "News",
+    //   name: "News",
+    //   component: News,
+    //   icon_focused: "newspaper-variant-multiple-outline",
+    //   icon_default: "newspaper-variant-outline",
+    // },
     {
-      key: "News",
-      name: "News",
-      component: News,
-      icon_focused: "newspaper-variant-multiple-outline",
-      icon_default: "newspaper-variant-outline",
+      key: "Merchandise",
+      name: "Merchandise",
+      component: Merchandise,
+      icon_focused: "cart",
+      icon_default: "cart-outline",
     },
   ];
 

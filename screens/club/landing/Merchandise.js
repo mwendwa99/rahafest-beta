@@ -1,10 +1,12 @@
-import { StyleSheet, View, FlatList } from "react-native";
-import { MerchCard } from "../../../components";
+import { StyleSheet, SafeAreaView, FlatList } from "react-native";
+import { MerchCard, Text } from "../../../components";
 import { products } from "./data";
+import { StatusBar } from "expo-status-bar";
 
 export default function Merchandise() {
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <Text value={"Raha Shop"} variant={"subtitle"} />
       <FlatList
         data={products}
         renderItem={({ item }) => <MerchCard product={item} />}
@@ -13,7 +15,8 @@ export default function Merchandise() {
         contentContainerStyle={styles.grid}
         showsVerticalScrollIndicator={false}
       />
-    </View>
+      <StatusBar style="dark" />
+    </SafeAreaView>
   );
 }
 

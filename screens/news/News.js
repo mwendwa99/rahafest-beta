@@ -39,7 +39,12 @@ export default function News() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <TouchableOpacity
+      <Text
+        value="Here is what you missed in March"
+        variant="subtitle"
+        style={{ color: "#fff" }}
+      />
+      {/* <TouchableOpacity
         style={styles.accordionInner}
         onPress={() => setShowAccordion(!showAccordion)}
         disabled
@@ -49,12 +54,18 @@ export default function News() {
           variant="subtitle"
           style={{ color: "#fff" }}
         />
-        {/* <MaterialCommunityIcons
+
+        <Text
+          value="Here is what you missed in March"
+          variant="subtitle"
+          style={{ color: "#fff" }}
+        />
+        <MaterialCommunityIcons
           name={showAccordion ? "chevron-up" : "chevron-down"}
           size={24}
           color="white"
-        /> */}
-      </TouchableOpacity>
+        />
+      </TouchableOpacity> */}
       <FlatList
         style={styles.eventCardContainer}
         data={news}
@@ -73,7 +84,7 @@ export default function News() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: "100%",
+    // width: "100%",
     alignItems: "center",
     backgroundColor: "#212529",
   },
