@@ -38,6 +38,7 @@ export default function App() {
           </PaperProvider>
         </NavigationContainer>
       </PersistGate>
+      <StatusBar style="light" />
     </Provider>
   );
 }

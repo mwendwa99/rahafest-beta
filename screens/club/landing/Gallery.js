@@ -18,13 +18,6 @@ import { Text, Dropdown } from "../../../components";
 
 const placeholderImage = "../../../assets/placeholder.png"; // Placeholder image path
 
-// Dummy data array with event categories
-const eventCategories = [
-  { title: "Raha Rave 2024", key: "rave2024" },
-  { title: "Raha December", key: "december" },
-  { title: "RahaFest", key: "rahafest" },
-];
-
 export default function Media() {
   const dispatch = useDispatch();
   const { gallery, loading } = useSelector((state) => state.news);
@@ -37,16 +30,18 @@ export default function Media() {
   }, [dispatch]);
 
   const formattedGallery = useMemo(() => {
-    const categorizedGallery = {
-      rave2024: [],
-      december: [],
-      rahafest: gallery
-        ? gallery.map((item) => ({
-            uri: item.image ? rahaImageApi + item.image : placeholderImage,
-            id: item.id.toString(),
-          }))
-        : [],
-    };
+    const categorizedGallery = gallery.reduce((acc, item) => {
+      if (item.event_name) {
+        if (!acc[item.event_name]) {
+          acc[item.event_name] = [];
+        }
+        acc[item.event_name].push({
+          uri: item.image ? rahaImageApi + item.image : placeholderImage,
+          id: item.id.toString(),
+        });
+      }
+      return acc;
+    }, {});
     return categorizedGallery;
   }, [gallery]);
 
@@ -98,43 +93,45 @@ export default function Media() {
             padding: 10,
           }}
         />
-        {eventCategories.map((event) => (
-          <Dropdown
-            key={event.key}
-            showAccordion={accordionState[event.key]}
-            setShowAccordion={() => toggleAccordion(event.key)}
-            title={event.title}
-          >
-            {accordionState[event.key] &&
-            formattedGallery[event.key].length > 0 ? (
-              <MasonryList
-                images={formattedGallery[event.key].map((img) => ({
-                  uri: img.uri,
-                  id: img.id,
-                  component: renderImage({ uri: img.uri, id: img.id }), // Custom render function
-                }))}
-                spacing={4}
-                columns={2}
-                backgroundColor="#212529"
-                imageContainerStyle={styles.imageContainer}
-                onPressImage={(item, index) => {
-                  setSelectedImage(item.uri);
-                  setModalVisible(true);
-                }}
-                onRefresh={onRefresh}
-                refreshing={loading}
-              />
-            ) : (
-              <View style={styles.noImages}>
-                <Text
-                  value="Coming soon"
-                  variant="body"
-                  style={{ color: "#fff" }}
+        {Object.keys(formattedGallery)
+          .reverse()
+          .map((eventName) => (
+            <Dropdown
+              key={eventName}
+              showAccordion={accordionState[eventName]}
+              setShowAccordion={() => toggleAccordion(eventName)}
+              title={eventName}
+            >
+              {accordionState[eventName] &&
+              formattedGallery[eventName].length > 0 ? (
+                <MasonryList
+                  images={formattedGallery[eventName].map((img) => ({
+                    uri: img.uri,
+                    id: img.id,
+                    component: renderImage({ uri: img.uri, id: img.id }), // Custom render function
+                  }))}
+                  spacing={4}
+                  columns={2}
+                  backgroundColor="#212529"
+                  imageContainerStyle={styles.imageContainer}
+                  onPressImage={(item, index) => {
+                    setSelectedImage(item.uri);
+                    setModalVisible(true);
+                  }}
+                  onRefresh={onRefresh}
+                  refreshing={loading}
                 />
-              </View>
-            )}
-          </Dropdown>
-        ))}
+              ) : (
+                <View style={styles.noImages}>
+                  <Text
+                    value="Coming soon"
+                    variant="body"
+                    style={{ color: "#fff" }}
+                  />
+                </View>
+              )}
+            </Dropdown>
+          ))}
         <Modal
           visible={modalVisible}
           transparent={true}
@@ -162,6 +159,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#212529",
+    paddingHorizontal: 10,
+    width: "100%",
   },
   imageContainer: {
     borderRadius: 6,
