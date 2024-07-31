@@ -5,10 +5,9 @@ import {
   Image,
   Modal,
   TouchableOpacity,
-  ScrollView,
+  FlatList,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import MasonryList from "react-native-masonry-list";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchGallery } from "../../../redux/news/newsActions";
 import { ActivityIndicator } from "react-native-paper";
@@ -49,18 +48,25 @@ export default function Media() {
     dispatch(fetchGallery());
   }, [dispatch]);
 
+  const handleImagePress = (uri) => {
+    setSelectedImage(uri);
+    setModalVisible(true);
+  };
+
   const renderImage = useCallback(
     ({ uri, id }) => (
-      <View style={styles.imageContainer} key={id}>
-        <Image
-          source={{ uri }}
-          style={styles.image}
-          resizeMode="cover"
-          onError={(e) => {
-            console.error("Image failed to load", e.nativeEvent.error);
-          }}
-        />
-      </View>
+      <TouchableOpacity onPress={() => handleImagePress(uri)} key={id}>
+        <View style={styles.imageContainer}>
+          <Image
+            source={{ uri }}
+            style={styles.image}
+            resizeMode="cover"
+            onError={(e) => {
+              console.error("Image failed to load", e.nativeEvent.error);
+            }}
+          />
+        </View>
+      </TouchableOpacity>
     ),
     []
   );
@@ -80,76 +86,61 @@ export default function Media() {
     );
   }
 
+  const renderCategory = ({ item }) => (
+    <View>
+      <Dropdown
+        key={item}
+        showAccordion={accordionState[item]}
+        setShowAccordion={() => toggleAccordion(item)}
+        title={item}
+      >
+        {accordionState[item] && formattedGallery[item].length > 0 ? (
+          <FlatList
+            data={formattedGallery[item]}
+            keyExtractor={(img) => img.id}
+            renderItem={({ item }) => renderImage(item)}
+            numColumns={2}
+            columnWrapperStyle={styles.columnWrapper}
+          />
+        ) : (
+          <View style={styles.noImages}>
+            <Text
+              value="Coming soon"
+              variant="body"
+              style={{ color: "#fff" }}
+            />
+          </View>
+        )}
+      </Dropdown>
+    </View>
+  );
+
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView nestedScrollEnabled>
-        <Text
-          value="Gallery"
-          variant="subtitle"
-          style={{
-            color: "#fff",
-            alignSelf: "center",
-            margin: 10,
-            padding: 10,
-          }}
-        />
-        {Object.keys(formattedGallery)
-          .reverse()
-          .map((eventName) => (
-            <Dropdown
-              key={eventName}
-              showAccordion={accordionState[eventName]}
-              setShowAccordion={() => toggleAccordion(eventName)}
-              title={eventName}
-            >
-              {accordionState[eventName] &&
-              formattedGallery[eventName].length > 0 ? (
-                <MasonryList
-                  images={formattedGallery[eventName].map((img) => ({
-                    uri: img.uri,
-                    id: img.id,
-                    component: renderImage({ uri: img.uri, id: img.id }), // Custom render function
-                  }))}
-                  spacing={4}
-                  columns={2}
-                  backgroundColor="#212529"
-                  imageContainerStyle={styles.imageContainer}
-                  onPressImage={(item, index) => {
-                    setSelectedImage(item.uri);
-                    setModalVisible(true);
-                  }}
-                  onRefresh={onRefresh}
-                  refreshing={loading}
-                />
-              ) : (
-                <View style={styles.noImages}>
-                  <Text
-                    value="Coming soon"
-                    variant="body"
-                    style={{ color: "#fff" }}
-                  />
-                </View>
-              )}
-            </Dropdown>
-          ))}
-        <Modal
-          visible={modalVisible}
-          transparent={true}
-          onRequestClose={() => setModalVisible(false)}
-        >
-          <View style={styles.modalBackground}>
-            <TouchableOpacity
-              style={styles.fullscreenImageContainer}
-              onPress={() => setModalVisible(false)}
-            >
-              <Image
-                source={{ uri: selectedImage }}
-                style={styles.fullscreenImage}
-              />
-            </TouchableOpacity>
-          </View>
-        </Modal>
-      </ScrollView>
+      <FlatList
+        data={Object.keys(formattedGallery).reverse()} // Use the keys from the formatted gallery
+        keyExtractor={(item) => item.toString()} // Use the event name as the key
+        renderItem={renderCategory}
+        onRefresh={onRefresh}
+        refreshing={loading}
+      />
+      <Modal
+        visible={modalVisible}
+        transparent={true}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalBackground}>
+          <TouchableOpacity
+            style={styles.fullscreenImageContainer}
+            onPress={() => setModalVisible(false)}
+          >
+            <Image
+              source={{ uri: selectedImage }}
+              style={styles.fullscreenImage}
+            />
+          </TouchableOpacity>
+        </View>
+      </Modal>
       <StatusBar style="light" />
     </SafeAreaView>
   );
@@ -165,9 +156,10 @@ const styles = StyleSheet.create({
   imageContainer: {
     borderRadius: 6,
     overflow: "hidden",
+    margin: 4,
   },
   image: {
-    width: "100%",
+    width: 200, // Adjust width as needed
     height: 200, // Adjust height as needed
   },
   loader: {
@@ -194,5 +186,10 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     resizeMode: "contain",
+  },
+  columnWrapper: {
+    padding: 10,
+    // margin: 10,
+    justifyContent: "space-between",
   },
 });
