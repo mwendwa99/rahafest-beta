@@ -159,8 +159,8 @@ const styles = StyleSheet.create({
     margin: 4,
   },
   image: {
-    width: 200, // Adjust width as needed
-    height: 200, // Adjust height as needed
+    width: 150, // Adjust width as needed
+    height: 150, // Adjust height as needed
   },
   loader: {
     flex: 1,
@@ -188,8 +188,8 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
   },
   columnWrapper: {
-    padding: 10,
+    // padding: 10,
     // margin: 10,
-    justifyContent: "space-between",
+    justifyContent: "space-evenly",
   },
 });
