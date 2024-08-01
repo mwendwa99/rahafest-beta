@@ -3,10 +3,8 @@ import {
   View,
   FlatList,
   RefreshControl,
-  ImageBackground,
-  TouchableOpacity,
+  SafeAreaView,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Article, Text } from "../../components";
 import { useSelector, useDispatch } from "react-redux";
@@ -14,11 +12,9 @@ import { fetchNews } from "../../redux/news/newsActions";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator } from "react-native-paper";
 import { StatusBar } from "expo-status-bar";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 export default function News() {
   const { news, loading } = useSelector((state) => state.news);
-  const [showAccordion, setShowAccordion] = useState(false);
   const dispatch = useDispatch();
 
   useEffect(() => {
