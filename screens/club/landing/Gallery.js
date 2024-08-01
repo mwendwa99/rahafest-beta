@@ -29,7 +29,7 @@ export default function Media() {
   }, [dispatch]);
 
   const formattedGallery = useMemo(() => {
-    const categorizedGallery = gallery.reduce((acc, item) => {
+    const categorizedGallery = gallery?.reduce((acc, item) => {
       if (item.event_name) {
         if (!acc[item.event_name]) {
           acc[item.event_name] = [];
@@ -117,13 +117,23 @@ export default function Media() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <FlatList
-        data={Object.keys(formattedGallery).reverse()} // Use the keys from the formatted gallery
-        keyExtractor={(item) => item.toString()} // Use the event name as the key
-        renderItem={renderCategory}
-        onRefresh={onRefresh}
-        refreshing={loading}
-      />
+      {formattedGallery && Object.keys(formattedGallery).length > 0 ? (
+        <FlatList
+          data={Object.keys(formattedGallery).reverse()} // Use the keys from the formatted gallery
+          keyExtractor={(item) => item.toString()} // Use the event name as the key
+          renderItem={renderCategory}
+          onRefresh={onRefresh}
+          refreshing={loading}
+        />
+      ) : (
+        <View style={styles.noImages}>
+          <Text
+            value="No images available"
+            variant="body"
+            style={{ color: "#fff" }}
+          />
+        </View>
+      )}
       <Modal
         visible={modalVisible}
         transparent={true}
