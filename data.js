@@ -40,7 +40,7 @@ export const products = [
 export const DealData = [
   {
     id: "1",
-    image: require("./assets/test-merch.png"),
+    image: require("./assets/logo.png"),
     name: "Raha Rave",
     time: "4:00pm - 10:00pm",
     location: "Sarit Expo Center",
@@ -51,7 +51,7 @@ export const DealData = [
   },
   {
     id: "2",
-    image: require("./assets/test-merch.png"),
+    image: require("./assets/logo.png"),
     name: "Raha Rave",
     time: "4:00pm - 10:00pm",
     location: "Sarit Expo Center",
@@ -62,7 +62,7 @@ export const DealData = [
   },
   {
     id: "3",
-    image: require("./assets/test-merch.png"),
+    image: require("./assets/logo.png"),
     name: "Raha December",
     time: "4:00pm - 10:00pm",
     location: "Sarit Expo Center",
@@ -73,7 +73,7 @@ export const DealData = [
   },
   {
     id: "4",
-    image: require("./assets/test-merch.png"),
+    image: require("./assets/logo.png"),
     name: "Raha December",
     time: "4:00pm - 10:00pm",
     location: "Sarit Expo Center",
@@ -84,7 +84,7 @@ export const DealData = [
   },
   {
     id: "5",
-    image: require("./assets/test-merch.png"),
+    image: require("./assets/logo.png"),
     name: "Raha Rave",
     time: "4:00pm - 10:00pm",
     location: "Sarit Expo Center",
@@ -95,7 +95,7 @@ export const DealData = [
   },
   {
     id: "7",
-    image: require("./assets/test-merch.png"),
+    image: require("./assets/logo.png"),
     name: "Raha December",
     time: "4:00pm - 10:00pm",
     location: "Sarit Expo Center",
@@ -106,7 +106,7 @@ export const DealData = [
   },
   {
     id: "8",
-    image: require("./assets/test-merch.png"),
+    image: require("./assets/logo.png"),
     name: "Raha December",
     time: "4:00pm - 10:00pm",
     location: "Sarit Expo Center",
@@ -117,7 +117,7 @@ export const DealData = [
   },
   {
     id: "9",
-    image: require("./assets/test-merch.png"),
+    image: require("./assets/logo.png"),
     name: "Raha December",
     time: "4:00pm - 10:00pm",
     location: "Sarit Expo Center",
