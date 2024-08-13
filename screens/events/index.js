@@ -7,19 +7,24 @@ const Stack = createNativeStackNavigator();
 
 export default function EventNavigator() {
   return (
-    <Stack.Navigator initialRouteName="Feed">
+    <Stack.Navigator initialRouteName="EventScreen">
       <Stack.Screen
         name="EventScreen"
         component={Events}
         options={({ navigation }) => ({
-          headerShown: false,
+          headerShown: true,
           headerShadowVisible: false,
           headerTintColor: "#fff",
           headerStyle: {
             backgroundColor: "#212529",
           },
           headerTitle: (props) => (
-            <Text value={"Events"} {...props} variant={"subtitle"} />
+            <Text
+              value={"Events"}
+              {...props}
+              variant={"subtitle"}
+              style={{ color: "#fff" }}
+            />
           ),
           headerTitleAlign: "center",
         })}
