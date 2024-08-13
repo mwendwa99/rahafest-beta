@@ -12,7 +12,7 @@ export default function Events() {
         renderItem={({ item }) => <EventCard deal={item} />}
         keyExtractor={(item) => item.id}
         numColumns={1}
-        contentContainerStyle={styles.grid}
+        contentContainerStyle={styles.contentContainer}
         showsVerticalScrollIndicator={false}
       />
       <StatusBar style="light" />
@@ -23,7 +23,11 @@ export default function Events() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginHorizontal: 12,
-    height: "100%",
+    backgroundColor: "#212529",
+  },
+  contentContainer: {
+    padding: 0,
+    margin: 0,
+    flexGrow: 1, // Ensure FlatList takes up available space
   },
 });

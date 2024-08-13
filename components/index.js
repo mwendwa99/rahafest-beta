@@ -1,6 +1,5 @@
 export { default as Text } from "./Text";
 export { default as Input } from "./Input";
-export { default as VideoPlayer } from "./VideoPlayer";
 export { default as Avatar } from "./Avatar";
 export { default as ListItem } from "./ListItem";
 export { default as Button } from "./Button";
@@ -13,6 +12,6 @@ export { default as UserList } from "./UserList";
 export { default as MessageList } from "./MessageList";
 export { default as NavCard } from "./NavCard";
 export { default as MerchCard } from "./MerchCard";
-export { default as EventCard } from "./EventDealCard";
+export { default as EventCard } from "./EventCard";
 export { default as Article } from "./Article";
 export { default as Dropdown } from "./Dropdown";
