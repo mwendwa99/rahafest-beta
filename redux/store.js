@@ -18,13 +18,14 @@ import newsSlice from "./news/newsSlice";
 import menuSlice from "./menu/menuSlice";
 import chatSlice from "./chat/chatSlice";
 import friendSlice from "./friends/friendSlice";
+import eventSlice from "./events/eventSlice";
 
 const rootPersistConfig = {
   key: "root",
   storage: AsyncStorage,
   keyPrefix: "redux-",
-  whitelist: ["auth", "faq", "lineup", "news", "menu"],
-  blacklist: ["chat", "friends"],
+  whitelist: ["auth"],
+  blacklist: ["chat", "friends", "events", "faq", "lineup", "news", "menu"],
 };
 
 const rootReducer = combineReducers({
@@ -35,6 +36,7 @@ const rootReducer = combineReducers({
   menu: menuSlice,
   chat: chatSlice,
   friends: friendSlice,
+  events: eventSlice,
 });
 
 const persistedReducer = persistReducer(rootPersistConfig, rootReducer);
