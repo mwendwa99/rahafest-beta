@@ -34,13 +34,7 @@ export default function App() {
       icon_focused: "cards-club",
       icon_default: "cards-club-outline",
     },
-    // {
-    //   key: "News",
-    //   name: "News",
-    //   component: News,
-    //   icon_focused: "newspaper-variant-multiple-outline",
-    //   icon_default: "newspaper-variant-outline",
-    // },
+
     {
       key: "Merchandise",
       name: "Merchandise",

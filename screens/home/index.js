@@ -4,7 +4,6 @@ import { Text } from "../../components";
 import Home from "./Home";
 import Settings from "./Settings";
 import Faqs from "./Faqs";
-import Checkout from "./Events";
 import Gallery from "../club/landing/Gallery";
 import News from "../news/News";
 
@@ -51,22 +50,6 @@ export default function HomeNavigator() {
           },
           headerTitle: (props) => (
             <Text value={"Gallery"} {...props} variant={"subtitle"} />
-          ),
-          headerTitleAlign: "center",
-        }}
-      />
-      <Stack.Screen
-        name="Checkout"
-        component={Checkout}
-        options={{
-          headerShown: false,
-          headerShadowVisible: false,
-          headerTintColor: "#fff",
-          headerStyle: {
-            backgroundColor: "#212529",
-          },
-          headerTitle: (props) => (
-            <Text value={"Upcoming Event"} {...props} variant={"subtitle"} />
           ),
           headerTitleAlign: "center",
         }}

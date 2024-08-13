@@ -34,11 +34,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 12,
     margin: 5,
-    width: 350,
+    // width: 350,
     backgroundColor: "#fff",
     color: "#fafafa",
     borderRadius: 6,
     overflow: "hidden",
+    elevation: 1,
   },
   banner: {
     width: 100,

@@ -10,15 +10,13 @@ import { Text } from "../../components";
 
 import DirectMessage from "./chat/DirectMessage";
 import Live from "./chat/Live";
-import Checkout from "../events/Events";
 import Friends from "./friends";
 import Account from "../account";
 import AllUsers from "./friends/AllUsers";
 import Messages from "./chat/Messages";
 import Landing from "./landing/Landing";
 import Merchandise from "./landing/Merchandise";
-import Gallery from "./landing/Gallery";
-import EventDeals from "./landing/Deals";
+import Events from "../events";
 import Login from "./auth/Login";
 import Register from "./auth/Register";
 import { persistor } from "../../redux/store";
@@ -189,7 +187,7 @@ export default function ClubNavigator() {
             name="Merchandise"
             component={Merchandise}
             options={{
-              headerShown: true,
+              headerShown: false,
               headerShadowVisible: false,
               headerTintColor: "#fff",
               headerStyle: {
@@ -205,43 +203,9 @@ export default function ClubNavigator() {
               headerTitleAlign: "center",
             }}
           />
-          {/* <Stack.Screen
-            name="Gallery"
-            component={Gallery}
-            options={{
-              headerShown: true,
-              headerShadowVisible: false,
-              headerTintColor: "#fff",
-              headerStyle: {
-                backgroundColor: "#212529",
-              },
-              headerTitle: (props) => (
-                <Text
-                  value={"Gallery"}
-                  {...props}
-                  variant={"subtitle"}
-                  style={{ color: "#fff" }}
-                />
-              ),
-              headerTitleAlign: "center",
-            }}
-          /> */}
           <Stack.Screen
-            name="Checkout"
-            component={Checkout}
-            options={{
-              headerShown: true,
-              headerShadowVisible: false,
-              headerTintColor: "#fff",
-              headerStyle: {
-                backgroundColor: "#212529",
-              },
-              headerTitleAlign: "center",
-            }}
-          />
-          <Stack.Screen
-            name="EventDeals"
-            component={EventDeals}
+            name="Events"
+            component={Events}
             options={{
               headerShown: true,
               headerShadowVisible: false,

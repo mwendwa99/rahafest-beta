@@ -1,7 +1,8 @@
-import { StyleSheet, SafeAreaView, FlatList } from "react-native";
+import { StyleSheet, FlatList } from "react-native";
 import { MerchCard, Text } from "../../../components";
-import { products } from "./data";
+import { products } from "../../../data";
 import { StatusBar } from "expo-status-bar";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Merchandise() {
   return (
