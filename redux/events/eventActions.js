@@ -22,3 +22,26 @@ export const fetchEvents = createAsyncThunk(
     }
   }
 );
+
+export const fetchTicketTypes = createAsyncThunk(
+  "event/fetchTicketTypes",
+  async (eventId, { rejectWithValue }) => {
+    try {
+      const response = await ticketApi.get(
+        `events/${eventId}/event-ticket-type`
+      );
+
+      // Filter active ticket types
+      const activeTicketTypes = response.data.filter(
+        (ticketType) => ticketType.is_active
+      );
+
+      // Sort by price from cheapest to most expensive
+      activeTicketTypes.sort((a, b) => a.price - b.price);
+
+      return activeTicketTypes;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);

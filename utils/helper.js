@@ -48,15 +48,44 @@ export function getInitials(name) {
   return initials;
 }
 
-export function formatDate(timestamp) {
-  const date = new Date(timestamp);
-  const options = {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "numeric",
-    minute: "numeric",
-    second: "numeric",
-  };
-  return date.toLocaleDateString("en-US", options);
+export const formatDate = (date) => {
+  const options = { month: "short", day: "numeric" };
+  return new Intl.DateTimeFormat("en-US", options).format(new Date(date));
+};
+
+export const formatTime = (date) => {
+  const options = { hour: "numeric", minute: "numeric", hour12: true };
+  return new Intl.DateTimeFormat("en-US", options)
+    .format(new Date(date))
+    .replace("AM", "am")
+    .replace("PM", "pm");
+};
+
+export const formatEventDates = (start_date, end_date) => {
+  const startDate = new Date(start_date);
+  const endDate = new Date(end_date);
+
+  const isSameDayAndMonth =
+    startDate.getDate() === endDate.getDate() &&
+    startDate.getMonth() === endDate.getMonth() &&
+    startDate.getFullYear() === endDate.getFullYear();
+
+  const startDateFormatted = formatDate(start_date);
+  const endDateFormatted = formatDate(end_date);
+  const startTimeFormatted = formatTime(start_date);
+  const endTimeFormatted = formatTime(end_date);
+
+  if (isSameDayAndMonth) {
+    return `${startDateFormatted} from ${startTimeFormatted}`;
+  } else {
+    return `${startDateFormatted} to ${endDateFormatted} from ${startTimeFormatted}`;
+  }
+};
+
+export function formatCurrencyWithCommas(number) {
+  // Round to the nearest whole number
+  const roundedNumber = Math.round(number);
+
+  // Format with commas
+  return roundedNumber.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
