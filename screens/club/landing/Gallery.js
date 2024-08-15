@@ -128,7 +128,7 @@ export default function Media() {
       ) : (
         <View style={styles.noImages}>
           <Text
-            value="No images available"
+            value="Oops! Something went wrong with the server."
             variant="body"
             style={{ color: "#fff" }}
           />

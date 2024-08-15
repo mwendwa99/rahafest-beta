@@ -3,7 +3,7 @@ import { getFaq } from "./faqActions";
 
 const initialState = {
   faq: null,
-  faqError: null,
+  error: null,
   loading: false,
 };
 
@@ -18,11 +18,11 @@ const faqSlice = createSlice({
     builder.addCase(getFaq.fulfilled, (state, action) => {
       state.loading = false;
       state.faq = action.payload.data;
-      state.faqError = null;
+      state.error = null;
     });
     builder.addCase(getFaq.rejected, (state, action) => {
       state.loading = false;
-      state.faqError = action.error;
+      state.error = action.error;
     });
   },
 });

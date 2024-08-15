@@ -3,18 +3,19 @@ import {
   View,
   FlatList,
   RefreshControl,
-  SafeAreaView,
+  Text as RNText,
 } from "react-native";
 
 import { Article, Text } from "../../components";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchNews } from "../../redux/news/newsActions";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { ActivityIndicator } from "react-native-paper";
 import { StatusBar } from "expo-status-bar";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function News() {
-  const { news, loading } = useSelector((state) => state.news);
+  const { news, loading, error } = useSelector((state) => state.news);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -25,6 +26,16 @@ export default function News() {
     return (
       <View style={styles.loader}>
         <ActivityIndicator size="large" color="orange" />
+      </View>
+    );
+  }
+
+  if (error) {
+    console.log(error);
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <RNText>Oops! Something went wrong with the server.</RNText>
+        <StatusBar style="dark" />
       </View>
     );
   }
@@ -40,28 +51,6 @@ export default function News() {
         variant="subtitle"
         style={{ color: "#fff" }}
       />
-      {/* <TouchableOpacity
-        style={styles.accordionInner}
-        onPress={() => setShowAccordion(!showAccordion)}
-        disabled
-      >
-        <Text
-          value="Here is what you missed in March"
-          variant="subtitle"
-          style={{ color: "#fff" }}
-        />
-
-        <Text
-          value="Here is what you missed in March"
-          variant="subtitle"
-          style={{ color: "#fff" }}
-        />
-        <MaterialCommunityIcons
-          name={showAccordion ? "chevron-up" : "chevron-down"}
-          size={24}
-          color="white"
-        />
-      </TouchableOpacity> */}
       <FlatList
         style={styles.eventCardContainer}
         data={news}

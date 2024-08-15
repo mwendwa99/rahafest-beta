@@ -62,9 +62,10 @@ export default function Events() {
   }
 
   if (error) {
+    console.log(error);
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text>{error}</Text>
+        <Text>Oops! Something went wrong with the server.</Text>
       </View>
     );
   }
