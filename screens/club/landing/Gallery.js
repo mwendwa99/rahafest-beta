@@ -6,6 +6,7 @@ import {
   Modal,
   TouchableOpacity,
   FlatList,
+  Text as RNText,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useDispatch, useSelector } from "react-redux";
@@ -14,22 +15,27 @@ import { ActivityIndicator } from "react-native-paper";
 import { rahaImageApi } from "../../../services/api.service";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Text, Dropdown } from "../../../components";
+import { clearNewsAndGalleryError } from "../../../redux/news/newsSlice";
 
 const placeholderImage = "../../../assets/placeholder.png"; // Placeholder image path
 
 export default function Media() {
   const dispatch = useDispatch();
-  const { gallery, loading } = useSelector((state) => state.news);
+  const { gallery, loading, error } = useSelector((state) => state.news);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [accordionState, setAccordionState] = useState({});
 
   useEffect(() => {
     dispatch(fetchGallery());
+    return () => {
+      dispatch(clearNewsAndGalleryError());
+    };
   }, [dispatch]);
 
   const formattedGallery = useMemo(() => {
-    const categorizedGallery = gallery?.reduce((acc, item) => {
+    if (!gallery) return {};
+    return gallery.reduce((acc, item) => {
       if (item.event_name) {
         if (!acc[item.event_name]) {
           acc[item.event_name] = [];
@@ -41,7 +47,6 @@ export default function Media() {
       }
       return acc;
     }, {});
-    return categorizedGallery;
   }, [gallery]);
 
   const onRefresh = useCallback(() => {
@@ -78,14 +83,6 @@ export default function Media() {
     }));
   };
 
-  if (loading) {
-    return (
-      <View style={styles.loader}>
-        <ActivityIndicator size="large" color="orange" />
-      </View>
-    );
-  }
-
   const renderCategory = ({ item }) => (
     <View>
       <Dropdown
@@ -115,12 +112,29 @@ export default function Media() {
     </View>
   );
 
+  if (error) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <RNText>Oops! Something went wrong with the server.</RNText>
+        <StatusBar style="dark" />
+      </View>
+    );
+  }
+
+  if (loading) {
+    return (
+      <View style={styles.loader}>
+        <ActivityIndicator size="large" color="orange" />
+      </View>
+    );
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       {formattedGallery && Object.keys(formattedGallery).length > 0 ? (
         <FlatList
-          data={Object.keys(formattedGallery).reverse()} // Use the keys from the formatted gallery
-          keyExtractor={(item) => item.toString()} // Use the event name as the key
+          data={Object.keys(formattedGallery).reverse()}
+          keyExtractor={(item) => item.toString()}
           renderItem={renderCategory}
           onRefresh={onRefresh}
           refreshing={loading}

@@ -11,7 +11,11 @@ const initialState = {
 const eventSlice = createSlice({
   name: "event",
   initialState,
-  reducers: {},
+  reducers: {
+    clearEventsError: (state) => {
+      state.error = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchEvents.pending, (state) => {
@@ -40,5 +44,7 @@ const eventSlice = createSlice({
       });
   },
 });
+
+export const { clearEventsError } = eventSlice.actions;
 
 export default eventSlice.reducer;

@@ -11,7 +11,11 @@ const initialState = {
 const newsSlice = createSlice({
   name: "news",
   initialState,
-  reducers: {},
+  reducers: {
+    clearNewsAndGalleryError: (state) => {
+      state.error = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchNews.pending, (state) => {
@@ -41,5 +45,7 @@ const newsSlice = createSlice({
       });
   },
 });
+
+export const { clearNewsAndGalleryError } = newsSlice.actions;
 
 export default newsSlice.reducer;

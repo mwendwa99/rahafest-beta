@@ -3,49 +3,83 @@ import { EventCard } from "../../components";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { fetchEvents, fetchTicketTypes } from "../../redux/events/eventActions";
 import { ActivityIndicator } from "react-native-paper";
+import { clearEventsError } from "../../redux/events/eventSlice";
 
 export default function Events() {
   const dispatch = useDispatch();
   const { events, loading, error } = useSelector((state) => state.events);
   const { user, token } = useSelector((state) => state.auth);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
   const [mergedEvents, setMergedEvents] = useState([]);
+  const isAuthenticated = !!(user && token);
+
+  // Ref to store the current fetch request's AbortController
+  const abortControllerRef = useRef(null);
+
+  useEffect(() => {
+    // Cleanup on unmount
+    return () => {
+      dispatch(clearEventsError());
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, [dispatch]);
 
   useEffect(() => {
     const fetchData = async () => {
-      await dispatch(fetchEvents());
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+      const controller = new AbortController();
+      abortControllerRef.current = controller;
+      try {
+        await dispatch(fetchEvents(controller.signal));
+      } catch (err) {
+        if (err.name !== "AbortError") {
+          console.error("Error fetching events:", err);
+        }
+      }
     };
     fetchData();
   }, [dispatch]);
 
   useEffect(() => {
-    if (user && token) {
-      setIsAuthenticated(true);
-    }
-  }, [user, token]);
-
-  useEffect(() => {
     const fetchAndMergeData = async () => {
       if (events.length > 0) {
-        const updatedEvents = await Promise.all(
-          events.map(async (event) => {
-            const ticketTypesForEvent = await dispatch(
-              fetchTicketTypes(event.id)
-            );
-            return {
-              ...event,
-              ticketTypes: ticketTypesForEvent.payload || [],
-            };
-          })
-        );
-        setMergedEvents(updatedEvents);
+        const controller = new AbortController();
+        const signal = controller.signal;
+        try {
+          const updatedEvents = await Promise.all(
+            events.map(async (event) => {
+              if (event.id) {
+                // Ensure event.id is not null, undefined, or empty
+                const ticketTypesForEvent = await dispatch(
+                  fetchTicketTypes(event.id, signal)
+                );
+                return {
+                  ...event,
+                  ticketTypes: ticketTypesForEvent.payload || [],
+                };
+              } else {
+                // Handle events without a valid id
+                return {
+                  ...event,
+                  ticketTypes: [],
+                };
+              }
+            })
+          );
+          setMergedEvents(updatedEvents);
+        } catch (err) {
+          if (err.name !== "AbortError") {
+            console.error("Error fetching ticket types:", err);
+          }
+        }
       }
     };
-
     fetchAndMergeData();
   }, [events, dispatch]);
 
@@ -55,17 +89,17 @@ export default function Events() {
 
   if (loading) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <View style={styles.centered}>
         <ActivityIndicator animating={true} />
       </View>
     );
   }
 
-  if (error) {
-    console.log(error);
+  if (error && error.detail !== "No Invoice matches the given query.") {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <View style={styles.centered}>
         <Text>Oops! Something went wrong with the server.</Text>
+        <StatusBar style="light" />
       </View>
     );
   }
@@ -81,7 +115,7 @@ export default function Events() {
             isAuthenticated={isAuthenticated}
           />
         )}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.id.toString()}
         numColumns={1}
         contentContainerStyle={styles.contentContainer}
         showsVerticalScrollIndicator={false}
@@ -100,8 +134,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#212529",
   },
   contentContainer: {
-    padding: 0,
-    margin: 0,
     flexGrow: 1, // Ensure FlatList takes up available space
+  },
+  centered: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
