@@ -6,8 +6,10 @@ import {
   FlatList,
   TouchableOpacity,
 } from "react-native";
+
 import Text from "./Text";
 import { formatEventDates, formatCurrencyWithCommas } from "../utils/helper";
+
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const EventCard = ({ event, ticketTypes, isAuthenticated, handleNavigate }) => {
@@ -90,7 +92,7 @@ const EventCard = ({ event, ticketTypes, isAuthenticated, handleNavigate }) => {
   };
 
   return (
-    <View style={styles.container} disabled={expired}>
+    <View style={styles.container}>
       {/* Event Banner */}
       <Image source={{ uri: banner }} style={styles.banner} />
 

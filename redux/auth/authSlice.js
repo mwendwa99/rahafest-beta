@@ -17,6 +17,7 @@ const initialState = {
   error: null,
   loading: false,
   userById: null,
+  isAuthenticated: false,
 };
 
 const authSlice = createSlice({
@@ -25,6 +26,10 @@ const authSlice = createSlice({
   reducers: {
     clearError: (state) => {
       state.error = null;
+    },
+    checkUserAuthentication: (state) => {
+      // Check if user and token are present in the state
+      state.isAuthenticated = !!state.user && !!state.token;
     },
   },
   extraReducers: (builder) => {
@@ -37,10 +42,12 @@ const authSlice = createSlice({
         state.user = action.payload.user;
         state.token = action.payload.token;
         state.error = null;
+        state.isAuthenticated = true; // Set authentication status
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+        state.isAuthenticated = false; // Reset authentication status
       })
       .addCase(loginUser.pending, (state) => {
         state.loading = true;
@@ -49,10 +56,12 @@ const authSlice = createSlice({
         state.loading = false;
         state.token = action.payload.token;
         state.error = null;
+        state.isAuthenticated = true; // Set authentication status
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+        state.isAuthenticated = false; // Reset authentication status
       })
       .addCase(fetchUser.pending, (state) => {
         state.loading = true;
@@ -61,10 +70,12 @@ const authSlice = createSlice({
         state.loading = false;
         state.user = action.payload;
         state.error = null;
+        state.isAuthenticated = true; // Set authentication status
       })
       .addCase(fetchUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+        state.isAuthenticated = false; // Reset authentication status
       })
       .addCase(filterUserById.pending, (state) => {
         state.loading = true;
@@ -99,6 +110,7 @@ const authSlice = createSlice({
   },
 });
 
-export const { clearError } = authSlice.actions;
+// Call this action when initializing or rehydrating the store
+export const { clearError, checkUserAuthentication } = authSlice.actions;
 
 export default authSlice.reducer;
