@@ -82,7 +82,8 @@ const EventCard = ({ event, ticketTypes, isAuthenticated, handleNavigate }) => {
   const navigateToCheckout = () => {
     const eventDetails = {
       ...event,
-      tickets: prices, // Pass the updated ticket prices
+      ticketTypes: prices,
+      // tickets: prices, // Pass the updated ticket prices
     };
 
     handleNavigate(eventDetails);

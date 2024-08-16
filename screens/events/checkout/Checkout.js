@@ -1,4 +1,4 @@
-import { View, StyleSheet, Image, Platform } from "react-native";
+import { View, StyleSheet, Image, FlatList } from "react-native";
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
@@ -6,12 +6,15 @@ import { StatusBar } from "expo-status-bar";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import { Text } from "../../../components";
-import { formatEventDates } from "../../../utils/helper";
+import {
+  formatCurrencyWithCommas,
+  formatEventDates,
+} from "../../../utils/helper";
 
 export default function Checkout({ route }) {
   const { event } = route.params || {};
 
-  // console.log(event);
+  console.log(event);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -44,51 +47,57 @@ export default function Checkout({ route }) {
           />
         </View>
       </View>
-      {/* <View style={{}}>
-          <FlatList
-            data={prices}
-            renderItem={({ item }) => (
-              <View style={styles.ticketItem}>
+      <View style={styles.detailsContainer}>
+        <FlatList
+          data={event.ticketTypes}
+          renderItem={({ item }) => (
+            <View style={styles.ticketItem}>
+              <View style={styles.row}>
                 <Text
-                  value={item.title}
+                  value={item?.title || "N/A"}
                   variant="body"
-                  style={{ fontWeight: "bold" }}
+                  style={{ fontWeight: "bold", marginRight: 2 }}
                 />
-                <View style={styles.priceContainer}>
-                  {discountPercentage > 0 && (
-                    <View style={styles.row}>
-                      <Text
-                        value={`KES ${formatCurrencyWithCommas(
-                          item.originalPrice
-                        )}`}
-                        variant="body"
-                        style={styles.oldPrice}
-                      />
-                      <Text
-                        value={`KES ${formatCurrencyWithCommas(
-                          item.discountedPrice.toFixed(2)
-                        )}`}
-                        variant="body"
-                        style={styles.newPrice}
-                      />
-                    </View>
-                  )}
-                  {discountPercentage === 0 && (
+                {item?.discount_price > 0 && (
+                  <View style={styles.row}>
+                    <Text
+                      value={`${Math.round(item?.discount_rate)}% off`}
+                      variant="body"
+                      style={styles.discount}
+                    />
+                  </View>
+                )}
+              </View>
+              <View style={styles.priceContainer}>
+                {item?.discount_price > 0 ? (
+                  <View style={styles.row}>
+                    <Text
+                      value={`KES ${formatCurrencyWithCommas(item?.price)}`}
+                      variant="body"
+                      style={styles.oldPrice}
+                    />
                     <Text
                       value={`KES ${formatCurrencyWithCommas(
-                        item.originalPrice
+                        item?.discount_price
                       )}`}
                       variant="body"
+                      style={styles.newPrice}
                     />
-                  )}
-                </View>
+                  </View>
+                ) : (
+                  <Text
+                    value={`KES ${formatCurrencyWithCommas(item?.price)}`}
+                    variant="body"
+                  />
+                )}
               </View>
-            )}
-            keyExtractor={(item) => item.id.toString()}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-          />
-        </View> */}
+            </View>
+          )}
+          keyExtractor={(item) => item?.id.toString()}
+          showsHorizontalScrollIndicator={false}
+        />
+      </View>
+
       <StatusBar style="dark" />
     </SafeAreaView>
   );
@@ -108,5 +117,37 @@ const styles = StyleSheet.create({
     height: 250,
     width: 200,
     borderRadius: 4,
+  },
+  ticketItem: {
+    borderWidth: 1,
+    borderColor: "#ddd",
+    padding: 10,
+    marginVertical: 5,
+    borderRadius: 4,
+  },
+  oldPrice: {
+    fontSize: 12,
+    fontWeight: "300",
+    textDecorationLine: "line-through",
+    color: "grey",
+    marginEnd: 5,
+  },
+  newPrice: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  discountImage: {
+    width: 20,
+    height: 20,
+    marginEnd: 2,
+  },
+  discount: {
+    fontSize: 14,
+    color: "red",
+    fontWeight: "bold",
+  },
+  priceContainer: {
+    flexDirection: "row",
+    alignItems: "center",
   },
 });
