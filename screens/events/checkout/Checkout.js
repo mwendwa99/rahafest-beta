@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Image, FlatList } from "react-native";
+import { View, StyleSheet, Image, FlatList, Modal } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { useSelector, useDispatch } from "react-redux";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-import { Text, UserInfoCard, TicketCard } from "../../../components";
+import {
+  Text,
+  UserInfoCard,
+  TicketCard,
+  Button,
+  UserInputForm,
+} from "../../../components";
 
 import {
   formatEventDates,
@@ -17,6 +23,11 @@ export default function Checkout({ route }) {
   const { event } = route.params || {};
   const { user, loading, isAuthenticated } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
+
+  const [attendeeInfo, setAttendeeInfo] = useState([]);
+  const [ticketQuantities, setTicketQuantities] = useState({});
+  const [showUserInputModal, setShowUserInputModal] = useState(false);
+  const [showPhoneInputModal, setShowPhoneInputModal] = useState(false);
 
   if (!event) {
     return (
@@ -30,16 +41,22 @@ export default function Checkout({ route }) {
     dispatch(checkUserAuthentication());
   }, []);
 
-  const [attendeeInfo, setAttendeeInfo] = useState([]);
-  const [ticketQuantities, setTicketQuantities] = useState({});
-
   const handleSelectTicketQuantity = (quantity, ticket) => {
+    if (!isAuthenticated) {
+      setShowUserInputModal(true);
+      return;
+    }
+
+    if (isAuthenticated && !user?.phone) {
+      setShowPhoneInputModal(true);
+      return;
+    }
+
+    // Proceed with updating the ticket quantities and attendee info
     setTicketQuantities((prevQuantities) => {
-      // Update the ticket quantities
       const updatedQuantities = { ...prevQuantities, [ticket.id]: quantity };
       const newAttendees = [];
 
-      // Add new attendee entries based on the updated quantities
       Object.keys(updatedQuantities).forEach((ticketId) => {
         const qty = updatedQuantities[ticketId];
         if (qty > 0) {
@@ -65,15 +82,53 @@ export default function Checkout({ route }) {
         }
       });
 
-      // Update attendeeInfo state
       setAttendeeInfo(newAttendees);
 
       return updatedQuantities;
     });
   };
 
-  console.log("isAuthenticated", isAuthenticated);
-  console.log("user", user);
+  // const handleSelectTicketQuantity = (quantity, ticket) => {
+  //   setTicketQuantities((prevQuantities) => {
+  //     // Update the ticket quantities
+  //     const updatedQuantities = { ...prevQuantities, [ticket.id]: quantity };
+  //     const newAttendees = [];
+
+  //     // Add new attendee entries based on the updated quantities
+  //     Object.keys(updatedQuantities).forEach((ticketId) => {
+  //       const qty = updatedQuantities[ticketId];
+  //       if (qty > 0) {
+  //         const ticket = event.ticketTypes.find(
+  //           (t) => t.id === parseInt(ticketId, 10)
+  //         );
+  //         for (let i = 0; i < qty; i++) {
+  //           newAttendees.push({
+  //             ticket_name: ticket.title,
+  //             event_name: event.title,
+  //             first_name: user?.first_name || "", // or some default value
+  //             last_name: user?.last_name || "", // or some default value
+  //             phone: formatPhoneNumberToMpesaFormat(user?.phone || ""), // format phone number
+  //             event_id: event.id,
+  //             email: user?.email || "", // or some default value
+  //             amount_paid:
+  //               ticket.discount_price > 0
+  //                 ? ticket.discount_price
+  //                 : ticket.price,
+  //             ticket_type: ticket.id,
+  //           });
+  //         }
+  //       }
+  //     });
+
+  //     // Update attendeeInfo state
+  //     setAttendeeInfo(newAttendees);
+
+  //     return updatedQuantities;
+  //   });
+  // };
+
+  console.log("attendeeInfo", attendeeInfo);
+  // console.log("user", user);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -115,6 +170,14 @@ export default function Checkout({ route }) {
         />
       </View>
       {isAuthenticated && <UserInfoCard loading={loading} user={user} />}
+
+      <View>
+        <Button
+          label="Buy Ticket"
+          variant={"contained"}
+          onPress={() => alert("Pay Now", attendeeInfo)}
+        />
+      </View>
 
       <StatusBar style="dark" />
     </SafeAreaView>
