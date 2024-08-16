@@ -89,3 +89,8 @@ export function formatCurrencyWithCommas(number) {
   // Format with commas
   return roundedNumber.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
+
+// Function to format phone number
+export const formatPhoneNumberToMpesaFormat = (phoneNumber) => {
+  return phoneNumber.replace(/^0/, "254");
+};
