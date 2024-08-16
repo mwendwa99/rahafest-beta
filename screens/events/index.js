@@ -1,33 +1,42 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-
 import { Text } from "../../components";
 import Events from "./Events";
+import CheckoutNavigator from "./checkout";
 
 const Stack = createNativeStackNavigator();
 
 export default function EventNavigator() {
   return (
-    <Stack.Navigator initialRouteName="EventScreen">
+    <Stack.Navigator initialRouteName="Raha Events">
       <Stack.Screen
-        name="EventScreen"
+        name="Raha Events"
         component={Events}
-        options={({ navigation }) => ({
-          headerShown: true,
+        options={{
+          headerShown: false, // Hide header for the Events screen
+        }}
+      />
+      <Stack.Screen
+        name="CheckoutNavigator"
+        component={CheckoutNavigator}
+        options={{
+          headerShown: false,
           headerShadowVisible: false,
-          headerTintColor: "#fff",
+          headerTintColor: "#000",
           headerStyle: {
-            backgroundColor: "#212529",
+            backgroundColor: "#fff", // Ensure background color is set correctly
+            elevation: 0, // Remove shadow on Android
+            shadowOpacity: 0, // Remove shadow on iOS
+            borderBottomWidth: 0, // Remove bottom border
           },
           headerTitle: (props) => (
             <Text
-              value={"Events"}
+              value={""}
               {...props}
               variant={"subtitle"}
-              style={{ color: "#fff" }}
+              style={{ color: "#000" }}
             />
           ),
-          headerTitleAlign: "center",
-        })}
+        }}
       />
     </Stack.Navigator>
   );
