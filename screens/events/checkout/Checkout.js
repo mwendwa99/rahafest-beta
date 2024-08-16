@@ -5,10 +5,9 @@ import { StatusBar } from "expo-status-bar";
 import { useSelector, useDispatch } from "react-redux";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-import { Text, Input, UserInputForm } from "../../../components";
+import { Text, UserInfoCard, TicketCard } from "../../../components";
 
 import {
-  formatCurrencyWithCommas,
   formatEventDates,
   formatPhoneNumberToMpesaFormat,
 } from "../../../utils/helper";
@@ -16,9 +15,7 @@ import { checkUserAuthentication } from "../../../redux/auth/authSlice";
 
 export default function Checkout({ route }) {
   const { event } = route.params || {};
-  const { user, token, error, loading, isAuthenticated } = useSelector(
-    (state) => state.auth
-  );
+  const { user, loading, isAuthenticated } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
   if (!event) {
@@ -28,14 +25,6 @@ export default function Checkout({ route }) {
       </View>
     );
   }
-
-  // if (loading) {
-  //   return (
-  //     <View style={styles.container}>
-  //       <Text value="Loading..." variant="body" />
-  //     </View>
-  //   );
-  // }
 
   useEffect(() => {
     dispatch(checkUserAuthentication());
@@ -116,100 +105,16 @@ export default function Checkout({ route }) {
         <FlatList
           data={event.ticketTypes}
           renderItem={({ item }) => (
-            <View style={styles.ticketItem}>
-              <View>
-                <View style={styles.row}>
-                  <Text
-                    value={item?.title || "N/A"}
-                    variant="body"
-                    style={{ fontWeight: "bold", marginRight: 2 }}
-                  />
-                  {item?.discount_price > 0 && (
-                    <View style={styles.row}>
-                      <Text
-                        value={`${Math.round(item?.discount_rate)}% off`}
-                        variant="body"
-                        style={styles.discount}
-                      />
-                    </View>
-                  )}
-                </View>
-                <View style={styles.priceContainer}>
-                  {item?.discount_price > 0 ? (
-                    <View style={styles.row}>
-                      <Text
-                        value={`KES ${formatCurrencyWithCommas(item?.price)}`}
-                        variant="body"
-                        style={styles.oldPrice}
-                      />
-                      <Text
-                        value={`KES ${formatCurrencyWithCommas(
-                          item?.discount_price
-                        )}`}
-                        variant="body"
-                        style={styles.newPrice}
-                      />
-                    </View>
-                  ) : (
-                    <Text
-                      value={`KES ${formatCurrencyWithCommas(item?.price)}`}
-                      variant="body"
-                    />
-                  )}
-                </View>
-              </View>
-              <View>
-                <Text value={`Select quantity`} variant="body" />
-                <Input
-                  placeholder="0"
-                  type="number-pad"
-                  defaultValue="0"
-                  onChange={(text) => {
-                    const quantity = parseInt(text, 10) || 0;
-                    handleSelectTicketQuantity(quantity, item);
-                  }}
-                />
-              </View>
-            </View>
+            <TicketCard
+              item={item}
+              handleSelectTicketQuantity={handleSelectTicketQuantity}
+            />
           )}
           keyExtractor={(item) => item?.id.toString()}
           showsHorizontalScrollIndicator={false}
         />
       </View>
-      {isAuthenticated && (
-        <View>
-          {loading && (
-            <Text
-              value="Getting your information, please wait"
-              variant="body"
-            />
-          )}
-          <Text value="Your Information" variant="body" />
-          <View
-            style={{
-              ...styles.ticketItem,
-              flexDirection: "column",
-              alignItems: "flex-start",
-            }}
-          >
-            <Text
-              value={`name: ${user?.first_name} ${user?.last_name}`}
-              variant="body"
-              style={{ color: "grey" }}
-            />
-            <Text
-              value={`mobile: ${user?.phone || "unavailable"}`}
-              variant="body"
-              style={{ color: "grey" }}
-            />
-            <Text
-              value={`email: ${user?.email}`}
-              variant="body"
-              style={{ color: "grey" }}
-            />
-          </View>
-        </View>
-      )}
+      {isAuthenticated && <UserInfoCard loading={loading} user={user} />}
 
       <StatusBar style="dark" />
     </SafeAreaView>
@@ -252,11 +157,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
-  discountImage: {
-    width: 20,
-    height: 20,
-    marginEnd: 2,
-  },
+
   discount: {
     fontSize: 14,
     color: "red",

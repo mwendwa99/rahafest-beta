@@ -16,3 +16,5 @@ export { default as EventCard } from "./EventCard";
 export { default as Article } from "./Article";
 export { default as Dropdown } from "./Dropdown";
 export { default as UserInputForm } from "./UserInputForm";
+export { default as UserInfoCard } from "./UserInfoCard";
+export { default as TicketCard } from "./TicketCard";
