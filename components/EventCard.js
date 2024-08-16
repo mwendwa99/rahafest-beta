@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Image,
@@ -10,19 +10,91 @@ import Text from "./Text";
 import { formatEventDates, formatCurrencyWithCommas } from "../utils/helper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-const EventCard = ({ event, ticketTypes, isAuthenticated }) => {
+const EventCard = ({ event, ticketTypes, isAuthenticated, handleNavigate }) => {
   const { banner, title, location, expired, start_date, end_date } = event;
+  const [prices, setPrices] = useState([]);
 
-  const discountPercentage =
-    isAuthenticated && !expired ? Math.floor(Math.random() * 10) : 0;
+  // //test data
+  // useEffect(() => {
+  //   // Example data manipulation for testing
+  //   const simulatedTicketTypes = [
+  //     {
+  //       id: 1,
+  //       title: "Regular",
+  //       price: "6000.00",
+  //       discount_price: "5000.00", // Discounted price
+  //       discount_rate: "10.00",
+  //       available_tickets: 120,
+  //       event_id: 7,
+  //       is_active: true,
+  //       count: 0,
+  //       total_tickets: 120,
+  //       remaining_tickets: 120,
+  //       revenue: "0.00",
+  //     },
+  //     {
+  //       id: 2,
+  //       title: "VIP",
+  //       price: "10000.00",
+  //       discount_price: "9000.00", // Discounted price
+  //       discount_rate: "10.00",
+  //       available_tickets: 50,
+  //       event_id: 7,
+  //       is_active: true,
+  //       count: 0,
+  //       total_tickets: 50,
+  //       remaining_tickets: 50,
+  //       revenue: "0.00",
+  //     },
+  //   ];
+
+  //   const calculatePrices = () => {
+  //     const updatedPrices =
+  //       simulatedTicketTypes &&
+  //       simulatedTicketTypes.length > 0 &&
+  //       simulatedTicketTypes.map((item) => {
+  //         const originalPrice = parseFloat(item.price);
+  //         const discountedPrice = parseFloat(item.discount_price);
+  //         return { ...item, originalPrice, discountedPrice };
+  //       });
+  //     setPrices(updatedPrices);
+  //   };
+
+  //   calculatePrices();
+  // }, [ticketTypes]);
+
+  useEffect(() => {
+    const calculatePrices = () => {
+      const updatedPrices =
+        ticketTypes &&
+        ticketTypes.length > 0 &&
+        ticketTypes.map((item) => {
+          const originalPrice = parseFloat(item.price); // Ensure price is a number
+          const discountedPrice = parseFloat(item.discount_price); // Use discount_price directly
+          return { ...item, originalPrice, discountedPrice };
+        });
+      setPrices(updatedPrices);
+    };
+
+    calculatePrices();
+  }, [ticketTypes]);
+
+  const navigateToCheckout = () => {
+    const eventDetails = {
+      ...event,
+      tickets: prices, // Pass the updated ticket prices
+    };
+
+    handleNavigate(eventDetails);
+  };
 
   return (
     <View style={styles.container} disabled={expired}>
       {/* Event Banner */}
       <Image source={{ uri: banner }} style={styles.banner} />
 
-      {/* Event Details */}
       <View style={styles.cardInfoContainer}>
+        {/* Event Details */}
         <TouchableOpacity
           disabled={expired}
           style={{
@@ -30,7 +102,7 @@ const EventCard = ({ event, ticketTypes, isAuthenticated }) => {
             justifyContent: "space-between",
             width: "100%",
           }}
-          onPress={() => alert("Update coming soon!")}
+          onPress={navigateToCheckout}
         >
           <View>
             <Text value={title} variant="subtitle" />
@@ -57,70 +129,62 @@ const EventCard = ({ event, ticketTypes, isAuthenticated }) => {
             />
             <Text value={location} variant="body" />
           </View>
-          {isAuthenticated && discountPercentage > 0 && (
-            <View style={styles.row}>
-              <Image
-                source={require("../assets/discount.png")}
-                style={styles.discountImage}
-              />
-              <Text
-                value={`${discountPercentage}% membership discount`}
-                variant="body"
-                style={styles.discount}
-              />
-            </View>
-          )}
         </View>
 
         {/* Ticket Types */}
-        {ticketTypes.length > 0 && !expired && (
+        {prices.length > 0 && !expired && (
           <View style={styles.detailsContainer}>
             <FlatList
-              data={[...ticketTypes, ...ticketTypes]}
-              renderItem={({ item }) => {
-                const originalPrice = item.price;
-                const discountedPrice =
-                  originalPrice - (originalPrice * discountPercentage) / 100;
-
-                return (
-                  <View style={styles.ticketItem}>
+              data={prices}
+              renderItem={({ item }) => (
+                <View style={styles.ticketItem}>
+                  <View style={styles.row}>
                     <Text
                       value={item.title}
                       variant="body"
-                      style={{ fontWeight: "bold" }}
+                      style={{ fontWeight: "bold", marginRight: 2 }}
                     />
-                    <View style={styles.priceContainer}>
-                      {discountPercentage > 0 && (
-                        <View style={styles.row}>
-                          <Text
-                            value={`KES ${formatCurrencyWithCommas(
-                              originalPrice
-                            )}`}
-                            variant="body"
-                            style={styles.oldPrice}
-                          />
-                          <Text
-                            value={`KES ${formatCurrencyWithCommas(
-                              discountedPrice.toFixed(2)
-                            )}`}
-                            variant="body"
-                            style={styles.newPrice}
-                          />
-                        </View>
-                      )}
-                      {discountPercentage === 0 && (
+                    {isAuthenticated && item.discount_rate > 0 && (
+                      <View style={styles.row}>
+                        <Text
+                          value={`${Math.round(item.discount_rate)}% off`}
+                          variant="body"
+                          style={styles.discount}
+                        />
+                      </View>
+                    )}
+                  </View>
+                  <View style={styles.priceContainer}>
+                    {item.discountedPrice > 0 && (
+                      <View style={styles.row}>
                         <Text
                           value={`KES ${formatCurrencyWithCommas(
-                            originalPrice
+                            item.originalPrice
                           )}`}
                           variant="body"
+                          style={styles.oldPrice}
                         />
-                      )}
-                    </View>
+                        <Text
+                          value={`KES ${formatCurrencyWithCommas(
+                            item.discountedPrice.toFixed(2)
+                          )}`}
+                          variant="body"
+                          style={styles.newPrice}
+                        />
+                      </View>
+                    )}
+                    {item.discountedPrice === 0 && (
+                      <Text
+                        value={`KES ${formatCurrencyWithCommas(
+                          item.originalPrice
+                        )}`}
+                        variant="body"
+                      />
+                    )}
                   </View>
-                );
-              }}
-              keyExtractor={(item, index) => index.toString()}
+                </View>
+              )}
+              keyExtractor={(item) => item.id.toString()}
               horizontal
               showsHorizontalScrollIndicator={false}
             />
@@ -164,7 +228,6 @@ const styles = StyleSheet.create({
   ticketItem: {
     marginRight: 10,
   },
-
   oldPrice: {
     fontSize: 12,
     fontWeight: "300",
@@ -185,6 +248,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "red",
     fontWeight: "bold",
+  },
+  priceContainer: {
+    flexDirection: "row",
+    alignItems: "center",
   },
 });
 

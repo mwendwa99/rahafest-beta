@@ -8,7 +8,7 @@ import { fetchEvents, fetchTicketTypes } from "../../redux/events/eventActions";
 import { ActivityIndicator } from "react-native-paper";
 import { clearEventsError } from "../../redux/events/eventSlice";
 
-export default function Events() {
+export default function Events({ navigation }) {
   const dispatch = useDispatch();
   const { events, loading, error } = useSelector((state) => state.events);
   const { user, token } = useSelector((state) => state.auth);
@@ -104,6 +104,14 @@ export default function Events() {
     );
   }
 
+  const handleNavigateToCheckout = (event) => {
+    // console.log("Navigating to Checkout with event:", event);
+    navigation.navigate("CheckoutNavigator", {
+      screen: "Checkout",
+      params: { event },
+    });
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
@@ -113,6 +121,7 @@ export default function Events() {
             event={item}
             ticketTypes={item.ticketTypes}
             isAuthenticated={isAuthenticated}
+            handleNavigate={handleNavigateToCheckout}
           />
         )}
         keyExtractor={(item) => item.id.toString()}
