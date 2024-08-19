@@ -3,13 +3,20 @@ import { StyleSheet } from "react-native";
 import { TextInput } from "react-native-paper";
 
 export default function Input({ onChange, type, errorMessage, ...props }) {
+  const handleTextChange = (text) => {
+    if (type === "phone-pad" && text.length > 10) {
+      text = text.slice(0, 10); // Limit to 10 characters
+    }
+    onChange(text);
+  };
+
   return (
     <TextInput
       {...props}
       style={[styles.container, props.style]}
       mode="outlined"
       theme={inputTheme}
-      onChangeText={onChange}
+      onChangeText={handleTextChange}
       keyboardType={type}
       outlineStyle={styles.outline}
       error={!!errorMessage}

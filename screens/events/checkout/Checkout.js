@@ -30,6 +30,7 @@ export default function Checkout({ route }) {
   const [ticketQuantities, setTicketQuantities] = useState({});
   const [showUserInputModal, setShowUserInputModal] = useState(false);
   const [showPhoneInputModal, setShowPhoneInputModal] = useState(false);
+  const [phoneInput, setPhoneInput] = useState("");
 
   if (!event) {
     return (
@@ -42,6 +43,11 @@ export default function Checkout({ route }) {
   useEffect(() => {
     dispatch(checkUserAuthentication());
   }, []);
+
+  const toggleUserInputModal = () => setShowUserInputModal(!showUserInputModal);
+
+  const togglePhoneInputModal = () =>
+    setShowPhoneInputModal(!showPhoneInputModal);
 
   const handleSelectTicketQuantity = (quantity, ticket) => {
     setTicketQuantities((prevQuantities) => {
@@ -88,16 +94,14 @@ export default function Checkout({ route }) {
     }
   };
 
-  const handlePhoneUpdate = (phone) => {
-    const formattedPhone = formatPhoneNumberToMpesaFormat(phone);
+  const handlePhoneUpdate = () => {
+    const formattedPhone = formatPhoneNumberToMpesaFormat(phoneInput);
     setAttendeeInfo((prevInfo) =>
-      prevInfo.map((attendee) => ({
-        ...attendee,
-        phone: formattedPhone,
-      }))
+      prevInfo.map((attendee) => ({ ...attendee, phone: formattedPhone }))
     );
     setShowPhoneInputModal(false);
   };
+  console.log(attendeeInfo);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -138,7 +142,9 @@ export default function Checkout({ route }) {
           showsHorizontalScrollIndicator={false}
         />
       </View>
-      {isAuthenticated && <UserInfoCard loading={loading} user={user} />}
+      {isAuthenticated && (
+        <UserInfoCard loading={loading} user={user} phone={phoneInput} />
+      )}
 
       <View>
         <Button
@@ -149,23 +155,21 @@ export default function Checkout({ route }) {
       </View>
 
       {/* User Input Modal */}
-      <ModalComponent visible={showUserInputModal} transparent={false}>
-        <Button
-          label="close modal"
-          variant={"contained"}
-          onPress={() => setShowPhoneInputModal(false)}
-        />
+      <ModalComponent
+        visible={showUserInputModal}
+        toggleModal={toggleUserInputModal}
+        transparent={false}
+      >
         <UserInputForm onClose={() => setShowUserInputModal(false)} />
       </ModalComponent>
 
       {/* Phone Input Modal */}
-      <ModalComponent visible={showPhoneInputModal} transparent={false}>
+      <ModalComponent
+        visible={showPhoneInputModal}
+        toggleModal={togglePhoneInputModal}
+        transparent={false}
+      >
         <View style={styles.modalContainer}>
-          <Button
-            label="close modal"
-            variant={"contained"}
-            onPress={() => setShowPhoneInputModal(false)}
-          />
           <Text value="Please enter your phone number" variant="body" />
           <Text
             value="This will be used to send you a payment prompt"
@@ -173,8 +177,14 @@ export default function Checkout({ route }) {
           />
           <Input
             placeholder="Phone Number"
-            keyboardType="phone-pad"
-            onChangeText={(phone) => setAttendeeInfo({ phone })}
+            type="phone-pad"
+            value={phoneInput}
+            onChange={(text) => setPhoneInput(text)} // Handle input without closing
+          />
+          <Button
+            label="Confirm"
+            variant={"contained"}
+            onPress={handlePhoneUpdate} // Update all attendees and close modal
           />
         </View>
       </ModalComponent>
