@@ -45,3 +45,16 @@ export const fetchTicketTypes = createAsyncThunk(
     }
   }
 );
+
+export const createInvoice = createAsyncThunk(
+  "event/createInvoice",
+  async (invoiceData, { rejectWithValue }) => {
+    try {
+      const response = await ticketApi.post("create-invoice", invoiceData);
+
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);

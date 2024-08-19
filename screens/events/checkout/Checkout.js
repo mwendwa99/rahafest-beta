@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Image, FlatList, Modal } from "react-native";
+import { View, StyleSheet, Image, FlatList, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { useSelector, useDispatch } from "react-redux";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { ActivityIndicator } from "react-native-paper";
 
 import {
   Text,
@@ -11,8 +12,8 @@ import {
   TicketCard,
   Button,
   UserInputForm,
-  Input,
   ModalComponent,
+  PhoneInput,
 } from "../../../components";
 
 import {
@@ -20,10 +21,18 @@ import {
   formatPhoneNumberToMpesaFormat,
 } from "../../../utils/helper";
 import { checkUserAuthentication } from "../../../redux/auth/authSlice";
+import { createInvoice } from "../../../redux/events/eventActions";
+import { clearInvoiceError } from "../../../redux/events/eventSlice";
 
 export default function Checkout({ route }) {
   const { event } = route.params || {};
   const { user, loading, isAuthenticated } = useSelector((state) => state.auth);
+  const {
+    invoice,
+    invoiceError,
+    loading: invoiceLoading,
+  } = useSelector((state) => state.events);
+
   const dispatch = useDispatch();
 
   const [attendeeInfo, setAttendeeInfo] = useState([]);
@@ -43,6 +52,13 @@ export default function Checkout({ route }) {
   useEffect(() => {
     dispatch(checkUserAuthentication());
   }, []);
+
+  useEffect(() => {
+    if (invoiceError) {
+      Alert.alert("Error", invoiceError.message);
+      dispatch(clearInvoiceError());
+    }
+  }, [invoiceError]);
 
   const toggleUserInputModal = () => setShowUserInputModal(!showUserInputModal);
 
@@ -66,7 +82,9 @@ export default function Checkout({ route }) {
               event_name: event.title,
               first_name: user?.first_name || "",
               last_name: user?.last_name || "",
-              phone: formatPhoneNumberToMpesaFormat(user?.phone || ""),
+              phone: formatPhoneNumberToMpesaFormat(
+                user?.phone || phoneInput || ""
+              ),
               event_id: event.id,
               email: user?.email || "",
               amount_paid:
@@ -85,13 +103,36 @@ export default function Checkout({ route }) {
   };
 
   const handleBuyTicket = () => {
+    if (attendeeInfo.length === 0) {
+      alert("Please select at least one ticket");
+      return;
+    }
+
     if (!isAuthenticated) {
       setShowUserInputModal(true);
-    } else if (isAuthenticated && !user?.phone) {
-      setShowPhoneInputModal(true);
-    } else {
-      alert("Pay Now", attendeeInfo);
+      return;
     }
+    if (isAuthenticated && phoneInput === "") {
+      setShowPhoneInputModal(true);
+      return;
+    }
+
+    //validate that all required fields are filled
+    const requiredFields = ["first_name", "last_name", "phone", "email"];
+    const missingFields = attendeeInfo.filter((attendee) =>
+      requiredFields.some((field) => !attendee[field])
+    );
+
+    if (missingFields.length > 0) {
+      alert("Please fill all required fields");
+      return;
+    }
+
+    const invoiceData = { data: { attendeeInfo } };
+
+    // console.log(invoiceData);
+
+    dispatch(createInvoice(invoiceData));
   };
 
   const handlePhoneUpdate = () => {
@@ -101,7 +142,24 @@ export default function Checkout({ route }) {
     );
     setShowPhoneInputModal(false);
   };
-  console.log(attendeeInfo);
+  // console.log({ data: { attendeeInfo } });
+
+  if (invoiceLoading) {
+    return (
+      <View
+        style={{
+          ...styles.container,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <ActivityIndicator animating={true} color="black" />
+      </View>
+    );
+  }
+
+  console.log("invoice", invoice);
+  console.log("invoiceError", invoiceError);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -169,24 +227,11 @@ export default function Checkout({ route }) {
         toggleModal={togglePhoneInputModal}
         transparent={false}
       >
-        <View style={styles.modalContainer}>
-          <Text value="Please enter your phone number" variant="body" />
-          <Text
-            value="This will be used to send you a payment prompt"
-            variant="body"
-          />
-          <Input
-            placeholder="Phone Number"
-            type="phone-pad"
-            value={phoneInput}
-            onChange={(text) => setPhoneInput(text)} // Handle input without closing
-          />
-          <Button
-            label="Confirm"
-            variant={"contained"}
-            onPress={handlePhoneUpdate} // Update all attendees and close modal
-          />
-        </View>
+        <PhoneInput
+          value={phoneInput}
+          setPhoneInput={setPhoneInput}
+          handlePhoneUpdate={handlePhoneUpdate}
+        />
       </ModalComponent>
 
       <StatusBar style="dark" />
@@ -239,11 +284,5 @@ const styles = StyleSheet.create({
   priceContainer: {
     flexDirection: "row",
     alignItems: "center",
-  },
-  modalContainer: {
-    flex: 1,
-    // justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#fff",
   },
 });
