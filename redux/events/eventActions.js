@@ -58,3 +58,15 @@ export const createInvoice = createAsyncThunk(
     }
   }
 );
+
+export const triggerSTK = createAsyncThunk(
+  "app/triggerSTK",
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await ticketApi.post("initiate-payment", data);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);

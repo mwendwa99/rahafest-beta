@@ -14,6 +14,7 @@ import {
   UserInputForm,
   ModalComponent,
   PhoneInput,
+  PaymentModal,
 } from "../../../components";
 
 import {
@@ -22,7 +23,10 @@ import {
 } from "../../../utils/helper";
 import { checkUserAuthentication } from "../../../redux/auth/authSlice";
 import { createInvoice } from "../../../redux/events/eventActions";
-import { clearInvoiceError } from "../../../redux/events/eventSlice";
+import {
+  clearInvoiceError,
+  clearPaymentData,
+} from "../../../redux/events/eventSlice";
 
 export default function Checkout({ route }) {
   const { event } = route.params || {};
@@ -39,6 +43,7 @@ export default function Checkout({ route }) {
   const [ticketQuantities, setTicketQuantities] = useState({});
   const [showUserInputModal, setShowUserInputModal] = useState(false);
   const [showPhoneInputModal, setShowPhoneInputModal] = useState(false);
+  const [showInvoiceModal, setShowInvoiceModal] = useState(false);
   const [phoneInput, setPhoneInput] = useState("");
 
   if (!event) {
@@ -60,10 +65,25 @@ export default function Checkout({ route }) {
     }
   }, [invoiceError]);
 
+  useEffect(() => {
+    return () => {
+      dispatch(clearPaymentData());
+    };
+  }, []);
+
+  //once the invoice has been created, show the payment modal
+  useEffect(() => {
+    if (invoice && invoice.id) {
+      setShowInvoiceModal(true);
+    }
+  }, [invoice]);
+
   const toggleUserInputModal = () => setShowUserInputModal(!showUserInputModal);
 
   const togglePhoneInputModal = () =>
     setShowPhoneInputModal(!showPhoneInputModal);
+
+  const toggleInvoiceModal = () => setShowInvoiceModal(!showInvoiceModal);
 
   const handleSelectTicketQuantity = (quantity, ticket) => {
     setTicketQuantities((prevQuantities) => {
@@ -133,6 +153,10 @@ export default function Checkout({ route }) {
     // console.log(invoiceData);
 
     dispatch(createInvoice(invoiceData));
+
+    //reset all state
+    setTicketQuantities({});
+    setAttendeeInfo([]);
   };
 
   const handlePhoneUpdate = () => {
@@ -234,6 +258,17 @@ export default function Checkout({ route }) {
         />
       </ModalComponent>
 
+      {/* once invoice has been generated load payment modal */}
+      {invoice && invoice.id && (
+        <ModalComponent
+          visible={showInvoiceModal}
+          toggleModal={toggleInvoiceModal}
+          transparent={false}
+        >
+          <PaymentModal invoice={invoice} toggleModal={toggleInvoiceModal} />
+        </ModalComponent>
+      )}
+
       <StatusBar style="dark" />
     </SafeAreaView>
   );
@@ -253,36 +288,5 @@ const styles = StyleSheet.create({
     height: 250,
     width: 200,
     borderRadius: 4,
-  },
-  ticketItem: {
-    borderWidth: 1,
-    borderColor: "#ddd",
-    padding: 10,
-    marginVertical: 5,
-    borderRadius: 4,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  oldPrice: {
-    fontSize: 12,
-    fontWeight: "300",
-    textDecorationLine: "line-through",
-    color: "grey",
-    marginEnd: 5,
-  },
-  newPrice: {
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-
-  discount: {
-    fontSize: 14,
-    color: "red",
-    fontWeight: "bold",
-  },
-  priceContainer: {
-    flexDirection: "row",
-    alignItems: "center",
   },
 });
