@@ -1,5 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { fetchEvents, fetchTicketTypes, createInvoice } from "./eventActions";
+import {
+  fetchEvents,
+  fetchTicketTypes,
+  createInvoice,
+  triggerSTK,
+} from "./eventActions";
 
 const initialState = {
   events: [],
@@ -8,6 +13,7 @@ const initialState = {
   loading: false,
   error: null,
   invoiceError: null,
+  paymentData: null,
 };
 
 const eventSlice = createSlice({
@@ -19,6 +25,9 @@ const eventSlice = createSlice({
     },
     clearInvoiceError: (state) => {
       state.invoiceError = null;
+    },
+    clearPaymentData: (state) => {
+      state.paymentData = null;
     },
   },
   extraReducers: (builder) => {
@@ -58,10 +67,23 @@ const eventSlice = createSlice({
       .addCase(createInvoice.rejected, (state, action) => {
         state.loading = false;
         state.invoiceError = action.payload;
+      })
+      .addCase(triggerSTK.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(triggerSTK.fulfilled, (state, action) => {
+        state.loading = false;
+        state.paymentData = action.payload;
+      })
+      .addCase(triggerSTK.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
   },
 });
 
-export const { clearEventsError, clearInvoiceError } = eventSlice.actions;
+export const { clearEventsError, clearInvoiceError, clearPaymentData } =
+  eventSlice.actions;
 
 export default eventSlice.reducer;
