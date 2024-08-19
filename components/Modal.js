@@ -2,14 +2,16 @@ import React from "react";
 import { View, StyleSheet, Modal } from "react-native";
 
 import Button from "./Button";
+import { IconButton } from "react-native-paper";
 
-const ModalComponent = ({ visible, ...props }) => {
+const ModalComponent = ({ visible, toggleModal, ...props }) => {
   return (
     <Modal visible={visible} {...props}>
-      <Button
-        label="close modal"
-        variant={"contained"}
-        // onPress={() => setShowPhoneInputModal(false)}
+      <IconButton
+        icon="close"
+        size={20}
+        mode="contained"
+        onPress={toggleModal}
       />
       {props.children}
     </Modal>
@@ -18,9 +20,7 @@ const ModalComponent = ({ visible, ...props }) => {
 
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
     height: 300,
-    // justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#fff",
   },

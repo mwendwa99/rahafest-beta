@@ -3,7 +3,7 @@ import React from "react";
 
 import Text from "./Text";
 
-const UserInfoCard = ({ loading, user }) => {
+const UserInfoCard = ({ loading, user, phone }) => {
   return (
     <View>
       {loading && (
@@ -23,7 +23,7 @@ const UserInfoCard = ({ loading, user }) => {
           style={{ color: "grey" }}
         />
         <Text
-          value={`mobile: ${user?.phone || "unavailable"}`}
+          value={`mobile: ${user?.phone || phone || "unavailable"}`}
           variant="body"
           style={{ color: "grey" }}
         />
