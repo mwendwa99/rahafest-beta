@@ -11,7 +11,7 @@ import {
   UserInfoCard,
   TicketCard,
   Button,
-  UserInputForm,
+  // UserInputForm,
   ModalComponent,
   PhoneInput,
   PaymentModal,
@@ -28,7 +28,7 @@ import {
   clearPaymentData,
 } from "../../../redux/events/eventSlice";
 
-export default function Checkout({ route }) {
+export default function Checkout({ route, navigation }) {
   const { event } = route.params || {};
   const { user, loading, isAuthenticated } = useSelector((state) => state.auth);
   const {
@@ -41,7 +41,7 @@ export default function Checkout({ route }) {
 
   const [attendeeInfo, setAttendeeInfo] = useState([]);
   const [ticketQuantities, setTicketQuantities] = useState({});
-  const [showUserInputModal, setShowUserInputModal] = useState(false);
+  // const [showUserInputModal, setShowUserInputModal] = useState(false);
   const [showPhoneInputModal, setShowPhoneInputModal] = useState(false);
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
   const [phoneInput, setPhoneInput] = useState("");
@@ -78,7 +78,7 @@ export default function Checkout({ route }) {
     }
   }, [invoice]);
 
-  const toggleUserInputModal = () => setShowUserInputModal(!showUserInputModal);
+  // const toggleUserInputModal = () => setShowUserInputModal(!showUserInputModal);
 
   const togglePhoneInputModal = () =>
     setShowPhoneInputModal(!showPhoneInputModal);
@@ -129,7 +129,8 @@ export default function Checkout({ route }) {
     }
 
     if (!isAuthenticated) {
-      setShowUserInputModal(true);
+      alert("Please login to buy a ticket");
+      navigation.navigate("Login");
       return;
     }
     if (isAuthenticated && phoneInput === "") {
@@ -181,10 +182,6 @@ export default function Checkout({ route }) {
       </View>
     );
   }
-
-  console.log("invoice", invoice);
-  console.log("invoiceError", invoiceError);
-
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.row}>
@@ -237,13 +234,13 @@ export default function Checkout({ route }) {
       </View>
 
       {/* User Input Modal */}
-      <ModalComponent
+      {/* <ModalComponent
         visible={showUserInputModal}
         toggleModal={toggleUserInputModal}
         transparent={false}
       >
         <UserInputForm onClose={() => setShowUserInputModal(false)} />
-      </ModalComponent>
+      </ModalComponent> */}
 
       {/* Phone Input Modal */}
       <ModalComponent
