@@ -5,6 +5,8 @@ import {
   Alert,
   RefreshControl,
   ScrollView,
+  Image,
+  TouchableOpacity,
 } from "react-native";
 import { deleteAccount, fetchUser } from "../../redux/auth/authActions";
 import {
@@ -201,6 +203,18 @@ export default function Account({ navigation }) {
             />
           </View>
         </View>
+        <View>
+          <TouchableOpacity
+            onPress={() => alert("Wallet feature coming soon!")}
+          >
+            <Image
+              source={require("../../assets/wallet-card.png")}
+              style={styles.walletCard}
+              height={150}
+              width={400}
+            />
+          </TouchableOpacity>
+        </View>
         <View style={styles.column}>
           <Text value={`Friends`} variant={"subtitle"} />
           <ScrollView
@@ -277,5 +291,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  walletCard: {
+    width: 400,
+    height: 150,
+    borderRadius: 10,
+    marginVertical: 10,
   },
 });
