@@ -11,6 +11,8 @@ import {
   TicketCard,
   Button,
   UserInputForm,
+  Input,
+  ModalComponent,
 } from "../../../components";
 
 import {
@@ -42,17 +44,6 @@ export default function Checkout({ route }) {
   }, []);
 
   const handleSelectTicketQuantity = (quantity, ticket) => {
-    if (!isAuthenticated) {
-      setShowUserInputModal(true);
-      return;
-    }
-
-    if (isAuthenticated && !user?.phone) {
-      setShowPhoneInputModal(true);
-      return;
-    }
-
-    // Proceed with updating the ticket quantities and attendee info
     setTicketQuantities((prevQuantities) => {
       const updatedQuantities = { ...prevQuantities, [ticket.id]: quantity };
       const newAttendees = [];
@@ -67,11 +58,11 @@ export default function Checkout({ route }) {
             newAttendees.push({
               ticket_name: ticket.title,
               event_name: event.title,
-              first_name: user?.first_name || "", // or some default value
-              last_name: user?.last_name || "", // or some default value
-              phone: formatPhoneNumberToMpesaFormat(user?.phone || ""), // format phone number
+              first_name: user?.first_name || "",
+              last_name: user?.last_name || "",
+              phone: formatPhoneNumberToMpesaFormat(user?.phone || ""),
               event_id: event.id,
-              email: user?.email || "", // or some default value
+              email: user?.email || "",
               amount_paid:
                 ticket.discount_price > 0
                   ? ticket.discount_price
@@ -83,52 +74,30 @@ export default function Checkout({ route }) {
       });
 
       setAttendeeInfo(newAttendees);
-
       return updatedQuantities;
     });
   };
 
-  // const handleSelectTicketQuantity = (quantity, ticket) => {
-  //   setTicketQuantities((prevQuantities) => {
-  //     // Update the ticket quantities
-  //     const updatedQuantities = { ...prevQuantities, [ticket.id]: quantity };
-  //     const newAttendees = [];
+  const handleBuyTicket = () => {
+    if (!isAuthenticated) {
+      setShowUserInputModal(true);
+    } else if (isAuthenticated && !user?.phone) {
+      setShowPhoneInputModal(true);
+    } else {
+      alert("Pay Now", attendeeInfo);
+    }
+  };
 
-  //     // Add new attendee entries based on the updated quantities
-  //     Object.keys(updatedQuantities).forEach((ticketId) => {
-  //       const qty = updatedQuantities[ticketId];
-  //       if (qty > 0) {
-  //         const ticket = event.ticketTypes.find(
-  //           (t) => t.id === parseInt(ticketId, 10)
-  //         );
-  //         for (let i = 0; i < qty; i++) {
-  //           newAttendees.push({
-  //             ticket_name: ticket.title,
-  //             event_name: event.title,
-  //             first_name: user?.first_name || "", // or some default value
-  //             last_name: user?.last_name || "", // or some default value
-  //             phone: formatPhoneNumberToMpesaFormat(user?.phone || ""), // format phone number
-  //             event_id: event.id,
-  //             email: user?.email || "", // or some default value
-  //             amount_paid:
-  //               ticket.discount_price > 0
-  //                 ? ticket.discount_price
-  //                 : ticket.price,
-  //             ticket_type: ticket.id,
-  //           });
-  //         }
-  //       }
-  //     });
-
-  //     // Update attendeeInfo state
-  //     setAttendeeInfo(newAttendees);
-
-  //     return updatedQuantities;
-  //   });
-  // };
-
-  console.log("attendeeInfo", attendeeInfo);
-  // console.log("user", user);
+  const handlePhoneUpdate = (phone) => {
+    const formattedPhone = formatPhoneNumberToMpesaFormat(phone);
+    setAttendeeInfo((prevInfo) =>
+      prevInfo.map((attendee) => ({
+        ...attendee,
+        phone: formattedPhone,
+      }))
+    );
+    setShowPhoneInputModal(false);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -175,9 +144,40 @@ export default function Checkout({ route }) {
         <Button
           label="Buy Ticket"
           variant={"contained"}
-          onPress={() => alert("Pay Now", attendeeInfo)}
+          onPress={handleBuyTicket}
         />
       </View>
+
+      {/* User Input Modal */}
+      <ModalComponent visible={showUserInputModal} transparent={false}>
+        <Button
+          label="close modal"
+          variant={"contained"}
+          onPress={() => setShowPhoneInputModal(false)}
+        />
+        <UserInputForm onClose={() => setShowUserInputModal(false)} />
+      </ModalComponent>
+
+      {/* Phone Input Modal */}
+      <ModalComponent visible={showPhoneInputModal} transparent={false}>
+        <View style={styles.modalContainer}>
+          <Button
+            label="close modal"
+            variant={"contained"}
+            onPress={() => setShowPhoneInputModal(false)}
+          />
+          <Text value="Please enter your phone number" variant="body" />
+          <Text
+            value="This will be used to send you a payment prompt"
+            variant="body"
+          />
+          <Input
+            placeholder="Phone Number"
+            keyboardType="phone-pad"
+            onChangeText={(phone) => setAttendeeInfo({ phone })}
+          />
+        </View>
+      </ModalComponent>
 
       <StatusBar style="dark" />
     </SafeAreaView>
@@ -229,5 +229,11 @@ const styles = StyleSheet.create({
   priceContainer: {
     flexDirection: "row",
     alignItems: "center",
+  },
+  modalContainer: {
+    flex: 1,
+    // justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#fff",
   },
 });
