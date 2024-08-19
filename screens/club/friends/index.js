@@ -79,6 +79,12 @@ export default function Friends({ navigation }) {
             <Text value={"You have no friends"} variant={"body"} />
           )}
         </ScrollView>
+        <Text
+          value={
+            "You will soon be able to add your friends, stay tuned for the next update!"
+          }
+          variant={"body"}
+        />
         {/* {friends && friends.length > 0 ? (
           <FlatList
             data={friends}
