@@ -209,17 +209,29 @@ export default function Checkout({ route, navigation }) {
         </View>
       </View>
       <View style={styles.detailsContainer}>
-        <FlatList
-          data={event.ticketTypes}
-          renderItem={({ item }) => (
-            <TicketCard
-              item={item}
-              handleSelectTicketQuantity={handleSelectTicketQuantity}
-            />
-          )}
-          keyExtractor={(item) => item?.id.toString()}
-          showsHorizontalScrollIndicator={false}
-        />
+        {event.ticketTypes ? (
+          <FlatList
+            data={event.ticketTypes}
+            renderItem={({ item }) => (
+              <TicketCard
+                item={item}
+                handleSelectTicketQuantity={handleSelectTicketQuantity}
+              />
+            )}
+            keyExtractor={(item) => item?.id.toString()}
+            showsHorizontalScrollIndicator={false}
+          />
+        ) : (
+          <Text
+            value="Server error when fetching tickets. Please try again later."
+            variant="body"
+            style={{
+              marginVertical: 10,
+              color: "red",
+              textAlign: "center",
+            }}
+          />
+        )}
       </View>
       {isAuthenticated && (
         <UserInfoCard loading={loading} user={user} phone={phoneInput} />
