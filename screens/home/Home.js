@@ -79,7 +79,8 @@ export default function Home({ navigation }) {
                 </ImageBackground>
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={() => Linking.openURL("https://ticketraha.com/events")}
+                // onPress={() => Linking.openURL("https://ticketraha.com/events")}
+                onPress={() => handleNavigate("Events")}
               >
                 <ImageBackground source={blob} style={styles.blob}>
                   <MaterialCommunityIcons
