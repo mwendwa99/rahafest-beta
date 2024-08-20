@@ -27,27 +27,28 @@ export default function Media() {
   const [accordionState, setAccordionState] = useState({});
 
   useEffect(() => {
+    dispatch(clearNewsAndGalleryError());
     dispatch(fetchGallery());
     return () => {
       dispatch(clearNewsAndGalleryError());
     };
   }, [dispatch]);
 
-  const formattedGallery = useMemo(() => {
-    if (!gallery) return {};
-    return gallery.reduce((acc, item) => {
-      if (item.event_name) {
-        if (!acc[item.event_name]) {
-          acc[item.event_name] = [];
-        }
-        acc[item.event_name].push({
-          uri: item.image ? rahaImageApi + item.image : placeholderImage,
-          id: item.id.toString(),
-        });
-      }
-      return acc;
-    }, {});
-  }, [gallery]);
+  // const formattedGallery = useMemo(() => {
+  //   if (!gallery) return {};
+  //   return gallery.reduce((acc, item) => {
+  //     if (item.event_name) {
+  //       if (!acc[item.event_name]) {
+  //         acc[item.event_name] = [];
+  //       }
+  //       acc[item.event_name].push({
+  //         uri: item.image ? rahaImageApi + item.image : placeholderImage,
+  //         id: item.id.toString(),
+  //       });
+  //     }
+  //     return acc;
+  //   }, {});
+  // }, [gallery]);
 
   const onRefresh = useCallback(() => {
     dispatch(fetchGallery());
@@ -91,9 +92,9 @@ export default function Media() {
         setShowAccordion={() => toggleAccordion(item)}
         title={item}
       >
-        {accordionState[item] && formattedGallery[item].length > 0 ? (
+        {accordionState[item] && gallery[item].length > 0 ? (
           <FlatList
-            data={formattedGallery[item]}
+            data={gallery[item]}
             keyExtractor={(img) => img.id}
             renderItem={({ item }) => renderImage(item)}
             numColumns={2}
@@ -129,11 +130,13 @@ export default function Media() {
     );
   }
 
+  // console.log({ formattedGallery });
+
   return (
     <SafeAreaView style={styles.container}>
-      {formattedGallery && Object.keys(formattedGallery).length > 0 ? (
+      {gallery && Object.keys(gallery).length > 0 ? (
         <FlatList
-          data={Object.keys(formattedGallery).reverse()}
+          data={Object.keys(gallery).reverse()}
           keyExtractor={(item) => item.toString()}
           renderItem={renderCategory}
           onRefresh={onRefresh}
@@ -142,7 +145,7 @@ export default function Media() {
       ) : (
         <View style={styles.noImages}>
           <Text
-            value="Oops! Something went wrong with the server."
+            value="No images available at the moment."
             variant="body"
             style={{ color: "#fff" }}
           />
