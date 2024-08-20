@@ -29,19 +29,18 @@ export default function App() {
       icon_default: "calendar-multiple",
     },
     {
-      key: "Club",
-      name: "Raha Club",
-      component: ClubNavigator,
-      icon_focused: "cards-club",
-      icon_default: "cards-club-outline",
-    },
-
-    {
       key: "Merchandise",
       name: "Merchandise",
       component: Merchandise,
       icon_focused: "cart",
       icon_default: "cart-outline",
+    },
+    {
+      key: "Club",
+      name: "Raha Club",
+      component: ClubNavigator,
+      icon_focused: "cards-club",
+      icon_default: "cards-club-outline",
     },
   ];
 
