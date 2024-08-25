@@ -7,9 +7,13 @@ import {
   SafeAreaView,
   FlatList,
   TouchableOpacity,
+  Linking,
 } from "react-native";
 import { Avatar, IconButton } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
+
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+
 import {
   fetchLiveMessages,
   sendLiveMessage,
@@ -114,14 +118,47 @@ export default function LiveMessages({ sessionId }) {
                 onPress={() => {
                   /* Handle modal open */
                 }}
+                disabled
               >
                 <Avatar.Text size={40} label={user?.first_name[0]} />
               </TouchableOpacity>
               <View style={styles.messageContent}>
-                <Text style={styles.messageSender}>
-                  {`${user?.first_name} ${user?.last_name}` ||
-                    `User ${index + 1}`}
-                </Text>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center", // Ensures the username and "report" button are aligned vertically
+                    width: "95%",
+                  }}
+                >
+                  <Text
+                    style={{
+                      ...styles.messageSender,
+                      // flex: 1, // This makes the username text take up available space
+                      width: "auto",
+                    }}
+                  >
+                    {`${user?.first_name} ${user?.last_name}` ||
+                      `User ${index + 1}`}
+                  </Text>
+                  {/* <TouchableOpacity
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                    }}
+                    onPress={() =>
+                      Linking.openURL("https://support.rahafest.com")
+                    }
+                  >
+                    <MaterialCommunityIcons
+                      name="dots-vertical"
+                      size={20}
+                      color="#d3d3d3"
+                      style={{ marginRight: 2 }}
+                    />
+                  </TouchableOpacity> */}
+                </View>
+
                 <Text style={styles.messageText}>{item.content}</Text>
                 <Text style={styles.messageTimestamp}>
                   {formatDate(item.timestamp)}
