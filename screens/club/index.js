@@ -3,8 +3,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { fetchUser } from "../../redux/auth/authActions";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, TouchableOpacity, Linking } from "react-native";
 import { clearError } from "../../redux/auth/authSlice";
+
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import { Text } from "../../components";
 
@@ -98,13 +100,25 @@ export default function ClubNavigator() {
                 </View>
               ),
               headerRight: () => (
-                <View style={styles.row}>
-                  <Text
-                    value={`${allUsers.length} members`}
-                    style={styles.onlineCount}
-                    variant={"body"}
+                <TouchableOpacity
+                  style={styles.row}
+                  onPress={() =>
+                    Linking.openURL("https://support.rahafest.com")
+                  }
+                >
+                  <MaterialCommunityIcons
+                    name="alert-outline"
+                    size={20}
+                    color="yellow"
+                    style={{ marginRight: 2 }}
                   />
-                </View>
+                  <Text
+                    // value={`${allUsers.length} members`}
+                    value="report"
+                    variant={"body"}
+                    style={{ color: "yellow" }}
+                  />
+                </TouchableOpacity>
               ),
             })}
           />
@@ -161,6 +175,27 @@ export default function ClubNavigator() {
                   style={{ color: "#fff" }}
                   variant={"subtitle"}
                 />
+              ),
+              headerRight: () => (
+                <TouchableOpacity
+                  style={styles.row}
+                  onPress={() =>
+                    Linking.openURL("https://support.rahafest.com")
+                  }
+                >
+                  <MaterialCommunityIcons
+                    name="alert-outline"
+                    size={20}
+                    color="yellow"
+                    style={{ marginRight: 2 }}
+                  />
+                  <Text
+                    // value={`${allUsers.length} members`}
+                    value="report"
+                    variant={"body"}
+                    style={{ color: "yellow" }}
+                  />
+                </TouchableOpacity>
               ),
               headerTitleAlign: "center",
             }}
@@ -307,9 +342,5 @@ const styles = StyleSheet.create({
   headerTitleText: {
     color: "#fff",
     textAlign: "center",
-  },
-  onlineCount: {
-    color: "limegreen",
-    textAlign: "right",
   },
 });
