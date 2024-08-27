@@ -223,11 +223,11 @@ export default function Checkout({ route, navigation }) {
           />
         ) : (
           <Text
-            value="Server error when fetching tickets. Please try again later."
+            value="Tickets will be available soon!"
             variant="body"
             style={{
               marginVertical: 10,
-              color: "red",
+              // color: "red",
               textAlign: "center",
             }}
           />

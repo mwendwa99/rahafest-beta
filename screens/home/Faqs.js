@@ -39,9 +39,7 @@ export default function Faqs() {
     console.log(error);
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text style={{ color: "black" }}>
-          Oops! Something went wrong with the server.
-        </Text>
+        <Text style={{ color: "black" }}>Faqs will be available soon!</Text>
       </View>
     );
   }

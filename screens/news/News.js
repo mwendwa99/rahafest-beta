@@ -34,7 +34,7 @@ export default function News() {
     console.log(error);
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <RNText>Oops! Something went wrong with the server.</RNText>
+        <RNText>News will be available soon!</RNText>
         <StatusBar style="dark" />
       </View>
     );
