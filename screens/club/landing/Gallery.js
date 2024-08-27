@@ -116,7 +116,7 @@ export default function Media() {
   if (error) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <RNText>Oops! Something went wrong with the server.</RNText>
+        <RNText>Images will be available soon</RNText>
         <StatusBar style="dark" />
       </View>
     );

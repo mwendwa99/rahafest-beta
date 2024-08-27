@@ -1,5 +1,12 @@
-import { StyleSheet, FlatList, RefreshControl, View, Text } from "react-native";
-import { EventCard } from "../../components";
+import {
+  StyleSheet,
+  FlatList,
+  RefreshControl,
+  View,
+  Text as RNText,
+  ScrollView,
+} from "react-native";
+import { EventCard, Text } from "../../components";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { useDispatch, useSelector } from "react-redux";
@@ -15,11 +22,9 @@ export default function Events({ navigation }) {
   const [mergedEvents, setMergedEvents] = useState([]);
   const isAuthenticated = !!(user && token);
 
-  // Ref to store the current fetch request's AbortController
   const abortControllerRef = useRef(null);
 
   useEffect(() => {
-    // Cleanup on unmount
     return () => {
       dispatch(clearEventsError());
       if (abortControllerRef.current) {
@@ -55,7 +60,6 @@ export default function Events({ navigation }) {
           const updatedEvents = await Promise.all(
             events.map(async (event) => {
               if (event.id) {
-                // Ensure event.id is not null, undefined, or empty
                 const ticketTypesForEvent = await dispatch(
                   fetchTicketTypes(event.id, signal)
                 );
@@ -63,13 +67,11 @@ export default function Events({ navigation }) {
                   ...event,
                   ticketTypes: ticketTypesForEvent.payload || [],
                 };
-              } else {
-                // Handle events without a valid id
-                return {
-                  ...event,
-                  ticketTypes: [],
-                };
               }
+              return {
+                ...event,
+                ticketTypes: [],
+              };
             })
           );
           setMergedEvents(updatedEvents);
@@ -85,6 +87,7 @@ export default function Events({ navigation }) {
 
   const handleRefresh = () => {
     dispatch(fetchEvents());
+    dispatch(clearEventsError());
   };
 
   if (loading) {
@@ -97,34 +100,72 @@ export default function Events({ navigation }) {
 
   if (error && error.detail !== "No Invoice matches the given query.") {
     return (
-      <View style={styles.centered}>
-        <Text>Oops! Something went wrong with the server.</Text>
+      <ScrollView
+        contentContainerStyle={styles.centered}
+        refreshControl={
+          <RefreshControl refreshing={loading} onRefresh={handleRefresh} />
+        }
+      >
+        <RNText>Events will be available soon!</RNText>
         <StatusBar style="light" />
-      </View>
+      </ScrollView>
     );
   }
 
   const handleNavigateToCheckout = (event) => {
-    // console.log("Navigating to Checkout with event:", event);
     navigation.navigate("CheckoutNavigator", {
       screen: "Checkout",
       params: { event },
     });
   };
 
+  const renderHeader = () => (
+    <View>
+      <RNText variant={"title"} style={styles.headerText}>
+        Upcoming Events
+      </RNText>
+    </View>
+  );
+
+  const renderFooter = () => (
+    <View>
+      <RNText variant={"title"} style={styles.headerText}>
+        Past Events
+      </RNText>
+    </View>
+  );
+
+  const data = [
+    { type: "header", key: "upcoming-header" },
+    ...mergedEvents.filter((item) => !item.expired),
+    { type: "footer", key: "past-footer" },
+    ...mergedEvents.filter((item) => item.expired),
+  ];
+
+  const renderItem = ({ item }) => {
+    if (item.type === "header") {
+      return renderHeader();
+    } else if (item.type === "footer") {
+      return renderFooter();
+    }
+    return (
+      <View key={item.id}>
+        <EventCard
+          event={item}
+          ticketTypes={item.ticketTypes}
+          isAuthenticated={isAuthenticated}
+          handleNavigate={handleNavigateToCheckout}
+        />
+      </View>
+    );
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
-        data={mergedEvents}
-        renderItem={({ item }) => (
-          <EventCard
-            event={item}
-            ticketTypes={item.ticketTypes}
-            isAuthenticated={isAuthenticated}
-            handleNavigate={handleNavigateToCheckout}
-          />
-        )}
-        keyExtractor={(item) => item.id.toString()}
+        data={data}
+        renderItem={renderItem}
+        keyExtractor={(item) => (item.id ? item.id.toString() : item.key)}
         numColumns={1}
         contentContainerStyle={styles.contentContainer}
         showsVerticalScrollIndicator={false}
@@ -143,11 +184,18 @@ const styles = StyleSheet.create({
     backgroundColor: "#212529",
   },
   contentContainer: {
-    flexGrow: 1, // Ensure FlatList takes up available space
+    flexGrow: 1,
   },
   centered: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  headerText: {
+    color: "#fafafa",
+    textAlign: "center",
+    textTransform: "capitalize",
+    fontSize: 24,
+    fontWeight: "bold",
   },
 });
