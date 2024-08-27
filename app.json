@@ -15,7 +15,7 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.mwendwa99.rahafestbeta",
-      "buildNumber": "3",
+      "buildNumber": "4",
       "config": {
         "googleMapsApiKey": "AIzaSyD3kyMh4P3uCTWP-tlbi4Lq2aYdFnvVSpA"
       }
@@ -26,7 +26,7 @@
         "backgroundColor": "#212529"
       },
       "package": "com.mwendwa99.rahafestbeta",
-      "versionCode": 3,
+      "versionCode": 4,
       "config": {
         "googleMaps": {
           "apiKey": "AIzaSyD3kyMh4P3uCTWP-tlbi4Lq2aYdFnvVSpA"
