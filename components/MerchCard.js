@@ -29,8 +29,8 @@ export default function MerchCard({ product }) {
 
 const styles = StyleSheet.create({
   card: {
-    justifyContent: "flex-start",
-    alignItems: "flex-start",
+    justifyContent: "center",
+    alignItems: "center",
     margin: 5,
     width: 175,
     backgroundColor: "#fff",
@@ -42,6 +42,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 150,
     marginBottom: 10,
+    objectFit: "contain"
   },
   infoContainer: {
     padding: 16,
