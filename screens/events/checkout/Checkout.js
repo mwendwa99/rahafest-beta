@@ -39,6 +39,8 @@ export default function Checkout({ route, navigation }) {
 
   const dispatch = useDispatch();
 
+  // console.log(user);
+
   const [attendeeInfo, setAttendeeInfo] = useState([]);
   const [ticketQuantities, setTicketQuantities] = useState({});
   // const [showUserInputModal, setShowUserInputModal] = useState(false);
@@ -130,10 +132,16 @@ export default function Checkout({ route, navigation }) {
 
     if (!isAuthenticated) {
       alert("Please login to buy a ticket");
-      navigation.navigate("Login");
+      navigation.navigate("ClubNavigator", {
+        screen: "Login",
+      });
       return;
     }
-    if (isAuthenticated && phoneInput === "") {
+    // if (isAuthenticated && phoneInput === "") {
+    //   setShowPhoneInputModal(true);
+    //   return;
+    // }
+    if (isAuthenticated) {
       setShowPhoneInputModal(true);
       return;
     }

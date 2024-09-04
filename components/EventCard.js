@@ -11,27 +11,34 @@ import { formatEventDates, formatCurrencyWithCommas } from "../utils/helper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const EventCard = React.memo(
-  ({ event, ticketTypes, isAuthenticated, handleNavigate }) => {
-    const { banner, title, location, expired, start_date, end_date } = event;
+  ({ event, ticketTypes = [], isAuthenticated, handleNavigate }) => {
+    const {
+      banner = "",
+      title = "No Title Available",
+      location = "Location not available",
+      expired = false,
+      start_date,
+      end_date,
+    } = event || {};
+
     const [prices, setPrices] = useState([]);
 
     const ensureHttps = useCallback((url) => {
+      if (typeof url !== "string") return "";
       return url.startsWith("http://")
         ? url.replace("http://", "https://")
         : url;
     }, []);
 
     useEffect(() => {
-      const calculatePrices = () => {
+      if (Array.isArray(ticketTypes) && ticketTypes.length > 0) {
         const updatedPrices = ticketTypes.map((item) => {
-          const originalPrice = parseFloat(item.price);
-          const discountedPrice = parseFloat(item.discount_price);
+          const originalPrice = parseFloat(item?.price || 0);
+          const discountedPrice = parseFloat(item?.discount_price || 0);
           return { ...item, originalPrice, discountedPrice };
         });
         setPrices(updatedPrices);
-      };
-
-      calculatePrices();
+      }
     }, [ticketTypes]);
 
     const navigateToCheckout = () => {
@@ -43,7 +50,12 @@ const EventCard = React.memo(
 
     return (
       <View style={styles.container}>
-        <Image source={{ uri: ensureHttps(banner) }} style={styles.banner} />
+        <Image
+          source={{
+            uri: ensureHttps(banner) || "https://via.placeholder.com/200",
+          }}
+          style={styles.banner}
+        />
         {expired && (
           <View style={styles.expiredBadge}>
             <Text value={"Sales Ended"} variant="subtitle" />
@@ -58,7 +70,9 @@ const EventCard = React.memo(
             <View>
               <Text value={title} variant="subtitle" />
               <Text
-                value={formatEventDates(start_date, end_date)}
+                value={
+                  formatEventDates(start_date, end_date) || "Date not available"
+                }
                 variant="body"
                 style={styles.dateText}
               />
@@ -70,7 +84,7 @@ const EventCard = React.memo(
             />
           </TouchableOpacity>
           <View style={styles.detailsContainer}>
-            <View style={styles.row}>
+            <View style={{ ...styles.row, flexDirection: "row" }}>
               <MaterialCommunityIcons
                 name="map-marker-outline"
                 size={20}
@@ -87,11 +101,11 @@ const EventCard = React.memo(
                   <View style={styles.ticketItem}>
                     <View style={styles.row}>
                       <Text
-                        value={item.title}
+                        value={item?.title || "N/A"}
                         variant="body"
                         style={styles.ticketTitle}
                       />
-                      {isAuthenticated && item.discount_rate > 0 && (
+                      {isAuthenticated && item?.discount_rate > 0 && (
                         <Text
                           value={`${Math.round(item.discount_rate)}% off`}
                           variant="body"
@@ -100,18 +114,18 @@ const EventCard = React.memo(
                       )}
                     </View>
                     <View style={styles.priceContainer}>
-                      {item.discountedPrice > 0 ? (
+                      {item?.discountedPrice > 0 ? (
                         <View style={styles.row}>
                           <Text
                             value={`KES ${formatCurrencyWithCommas(
-                              item.originalPrice
+                              item?.originalPrice || 0
                             )}`}
                             variant="body"
                             style={styles.oldPrice}
                           />
                           <Text
                             value={`KES ${formatCurrencyWithCommas(
-                              item.discountedPrice.toFixed(2)
+                              item?.discountedPrice.toFixed(2) || 0
                             )}`}
                             variant="body"
                             style={styles.newPrice}
@@ -120,7 +134,7 @@ const EventCard = React.memo(
                       ) : (
                         <Text
                           value={`KES ${formatCurrencyWithCommas(
-                            item.originalPrice
+                            item?.originalPrice || 0
                           )}`}
                           variant="body"
                         />
@@ -128,7 +142,9 @@ const EventCard = React.memo(
                     </View>
                   </View>
                 )}
-                keyExtractor={(item) => item.id.toString()}
+                keyExtractor={(item) =>
+                  item?.id ? item.id.toString() : Math.random().toString()
+                }
                 horizontal
                 showsHorizontalScrollIndicator={false}
               />
@@ -139,7 +155,6 @@ const EventCard = React.memo(
     );
   }
 );
-
 const styles = StyleSheet.create({
   container: {
     position: "relative",

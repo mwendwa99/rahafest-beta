@@ -5,14 +5,14 @@ import {
   View,
   Text as RNText,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import { EventCard, Text } from "../../components";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { fetchEvents, fetchTicketTypes } from "../../redux/events/eventActions";
-import { ActivityIndicator } from "react-native-paper";
 import { clearEventsError } from "../../redux/events/eventSlice";
 
 export default function Events({ navigation }) {
@@ -25,30 +25,13 @@ export default function Events({ navigation }) {
   const abortControllerRef = useRef(null);
 
   useEffect(() => {
+    abortControllerRef.current = new AbortController();
+    dispatch(fetchEvents(abortControllerRef.current.signal));
+
     return () => {
       dispatch(clearEventsError());
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-      }
+      abortControllerRef.current?.abort();
     };
-  }, [dispatch]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-      }
-      const controller = new AbortController();
-      abortControllerRef.current = controller;
-      try {
-        await dispatch(fetchEvents(controller.signal));
-      } catch (err) {
-        if (err.name !== "AbortError") {
-          console.error("Error fetching events:", err);
-        }
-      }
-    };
-    fetchData();
   }, [dispatch]);
 
   useEffect(() => {
@@ -56,6 +39,8 @@ export default function Events({ navigation }) {
       if (events.length > 0) {
         const controller = new AbortController();
         const signal = controller.signal;
+        abortControllerRef.current = controller;
+
         try {
           const updatedEvents = await Promise.all(
             events.map(async (event) => {
@@ -68,10 +53,7 @@ export default function Events({ navigation }) {
                   ticketTypes: ticketTypesForEvent.payload || [],
                 };
               }
-              return {
-                ...event,
-                ticketTypes: [],
-              };
+              return { ...event, ticketTypes: [] };
             })
           );
           setMergedEvents(updatedEvents);
@@ -82,57 +64,64 @@ export default function Events({ navigation }) {
         }
       }
     };
-    fetchAndMergeData();
+
+    if (events.length) fetchAndMergeData();
   }, [events, dispatch]);
 
-  const handleRefresh = () => {
+  const handleRefresh = useCallback(() => {
     dispatch(fetchEvents());
     dispatch(clearEventsError());
-  };
+  }, [dispatch]);
 
-  if (loading) {
-    return (
-      <View style={styles.centered}>
-        <ActivityIndicator animating={true} />
-      </View>
-    );
-  }
-
-  if (error && error.detail !== "No Invoice matches the given query.") {
-    return (
-      <ScrollView
-        contentContainerStyle={styles.centered}
-        refreshControl={
-          <RefreshControl refreshing={loading} onRefresh={handleRefresh} />
-        }
-      >
-        <RNText>Events will be available soon!</RNText>
-        <StatusBar style="light" />
-      </ScrollView>
-    );
-  }
-
-  const handleNavigateToCheckout = (event) => {
-    navigation.navigate("CheckoutNavigator", {
-      screen: "Checkout",
-      params: { event },
-    });
-  };
-
-  const renderHeader = () => (
-    <View>
-      <RNText variant={"title"} style={styles.headerText}>
-        Upcoming Events
-      </RNText>
-    </View>
+  const handleNavigateToCheckout = useCallback(
+    (event) => {
+      navigation.navigate("CheckoutNavigator", {
+        screen: "Checkout",
+        params: { event },
+      });
+    },
+    [navigation]
   );
 
-  const renderFooter = () => (
-    <View>
-      <RNText variant={"title"} style={styles.headerText}>
-        Past Events
-      </RNText>
-    </View>
+  const renderHeader = useCallback(
+    () => (
+      <View>
+        <RNText variant={"title"} style={styles.headerText}>
+          Upcoming Events
+        </RNText>
+      </View>
+    ),
+    []
+  );
+
+  const renderFooter = useCallback(
+    () => (
+      <View>
+        <RNText variant={"title"} style={styles.headerText}>
+          Past Events
+        </RNText>
+      </View>
+    ),
+    []
+  );
+
+  const renderItem = useCallback(
+    ({ item }) => {
+      if (item.type === "header") return renderHeader();
+      if (item.type === "footer") return renderFooter();
+
+      return (
+        <View key={item.id}>
+          <EventCard
+            event={item}
+            ticketTypes={item.ticketTypes}
+            isAuthenticated={isAuthenticated}
+            handleNavigate={handleNavigateToCheckout}
+          />
+        </View>
+      );
+    },
+    [isAuthenticated, handleNavigateToCheckout, renderHeader, renderFooter]
   );
 
   const data = [
@@ -142,38 +131,26 @@ export default function Events({ navigation }) {
     ...mergedEvents.filter((item) => item.expired),
   ];
 
-  const renderItem = ({ item }) => {
-    if (item.type === "header") {
-      return renderHeader();
-    } else if (item.type === "footer") {
-      return renderFooter();
-    }
-    return (
-      <View key={item.id}>
-        <EventCard
-          event={item}
-          ticketTypes={item.ticketTypes}
-          isAuthenticated={isAuthenticated}
-          handleNavigate={handleNavigateToCheckout}
-        />
-      </View>
-    );
-  };
-
   return (
     <SafeAreaView style={styles.container}>
-      <FlatList
-        data={data}
-        renderItem={renderItem}
-        keyExtractor={(item) => (item.id ? item.id.toString() : item.key)}
-        numColumns={1}
-        contentContainerStyle={styles.contentContainer}
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl refreshing={loading} onRefresh={handleRefresh} />
-        }
-      />
-      <StatusBar style="light" />
+      {loading && !mergedEvents.length ? (
+        <View style={styles.centered}>
+          <ActivityIndicator animating={true} />
+        </View>
+      ) : (
+        <FlatList
+          data={data}
+          renderItem={renderItem}
+          keyExtractor={(item) => (item.id ? item.id.toString() : item.key)}
+          numColumns={1}
+          contentContainerStyle={styles.contentContainer}
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl refreshing={loading} onRefresh={handleRefresh} />
+          }
+        />
+      )}
+      <StatusBar style="dark" />
     </SafeAreaView>
   );
 }
@@ -181,10 +158,10 @@ export default function Events({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#212529",
+    backgroundColor: "#fafafa",
   },
   contentContainer: {
-    flexGrow: 1,
+    paddingVertical: 20,
   },
   centered: {
     flex: 1,
@@ -192,10 +169,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   headerText: {
-    color: "#fafafa",
-    textAlign: "center",
-    textTransform: "capitalize",
     fontSize: 24,
     fontWeight: "bold",
+    marginBottom: 10,
+    textAlign: "center",
   },
 });
