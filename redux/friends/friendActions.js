@@ -14,18 +14,27 @@ export const fetchPendingFriendRequests = createAsyncThunk(
       await dispatch(fetchAllUsers());
       const allUsers = getState().auth.allUsers; // Adjust according to your store structure
 
+      // console.log("Fetched all users:", allUsers);
+
+      if (!allUsers) {
+        throw new Error("No users available in state.");
+      }
+
       // Enhance pending friend requests with user details
       const enhancedRequests = pendingFriendRequests.map((request) => {
         const userDetail = allUsers.find((user) => user.id === request.friend);
         return {
           ...request,
-          friendDetails: userDetail,
+          friendDetails: userDetail || {}, // Ensure friendDetails is always an object
         };
       });
 
+      // console.log("Enhanced requests:", enhancedRequests);
+
       return enhancedRequests;
     } catch (err) {
-      return rejectWithValue(err.response.data);
+      console.error("Failed to fetch pending friend requests:", err);
+      return rejectWithValue(err.response?.data || err.message);
     }
   }
 );
