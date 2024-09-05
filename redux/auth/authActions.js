@@ -19,9 +19,6 @@ export const loginUser = createAsyncThunk(
   async (user, { rejectWithValue }) => {
     try {
       const response = await authInstance.post("login", user);
-      // console.log(response.data.data);
-      // save token to local storage
-      // localStorage.setItem("token", response.data.data.token);
       await AsyncStorage.setItem("token", response.data.data.token);
       return response.data.data;
     } catch (error) {

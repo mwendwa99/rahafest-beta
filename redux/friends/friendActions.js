@@ -2,18 +2,6 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { authInstance } from "../../services/api.service";
 import { fetchAllUsers } from "../auth/authActions";
 
-// export const fetchPendingFriendRequests = createAsyncThunk(
-//   "friends/fetchPendingFriendRequests",
-//   async (_, { rejectWithValue }) => {
-//     try {
-//       const response = await authInstance.get("unaccepted-friendship-requests");
-//       return response.data;
-//     } catch (err) {
-//       return rejectWithValue(err.response.data);
-//     }
-//   }
-// );
-
 export const fetchPendingFriendRequests = createAsyncThunk(
   "friends/fetchPendingFriendRequests",
   async (_, { rejectWithValue, getState, dispatch }) => {
@@ -72,36 +60,6 @@ export const fetchFriends = createAsyncThunk(
   }
 );
 
-// export const fetchFriends = createAsyncThunk(
-//   "friends/fetchFriends",
-//   async (_, { rejectWithValue, getState, dispatch }) => {
-//     try {
-//       const response = await authInstance.get("accepted-friendships");
-//       const friends = response.data;
-
-//       //ensure all users are fetched
-//       await dispatch(fetchAllUsers());
-//       const allUsers = getState().auth.allUsers;
-
-//       //enhance friends with user details
-//       const enhancedFriends = friends.map((friend) => {
-//         const userDetail = allUsers.find((user) => user.id === friend.friend);
-//         return {
-//           ...friend,
-//           friendDetails: userDetail,
-//         };
-//       });
-
-//       return enhancedFriends;
-
-//       // const response = await authInstance.get("accepted-friendships");
-//       // return response.data;
-//     } catch (err) {
-//       return rejectWithValue(err.response.data);
-//     }
-//   }
-// );
-
 export const acceptFriendRequest = createAsyncThunk(
   "friends/acceptFriendRequest",
   async (id, { rejectWithValue }) => {
@@ -120,6 +78,34 @@ export const sendFriendRequest = createAsyncThunk(
     try {
       const response = await authInstance.post(`request-friendship`, data);
       return response.data;
+    } catch (err) {
+      return rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export const fetchNonFriends = createAsyncThunk(
+  "friends/fetchNonFriends",
+  async (currentUser, { rejectWithValue, dispatch, getState }) => {
+    try {
+      await dispatch(fetchAllUsers());
+      const allUsers = getState().auth.allUsers;
+
+      // Filter out users who are friends
+      const nonFriends = allUsers.filter((user) => {
+        // Exclude the current user from the list
+        if (user.id === currentUser.id) return false;
+
+        // Check if the current user is in the user's friendships list
+        const isFriend = user.friendships.some(
+          (friendship) => friendship.friend === currentUser.id
+        );
+
+        // Only return users who are not friends
+        return !isFriend;
+      });
+
+      return nonFriends;
     } catch (err) {
       return rejectWithValue(err.response.data);
     }

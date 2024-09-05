@@ -1,34 +1,27 @@
-import {
-  StyleSheet,
-  View,
-  FlatList,
-  RefreshControl,
-  ScrollView,
-} from "react-native";
+import { StyleSheet, View, ScrollView } from "react-native";
 import { UserList } from "../../../components";
 import { useDispatch, useSelector } from "react-redux";
-// import { getUsers } from "../../../redux/chat/chatActions";
-import { sendFriendRequest } from "../../../redux/friends/friendActions";
-import { useEffect, useState } from "react";
-import { ActivityIndicator } from "react-native";
+import {
+  sendFriendRequest,
+  fetchNonFriends,
+} from "../../../redux/friends/friendActions";
+import { useEffect } from "react";
 
 export default function AllUsers() {
   const { token, user, allUsers } = useSelector((state) => state.auth);
-  const { sentFriendRequest } = useSelector((state) => state.friends);
-  const [refreshing, setRefreshing] = useState(false);
+  const { sentFriendRequest, nonFriends, loading } = useSelector(
+    (state) => state.friends
+  );
   const dispatch = useDispatch();
 
-  console.log(allUsers);
+  // console.log(nonFriends);
 
-  // useEffect(() => {
-  //   dispatch(getUsers(token));
-  // }, []);
+  useEffect(() => {
+    const currentUser = user;
+    dispatch(fetchNonFriends(currentUser));
+  }, []);
 
-  const onRefresh = () => {
-    setRefreshing(true);
-    dispatch(getUsers(token));
-    setRefreshing(false);
-  };
+  // console.log(allUsers);
 
   const onSendFriendReq = (sendId) => {
     const data = {
@@ -42,9 +35,9 @@ export default function AllUsers() {
 
   return (
     <ScrollView style={styles.container}>
-      {allUsers &&
-        allUsers.length > 0 &&
-        allUsers.map((item, index) => (
+      {nonFriends &&
+        nonFriends.length > 0 &&
+        nonFriends.map((item, index) => (
           <UserList
             key={index}
             user={item}
@@ -58,7 +51,7 @@ export default function AllUsers() {
 
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
+    flex: 1,
     backgroundColor: "#fafafa",
   },
 });

@@ -4,6 +4,7 @@ import {
   fetchPendingFriendRequests,
   sendFriendRequest,
   acceptFriendRequest,
+  fetchNonFriends,
 } from "./friendActions";
 
 const initialState = {
@@ -13,6 +14,9 @@ const initialState = {
   acceptedRequest: null,
   error: null,
   loading: false,
+  nonFriends: null,
+  nonFriendsLoading: false,
+  nonFriendsError: null,
 };
 
 const friendsSlice = createSlice({
@@ -71,6 +75,18 @@ const friendsSlice = createSlice({
     builder.addCase(acceptFriendRequest.rejected, (state, action) => {
       state.loading = false;
       state.error = action.payload;
+    });
+    builder.addCase(fetchNonFriends.pending, (state, action) => {
+      state.nonFriendsLoading = true;
+      state.nonFriendsError = null;
+    });
+    builder.addCase(fetchNonFriends.fulfilled, (state, action) => {
+      state.nonFriends = action.payload;
+      state.nonFriendsLoading = false;
+    });
+    builder.addCase(fetchNonFriends.rejected, (state, action) => {
+      state.nonFriendsError = action.payload;
+      state.nonFriendsLoading = false;
     });
   },
 });
