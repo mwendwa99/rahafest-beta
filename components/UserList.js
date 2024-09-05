@@ -4,27 +4,19 @@ import { getInitials } from "../utils/helper";
 import Text from "./Text";
 import Button from "./Button";
 
-export default function UserList({
-  allUsers,
-  onSendFriendReq,
-  sentFriendRequest,
-}) {
+export default function UserList({ user, onSendFriendReq, sentFriendRequest }) {
   // console.log(sentFriendRequest);
   return (
     <View style={styles.container}>
       <View style={styles.row}>
-        <Avatar.Text
-          style={{ marginRight: 10 }}
-          size={30}
-          label={allUsers.name[0]}
-        />
+        <Avatar.Text style={{ marginRight: 10 }} size={30} label={user.name} />
         <View style={styles.column}>
-          <Text value={allUsers.name} color="#000" variant="body" />
-          <Text value={allUsers.email} color="#000" variant="small" />
+          <Text value={user.user_slug} color="#000" variant="body" />
+          <Text value={user.email} color="#000" variant="small" />
         </View>
       </View>
       <Button
-        onPress={() => onSendFriendReq(allUsers.id)}
+        onPress={() => onSendFriendReq(user.id)}
         disabled={
           sentFriendRequest && sentFriendRequest.is_accepted === false
             ? true
@@ -47,6 +39,7 @@ export default function UserList({
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: "#fafafa",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
