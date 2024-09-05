@@ -1,34 +1,57 @@
 import { View, ScrollView, RefreshControl, StyleSheet } from "react-native";
 import { AcceptedFriend, Text } from "../../../components";
 import AllUsers from "./AllUsers";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchFriends } from "../../../redux/friends/friendActions";
+import {
+  fetchFriends,
+  fetchPendingFriendRequests,
+  fetchNonFriends,
+} from "../../../redux/friends/friendActions";
 import { fetchUser } from "../../../redux/auth/authActions";
 import { ActivityIndicator } from "react-native-paper";
+import { warning } from "../../../utils/toast";
 
 export default function Friends({ navigation }) {
   const [refreshing, setRefreshing] = useState(false);
-  const { friends, loading } = useSelector((state) => state.friends);
+  const {
+    friends,
+    loading,
+    nonFriends,
+    pendingRequests,
+    sentFriendRequest,
+    error,
+  } = useSelector((state) => state.friends);
+  const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
+  // Fetch data when the component mounts or navigation focus changes
   useEffect(() => {
-    const unsubscribe = navigation.addListener("focus", () => {
-      dispatch(fetchUser());
-      dispatch(fetchFriends());
-    });
+    const unsubscribe = navigation.addListener("focus", fetchData);
 
     return unsubscribe;
-  }, [navigation]);
+  }, [navigation, fetchData]);
 
-  const onRefresh = () => {
+  // Use useCallback to memoize the fetchData function
+  const fetchData = useCallback(async () => {
+    await dispatch(fetchUser());
+    await dispatch(fetchFriends());
+    await dispatch(fetchNonFriends(user));
+    await dispatch(fetchPendingFriendRequests());
+  }, [dispatch, user]);
+
+  useEffect(() => {
+    if (error && error.message === "Permission denied") {
+      warning("Please login again and try again", 5000);
+    }
+  }, [error]);
+
+  // Handle refresh logic
+  const onRefresh = async () => {
     setRefreshing(true);
-    dispatch(fetchUser());
-    dispatch(fetchFriends());
+    await fetchData();
     setRefreshing(false);
   };
-
-  // console.log(friends);
 
   if (loading) {
     return (
@@ -77,7 +100,11 @@ export default function Friends({ navigation }) {
         style={{ textAlign: "center" }}
       />
 
-      <AllUsers />
+      <AllUsers
+        pendingFriendRequests={pendingRequests}
+        nonFriends={nonFriends}
+        sentFriendRequest={sentFriendRequest}
+      />
     </ScrollView>
   );
 }

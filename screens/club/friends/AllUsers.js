@@ -1,37 +1,26 @@
-import { StyleSheet, View, ScrollView } from "react-native";
+import { StyleSheet, ScrollView } from "react-native";
 import { UserList } from "../../../components";
+import { sendFriendRequest } from "../../../redux/friends/friendActions";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  sendFriendRequest,
-  fetchNonFriends,
-} from "../../../redux/friends/friendActions";
-import { useEffect } from "react";
 
-export default function AllUsers() {
-  const { token, user, allUsers } = useSelector((state) => state.auth);
-  const { sentFriendRequest, nonFriends, loading } = useSelector(
-    (state) => state.friends
-  );
+export default function AllUsers({
+  pendingFriendRequests,
+  nonFriends,
+  sentFriendRequest,
+}) {
+  const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
-  // console.log(nonFriends);
-
-  useEffect(() => {
-    const currentUser = user;
-    dispatch(fetchNonFriends(currentUser));
-  }, []);
-
-  // console.log(allUsers);
-
-  const onSendFriendReq = (sendId) => {
+  const onSendFriendReq = (friend) => {
     const data = {
       user: user.id,
-      friend: sendId,
-      is_accepted: false,
+      friend: friend,
     };
-    // console.log(data);
-    dispatch(sendFriendRequest({ token, data }));
+    dispatch(sendFriendRequest(data));
   };
+
+  // console.log({ nonFriends });
+  // console.log({ pendingFriendRequests });
 
   return (
     <ScrollView style={styles.container}>
@@ -43,6 +32,7 @@ export default function AllUsers() {
             user={item}
             onSendFriendReq={onSendFriendReq}
             sentFriendRequest={sentFriendRequest}
+            pendingFriendRequests={pendingFriendRequests}
           />
         ))}
     </ScrollView>

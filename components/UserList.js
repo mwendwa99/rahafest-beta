@@ -1,11 +1,21 @@
 import { View, StyleSheet } from "react-native";
 import { Avatar } from "react-native-paper";
-import { getInitials } from "../utils/helper";
 import Text from "./Text";
 import Button from "./Button";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
-export default function UserList({ user, onSendFriendReq, sentFriendRequest }) {
-  // console.log(sentFriendRequest);
+export default function UserList({
+  user,
+  onSendFriendReq,
+  sentFriendRequest,
+  pendingFriendRequests,
+}) {
+  // Check if the user is in the pending friend requests
+  const isPending = pendingFriendRequests.some(
+    (request) => request.friend === user.id
+  );
+
   return (
     <View style={styles.container}>
       <View style={styles.row}>
@@ -18,17 +28,18 @@ export default function UserList({ user, onSendFriendReq, sentFriendRequest }) {
       <Button
         onPress={() => onSendFriendReq(user.id)}
         disabled={
-          sentFriendRequest && sentFriendRequest.is_accepted === false
-            ? true
-            : false
+          (sentFriendRequest && sentFriendRequest.friend === user.id) ||
+          isPending
         }
         color={
-          sentFriendRequest && sentFriendRequest.is_accepted === false
+          sentFriendRequest && sentFriendRequest.friend === user.id
             ? "gray"
             : "orange"
         }
         label={
-          sentFriendRequest && sentFriendRequest.is_accepted === false
+          isPending
+            ? "Pending"
+            : sentFriendRequest && sentFriendRequest.friend === user.id
             ? "Sent"
             : "Add Friend"
         }
