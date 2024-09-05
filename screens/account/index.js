@@ -30,8 +30,6 @@ export default function Account({ navigation }) {
   const {
     friends,
     pendingRequests,
-    sentFriendRequest,
-    acceptedFriendRequest,
     error: friendError,
   } = useSelector((state) => state.friends);
 
@@ -60,6 +58,11 @@ export default function Account({ navigation }) {
 
     return unsubscribe;
   }, [navigation]);
+
+  // Filter requests sent to the current user
+  const incomingRequests = pendingRequests.filter(
+    (request) => request.friend === user.id
+  );
 
   const toggleEditMode = () => {
     setEditMode(!editMode);
@@ -211,7 +214,7 @@ export default function Account({ navigation }) {
               source={require("../../assets/wallet-card.png")}
               style={styles.walletCard}
               height={150}
-              width={400}
+              // width={300}
             />
           </TouchableOpacity>
         </View>
@@ -235,13 +238,13 @@ export default function Account({ navigation }) {
             nestedScrollEnabled
             style={{ maxHeight: 200, width: "100%" }}
           >
-            <Text value={`Pending Requests`} variant={"subtitle"} />
-            {pendingRequests && pendingRequests.length > 0 ? (
-              pendingRequests.map((item, index) => (
+            <Text value={`New Friend Requests`} variant={"subtitle"} />
+            {incomingRequests && incomingRequests.length > 0 ? (
+              incomingRequests.map((item, index) => (
                 <FriendRequest key={index} data={item} />
               ))
             ) : (
-              <Text value={"You have no pending requests"} variant={"body"} />
+              <Text value={"You have no new requests"} variant={"body"} />
             )}
           </ScrollView>
         </View>
@@ -293,9 +296,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   walletCard: {
-    width: 400,
+    width: 360,
     height: 150,
     borderRadius: 10,
     marginVertical: 10,
+    objectFit: "contain",
   },
 });
