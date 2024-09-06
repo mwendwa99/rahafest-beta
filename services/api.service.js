@@ -4,7 +4,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 //export an unprotected instance of axios
 export const ticketApi = axios.create({
-  baseURL: "https://tickoh.stackthon.com/api/",
+  baseURL: "https://api.ticketraha.com/api/",
 });
 
 export const rahaApi = axios.create({
@@ -12,10 +12,10 @@ export const rahaApi = axios.create({
 });
 
 export const rahaImageApi = "https://api.rahafest.com";
-export const tickohImageApi = "https://tickoh.stackthon.com";
+export const tickohImageApi = "https://api.ticketraha.com";
 
 const instance = axios.create({
-  baseURL: "https://tickoh.stackthon.com/api/",
+  baseURL: "https://api.ticketraha.com/api/",
 });
 
 const authInstance = axios.create({

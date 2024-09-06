@@ -109,6 +109,7 @@ export default function LiveMessages({ sessionId }) {
       <FlatList
         ref={listRef}
         data={liveMessages}
+        onContentSizeChange={() => scrollToBottom()} // Scroll to bottom after content size changes
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item, index }) => {
           const user = userMap[item?.sender];
@@ -157,12 +158,14 @@ export default function LiveMessages({ sessionId }) {
                       style={{ marginRight: 2 }}
                     />
                   </TouchableOpacity> */}
+                  <Text style={styles.messageTimestamp}>
+                    {formatDate(item.timestamp)}
+                  </Text>
                 </View>
 
-                <Text style={styles.messageText}>{item.content}</Text>
-                <Text style={styles.messageTimestamp}>
-                  {formatDate(item.timestamp)}
-                </Text>
+                <View>
+                  <Text style={styles.messageText}>{item.content}</Text>
+                </View>
               </View>
             </View>
           );
@@ -181,6 +184,8 @@ export default function LiveMessages({ sessionId }) {
           value={currentMessage}
           onChangeText={setCurrentMessage}
           disabled={loading}
+          onSubmitEditing={handleSubmit} // Trigger handleSubmit when return is pressed
+          returnKeyType="send"
         />
         <IconButton
           mode="contained-tonal"
@@ -220,6 +225,8 @@ const styles = StyleSheet.create({
   },
   messageContent: {
     marginLeft: 16,
+    flexDirection: "column",
+    // maxWidth: 300,
   },
   messageSender: {
     fontWeight: "bold",
@@ -227,6 +234,8 @@ const styles = StyleSheet.create({
   },
   messageText: {
     color: "white",
+    flexWrap: "wrap", // Ensure the text wraps
+    maxWidth: "90%",
   },
   messageTimestamp: {
     fontSize: 12,
