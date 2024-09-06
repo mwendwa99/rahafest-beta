@@ -137,11 +137,8 @@ export default function Checkout({ route, navigation }) {
       });
       return;
     }
-    // if (isAuthenticated && phoneInput === "") {
-    //   setShowPhoneInputModal(true);
-    //   return;
-    // }
-    if (isAuthenticated) {
+
+    if (isAuthenticated && phoneInput === "") {
       setShowPhoneInputModal(true);
       return;
     }

@@ -58,7 +58,7 @@ const EventCard = React.memo(
         />
         {expired && (
           <View style={styles.expiredBadge}>
-            <Text value={"Sales Ended"} variant="subtitle" />
+            <Text value={"Expired"} variant="subtitle" />
           </View>
         )}
         <View style={styles.cardInfoContainer}>
@@ -172,6 +172,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   expiredBadge: {
+    display: "flex",
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderWidth: 2,

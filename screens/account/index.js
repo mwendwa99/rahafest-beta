@@ -60,9 +60,9 @@ export default function Account({ navigation }) {
   }, [navigation]);
 
   // Filter requests sent to the current user
-  const incomingRequests = pendingRequests.filter(
-    (request) => request.friend === user.id
-  );
+  const incomingRequests =
+    pendingRequests &&
+    pendingRequests.filter((request) => request.friend === user.id);
 
   const toggleEditMode = () => {
     setEditMode(!editMode);
