@@ -106,23 +106,25 @@ function AppNav({ routes }) {
         />
       )}
     >
-      {routes.map((route) => (
-        <BottomTab.Screen
-          key={route.key}
-          name={route.name}
-          component={route.component}
-          options={{
-            title: route.name,
-            tabBarIcon: ({ size, focused }) => (
-              <MaterialCommunityIcons
-                name={focused ? route.icon_focused : route.icon_default}
-                color={focused ? "orange" : "#fafafa"}
-                size={size}
-              />
-            ),
-          }}
-        />
-      ))}
+      {routes &&
+        routes.length > 0 &&
+        routes.map((route) => (
+          <BottomTab.Screen
+            key={route.key}
+            name={route.name}
+            component={route.component}
+            options={{
+              title: route.name,
+              tabBarIcon: ({ size, focused }) => (
+                <MaterialCommunityIcons
+                  name={focused ? route.icon_focused : route.icon_default}
+                  color={focused ? "orange" : "#fafafa"}
+                  size={size}
+                />
+              ),
+            }}
+          />
+        ))}
     </BottomTab.Navigator>
   );
 }

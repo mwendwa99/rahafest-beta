@@ -1,6 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { authInstance } from "../../services/api.service";
 import { fetchAllUsers } from "../auth/authActions";
+import { warning } from "../../utils/toast";
 
 export const fetchPendingFriendRequests = createAsyncThunk(
   "friends/fetchPendingFriendRequests",
@@ -33,6 +34,7 @@ export const fetchPendingFriendRequests = createAsyncThunk(
 
       return enhancedRequests;
     } catch (err) {
+      warning("failed to fetch friends", 2000);
       console.error("Failed to fetch pending friend requests:", err);
       return rejectWithValue(err.response?.data || err.message);
     }
