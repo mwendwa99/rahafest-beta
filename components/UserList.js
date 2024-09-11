@@ -2,19 +2,17 @@ import { View, StyleSheet } from "react-native";
 import { Avatar } from "react-native-paper";
 import Text from "./Text";
 import Button from "./Button";
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
 
 export default function UserList({
   user,
   onSendFriendReq,
   sentFriendRequest,
-  pendingFriendRequests,
+  pendingFriendRequests = [],
 }) {
   // Check if the user is in the pending friend requests
-  const isPending = pendingFriendRequests.some(
-    (request) => request.friend === user.id
-  );
+  const isPending =
+    Array.isArray(pendingFriendRequests) &&
+    pendingFriendRequests.some((request) => request.friend === user.id);
 
   return (
     <View style={styles.container}>
