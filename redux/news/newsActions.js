@@ -58,7 +58,7 @@ export const fetchGallery = createAsyncThunk(
             acc[item.title] = [];
           }
           acc[item.title].push({
-            uri: item.image ? rahaImageApi + item.image : placeholderImage,
+            uri: item.image ? item.image : placeholderImage,
             id: item.id.toString(),
           });
         }

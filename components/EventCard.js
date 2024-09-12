@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Image,
@@ -23,13 +23,6 @@ const EventCard = React.memo(
 
     const [prices, setPrices] = useState([]);
 
-    const ensureHttps = useCallback((url) => {
-      if (typeof url !== "string") return "";
-      return url.startsWith("http://")
-        ? url.replace("http://", "https://")
-        : url;
-    }, []);
-
     useEffect(() => {
       if (Array.isArray(ticketTypes) && ticketTypes.length > 0) {
         const updatedPrices = ticketTypes.map((item) => {
@@ -52,7 +45,7 @@ const EventCard = React.memo(
       <View style={styles.container}>
         <Image
           source={{
-            uri: ensureHttps(banner) || "https://via.placeholder.com/200",
+            uri: banner || "https://via.placeholder.com/200",
           }}
           style={styles.banner}
         />

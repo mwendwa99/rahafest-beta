@@ -12,7 +12,6 @@ import { StatusBar } from "expo-status-bar";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchGallery } from "../../../redux/news/newsActions";
 import { ActivityIndicator } from "react-native-paper";
-import { rahaImageApi } from "../../../services/api.service";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Text, Dropdown } from "../../../components";
 import { clearNewsAndGalleryError } from "../../../redux/news/newsSlice";
@@ -34,22 +33,6 @@ export default function Media() {
     };
   }, [dispatch]);
 
-  // const formattedGallery = useMemo(() => {
-  //   if (!gallery) return {};
-  //   return gallery.reduce((acc, item) => {
-  //     if (item.event_name) {
-  //       if (!acc[item.event_name]) {
-  //         acc[item.event_name] = [];
-  //       }
-  //       acc[item.event_name].push({
-  //         uri: item.image ? rahaImageApi + item.image : placeholderImage,
-  //         id: item.id.toString(),
-  //       });
-  //     }
-  //     return acc;
-  //   }, {});
-  // }, [gallery]);
-
   const onRefresh = useCallback(() => {
     dispatch(fetchGallery());
   }, [dispatch]);
@@ -58,6 +41,7 @@ export default function Media() {
     setSelectedImage(uri);
     setModalVisible(true);
   };
+  // console.log(gallery);
 
   const renderImage = useCallback(
     ({ uri, id }) => (
@@ -134,6 +118,14 @@ export default function Media() {
 
   return (
     <SafeAreaView style={styles.container}>
+      <Text
+        value={"Raha Gallery"}
+        variant={"title"}
+        style={{
+          textAlign: "center",
+          color: "#fafafa",
+        }}
+      />
       {gallery && Object.keys(gallery).length > 0 ? (
         <FlatList
           data={Object.keys(gallery).reverse()}
