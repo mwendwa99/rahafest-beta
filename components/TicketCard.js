@@ -52,10 +52,15 @@ const TicketCard = ({ handleSelectTicketQuantity, item }) => {
         <Input
           placeholder="0"
           type="number-pad"
+          returnKeyType="done"
           defaultValue="0"
           onChange={(text) => {
             const quantity = parseInt(text, 10) || 0;
             handleSelectTicketQuantity(quantity, item);
+          }}
+          onSubmitEditing={(e) => {
+            const quantity = parseInt(e.nativeEvent.text, 10) || 0;
+            handleSelectTicketQuantity(quantity, item); // Confirm the quantity on return key
           }}
         />
       </View>

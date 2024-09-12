@@ -41,3 +41,5 @@ export default function EventNavigator() {
     </Stack.Navigator>
   );
 }
+// Export the Events component directly
+export { Events };
