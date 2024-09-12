@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { rahaApi, rahaImageApi } from "../../services/api.service";
+import { rahaApi } from "../../services/api.service";
 
 const placeholderImage = "../../assets/placeholder.png";
 
@@ -20,25 +20,6 @@ export const fetchNews = createAsyncThunk(
     }
   }
 );
-
-// export const fetchGallery = createAsyncThunk(
-//   "event/fetchGallery",
-//   async (_, { rejectWithValue }) => {
-//     try {
-//       const response = await rahaApi.get("gallery");
-
-//       //filter response to only render active gallery
-//       const filteredGallery = response.data.data.filter(
-//         (item) => item.active === true
-//       );
-
-//       return filteredGallery;
-//     } catch (error) {
-//       console.error(error);
-//       return rejectWithValue(error.response.data);
-//     }
-//   }
-// );
 
 export const fetchGallery = createAsyncThunk(
   "event/fetchGallery",
