@@ -83,7 +83,13 @@ const EventCard = React.memo(
             />
           </TouchableOpacity>
           <View style={styles.detailsContainer}>
-            <View style={{ ...styles.row, flexDirection: "row" }}>
+            <View
+              style={{
+                ...styles.row,
+                flexDirection: "row",
+                alignItems: "center",
+              }}
+            >
               <MaterialCommunityIcons
                 name="map-marker-outline"
                 size={20}
