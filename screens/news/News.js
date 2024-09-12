@@ -48,14 +48,10 @@ export default function News() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text
-        value="Here is what you missed in March"
-        variant="subtitle"
-        style={{ color: "#fff" }}
-      />
+      <Text value="Latest news" variant="subtitle" style={{ color: "#fff" }} />
       <FlatList
         style={styles.eventCardContainer}
-        data={news}
+        data={news ? [...news].reverse() : []} // Safely reverse the data or return an empty array
         renderItem={({ item }) => <Article news={item} />}
         keyExtractor={(item, index) => index.toString()}
         showsVerticalScrollIndicator={false}
