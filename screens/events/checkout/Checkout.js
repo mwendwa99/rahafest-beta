@@ -27,6 +27,7 @@ import {
   clearInvoiceError,
   clearPaymentData,
 } from "../../../redux/events/eventSlice";
+import { success, warning } from "../../../utils/toast";
 
 export default function Checkout({ route, navigation }) {
   const { event } = route.params || {};
@@ -166,11 +167,15 @@ export default function Checkout({ route, navigation }) {
   };
 
   const handlePhoneUpdate = () => {
-    const formattedPhone = formatPhoneNumberToMpesaFormat(phoneInput);
-    setAttendeeInfo((prevInfo) =>
-      prevInfo.map((attendee) => ({ ...attendee, phone: formattedPhone }))
-    );
-    setShowPhoneInputModal(false);
+    if (phoneInput && phoneInput !== "") {
+      const formattedPhone = formatPhoneNumberToMpesaFormat(phoneInput);
+      setAttendeeInfo((prevInfo) =>
+        prevInfo.map((attendee) => ({ ...attendee, phone: formattedPhone }))
+      );
+      setShowPhoneInputModal(false);
+    } else {
+      alert("please enter your phone number");
+    }
   };
   // console.log({ data: { attendeeInfo } });
 
@@ -214,7 +219,8 @@ export default function Checkout({ route, navigation }) {
         </View>
       </View>
       <View style={styles.detailsContainer}>
-        {event.ticketTypes ? (
+        {(event.ticketTypes && event.ticketTypes.length > 0) ||
+        event.location !== "TBA" ? (
           <FlatList
             data={event.ticketTypes}
             renderItem={({ item }) => (
@@ -232,7 +238,7 @@ export default function Checkout({ route, navigation }) {
             variant="body"
             style={{
               marginVertical: 10,
-              // color: "red",
+              color: "black",
               textAlign: "center",
             }}
           />
@@ -244,6 +250,7 @@ export default function Checkout({ route, navigation }) {
 
       <View>
         <Button
+          disabled={event.location === "TBA"}
           label="Buy Ticket"
           variant={"contained"}
           onPress={handleBuyTicket}
@@ -301,6 +308,7 @@ const styles = StyleSheet.create({
   banner: {
     height: 250,
     width: 200,
-    borderRadius: 4,
+    borderRadius: 8,
+    objectFit: "contain",
   },
 });

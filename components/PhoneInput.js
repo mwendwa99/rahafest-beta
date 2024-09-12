@@ -1,4 +1,6 @@
-import { View, StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+
 import React from "react";
 import Input from "./Input";
 import Button from "./Button";
@@ -11,7 +13,7 @@ export default function PhoneInput({
 }) {
   return (
     <View style={styles.container}>
-      <Text value="Please enter your phone number" variant="subtitle" />
+      <Text value="Please enter your M-PESA number" variant="subtitle" />
       <Text
         value="This will be used to send you a payment prompt"
         variant="body"

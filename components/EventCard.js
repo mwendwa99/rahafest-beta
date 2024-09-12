@@ -43,12 +43,18 @@ const EventCard = React.memo(
 
     return (
       <View style={styles.container}>
-        <Image
-          source={{
-            uri: banner || "https://via.placeholder.com/200",
-          }}
-          style={styles.banner}
-        />
+        <TouchableOpacity
+          disabled={expired}
+          style={styles.cardInfo}
+          onPress={navigateToCheckout}
+        >
+          <Image
+            source={{
+              uri: banner || "https://via.placeholder.com/200",
+            }}
+            style={styles.banner}
+          />
+        </TouchableOpacity>
         {expired && (
           <View style={styles.expiredBadge}>
             <Text value={"Expired"} variant="subtitle" />
@@ -158,6 +164,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderRadius: 6,
     elevation: 2,
+    borderWidth: 1,
+    borderColor: "#c3c3c3",
   },
   banner: {
     width: "100%",

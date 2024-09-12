@@ -126,9 +126,9 @@ export default function Events({ navigation }) {
 
   const data = [
     { type: "header", key: "upcoming-header" },
-    ...mergedEvents.filter((item) => !item.expired),
+    ...(mergedEvents && mergedEvents.filter((item) => !item.expired).reverse()), // Reverse upcoming events
     { type: "footer", key: "past-footer" },
-    ...mergedEvents.filter((item) => item.expired),
+    ...(mergedEvents && mergedEvents.filter((item) => item.expired).reverse()), // Reverse past events
   ];
 
   return (
@@ -139,7 +139,7 @@ export default function Events({ navigation }) {
         </View>
       ) : (
         <FlatList
-          data={data}
+          data={data || []}
           renderItem={renderItem}
           keyExtractor={(item) => (item.id ? item.id.toString() : item.key)}
           numColumns={1}
