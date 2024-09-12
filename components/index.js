@@ -3,8 +3,6 @@ export { default as Input } from "./Input";
 export { default as Avatar } from "./Avatar";
 export { default as ListItem } from "./ListItem";
 export { default as Button } from "./Button";
-export { default as Artist } from "./Artist";
-export { default as Card } from "./Card";
 export { default as Accordion } from "./Accordion";
 export { default as FriendRequest } from "./FriendRequest";
 export { default as AcceptedFriend } from "./AcceptedFriend";
