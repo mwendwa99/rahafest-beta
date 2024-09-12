@@ -7,7 +7,6 @@ import {
   StyleSheet,
   Dimensions,
 } from "react-native";
-import { rahaImageApi } from "../services/api.service";
 import { StatusBar } from "expo-status-bar";
 
 const Article = ({ news }) => {
@@ -17,7 +16,6 @@ const Article = ({ news }) => {
 
   const handleReadMore = () => {
     setShowMore(!showMore);
-    console.log("Read more clicked");
   };
 
   return (
@@ -30,7 +28,7 @@ const Article = ({ news }) => {
       <View>
         <Image
           source={{
-            uri: rahaImageApi + news.image,
+            uri: news.image,
           }}
           style={styles.image}
         />
