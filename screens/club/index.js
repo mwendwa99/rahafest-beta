@@ -18,7 +18,7 @@ import AllUsers from "./friends/AllUsers";
 import Messages from "./chat/Messages";
 import Landing from "./landing/Landing";
 import Merchandise from "./landing/Merchandise";
-import { Events } from "../events";
+import Events from "../events";
 import Login from "./auth/Login";
 import Register from "./auth/Register";
 import { persistor } from "../../redux/store";
@@ -83,7 +83,7 @@ export default function ClubNavigator() {
             name="Live"
             component={Live}
             options={({ navigation }) => ({
-              headerShown: true,
+              headerShown: false,
               headerShadowVisible: false,
               headerTintColor: "#fff",
               headerStyle: {
