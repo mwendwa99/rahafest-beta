@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { fetchUser } from "../../../redux/auth/authActions";
 import { StatusBar } from "expo-status-bar";
+import WebSocketChat from "../wsChat";
 
 const navigationItems = [
   { id: "1", icon: "globe", title: "Live Chat", link: "Live" },
@@ -79,6 +80,8 @@ export default function Landing({ navigation }) {
         numColumns={2}
         contentContainerStyle={styles.grid}
       />
+
+      {/* <WebSocketChat /> */}
       <StatusBar style="light" />
     </View>
   );
