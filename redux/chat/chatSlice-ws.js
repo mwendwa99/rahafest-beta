@@ -32,18 +32,23 @@ export const {
 } = chatSlice.actions;
 
 export const initializeWebSocket = (token) => (dispatch) => {
-  webSocketService.connect(token);
+  const messageListWS = webSocketService.createConnection(
+    "message-list",
+    "ws://rahaclub.rahafest.com/ws/messages/"
+  );
 
-  webSocketService.on("connected", () => {
+  messageListWS.connect(token);
+
+  messageListWS.on("connected", () => {
     dispatch(setConnectionStatus(true));
-    webSocketService.fetchLiveMessages();
+    // Note: fetchLiveMessages is removed as it's not part of the new WebSocket implementation
   });
 
-  webSocketService.on("disconnected", () => {
+  messageListWS.on("disconnected", () => {
     dispatch(setConnectionStatus(false));
   });
 
-  webSocketService.on("message", (data) => {
+  messageListWS.on("message", (data) => {
     if (data.action === "message-list") {
       dispatch(setLiveMessages(data.messages));
     } else if (data.action === "new-message") {
@@ -51,14 +56,15 @@ export const initializeWebSocket = (token) => (dispatch) => {
     }
   });
 
-  webSocketService.on("error", (error) => {
+  messageListWS.on("error", (error) => {
     dispatch(setError(error.message));
   });
 };
 
 export const sendMessage = (message) => (dispatch) => {
   try {
-    webSocketService.send({
+    const messageListWS = webSocketService.getConnection("message-list");
+    messageListWS.send({
       action: "send-message",
       message: message,
     });
