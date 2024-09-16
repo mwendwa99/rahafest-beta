@@ -19,6 +19,7 @@ import menuSlice from "./menu/menuSlice";
 import chatSlice from "./chat/chatSlice";
 import live from "./chat/chatSlice-ws";
 import friendSlice from "./friends/friendSlice";
+import friendship from "./friends/friendSlice-ws";
 import eventSlice from "./events/eventSlice";
 
 const rootPersistConfig = {
@@ -39,6 +40,7 @@ const rootReducer = combineReducers({
   friends: friendSlice,
   events: eventSlice,
   live: live,
+  friendship: friendship,
 });
 
 const persistedReducer = persistReducer(rootPersistConfig, rootReducer);

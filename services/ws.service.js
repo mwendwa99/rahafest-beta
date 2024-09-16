@@ -1,32 +1,26 @@
 import { EventEmitter } from "events";
 
-class WebSocketService extends EventEmitter {
-  constructor(url) {
+class WebSocketConnection extends EventEmitter {
+  constructor(baseUrl) {
     super();
-    this.url = url;
+    this.baseUrl = baseUrl;
     this.socket = null;
     this.isConnected = false;
   }
 
   connect(token) {
-    this.socket = new WebSocket(this.url);
+    const url = `${this.baseUrl}?token=${token}`;
+    this.socket = new WebSocket(url);
 
     this.socket.onopen = () => {
+      console.log("ws connected");
       this.isConnected = true;
-      this.socket.send(
-        JSON.stringify({
-          action: "message-list",
-          //   token: token,
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-      );
       this.emit("connected");
     };
 
     this.socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
+      console.log("ws message", data);
       this.emit("message", data);
     };
 
@@ -36,6 +30,7 @@ class WebSocketService extends EventEmitter {
     };
 
     this.socket.onerror = (error) => {
+      console.log("ws error", error);
       this.emit("error", error);
     };
   }
@@ -48,13 +43,58 @@ class WebSocketService extends EventEmitter {
 
   send(message) {
     if (this.isConnected) {
+      console.log("ws message", message);
       this.socket.send(JSON.stringify(message));
     } else {
-      throw new Error("WebSocket is not connected");
+      console.error("issue with ws service", message);
+      // throw new Error("WebSocket is not connected");
     }
   }
 }
 
-export const webSocketService = new WebSocketService(
-  "ws://rahaclub.rahafest.com/ws/messages/"
-);
+class WebSocketService {
+  constructor() {
+    this.connections = {};
+  }
+
+  createConnection(name, baseUrl) {
+    if (this.connections[name]) {
+      // throw new Error(`Connection '${name}' already exists`);
+      console.error(`${name} connection already exists`);
+    }
+    this.connections[name] = new WebSocketConnection(baseUrl);
+    return this.connections[name];
+  }
+
+  getConnection(name) {
+    if (!this.connections[name]) {
+      // throw new Error(`Connection '${name}' does not exist`);
+      console.error(`${name} does not exist`);
+    }
+    return this.connections[name];
+  }
+
+  removeConnection(name) {
+    if (this.connections[name]) {
+      this.connections[name].disconnect();
+      delete this.connections[name];
+    }
+  }
+}
+
+export const webSocketService = new WebSocketService();
+
+// Usage example:
+// const messageListWS = webSocketService.createConnection('message-list', 'ws://rahaclub.rahafest.com/ws/messages/');
+// const friendshipsWS = webSocketService.createConnection('friendships', 'ws://rahaclub.rahafest.com/ws/friendships/');
+
+// messageListWS.connect(token);
+// friendshipsWS.connect(token);
+
+// messageListWS.on('message', (data) => {
+//   // Handle message-list specific data
+// });
+
+// friendshipsWS.on('message', (data) => {
+//   // Handle friendships specific data
+// });
