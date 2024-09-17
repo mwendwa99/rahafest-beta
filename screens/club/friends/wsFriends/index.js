@@ -1,5 +1,11 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { View, Text, FlatList, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  StyleSheet,
+  ActivityIndicator,
+} from "react-native";
 import { useSelector } from "react-redux";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
@@ -17,15 +23,10 @@ const FriendsPage = () => {
   const [directMessages, setDirectMessages] = useState([]);
   const [selectedFriend, setSelectedFriend] = useState(null);
   const [inputMessage, setInputMessage] = useState("");
+  const [title, setTitle] = useState("Friends");
+  const [isLoading, setIsLoading] = useState(true);
   const { token, user } = useSelector((state) => state.auth);
   const flatListRef = useRef(null);
-  const [title, setTitle] = useState("Friends");
-
-  useEffect(() => {
-    if (selectedFriend === null) {
-      setTitle("Friends");
-    }
-  }, [selectedFriend]);
 
   const handleFriendsMessage = useCallback((data) => {
     switch (data.action) {
@@ -41,23 +42,26 @@ const FriendsPage = () => {
       default:
         console.warn("Unknown action from friends server:", data.action);
     }
+    setIsLoading(false);
   }, []);
 
   const handleDmMessage = useCallback((data) => {
     switch (data.action) {
       case "dm-list":
         setDirectMessages(data.messages);
+        setIsLoading(false);
         break;
       case "send-dm":
-        console.log(data);
         setDirectMessages((prev) => [...prev, data.message]);
         flatListRef.current?.scrollToEnd({ animated: true });
         break;
       case "error":
         console.error("Error from DM server:", data);
+        setIsLoading(false);
         break;
       default:
         console.warn("Unknown action from DM server:", data.action);
+        setIsLoading(false);
     }
   }, []);
 
@@ -75,6 +79,7 @@ const FriendsPage = () => {
 
   useEffect(() => {
     if (friendsWs.connected) {
+      setIsLoading(true);
       friendsWs.send({ action: "accepted-list" });
       friendsWs.send({ action: "unaccepted-list" });
     }
@@ -82,13 +87,14 @@ const FriendsPage = () => {
 
   useEffect(() => {
     if (dmWs.connected && selectedFriend) {
+      setIsLoading(true);
+      setDirectMessages([]);
       dmWs.send({ action: "dm-list", friend_id: selectedFriend });
     }
   }, [dmWs.connected, selectedFriend]);
 
   const sendMessage = useCallback(() => {
     if (inputMessage.trim() && dmWs.connected && selectedFriend) {
-      console.log({ selectedFriend });
       dmWs.send({
         action: "send-dm",
         recipient: selectedFriend,
@@ -101,6 +107,7 @@ const FriendsPage = () => {
   const handleFriendSelection = useCallback((friendId) => {
     setSelectedFriend(friendId);
     setDirectMessages([]);
+    setIsLoading(true);
   }, []);
 
   const renderFriend = useCallback(
@@ -146,15 +153,22 @@ const FriendsPage = () => {
           />
           <Text style={{ ...styles.statusText, fontSize: 24 }}>{title}</Text>
         </View>
-        {/* {selectedFriend && (
-          <View style={styles.statusContainer}>
-            <Text style={styles.statusText}>
-              {dmWs.connected ? "Connected" : "Offline"}
-            </Text>
-          </View>
-        )} */}
       </View>
-      {!selectedFriend ? (
+      {isLoading ? (
+        <ActivityIndicator
+          size="large"
+          color="#fafafa"
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        />
+      ) : !selectedFriend ? (
         <>
           <Text style={styles.sectionTitle}>Pending Requests</Text>
           <FlatList
@@ -179,7 +193,13 @@ const FriendsPage = () => {
           sendMessage={sendMessage}
           selectedFriend={selectedFriend}
           connected={dmWs.connected}
-          setSelectedFriend={setSelectedFriend}
+          setSelectedFriend={(id) => {
+            setSelectedFriend(id);
+            if (id === null) {
+              setDirectMessages([]);
+              setTitle("Friends");
+            }
+          }}
           setTitle={setTitle}
         />
       )}

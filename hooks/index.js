@@ -4,6 +4,20 @@ export const useWebSocket = (url, onMessage) => {
   const [connected, setConnected] = useState(false);
   const ws = useRef(null);
 
+  useEffect(() => {
+    if (url) {
+      connect();
+    } else if (ws.current) {
+      ws.current.close();
+      setConnected(false);
+    }
+    return () => {
+      if (ws.current) {
+        ws.current.close();
+      }
+    };
+  }, [url, connect]);
+
   const connect = useCallback(() => {
     if (!url) {
       setConnected(false);
@@ -21,14 +35,14 @@ export const useWebSocket = (url, onMessage) => {
     };
   }, [url, onMessage]);
 
-  useEffect(() => {
-    connect();
-    return () => {
-      if (ws.current) {
-        ws.current.close();
-      }
-    };
-  }, [connect]);
+  // useEffect(() => {
+  //   connect();
+  //   return () => {
+  //     if (ws.current) {
+  //       ws.current.close();
+  //     }
+  //   };
+  // }, [connect]);
 
   const send = useCallback((data) => {
     if (ws.current?.readyState === WebSocket.OPEN) {
