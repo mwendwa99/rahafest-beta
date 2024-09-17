@@ -3,24 +3,31 @@ import { formatTime, formatTimestamp } from "../../../../utils/helper";
 
 export default function MessageComponent({ item, isCurrentUser }) {
   return (
-    <View
-      style={[
-        styles.messageContainer,
-        isCurrentUser ? styles.currentUserMessage : styles.otherUserMessage,
-      ]}
-    >
-      <Text
+    <>
+      <View
         style={[
-          styles.messageText,
-          isCurrentUser ? styles.currentUserText : styles.otherUserText,
+          styles.messageContainer,
+          isCurrentUser ? styles.currentUserMessage : styles.otherUserMessage,
         ]}
       >
-        {item.content}
-      </Text>
-      <Text style={{ color: "#fafafa" }}>
+        <Text
+          style={[
+            styles.messageText,
+            isCurrentUser ? styles.currentUserText : styles.otherUserText,
+          ]}
+        >
+          {item.content}
+        </Text>
+      </View>
+      <Text
+        style={[
+          { color: "#fafafa" },
+          isCurrentUser ? styles.currentUserMessage : styles.otherUserMessage,
+        ]}
+      >
         {formatTimestamp(item?.timestamp || "")}
       </Text>
-    </View>
+    </>
   );
 }
 
