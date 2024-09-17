@@ -5,6 +5,7 @@ export default function PendingFriends({
   acceptFriendRequest,
   rejectFriendRequest,
 }) {
+  //   console.log(item);
   return (
     <View style={styles.requestItem}>
       <Text style={styles.requestText}>
@@ -12,7 +13,7 @@ export default function PendingFriends({
       </Text>
       <TouchableOpacity
         style={styles.acceptButton}
-        onPress={() => acceptFriendRequest(item.id)}
+        onPress={acceptFriendRequest}
       >
         <Text style={styles.buttonText}>Accept</Text>
       </TouchableOpacity>

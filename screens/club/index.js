@@ -162,7 +162,7 @@ export default function ClubNavigator() {
             name="Friends"
             component={Friends}
             options={{
-              headerShown: true,
+              headerShown: false,
               headerShadowVisible: false,
               headerTintColor: "#fff",
               headerStyle: {
