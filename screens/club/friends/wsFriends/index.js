@@ -48,7 +48,8 @@ const FriendsPage = () => {
       case "dm-list":
         setDirectMessages(data.messages);
         break;
-      case "new-dm":
+      case "send-dm":
+        console.log(data);
         setDirectMessages((prev) => [...prev, data.message]);
         flatListRef.current?.scrollToEnd({ animated: true });
         break;
@@ -87,6 +88,7 @@ const FriendsPage = () => {
 
   const sendMessage = useCallback(() => {
     if (inputMessage.trim() && dmWs.connected && selectedFriend) {
+      console.log({ selectedFriend });
       dmWs.send({
         action: "send-dm",
         recipient: selectedFriend,
