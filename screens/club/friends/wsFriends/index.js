@@ -19,6 +19,13 @@ const FriendsPage = () => {
   const [inputMessage, setInputMessage] = useState("");
   const { token, user } = useSelector((state) => state.auth);
   const flatListRef = useRef(null);
+  const [title, setTitle] = useState("Friends");
+
+  useEffect(() => {
+    if (selectedFriend === null) {
+      setTitle("Friends");
+    }
+  }, [selectedFriend]);
 
   const handleFriendsMessage = useCallback((data) => {
     switch (data.action) {
@@ -135,21 +142,15 @@ const FriendsPage = () => {
               { backgroundColor: friendsWs.connected ? "green" : "orange" },
             ]}
           />
-          <Text style={{ ...styles.statusText, fontSize: 24 }}>Friends</Text>
+          <Text style={{ ...styles.statusText, fontSize: 24 }}>{title}</Text>
         </View>
-        {selectedFriend && (
+        {/* {selectedFriend && (
           <View style={styles.statusContainer}>
-            <View
-              style={[
-                styles.statusIndicator,
-                { backgroundColor: dmWs.connected ? "green" : "orange" },
-              ]}
-            />
             <Text style={styles.statusText}>
-              {dmWs.connected ? "Online" : "Offline"}
+              {dmWs.connected ? "Connected" : "Offline"}
             </Text>
           </View>
-        )}
+        )} */}
       </View>
       {!selectedFriend ? (
         <>
@@ -177,6 +178,7 @@ const FriendsPage = () => {
           selectedFriend={selectedFriend}
           connected={dmWs.connected}
           setSelectedFriend={setSelectedFriend}
+          setTitle={setTitle}
         />
       )}
     </SafeAreaView>
@@ -194,7 +196,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 2,
-    borderRadius: 50,
     alignSelf: "center",
     // marginBottom: 1,
   },
