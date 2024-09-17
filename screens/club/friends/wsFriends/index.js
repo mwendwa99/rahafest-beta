@@ -171,11 +171,16 @@ const FriendsPage = () => {
       ) : !selectedFriend ? (
         <>
           <Text style={styles.sectionTitle}>Pending Requests</Text>
-          <FlatList
-            data={pendingRequests}
-            renderItem={renderPendingRequest}
-            keyExtractor={(item) => item.id.toString()}
-          />
+          <View style={styles.pendingContainer}>
+            <FlatList
+              data={pendingRequests}
+              renderItem={renderPendingRequest}
+              keyExtractor={(item) => item.id.toString()}
+              ListEmptyComponent={
+                <Text style={styles.emptyText}>No pending requests</Text>
+              }
+            />
+          </View>
           <Text style={styles.sectionTitle}>Friends</Text>
           <FlatList
             data={friends}
@@ -213,6 +218,16 @@ const styles = StyleSheet.create({
     backgroundColor: "#1B1B1B",
     paddingHorizontal: 10,
   },
+  pendingContainer: {
+    flexShrink: 1, // Allows the container to shrink based on content
+    // Optionally add padding or margin if needed
+  },
+  emptyText: {
+    color: "#fafafa",
+    fontSize: 16,
+    textAlign: "center",
+    padding: 20,
+  },
   statusContainer: {
     flexDirection: "row",
     justifyContent: "center",
@@ -238,7 +253,7 @@ const styles = StyleSheet.create({
     color: "#fafafa",
     fontSize: 16,
     fontWeight: "bold",
-    marginVertical: 10,
+    marginVertical: 20,
   },
 });
 
