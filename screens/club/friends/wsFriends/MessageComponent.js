@@ -1,4 +1,5 @@
 import { Text, View, StyleSheet } from "react-native";
+import { formatTime, formatTimestamp } from "../../../../utils/helper";
 
 export default function MessageComponent({ item, isCurrentUser }) {
   return (
@@ -15,6 +16,9 @@ export default function MessageComponent({ item, isCurrentUser }) {
         ]}
       >
         {item.content}
+      </Text>
+      <Text style={{ color: "#fafafa" }}>
+        {formatTimestamp(item?.timestamp || "")}
       </Text>
     </View>
   );

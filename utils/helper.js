@@ -94,3 +94,35 @@ export function formatCurrencyWithCommas(number) {
 export const formatPhoneNumberToMpesaFormat = (phoneNumber) => {
   return phoneNumber.replace(/^0/, "254");
 };
+
+export function formatTimestamp(timestamp) {
+  const date = new Date(timestamp);
+  const now = new Date();
+
+  const isToday = date.toDateString() === now.toDateString();
+
+  const yesterday = new Date();
+  yesterday.setDate(now.getDate() - 1);
+  const isYesterday = date.toDateString() === yesterday.toDateString();
+
+  if (isToday) {
+    return `Today, ${date.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true,
+    })}`;
+  } else if (isYesterday) {
+    return `Yesterday, ${date.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true,
+    })}`;
+  } else {
+    return date.toLocaleString("en-US", {
+      weekday: "long",
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true,
+    });
+  }
+}

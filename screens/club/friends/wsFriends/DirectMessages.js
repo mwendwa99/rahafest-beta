@@ -24,6 +24,12 @@ export default function DirectMessages({
 }) {
   const [userName, setUserName] = useState(null);
 
+  useEffect(() => {
+    if (flatListRef.current && directMessages.length > 0) {
+      flatListRef.current.scrollToEnd({ animated: true });
+    }
+  }, [directMessages]);
+
   // Update title when the friend is selected or when messages are fetched
   useEffect(() => {
     if (directMessages.length > 0 && selectedFriend) {
@@ -31,7 +37,7 @@ export default function DirectMessages({
       setUserName(recipientName);
       setTitle(recipientName);
     } else {
-      setTitle(user.first_name);
+      setTitle("Friends");
     }
   }, [directMessages, selectedFriend, setTitle]);
 
