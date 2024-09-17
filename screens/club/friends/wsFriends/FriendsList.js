@@ -2,17 +2,12 @@ import { Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Avatar } from "react-native-paper";
 
 export default function ({ item, setSelectedFriend, ws }) {
+  // console.log(item.friend);
   return (
     <TouchableOpacity
       style={styles.friendItem}
       onPress={() => {
         setSelectedFriend(item.friend);
-        ws.current.send(
-          JSON.stringify({
-            action: "dm-list",
-            friendId: item.friend,
-          })
-        );
       }}
     >
       <Avatar.Text
