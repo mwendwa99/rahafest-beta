@@ -41,6 +41,15 @@ export default function DirectMessages({
     }
   }, [directMessages, selectedFriend, setTitle]);
 
+  // Sort messages by timestamp in descending order
+  const sortedMessages = useMemo(
+    () =>
+      directMessages
+        .slice()
+        .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp)),
+    [directMessages]
+  );
+
   // Memoize renderMessage for performance optimization
   const renderMessage = useCallback(
     ({ item }) => {
@@ -79,7 +88,7 @@ export default function DirectMessages({
       ) : (
         <FlatList
           ref={flatListRef}
-          data={directMessages}
+          data={sortedMessages}
           renderItem={renderMessage}
           keyExtractor={(item) => item.id.toString()}
         />
@@ -121,7 +130,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     flexDirection: "row",
-    marginBottom: 10,
+    margin: 10,
   },
   input: {
     flex: 1,
