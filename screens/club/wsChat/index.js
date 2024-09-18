@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useLayoutEffect,
+} from "react";
 import {
   View,
   Text,
@@ -6,11 +12,15 @@ import {
   FlatList,
   StyleSheet,
   TouchableOpacity,
+  SafeAreaView,
+  StatusBar,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { Avatar } from "react-native-paper";
 import { useSelector } from "react-redux";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
+// import { SafeAreaView } from "react-native-safe-area-context";
+// import { StatusBar } from "expo-status-bar";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const WebSocketChat = () => {
@@ -40,7 +50,6 @@ const WebSocketChat = () => {
 
     ws.current.onerror = (e) => {
       console.error("WebSocket error:", e);
-      // Log additional error details if available
       if (e.error) {
         console.error("Error details:", e.error);
       }
@@ -72,8 +81,21 @@ const WebSocketChat = () => {
       default:
         console.warn("Unknown action:", data.action);
     }
-    flatListRef.current?.scrollToEnd({ animated: true });
   }, []);
+
+  // Scroll to bottom immediately when the component is first loaded
+  useLayoutEffect(() => {
+    if (flatListRef.current && messages.length > 0) {
+      flatListRef.current.scrollToEnd({ animated: false });
+    }
+  }, []);
+
+  // Scroll to bottom when new messages are added
+  useEffect(() => {
+    if (flatListRef.current && messages.length > 0) {
+      flatListRef.current.scrollToEnd({ animated: true });
+    }
+  }, [messages]);
 
   const sendMessage = useCallback(() => {
     if (inputMessage.trim() && ws.current && connected) {
@@ -134,38 +156,46 @@ const WebSocketChat = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.statusContainer}>
-        <View
-          style={[
-            styles.statusIndicator,
-            { backgroundColor: connected ? "green" : "orange" },
-          ]}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 50 : 0} // Adjust offset for iOS devices
+        style={{ flex: 1 }}
+      >
+        <View style={styles.statusContainer}>
+          <View
+            style={[
+              styles.statusIndicator,
+              { backgroundColor: connected ? "green" : "orange" },
+            ]}
+          />
+          <Text style={styles.statusText}>Live Chat</Text>
+        </View>
+        <FlatList
+          ref={flatListRef}
+          data={messages}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={renderMessage}
         />
-        <Text style={styles.statusText}>Live Chat</Text>
-      </View>
-      <FlatList
-        ref={flatListRef}
-        data={messages}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={renderMessage}
-      />
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.input}
-          value={inputMessage}
-          onChangeText={setInputMessage}
-          placeholder="Type a message..."
-          placeholderTextColor="#fafafa"
-        />
-        <TouchableOpacity
-          style={styles.sendButton}
-          onPress={sendMessage}
-          disabled={!connected}
-        >
-          <MaterialCommunityIcons name="send" size={20} color="#fafafa" />
-        </TouchableOpacity>
-      </View>
-      <StatusBar style="light" />
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={{
+              ...styles.input,
+            }}
+            value={inputMessage}
+            onChangeText={setInputMessage}
+            placeholder="Type a message..."
+            placeholderTextColor="#fafafa"
+          />
+          <TouchableOpacity
+            style={styles.sendButton}
+            onPress={sendMessage}
+            disabled={!connected}
+          >
+            <MaterialCommunityIcons name="send" size={20} color="#fafafa" />
+          </TouchableOpacity>
+        </View>
+        <StatusBar barStyle={"dark-content"} animated={true} />
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };
@@ -174,6 +204,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#1B1B1B",
+    paddingTop: StatusBar.currentHeight,
     // paddingHorizontal: 10,
   },
   statusContainer: {
@@ -181,7 +212,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 2,
-    borderRadius: 50,
     alignSelf: "center",
     // marginBottom: 10,
   },
@@ -220,7 +250,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#fafafa",
     color: "#B9052C",
     padding: 10,
-    borderRadius: 20,
+    borderRadius: 10,
+    overflow: "hidden",
     width: "auto",
     // maxWidth: 200,
     alignSelf: "flex-end",
@@ -247,6 +278,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
     color: "#fafafa",
     borderRadius: 20,
+    overflow: "hidden",
   },
   sendButton: {
     backgroundColor: "#B9052C",
@@ -254,6 +286,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     padding: 10,
     borderRadius: 25,
+    overflow: "hidden",
     height: 50,
     width: 50,
   },
