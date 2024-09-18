@@ -10,23 +10,27 @@ export default function MessageComponent({ item, isCurrentUser }) {
           isCurrentUser ? styles.currentUserMessage : styles.otherUserMessage,
         ]}
       >
+        <View>
+          <Text
+            style={[
+              styles.messageText,
+              isCurrentUser ? styles.currentUserText : styles.otherUserText,
+            ]}
+          >
+            {item.content}
+          </Text>
+        </View>
+      </View>
+      <View>
         <Text
           style={[
-            styles.messageText,
-            isCurrentUser ? styles.currentUserText : styles.otherUserText,
+            { color: "#fafafa" },
+            isCurrentUser ? styles.currentUserMessage : styles.otherUserMessage,
           ]}
         >
-          {item.content}
+          {formatTimestamp(item?.timestamp || "")}
         </Text>
       </View>
-      <Text
-        style={[
-          { color: "#fafafa" },
-          isCurrentUser ? styles.currentUserMessage : styles.otherUserMessage,
-        ]}
-      >
-        {formatTimestamp(item?.timestamp || "")}
-      </Text>
     </>
   );
 }
@@ -38,7 +42,8 @@ const styles = StyleSheet.create({
   },
   messageText: {
     padding: 10,
-    borderRadius: 20,
+    borderRadius: 10,
+    overflow: "hidden",
   },
   currentUserMessage: {
     alignSelf: "flex-end",

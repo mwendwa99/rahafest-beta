@@ -25,7 +25,7 @@ const WebSocketChat = () => {
     if (!token) return;
 
     ws.current = new WebSocket(
-      `ws://rahaclub.rahafest.com/ws/messages/?token=${token}`
+      `wss://rahaclub.rahafest.com/ws/messages/?token=${token}`
     );
 
     ws.current.onopen = () => {
@@ -38,10 +38,16 @@ const WebSocketChat = () => {
       handleWebSocketMessage(data);
     };
 
-    ws.current.onerror = (e) => console.error("WebSocket error:", e);
+    ws.current.onerror = (e) => {
+      console.error("WebSocket error:", e);
+      // Log additional error details if available
+      if (e.error) {
+        console.error("Error details:", e.error);
+      }
+    };
 
     ws.current.onclose = (e) => {
-      console.log("WebSocket Disconnected:", e.reason);
+      console.log("WebSocket Disconnected. Code:", e.code, "Reason:", e.reason);
       setConnected(false);
       setTimeout(connectWebSocket, 3000);
     };
@@ -168,7 +174,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#1B1B1B",
-    paddingHorizontal: 10,
+    // paddingHorizontal: 10,
   },
   statusContainer: {
     flexDirection: "row",
@@ -177,7 +183,7 @@ const styles = StyleSheet.create({
     padding: 2,
     borderRadius: 50,
     alignSelf: "center",
-    marginBottom: 10,
+    // marginBottom: 10,
   },
   statusIndicator: {
     height: 10,
@@ -231,7 +237,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     flexDirection: "row",
-    marginBottom: 10,
+    // marginBottom: 10,
   },
   input: {
     flex: 1,
