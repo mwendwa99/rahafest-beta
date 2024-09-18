@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import {
   FlatList,
   TextInput,
@@ -22,25 +22,6 @@ export default function DirectMessages({
   setSelectedFriend,
   setTitle,
 }) {
-  const [userName, setUserName] = useState(null);
-
-  useEffect(() => {
-    if (flatListRef.current && directMessages.length > 0) {
-      flatListRef.current.scrollToEnd({ animated: true });
-    }
-  }, [directMessages]);
-
-  // Update title when the friend is selected or when messages are fetched
-  useEffect(() => {
-    if (directMessages.length > 0 && selectedFriend) {
-      const recipientName = directMessages[0].recipient_username;
-      setUserName(recipientName);
-      setTitle(recipientName);
-    } else {
-      setTitle("Friends");
-    }
-  }, [directMessages, selectedFriend, setTitle]);
-
   // Sort messages by timestamp in descending order
   const sortedMessages = useMemo(
     () =>
@@ -79,11 +60,11 @@ export default function DirectMessages({
           style={{
             flex: 1,
             color: "#fafafa",
-            fontSize: 16,
+            fontSize: 10,
             textAlign: "center",
           }}
         >
-          No messages available
+          Start chatting!
         </Text>
       ) : (
         <FlatList

@@ -36,5 +36,6 @@ const showToast = async (msg, time, type) => {
     shadow: true,
     animation: true,
     hideOnPress: true,
+    position: Toast.positions.TOP,
   });
 };

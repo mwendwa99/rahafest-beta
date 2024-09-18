@@ -28,7 +28,7 @@ const Stack = createNativeStackNavigator();
 
 export default function ClubNavigator() {
   const navigation = useNavigation();
-  const { token, allUsers, error } = useSelector((state) => state.auth);
+  const { token, error } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
   useEffect(() => {

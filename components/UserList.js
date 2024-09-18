@@ -17,10 +17,38 @@ export default function UserList({
   return (
     <View style={styles.container}>
       <View style={styles.row}>
-        <Avatar.Text style={{ marginRight: 10 }} size={30} label={user.name} />
+        <Avatar.Text
+          style={{ marginRight: 10 }}
+          size={30}
+          label={
+            user?.friend_user_slug
+              ? user.friend_user_slug.charAt(0).toUpperCase()
+              : user?.user_slug
+              ? user.user_slug.charAt(0).toUpperCase()
+              : "?" // Fallback label if slug is null, empty, or undefined
+          }
+        />
         <View style={styles.column}>
-          <Text value={user.user_slug} color="#000" variant="body" />
-          <Text value={user.email} color="#000" variant="small" />
+          <Text
+            value={
+              user?.friend_user_slug
+                ? user.friend_user_slug
+                : user?.user_slug
+                ? user.user_slug
+                : "Anonymous"
+            }
+            style={{
+              color: "#fafafa",
+            }}
+            variant="body"
+          />
+          <Text
+            value={user.email}
+            style={{
+              color: "#fafafa",
+            }}
+            variant="small"
+          />
         </View>
       </View>
       <Button
@@ -39,7 +67,7 @@ export default function UserList({
             ? "Pending"
             : sentFriendRequest && sentFriendRequest.friend === user.id
             ? "Sent"
-            : "Add Friend"
+            : "Add "
         }
       />
     </View>
@@ -48,7 +76,7 @@ export default function UserList({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#fafafa",
+    // backgroundColor: "#fafafa",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
