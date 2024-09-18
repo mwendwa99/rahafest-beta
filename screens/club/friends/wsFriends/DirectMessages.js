@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo } from "react";
 import {
   FlatList,
   TextInput,
@@ -17,12 +17,10 @@ export default function DirectMessages({
   sendMessage,
   setInputMessage,
   inputMessage,
-  selectedFriend,
   connected,
   setSelectedFriend,
-  setTitle,
 }) {
-  // Sort messages by timestamp in descending order
+  // Sort messages by timestamp in ascending order (oldest to newest)
   const sortedMessages = useMemo(
     () =>
       directMessages
@@ -30,6 +28,20 @@ export default function DirectMessages({
         .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp)),
     [directMessages]
   );
+
+  // Scroll to bottom on initial render
+  useLayoutEffect(() => {
+    if (flatListRef.current && sortedMessages.length > 0) {
+      flatListRef.current.scrollToEnd({ animated: false });
+    }
+  }, []);
+
+  // Scroll to bottom when new messages are added
+  useEffect(() => {
+    if (flatListRef.current && sortedMessages.length > 0) {
+      flatListRef.current.scrollToEnd({ animated: true });
+    }
+  }, [sortedMessages]);
 
   // Memoize renderMessage for performance optimization
   const renderMessage = useCallback(
@@ -55,7 +67,7 @@ export default function DirectMessages({
           <Text style={styles.backButtonText}>Back</Text>
         </TouchableOpacity>
       </View>
-      {!directMessages || directMessages.length === 0 ? (
+      {!sortedMessages || sortedMessages.length === 0 ? (
         <Text
           style={{
             flex: 1,
@@ -72,6 +84,11 @@ export default function DirectMessages({
           data={sortedMessages}
           renderItem={renderMessage}
           keyExtractor={(item) => item.id.toString()}
+          inverted={false}
+          onContentSizeChange={() =>
+            flatListRef.current.scrollToEnd({ animated: true })
+          }
+          onLayout={() => flatListRef.current.scrollToEnd({ animated: false })}
         />
       )}
       <View style={styles.inputContainer}>

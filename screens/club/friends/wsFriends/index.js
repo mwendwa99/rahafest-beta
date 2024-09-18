@@ -6,20 +6,18 @@ import {
   StyleSheet,
   ActivityIndicator,
   Alert,
-  Button,
+  Platform,
+  KeyboardAvoidingView,
 } from "react-native";
 import { useSelector } from "react-redux";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
 
 import PendingFriends from "./PendingFriendRequests";
 import FriendsList from "./FriendsList";
-import MessageComponent from "./MessageComponent";
 import DirectMessages from "./DirectMessages";
 import { UserList } from "../../../../components";
 
 import { useWebSocket } from "../../../../hooks";
-import { success, warning } from "../../../../utils/toast";
 
 const FriendsPage = () => {
   const [friends, setFriends] = useState([]);
@@ -31,7 +29,6 @@ const FriendsPage = () => {
   const [title, setTitle] = useState("Friends");
   const { token, user, allUsers } = useSelector((state) => state.auth);
   const flatListRef = useRef(null);
-  const [acceptedData, setAcceptedData] = useState(null);
 
   const handleFriendsMessage = useCallback((data) => {
     switch (data.action) {
@@ -44,7 +41,7 @@ const FriendsPage = () => {
         setIsLoading(false);
         break;
       case "accept-friendship":
-        setAcceptedData(data);
+        // Handle accepted friendship
         setIsLoading(false);
         break;
       case "request-friendship":
@@ -60,29 +57,28 @@ const FriendsPage = () => {
         setIsLoading(false);
         break;
     }
-    setIsLoading(false);
   }, []);
-
-  // console.log(acceptedData);
 
   const handleDmMessage = useCallback((data) => {
     switch (data.action) {
       case "dm-list":
-        setDirectMessages(data.messages);
+        const sortedMessages = data.messages.sort(
+          (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
+        );
+        setDirectMessages(sortedMessages);
         setIsLoading(false);
         break;
       case "send-dm":
-        setDirectMessages((prev) => [...prev, data.message]);
-        flatListRef.current?.scrollToEnd({ animated: true });
-        setIsLoading(false);
+        setDirectMessages((prev) => {
+          const newMessages = [...prev, data.message];
+          setTimeout(() => {
+            flatListRef.current?.scrollToEnd({ animated: false });
+          }, 100);
+          return newMessages;
+        });
         break;
       case "error":
-        Alert.alert("Server Error", data.message, [
-          {
-            text: "Cancel",
-            onPress: setSelectedFriend(null),
-          },
-        ]);
+        Alert.alert("Server Error", data.message);
         console.log("Error from DM server:", data);
         setIsLoading(false);
         break;
@@ -122,7 +118,6 @@ const FriendsPage = () => {
 
   const sendMessage = useCallback(() => {
     if (inputMessage.trim() && dmWs.connected && selectedFriend) {
-      // console.log(selectedFriend);
       dmWs.send({
         action: "send-dm",
         recipient: selectedFriend,
@@ -134,9 +129,9 @@ const FriendsPage = () => {
 
   const handleFriendSelection = useCallback((item) => {
     setSelectedFriend(item.friend_id);
-    // setDirectMessages([]);
     setTitle(item.friend_slug);
     setIsLoading(true);
+    setDirectMessages([]); // Clear messages when switching friends
   }, []);
 
   const renderFriend = useCallback(
@@ -149,9 +144,7 @@ const FriendsPage = () => {
     [handleFriendSelection]
   );
 
-  const renderUser = useCallback(({ item }) => <UserList user={item} />);
-
-  // console.log({ allUsers });
+  const renderUser = useCallback(({ item }) => <UserList user={item} />, []);
 
   const renderPendingRequest = useCallback(
     ({ item }) => {
@@ -178,90 +171,94 @@ const FriendsPage = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-        <View style={{ ...styles.statusContainer, flex: 1 }}>
-          <View
-            style={[
-              styles.statusIndicator,
-              { backgroundColor: friendsWs.connected ? "green" : "orange" },
-            ]}
-          />
-          <Text style={{ ...styles.statusText, fontSize: 20 }}>{title}</Text>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 5 : 0} // Adjust offset for iOS devices
+        style={{ flex: 1 }}
+      >
+        <View style={styles.header}>
+          <View style={styles.statusContainer}>
+            <View
+              style={[
+                styles.statusIndicator,
+                {
+                  backgroundColor: (
+                    selectedFriend ? dmWs.connected : friendsWs.connected
+                  )
+                    ? "green"
+                    : "orange",
+                },
+              ]}
+            />
+            <Text style={styles.statusText}>{title}</Text>
+          </View>
         </View>
-      </View>
-      {isLoading ? (
-        <ActivityIndicator
-          size="large"
-          color="#fafafa"
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        />
-      ) : !selectedFriend ? (
-        <>
-          {pendingRequests && pendingRequests.length > 0 && (
-            <View style={styles.listContainer}>
-              <Text style={styles.sectionTitle}>Pending Requests</Text>
-              <FlatList
-                data={pendingRequests}
-                renderItem={renderPendingRequest}
-                keyExtractor={(item) => item.id.toString()}
-                ListEmptyComponent={
-                  <Text style={styles.emptyText}>No pending requests</Text>
-                }
-              />
-            </View>
-          )}
-          {friends && friends.length > 0 && (
-            <View style={styles.listContainer}>
-              <Text style={styles.sectionTitle}>Friends</Text>
-              <FlatList
-                data={friends}
-                renderItem={renderFriend}
-                keyExtractor={(item) => item.id.toString()}
-                ListEmptyComponent={
-                  <Text style={styles.emptyText}>No friends</Text>
-                }
-              />
-            </View>
-          )}
-        </>
-      ) : (
-        <DirectMessages
-          flatListRef={flatListRef}
-          directMessages={directMessages}
-          user={user}
-          setInputMessage={setInputMessage}
-          inputMessage={inputMessage}
-          sendMessage={sendMessage}
-          selectedFriend={selectedFriend}
-          connected={dmWs.connected}
-          setSelectedFriend={(id) => {
-            setSelectedFriend(id);
-            if (id === null) {
-              setDirectMessages([]);
-              setTitle("Friends");
-            }
-          }}
-          setTitle={setTitle}
-        />
-      )}
-      {allUsers && allUsers.length > 0 && (
-        <View style={styles.listContainer}>
-          <Text style={styles.sectionTitle}>Add a friend</Text>
-          <FlatList
-            data={allUsers}
-            renderItem={renderUser}
-            keyExtractor={(item) => item.id.toString()}
+        {isLoading ? (
+          <ActivityIndicator
+            size="large"
+            color="#fafafa"
+            style={styles.loader}
           />
-        </View>
-      )}
+        ) : !selectedFriend ? (
+          <>
+            {pendingRequests.length > 0 && (
+              <View style={styles.listContainer}>
+                <Text style={styles.sectionTitle}>Pending Requests</Text>
+                <FlatList
+                  data={pendingRequests}
+                  renderItem={renderPendingRequest}
+                  keyExtractor={(item) => item.id.toString()}
+                  ListEmptyComponent={
+                    <Text style={styles.emptyText}>No pending requests</Text>
+                  }
+                />
+              </View>
+            )}
+            {friends.length > 0 && (
+              <View style={styles.listContainer}>
+                <Text style={styles.sectionTitle}>Friends</Text>
+                <FlatList
+                  data={friends}
+                  renderItem={renderFriend}
+                  keyExtractor={(item) => item.id.toString()}
+                  ListEmptyComponent={
+                    <Text style={styles.emptyText}>No friends</Text>
+                  }
+                />
+              </View>
+            )}
+          </>
+        ) : (
+          <DirectMessages
+            flatListRef={flatListRef}
+            directMessages={directMessages}
+            user={user}
+            setInputMessage={setInputMessage}
+            inputMessage={inputMessage}
+            sendMessage={sendMessage}
+            selectedFriend={selectedFriend}
+            connected={dmWs.connected}
+            setSelectedFriend={(id) => {
+              setSelectedFriend(id);
+              if (id === null) {
+                setDirectMessages([]);
+                setTitle("Friends");
+              }
+            }}
+            setTitle={setTitle}
+          />
+        )}
+        {allUsers && allUsers.length > 0 && (
+          <View style={styles.listContainer}>
+            <Text style={styles.sectionTitle}>Add a friend</Text>
+            <FlatList
+              data={allUsers}
+              renderItem={renderUser}
+              keyExtractor={(item) => item.id.toString()}
+            />
+          </View>
+        )}
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };
@@ -272,9 +269,14 @@ const styles = StyleSheet.create({
     backgroundColor: "#1B1B1B",
     paddingHorizontal: 10,
   },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 10,
+  },
   listContainer: {
-    flexShrink: 1, // Allows the container to shrink based on content
-    // Optionally add padding or margin if needed
+    flexShrink: 1,
   },
   emptyText: {
     color: "#fafafa",
@@ -284,11 +286,7 @@ const styles = StyleSheet.create({
   },
   statusContainer: {
     flexDirection: "row",
-    justifyContent: "center",
     alignItems: "center",
-    padding: 2,
-    alignSelf: "center",
-    // marginBottom: 1,
   },
   statusIndicator: {
     height: 10,
@@ -298,16 +296,23 @@ const styles = StyleSheet.create({
   },
   statusText: {
     color: "#fafafa",
-    fontSize: 10,
+    fontSize: 20,
     fontWeight: "700",
-    margin: 0,
-    padding: 0,
   },
   sectionTitle: {
     color: "#fafafa",
     fontSize: 16,
     fontWeight: "bold",
     marginVertical: 20,
+  },
+  loader: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 
