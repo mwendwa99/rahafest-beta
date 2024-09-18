@@ -8,9 +8,9 @@ import { formatDate } from "../utils/helper";
 const FriendRequest = ({ data, type, navigation }) => {
   const dispatch = useDispatch();
 
-  const firstName = data?.friendDetails["first_name"] || "";
-  const lastName = data?.friendDetails["last_name"] || "";
-  const email = data?.friendDetails["email"] || "";
+  const firstName = data?.friendDetails?.first_name || "";
+  const lastName = data?.friendDetailslast_name || "";
+  const email = data?.friendDetailsemail || "";
   const createdAt = data?.created_at || "";
   const initials = (firstName[0] || "") + (lastName[0] || "");
   const isAccepted = data?.is_accepted || false;

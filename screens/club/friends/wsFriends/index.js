@@ -5,6 +5,8 @@ import {
   FlatList,
   StyleSheet,
   ActivityIndicator,
+  Alert,
+  Button,
 } from "react-native";
 import { useSelector } from "react-redux";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -14,8 +16,10 @@ import PendingFriends from "./PendingFriendRequests";
 import FriendsList from "./FriendsList";
 import MessageComponent from "./MessageComponent";
 import DirectMessages from "./DirectMessages";
+import { UserList } from "../../../../components";
 
 import { useWebSocket } from "../../../../hooks";
+import { success, warning } from "../../../../utils/toast";
 
 const FriendsPage = () => {
   const [friends, setFriends] = useState([]);
@@ -23,27 +27,43 @@ const FriendsPage = () => {
   const [directMessages, setDirectMessages] = useState([]);
   const [selectedFriend, setSelectedFriend] = useState(null);
   const [inputMessage, setInputMessage] = useState("");
-  const [title, setTitle] = useState("Friends");
   const [isLoading, setIsLoading] = useState(true);
-  const { token, user } = useSelector((state) => state.auth);
+  const [title, setTitle] = useState("Friends");
+  const { token, user, allUsers } = useSelector((state) => state.auth);
   const flatListRef = useRef(null);
+  const [acceptedData, setAcceptedData] = useState(null);
 
   const handleFriendsMessage = useCallback((data) => {
     switch (data.action) {
       case "accepted-list":
         setFriends(data.friendships);
+        setIsLoading(false);
         break;
       case "unaccepted-list":
         setPendingRequests(data.friendships);
+        setIsLoading(false);
+        break;
+      case "accept-friendship":
+        setAcceptedData(data);
+        setIsLoading(false);
+        break;
+      case "request-friendship":
+        console.log(data.message);
+        setIsLoading(false);
         break;
       case "error":
-        console.error("Error from friends server:", data);
+        console.log("Error from friends server:", data);
+        setIsLoading(false);
         break;
       default:
         console.warn("Unknown action from friends server:", data.action);
+        setIsLoading(false);
+        break;
     }
     setIsLoading(false);
   }, []);
+
+  // console.log(acceptedData);
 
   const handleDmMessage = useCallback((data) => {
     switch (data.action) {
@@ -54,9 +74,16 @@ const FriendsPage = () => {
       case "send-dm":
         setDirectMessages((prev) => [...prev, data.message]);
         flatListRef.current?.scrollToEnd({ animated: true });
+        setIsLoading(false);
         break;
       case "error":
-        console.error("Error from DM server:", data);
+        Alert.alert("Server Error", data.message, [
+          {
+            text: "Cancel",
+            onPress: setSelectedFriend(null),
+          },
+        ]);
+        console.log("Error from DM server:", data);
         setIsLoading(false);
         break;
       default:
@@ -95,6 +122,7 @@ const FriendsPage = () => {
 
   const sendMessage = useCallback(() => {
     if (inputMessage.trim() && dmWs.connected && selectedFriend) {
+      // console.log(selectedFriend);
       dmWs.send({
         action: "send-dm",
         recipient: selectedFriend,
@@ -104,9 +132,10 @@ const FriendsPage = () => {
     }
   }, [inputMessage, dmWs.connected, selectedFriend, dmWs.send]);
 
-  const handleFriendSelection = useCallback((friendId) => {
-    setSelectedFriend(friendId);
-    setDirectMessages([]);
+  const handleFriendSelection = useCallback((item) => {
+    setSelectedFriend(item.friend_id);
+    // setDirectMessages([]);
+    setTitle(item.friend_slug);
     setIsLoading(true);
   }, []);
 
@@ -114,30 +143,36 @@ const FriendsPage = () => {
     ({ item }) => (
       <FriendsList
         item={item}
-        setSelectedFriend={() => handleFriendSelection(item.id)}
+        setSelectedFriend={() => handleFriendSelection(item)}
       />
     ),
     [handleFriendSelection]
   );
 
+  const renderUser = useCallback(({ item }) => <UserList user={item} />);
+
+  // console.log({ selectedFriend });
+
   const renderPendingRequest = useCallback(
-    ({ item }) => (
-      <PendingFriends
-        item={item}
-        acceptFriendRequest={() =>
-          friendsWs.send({
-            action: "accept-friendship",
-            friend_id: item.friend,
-          })
-        }
-        rejectFriendRequest={() =>
-          friendsWs.send({
-            action: "decline-friendship",
-            friend_id: item.friend,
-          })
-        }
-      />
-    ),
+    ({ item }) => {
+      return (
+        <PendingFriends
+          item={item}
+          acceptFriendRequest={() =>
+            friendsWs.send({
+              action: "accept-friendship",
+              friend_id: item.friend_id,
+            })
+          }
+          rejectFriendRequest={() =>
+            friendsWs.send({
+              action: "decline-friendship",
+              friend_id: item.friend_id,
+            })
+          }
+        />
+      );
+    },
     [friendsWs.send]
   );
 
@@ -151,7 +186,7 @@ const FriendsPage = () => {
               { backgroundColor: friendsWs.connected ? "green" : "orange" },
             ]}
           />
-          <Text style={{ ...styles.statusText, fontSize: 24 }}>{title}</Text>
+          <Text style={{ ...styles.statusText, fontSize: 20 }}>{title}</Text>
         </View>
       </View>
       {isLoading ? (
@@ -170,22 +205,27 @@ const FriendsPage = () => {
         />
       ) : !selectedFriend ? (
         <>
-          <Text style={styles.sectionTitle}>Pending Requests</Text>
-          <View style={styles.pendingContainer}>
-            <FlatList
-              data={pendingRequests}
-              renderItem={renderPendingRequest}
-              keyExtractor={(item) => item.id.toString()}
-              ListEmptyComponent={
-                <Text style={styles.emptyText}>No pending requests</Text>
-              }
-            />
-          </View>
+          {pendingRequests && pendingRequests.length > 0 && (
+            <View style={styles.pendingContainer}>
+              <Text style={styles.sectionTitle}>Pending Requests</Text>
+              <FlatList
+                data={pendingRequests}
+                renderItem={renderPendingRequest}
+                keyExtractor={(item) => item.id.toString()}
+                ListEmptyComponent={
+                  <Text style={styles.emptyText}>No pending requests</Text>
+                }
+              />
+            </View>
+          )}
           <Text style={styles.sectionTitle}>Friends</Text>
           <FlatList
             data={friends}
             renderItem={renderFriend}
             keyExtractor={(item) => item.id.toString()}
+            ListEmptyComponent={
+              <Text style={styles.emptyText}>No friends</Text>
+            }
           />
         </>
       ) : (
@@ -208,6 +248,12 @@ const FriendsPage = () => {
           setTitle={setTitle}
         />
       )}
+      {/* <Text style={styles.sectionTitle}>Add a friend</Text>
+      <FlatList
+        data={allUsers}
+        renderItem={renderUser}
+        keyExtractor={(item) => item.id.toString()}
+      /> */}
     </SafeAreaView>
   );
 };

@@ -2,7 +2,6 @@ import { Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Avatar } from "react-native-paper";
 
 export default function ({ item, setSelectedFriend, ws }) {
-  // console.log(item.friend);
   return (
     <TouchableOpacity
       style={styles.friendItem}
@@ -12,10 +11,22 @@ export default function ({ item, setSelectedFriend, ws }) {
     >
       <Avatar.Text
         size={40}
-        label={item.friend_user_slug.charAt(0)}
+        label={
+          item?.friend_slug
+            ? item.friend_slug.charAt(0).toUpperCase()
+            : item?.user_slug
+            ? item.user_slug.charAt(0).toUpperCase()
+            : "?" // Fallback label if slug is null, empty, or undefined
+        }
         labelStyle={{ fontSize: 20 }}
       />
-      <Text style={styles.friendName}>{item.friend_user_slug}</Text>
+      <Text style={styles.friendName}>
+        {item?.friend_slug
+          ? item.friend_slug
+          : item?.user_slug
+          ? item.user_slug
+          : "Anonymous"}
+      </Text>
     </TouchableOpacity>
   );
 }
