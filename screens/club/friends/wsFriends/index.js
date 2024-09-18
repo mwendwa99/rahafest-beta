@@ -216,7 +216,7 @@ const FriendsPage = () => {
             )}
             {friends.length > 0 && (
               <View style={styles.listContainer}>
-                <Text style={styles.sectionTitle}>Friends</Text>
+                <Text style={styles.sectionTitle}>Friends List</Text>
                 <FlatList
                   data={friends}
                   renderItem={renderFriend}
@@ -287,6 +287,8 @@ const styles = StyleSheet.create({
   statusContainer: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
   },
   statusIndicator: {
     height: 10,
@@ -298,12 +300,15 @@ const styles = StyleSheet.create({
     color: "#fafafa",
     fontSize: 20,
     fontWeight: "700",
+    textAlign: "center",
+    alignSelf: "center",
   },
   sectionTitle: {
     color: "#fafafa",
     fontSize: 16,
     fontWeight: "bold",
     marginVertical: 20,
+    textAlign: "center",
   },
   loader: {
     position: "absolute",
