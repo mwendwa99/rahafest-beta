@@ -93,13 +93,13 @@ const FriendsPage = () => {
   }, []);
 
   const friendsWs = useWebSocket(
-    `ws://rahaclub.rahafest.com/ws/friendships/?token=${token}`,
+    `wss://rahaclub.rahafest.com/ws/friendships/?token=${token}`,
     handleFriendsMessage
   );
 
   const dmWs = useWebSocket(
     selectedFriend
-      ? `ws://rahaclub.rahafest.com/ws/direct_messages/?token=${token}&friend_id=${selectedFriend}`
+      ? `wss://rahaclub.rahafest.com/ws/direct_messages/?token=${token}&friend_id=${selectedFriend}`
       : null,
     handleDmMessage
   );
