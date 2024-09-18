@@ -8,7 +8,11 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
-import { deleteAccount, fetchUser } from "../../redux/auth/authActions";
+import {
+  deleteAccount,
+  fetchUser,
+  updateUser,
+} from "../../redux/auth/authActions";
 import {
   fetchFriends,
   fetchPendingFriendRequests,
@@ -27,11 +31,6 @@ import { success } from "../../utils/toast";
 
 export default function Account({ navigation }) {
   const { user, loading, error } = useSelector((state) => state.auth);
-  const {
-    friends,
-    pendingRequests,
-    error: friendError,
-  } = useSelector((state) => state.friends);
 
   const dispatch = useDispatch();
   const [refreshing, setRefreshing] = useState(false);
@@ -47,28 +46,28 @@ export default function Account({ navigation }) {
   const [editEmail, setEditEmail] = useState(email);
 
   // console.log({ acceptedFriendRequest });
-  // console.log({ friends });
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
       dispatch(fetchUser());
-      dispatch(fetchFriends());
-      dispatch(fetchPendingFriendRequests());
     });
 
     return unsubscribe;
   }, [navigation]);
-
-  // Filter requests sent to the current user
-  const incomingRequests =
-    pendingRequests &&
-    pendingRequests.filter((request) => request.friend === user.id);
 
   const toggleEditMode = () => {
     setEditMode(!editMode);
   };
 
   const handleUpdateProfile = () => {
+    // dispatch(
+    //   updateUser({
+    //     first_name: editFName,
+    //     last_name: editLName,
+    //   })
+    // );
+
+    // console.log({ user });
     console.log(editFName, editLName);
     Alert.alert(
       "Coming Soon!", // Title
@@ -217,36 +216,6 @@ export default function Account({ navigation }) {
               // width={300}
             />
           </TouchableOpacity>
-        </View>
-        <View style={styles.column}>
-          <Text value={`Friends`} variant={"subtitle"} />
-          <ScrollView
-            nestedScrollEnabled
-            style={{ maxHeight: 200, width: "100%" }}
-          >
-            {friends && friends.length > 0 ? (
-              friends.map((item, index) => (
-                <AcceptedFriend key={index} data={item} type="profile" />
-              ))
-            ) : (
-              <Text value={"You have no friends"} variant={"body"} />
-            )}
-          </ScrollView>
-
-          <Divider />
-          <ScrollView
-            nestedScrollEnabled
-            style={{ maxHeight: 200, width: "100%" }}
-          >
-            <Text value={`New Friend Requests`} variant={"subtitle"} />
-            {incomingRequests && incomingRequests.length > 0 ? (
-              incomingRequests.map((item, index) => (
-                <FriendRequest key={index} data={item} />
-              ))
-            ) : (
-              <Text value={"You have no new requests"} variant={"body"} />
-            )}
-          </ScrollView>
         </View>
         <View style={styles.button}>
           <Button

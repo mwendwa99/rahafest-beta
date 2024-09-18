@@ -39,6 +39,19 @@ export const fetchUser = createAsyncThunk(
   }
 );
 
+export const updateUser = createAsyncThunk(
+  "auth/updateUser",
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await authInstance.put("user", data);
+      return response.data.data;
+    } catch (error) {
+      danger("server error", 2000);
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 export const fetchAllUsers = createAsyncThunk(
   "chat/fetchUsers",
   async (_, { rejectWithValue }) => {

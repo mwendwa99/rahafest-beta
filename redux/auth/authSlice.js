@@ -5,6 +5,7 @@ import {
   fetchUser,
   filterUserById,
   fetchAllUsers,
+  updateUser,
 } from "./authActions";
 import { PURGE } from "redux-persist";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -100,6 +101,18 @@ const authSlice = createSlice({
       .addCase(fetchAllUsers.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+      .addCase(updateUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateUser.fulfilled, (state, action) => {
+        state.user = action.payload;
+        state.loading = false;
+      })
+      .addCase(updateUser.rejected, (state, action) => {
+        state.error = action.payload;
+        state.loading = false;
       })
       .addCase(PURGE, () => {
         AsyncStorage.removeItem("token");
