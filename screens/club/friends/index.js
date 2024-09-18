@@ -1,6 +1,4 @@
 import { View, ScrollView, RefreshControl, StyleSheet } from "react-native";
-import { AcceptedFriend, Text } from "../../../components";
-import AllUsers from "./AllUsers";
 import { useState, useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -13,12 +11,24 @@ import { ActivityIndicator } from "react-native-paper";
 import { warning } from "../../../utils/toast";
 import FriendsPage from "./wsFriends";
 
+import { clearError } from "../../../redux/auth/authSlice";
+
 export default function Friends({ navigation }) {
   const dispatch = useDispatch();
+  const { error } = useSelector((state) => state.auth);
 
   useEffect(() => {
     dispatch(fetchAllUsers());
   }, []);
+
+  useEffect(() => {
+    dispatch(clearError());
+  }, [error]);
+
+  if (error && error.message !== "") {
+    console.log("club index page", error);
+    // warning(error.message, 2000);
+  }
 
   return (
     <View style={{ flex: 1 }}>

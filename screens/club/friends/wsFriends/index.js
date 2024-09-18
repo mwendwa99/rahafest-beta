@@ -151,7 +151,7 @@ const FriendsPage = () => {
 
   const renderUser = useCallback(({ item }) => <UserList user={item} />);
 
-  // console.log({ selectedFriend });
+  // console.log({ allUsers });
 
   const renderPendingRequest = useCallback(
     ({ item }) => {
@@ -206,7 +206,7 @@ const FriendsPage = () => {
       ) : !selectedFriend ? (
         <>
           {pendingRequests && pendingRequests.length > 0 && (
-            <View style={styles.pendingContainer}>
+            <View style={styles.listContainer}>
               <Text style={styles.sectionTitle}>Pending Requests</Text>
               <FlatList
                 data={pendingRequests}
@@ -218,15 +218,19 @@ const FriendsPage = () => {
               />
             </View>
           )}
-          <Text style={styles.sectionTitle}>Friends</Text>
-          <FlatList
-            data={friends}
-            renderItem={renderFriend}
-            keyExtractor={(item) => item.id.toString()}
-            ListEmptyComponent={
-              <Text style={styles.emptyText}>No friends</Text>
-            }
-          />
+          {friends && friends.length > 0 && (
+            <View style={styles.listContainer}>
+              <Text style={styles.sectionTitle}>Friends</Text>
+              <FlatList
+                data={friends}
+                renderItem={renderFriend}
+                keyExtractor={(item) => item.id.toString()}
+                ListEmptyComponent={
+                  <Text style={styles.emptyText}>No friends</Text>
+                }
+              />
+            </View>
+          )}
         </>
       ) : (
         <DirectMessages
@@ -248,12 +252,16 @@ const FriendsPage = () => {
           setTitle={setTitle}
         />
       )}
-      {/* <Text style={styles.sectionTitle}>Add a friend</Text>
-      <FlatList
-        data={allUsers}
-        renderItem={renderUser}
-        keyExtractor={(item) => item.id.toString()}
-      /> */}
+      {allUsers && allUsers.length > 0 && (
+        <View style={styles.listContainer}>
+          <Text style={styles.sectionTitle}>Add a friend</Text>
+          <FlatList
+            data={allUsers}
+            renderItem={renderUser}
+            keyExtractor={(item) => item.id.toString()}
+          />
+        </View>
+      )}
     </SafeAreaView>
   );
 };
@@ -264,7 +272,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#1B1B1B",
     paddingHorizontal: 10,
   },
-  pendingContainer: {
+  listContainer: {
     flexShrink: 1, // Allows the container to shrink based on content
     // Optionally add padding or margin if needed
   },
