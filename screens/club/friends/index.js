@@ -1,14 +1,8 @@
-import { View, ScrollView, RefreshControl, StyleSheet } from "react-native";
-import { useState, useEffect, useCallback } from "react";
+import { View, StyleSheet } from "react-native";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  fetchFriends,
-  fetchPendingFriendRequests,
-  fetchNonFriends,
-} from "../../../redux/friends/friendActions";
-import { fetchUser, fetchAllUsers } from "../../../redux/auth/authActions";
-import { ActivityIndicator } from "react-native-paper";
-import { warning } from "../../../utils/toast";
+
+import { fetchAllUsers } from "../../../redux/auth/authActions";
 import FriendsPage from "./wsFriends";
 
 import { clearError } from "../../../redux/auth/authSlice";

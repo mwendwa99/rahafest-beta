@@ -5,7 +5,7 @@ import Button from "./Button";
 
 export default function UserList({
   user,
-  onSendFriendReq,
+  handleSendFriendRequest,
   sentFriendRequest,
   pendingFriendRequests = [],
 }) {
@@ -52,7 +52,7 @@ export default function UserList({
         </View>
       </View>
       <Button
-        onPress={() => onSendFriendReq(user.id)}
+        onPress={() => handleSendFriendRequest(user.id)}
         disabled={
           (sentFriendRequest && sentFriendRequest.friend === user.id) ||
           isPending
@@ -62,13 +62,14 @@ export default function UserList({
             ? "gray"
             : "orange"
         }
-        label={
-          isPending
-            ? "Pending"
-            : sentFriendRequest && sentFriendRequest.friend === user.id
-            ? "Sent"
-            : "Add "
-        }
+        label="add"
+        // label={
+        //   isPending
+        //     ? "Pending"
+        //     : sentFriendRequest && sentFriendRequest.friend === user.id
+        //     ? "Sent"
+        //     : "Add "
+        // }
       />
     </View>
   );

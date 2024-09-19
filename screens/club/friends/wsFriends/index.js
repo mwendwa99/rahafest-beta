@@ -18,6 +18,7 @@ import DirectMessages from "./DirectMessages";
 import { UserList } from "../../../../components";
 
 import { useWebSocket } from "../../../../hooks";
+import { success } from "../../../../utils/toast";
 
 const FriendsPage = () => {
   const [friends, setFriends] = useState([]);
@@ -42,10 +43,14 @@ const FriendsPage = () => {
         break;
       case "accept-friendship":
         // Handle accepted friendship
+        console.log("accepted", data);
         setIsLoading(false);
         break;
       case "request-friendship":
-        console.log(data.message);
+        if (data.status === "success") {
+          console.log(data.status);
+          success("Friend request sent");
+        }
         setIsLoading(false);
         break;
       case "error":
@@ -127,6 +132,17 @@ const FriendsPage = () => {
     }
   }, [inputMessage, dmWs.connected, selectedFriend, dmWs.send]);
 
+  const handleSendFriendRequest = (friendId) => {
+    if (friendsWs.connected) {
+      friendsWs.send({
+        action: "request-friendship",
+        friend_id: friendId,
+      });
+    } else {
+      console.log("Disconnected: Could not send friend request!");
+    }
+  };
+
   const handleFriendSelection = useCallback((item) => {
     setSelectedFriend(item.friend_id);
     setTitle(item.friend_slug);
@@ -144,19 +160,30 @@ const FriendsPage = () => {
     [handleFriendSelection]
   );
 
-  const renderUser = useCallback(({ item }) => <UserList user={item} />, []);
+  const acceptFriendship = (item) => {
+    if (friendsWs.connected) {
+      friendsWs.send({
+        action: "accept-friendship",
+        friend_id: item.friend_id,
+      });
+    } else {
+      console.log("Disconnected: cannot send friend request");
+    }
+  };
+
+  const renderUser = useCallback(
+    ({ item }) => (
+      <UserList user={item} handleSendFriendRequest={handleSendFriendRequest} />
+    ),
+    []
+  );
 
   const renderPendingRequest = useCallback(
     ({ item }) => {
       return (
         <PendingFriends
           item={item}
-          acceptFriendRequest={() =>
-            friendsWs.send({
-              action: "accept-friendship",
-              friend_id: item.friend_id,
-            })
-          }
+          acceptFriendRequest={() => acceptFriendship(item)}
           rejectFriendRequest={() =>
             friendsWs.send({
               action: "decline-friendship",
@@ -277,7 +304,7 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     flexShrink: 1,
-    minHeight: 200,
+    minHeight: 150,
   },
   emptyText: {
     color: "#fafafa",
