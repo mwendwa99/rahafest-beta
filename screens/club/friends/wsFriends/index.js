@@ -26,7 +26,7 @@ const FriendsPage = () => {
   const [selectedFriend, setSelectedFriend] = useState(null);
   const [inputMessage, setInputMessage] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const [title, setTitle] = useState("Friends");
+  const [title, setTitle] = useState("Messages");
   const { token, user, allUsers } = useSelector((state) => state.auth);
   const flatListRef = useRef(null);
 
@@ -216,7 +216,7 @@ const FriendsPage = () => {
             )}
             {friends.length > 0 && (
               <View style={styles.listContainer}>
-                <Text style={styles.sectionTitle}>Friends List</Text>
+                <Text style={styles.sectionTitle}>Your Friends</Text>
                 <FlatList
                   data={friends}
                   renderItem={renderFriend}
@@ -242,13 +242,13 @@ const FriendsPage = () => {
               setSelectedFriend(id);
               if (id === null) {
                 setDirectMessages([]);
-                setTitle("Friends");
+                setTitle("Messages");
               }
             }}
             setTitle={setTitle}
           />
         )}
-        {allUsers && allUsers.length > 0 && (
+        {allUsers && allUsers.length > 0 && !selectedFriend && (
           <View style={styles.listContainer}>
             <Text style={styles.sectionTitle}>Add a friend</Text>
             <FlatList
@@ -277,6 +277,7 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     flexShrink: 1,
+    minHeight: 200,
   },
   emptyText: {
     color: "#fafafa",
@@ -308,7 +309,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     marginVertical: 20,
-    textAlign: "center",
+    textAlign: "left",
   },
   loader: {
     position: "absolute",
