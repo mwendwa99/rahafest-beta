@@ -27,7 +27,7 @@ const rootPersistConfig = {
   storage: AsyncStorage,
   keyPrefix: "redux-",
   whitelist: ["auth"],
-  blacklist: ["chat", "friends", "events", "faq", "lineup", "news", "menu"],
+  blacklist: ["events", "faq", "lineup", "news", "menu"],
 };
 
 const rootReducer = combineReducers({
@@ -36,11 +36,7 @@ const rootReducer = combineReducers({
   lineup: lineupSlice,
   news: newsSlice,
   menu: menuSlice,
-  chat: chatSlice,
-  friends: friendSlice,
   events: eventSlice,
-  live: live,
-  friendship: friendship,
 });
 
 const persistedReducer = persistReducer(rootPersistConfig, rootReducer);

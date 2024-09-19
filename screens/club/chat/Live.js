@@ -1,15 +1,14 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { StyleSheet, TextInput, SafeAreaView } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
 import { useNavigation } from "@react-navigation/native";
 import { clearError } from "../../../redux/auth/authSlice";
-import WebSocketChat from "../wsChat";
+import WebSocketChat from "./wsChat";
 
 export default function LiveMessages({ sessionId }) {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
-  const allUsers = useSelector((state) => state.auth.allUsers);
   const navigation = useNavigation();
   const listRef = useRef(null); // Ref for scrolling
 

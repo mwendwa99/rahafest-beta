@@ -1,15 +1,22 @@
 import { Text, TouchableOpacity, View, StyleSheet } from "react-native";
+import { useSelector } from "react-redux";
+import { useMemo } from "react";
+import { formatTimestamp } from "../../../../utils/helper";
 
 export default function PendingFriends({
   item,
   acceptFriendRequest,
   rejectFriendRequest,
 }) {
-  //   console.log(item);
-  return (
+  const { id } = useSelector((state) => state.auth.user || {});
+
+  // Memoized check for user's ID comparison
+  const isRequester = useMemo(() => id !== item.user, [id, item.user]);
+
+  return isRequester ? (
     <View style={styles.requestItem}>
       <Text style={styles.requestText}>
-        {item.user_slug || "Anonymous"} wants to be your friend
+        {item.friend_slug || "Anonymous"} wants to be your friend
       </Text>
       <TouchableOpacity
         style={styles.acceptButton}
@@ -23,6 +30,13 @@ export default function PendingFriends({
       >
         <Text style={styles.buttonText}>Reject</Text>
       </TouchableOpacity>
+    </View>
+  ) : (
+    <View style={styles.requestItem}>
+      <Text style={styles.requestText}>
+        Friend request sent to {item.friend_slug || "Anonymous"} on{" "}
+        {formatTimestamp(item?.created_at)}
+      </Text>
     </View>
   );
 }

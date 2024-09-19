@@ -10,12 +10,9 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import { Text } from "../../components";
 
-import DirectMessage from "./chat/DirectMessage";
 import Live from "./chat/Live";
 import Friends from "./friends";
 import Account from "../account";
-import AllUsers from "./friends/AllUsers";
-import Messages from "./chat/Messages";
 import Landing from "./landing/Landing";
 import Merchandise from "./landing/Merchandise";
 import Events from "../events";
@@ -123,42 +120,6 @@ export default function ClubNavigator() {
             })}
           />
           <Stack.Screen
-            name="Messages"
-            component={Messages}
-            options={{
-              headerShown: true,
-              headerShadowVisible: false,
-              headerTintColor: "#fff",
-              headerStyle: {
-                backgroundColor: "#212529",
-              },
-              headerTitle: (props) => (
-                <Text {...props} style={{ fontWeight: "bold", fontSize: 18 }}>
-                  Direct messages
-                </Text>
-              ),
-              headerTitleAlign: "center",
-            }}
-          />
-          <Stack.Screen
-            name="DirectMessage"
-            component={DirectMessage}
-            options={{
-              headerShown: true,
-              headerShadowVisible: false,
-              headerTintColor: "#fff",
-              headerStyle: {
-                backgroundColor: "#212529",
-              },
-              headerTitle: (props) => (
-                <Text {...props} style={{ fontWeight: "bold", fontSize: 18 }}>
-                  Direct Messages
-                </Text>
-              ),
-              headerTitleAlign: "center",
-            }}
-          />
-          <Stack.Screen
             name="Friends"
             component={Friends}
             options={{
@@ -196,24 +157,6 @@ export default function ClubNavigator() {
                     style={{ color: "yellow" }}
                   />
                 </TouchableOpacity>
-              ),
-              headerTitleAlign: "center",
-            }}
-          />
-          <Stack.Screen
-            name="AllUsers"
-            component={AllUsers}
-            options={{
-              headerShown: true,
-              headerShadowVisible: false,
-              headerTintColor: "#fff",
-              headerStyle: {
-                backgroundColor: "#212529",
-              },
-              headerTitle: (props) => (
-                <Text {...props} style={{ fontWeight: "bold", fontSize: 18 }}>
-                  AllUsers
-                </Text>
               ),
               headerTitleAlign: "center",
             }}
