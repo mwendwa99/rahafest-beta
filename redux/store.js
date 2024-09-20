@@ -16,10 +16,6 @@ import authSlice from "./auth/authSlice";
 import lineupSlice from "./lineup/lineupSlice";
 import newsSlice from "./news/newsSlice";
 import menuSlice from "./menu/menuSlice";
-import chatSlice from "./chat/chatSlice";
-import live from "./chat/chatSlice-ws";
-import friendSlice from "./friends/friendSlice";
-import friendship from "./friends/friendSlice-ws";
 import eventSlice from "./events/eventSlice";
 
 const rootPersistConfig = {

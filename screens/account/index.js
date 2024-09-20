@@ -8,23 +8,9 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
-import {
-  deleteAccount,
-  fetchUser,
-  updateUser,
-} from "../../redux/auth/authActions";
-import {
-  fetchFriends,
-  fetchPendingFriendRequests,
-} from "../../redux/friends/friendActions";
-import {
-  Text,
-  Button,
-  FriendRequest,
-  Input,
-  AcceptedFriend,
-} from "../../components";
-import { ActivityIndicator, Avatar, Divider } from "react-native-paper";
+import { deleteAccount, fetchUser } from "../../redux/auth/authActions";
+import { Text, Button, Input } from "../../components";
+import { ActivityIndicator, Avatar } from "react-native-paper";
 import { useSelector, useDispatch } from "react-redux";
 import { persistor } from "../../redux/store";
 import { success } from "../../utils/toast";
@@ -73,13 +59,6 @@ export default function Account({ navigation }) {
       "Coming Soon!", // Title
       "You will be able to update your profile in a future update. Stay tuned!" // Message
     );
-  };
-
-  const onRefresh = () => {
-    setRefreshing(true);
-    dispatch(fetchUser());
-    dispatch(fetchFriends());
-    dispatch(fetchPendingFriendRequests()).finally(() => setRefreshing(false));
   };
 
   const handleLogout = () => {
