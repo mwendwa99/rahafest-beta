@@ -304,7 +304,7 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     flexShrink: 1,
-    minHeight: 150,
+    minHeight: 200,
   },
   emptyText: {
     color: "#fafafa",
