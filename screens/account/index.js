@@ -97,6 +97,11 @@ export default function Account({ navigation }) {
     );
   }
 
+  const onRefresh = () => {
+    setRefreshing(true);
+    dispatch(fetchUser()).finally(() => setRefreshing(false));
+  };
+
   return (
     <ScrollView
       refreshControl={
