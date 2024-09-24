@@ -4,7 +4,6 @@ import {
   Text,
   FlatList,
   StyleSheet,
-  ActivityIndicator,
   Alert,
   Platform,
   KeyboardAvoidingView,
@@ -18,7 +17,7 @@ import DirectMessages from "./DirectMessages";
 import { UserList } from "../../../../components";
 
 import { useWebSocket } from "../../../../hooks";
-import { success } from "../../../../utils/toast";
+import { success, warning } from "../../../../utils/toast";
 
 const FriendsPage = () => {
   const [friends, setFriends] = useState([]);
@@ -26,10 +25,10 @@ const FriendsPage = () => {
   const [directMessages, setDirectMessages] = useState([]);
   const [selectedFriend, setSelectedFriend] = useState(null);
   const [inputMessage, setInputMessage] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
   const [title, setTitle] = useState("Messages");
-  const { token, user, allUsers } = useSelector((state) => state.auth);
+  const { token, user } = useSelector((state) => state.auth);
   const flatListRef = useRef(null);
+  const [allUsers, setAllUsers] = useState([]);
 
   // Function to generate a unique key
   const generateUniqueKey = useCallback(() => {
@@ -40,31 +39,34 @@ const FriendsPage = () => {
     switch (data.action) {
       case "accepted-list":
         setFriends(data.friendships);
-        setIsLoading(false);
         break;
       case "unaccepted-list":
         setPendingRequests(data.friendships);
-        setIsLoading(false);
+        break;
+      case "unique-users":
+        setAllUsers(data.users);
         break;
       case "accept-friendship":
         // Handle accepted friendship
-        console.log("accepted", data);
-        setIsLoading(false);
+        // console.log("accepted", data);
         break;
       case "request-friendship":
+        // console.log(data);
         if (data.status === "success") {
-          console.log(data.status);
+          console.log(data.message);
           success("Friend request sent");
         }
-        setIsLoading(false);
+        if (data.status === "info") {
+          console.log(data.message);
+          warning(data.message);
+        }
         break;
       case "error":
+        console.log(data);
         console.log("Error from friends server:", data);
-        setIsLoading(false);
         break;
       default:
         console.warn("Unknown action from friends server:", data.action);
-        setIsLoading(false);
         break;
     }
   }, []);
@@ -79,7 +81,6 @@ const FriendsPage = () => {
             uniqueKey: generateUniqueKey(),
           }));
         setDirectMessages(sortedMessages);
-        setIsLoading(false);
         break;
       case "send-dm":
         setDirectMessages((prevMessages) => [
@@ -97,11 +98,9 @@ const FriendsPage = () => {
       case "error":
         Alert.alert("Server Error", data.message);
         console.log("Error from DM server:", data);
-        setIsLoading(false);
         break;
       default:
         console.warn("Unknown action from DM server:", data);
-        setIsLoading(false);
     }
   }, []);
 
@@ -119,15 +118,14 @@ const FriendsPage = () => {
 
   useEffect(() => {
     if (friendsWs.connected) {
-      setIsLoading(true);
       friendsWs.send({ action: "accepted-list" });
       friendsWs.send({ action: "unaccepted-list" });
+      friendsWs.send({ action: "unique-users" });
     }
   }, [friendsWs.connected]);
 
   useEffect(() => {
     if (dmWs.connected && selectedFriend) {
-      setIsLoading(true);
       setDirectMessages([]);
       dmWs.send({ action: "dm-list", friend_id: selectedFriend });
     }
@@ -146,6 +144,8 @@ const FriendsPage = () => {
 
   const handleSendFriendRequest = (friendId) => {
     if (friendsWs.connected) {
+      // console.log(friendId);
+
       friendsWs.send({
         action: "request-friendship",
         friend_id: friendId,
@@ -158,7 +158,6 @@ const FriendsPage = () => {
   const handleFriendSelection = useCallback((item) => {
     setSelectedFriend(item.friend_id);
     setTitle(item.friend_slug);
-    setIsLoading(true);
     setDirectMessages([]); // Clear messages when switching friends
   }, []);
 
@@ -311,6 +310,7 @@ const styles = StyleSheet.create({
   listContainer: {
     flexShrink: 1,
     minHeight: 200,
+    maxHeight: 250,
   },
   emptyText: {
     color: "#fafafa",
