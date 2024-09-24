@@ -31,6 +31,11 @@ const FriendsPage = () => {
   const { token, user, allUsers } = useSelector((state) => state.auth);
   const flatListRef = useRef(null);
 
+  // Function to generate a unique key
+  const generateUniqueKey = useCallback(() => {
+    return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  }, []);
+
   const handleFriendsMessage = useCallback((data) => {
     switch (data.action) {
       case "accepted-list":
@@ -67,20 +72,27 @@ const FriendsPage = () => {
   const handleDmMessage = useCallback((data) => {
     switch (data.action) {
       case "dm-list":
-        const sortedMessages = data.messages.sort(
-          (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
-        );
+        const sortedMessages = data.messages
+          .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
+          .map((message) => ({
+            ...message,
+            uniqueKey: generateUniqueKey(),
+          }));
         setDirectMessages(sortedMessages);
         setIsLoading(false);
         break;
       case "send-dm":
-        setDirectMessages((prev) => {
-          const newMessages = [...prev, data.message];
-          setTimeout(() => {
-            flatListRef.current?.scrollToEnd({ animated: false });
-          }, 100);
-          return newMessages;
-        });
+        setDirectMessages((prevMessages) => [
+          ...prevMessages,
+          {
+            ...data.message,
+            uniqueKey: generateUniqueKey(),
+          },
+        ]);
+        // setDirectMessages((prev) => {
+        //   const newMessages = [...prev, data.message];
+        //   return newMessages;
+        // });
         break;
       case "error":
         Alert.alert("Server Error", data.message);
@@ -88,7 +100,7 @@ const FriendsPage = () => {
         setIsLoading(false);
         break;
       default:
-        console.warn("Unknown action from DM server:", data.action);
+        console.warn("Unknown action from DM server:", data);
         setIsLoading(false);
     }
   }, []);
@@ -220,13 +232,7 @@ const FriendsPage = () => {
             <Text style={styles.statusText}>{title}</Text>
           </View>
         </View>
-        {isLoading ? (
-          <ActivityIndicator
-            size="large"
-            color="#fafafa"
-            style={styles.loader}
-          />
-        ) : !selectedFriend ? (
+        {!selectedFriend ? (
           <>
             {pendingRequests.length > 0 && (
               <View style={styles.listContainer}>
