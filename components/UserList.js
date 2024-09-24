@@ -63,13 +63,6 @@ export default function UserList({
             : "orange"
         }
         label="add"
-        // label={
-        //   isPending
-        //     ? "Pending"
-        //     : sentFriendRequest && sentFriendRequest.friend === user.id
-        //     ? "Sent"
-        //     : "Add "
-        // }
       />
     </View>
   );
