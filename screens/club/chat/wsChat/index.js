@@ -31,6 +31,11 @@ const WebSocketChat = () => {
   const ws = useRef(null);
   const flatListRef = useRef(null);
 
+  // Function to generate a unique key
+  const generateUniqueKey = useCallback(() => {
+    return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  }, []);
+
   const connectWebSocket = useCallback(() => {
     if (!token) return;
 
@@ -70,13 +75,25 @@ const WebSocketChat = () => {
   const handleWebSocketMessage = useCallback((data) => {
     switch (data.action) {
       case "message-list":
-        setMessages(data.messages);
+        const sortedMessages = data.messages
+          .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
+          .map((message) => ({
+            ...message,
+            uniqueKey: generateUniqueKey(),
+          }));
+        setMessages(sortedMessages);
         break;
       case "send-message":
-        setMessages((prevMessages) => [...prevMessages, data.message]);
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          {
+            ...data.message,
+            uniqueKey: generateUniqueKey(),
+          },
+        ]);
         break;
       case "error":
-        console.error("Error from server:", data.message);
+        console.error("Error from server:", data);
         break;
       default:
         console.warn("Unknown action:", data.action);
@@ -101,11 +118,9 @@ const WebSocketChat = () => {
     if (inputMessage.trim() && ws.current && connected) {
       const messageData = {
         action: "send-message",
-        message: {
-          sender: user.id,
-          content: inputMessage.trim(),
-        },
+        content: inputMessage.trim(),
       };
+      // console.log(messageData);
       ws.current.send(JSON.stringify(messageData));
       setInputMessage("");
     }
@@ -173,7 +188,7 @@ const WebSocketChat = () => {
         <FlatList
           ref={flatListRef}
           data={messages}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={(item) => item.uniqueKey}
           renderItem={renderMessage}
         />
         <View style={styles.inputContainer}>
@@ -220,6 +235,10 @@ const styles = StyleSheet.create({
     width: 10,
     borderRadius: 5,
     marginRight: 5,
+  },
+  inputContainer: {
+    flexDirection: "row",
+    margin: 10,
   },
   statusText: {
     color: "#fafafa",

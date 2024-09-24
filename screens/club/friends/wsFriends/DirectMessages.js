@@ -30,11 +30,11 @@ export default function DirectMessages({
   );
 
   // Scroll to bottom on initial render
-  useLayoutEffect(() => {
-    if (flatListRef.current && sortedMessages.length > 0) {
-      flatListRef.current.scrollToEnd({ animated: false });
-    }
-  }, []);
+  // useLayoutEffect(() => {
+  //   if (flatListRef.current && sortedMessages.length > 0) {
+  //     flatListRef.current.scrollToEnd({ animated: false });
+  //   }
+  // }, []);
 
   // Scroll to bottom when new messages are added
   useEffect(() => {
@@ -83,7 +83,7 @@ export default function DirectMessages({
           ref={flatListRef}
           data={sortedMessages}
           renderItem={renderMessage}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={(item) => item.uniqueKey}
           inverted={false}
           onContentSizeChange={() =>
             flatListRef.current.scrollToEnd({ animated: true })
