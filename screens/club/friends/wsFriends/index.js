@@ -18,6 +18,11 @@ import { UserList } from "../../../../components";
 
 import { useWebSocket } from "../../../../hooks";
 import { success, warning } from "../../../../utils/toast";
+import {
+  acceptFriendship,
+  declineFriendRequest,
+  handleSendFriendRequest,
+} from "./wsActions";
 
 const FriendsPage = () => {
   const [friends, setFriends] = useState([]);
@@ -53,16 +58,28 @@ const FriendsPage = () => {
       case "request-friendship":
         // console.log(data);
         if (data.status === "success") {
-          console.log(data.message);
+          // console.log(data.message);
           success("Friend request sent");
         }
         if (data.status === "info") {
-          console.log(data.message);
+          // console.log(data.message);
           warning(data.message);
         }
         break;
+      case "add-friendship":
+        // alert("request sent!");
+        success("Request sent!");
+        // console.log(data);
+        break;
+      case "declined-friendship":
+        console.log("declined response", data);
+        break;
+
+      case "accepted-friendship":
+        onsole.log("accepted response", data);
+        break;
       case "error":
-        console.log(data);
+        // console.log({ data });
         console.log("Error from friends server:", data);
         break;
       default:
@@ -90,11 +107,8 @@ const FriendsPage = () => {
             uniqueKey: generateUniqueKey(),
           },
         ]);
-        // setDirectMessages((prev) => {
-        //   const newMessages = [...prev, data.message];
-        //   return newMessages;
-        // });
         break;
+
       case "error":
         Alert.alert("Server Error", data.message);
         console.log("Error from DM server:", data);
@@ -142,19 +156,6 @@ const FriendsPage = () => {
     }
   }, [inputMessage, dmWs.connected, selectedFriend, dmWs.send]);
 
-  const handleSendFriendRequest = (friendId) => {
-    if (friendsWs.connected) {
-      // console.log(friendId);
-
-      friendsWs.send({
-        action: "request-friendship",
-        friend_id: friendId,
-      });
-    } else {
-      console.log("Disconnected: Could not send friend request!");
-    }
-  };
-
   const handleFriendSelection = useCallback((item) => {
     setSelectedFriend(item.friend_id);
     setTitle(item.friend_slug);
@@ -171,22 +172,18 @@ const FriendsPage = () => {
     [handleFriendSelection]
   );
 
-  const acceptFriendship = (item) => {
-    if (friendsWs.connected) {
-      friendsWs.send({
-        action: "accept-friendship",
-        friend_id: item.friend_id,
-      });
-    } else {
-      console.log("Disconnected: cannot send friend request");
-    }
-  };
-
   const renderUser = useCallback(
-    ({ item }) => (
-      <UserList user={item} handleSendFriendRequest={handleSendFriendRequest} />
-    ),
-    []
+    ({ item }) => {
+      return (
+        <UserList
+          user={item}
+          handleSendFriendRequest={() =>
+            handleSendFriendRequest(friendsWs, item.id)
+          }
+        />
+      );
+    },
+    [friendsWs.send]
   );
 
   const renderPendingRequest = useCallback(
@@ -194,12 +191,11 @@ const FriendsPage = () => {
       return (
         <PendingFriends
           item={item}
-          acceptFriendRequest={() => acceptFriendship(item)}
+          acceptFriendRequest={() =>
+            acceptFriendship(friendsWs, item.friend_id)
+          }
           rejectFriendRequest={() =>
-            friendsWs.send({
-              action: "decline-friendship",
-              friend_id: item.friend_id,
-            })
+            declineFriendRequest(friendsWs, item.friend_id)
           }
         />
       );

@@ -8,10 +8,16 @@ export default function PendingFriends({
   acceptFriendRequest,
   rejectFriendRequest,
 }) {
-  const { id } = useSelector((state) => state.auth.user || {});
+  const { user } = useSelector((state) => state.auth || {});
+
+  // console.log(item);
+
+  const id = user.id;
 
   // Memoized check for user's ID comparison
   const isRequester = useMemo(() => id !== item.user, [id, item.user]);
+
+  // console.log(isRequester, item.user);
 
   return isRequester ? (
     <View style={styles.requestItem}>

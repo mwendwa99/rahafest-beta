@@ -52,7 +52,7 @@ export default function UserList({
         </View>
       </View>
       <Button
-        onPress={() => handleSendFriendRequest(user.id)}
+        onPress={handleSendFriendRequest}
         disabled={
           (sentFriendRequest && sentFriendRequest.friend === user.id) ||
           isPending
