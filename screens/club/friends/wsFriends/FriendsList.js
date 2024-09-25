@@ -2,8 +2,8 @@ import { Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Avatar } from "react-native-paper";
 import { TabBarItem } from "react-native-tab-view";
 
-export default function ({ item, setSelectedFriend, ws }) {
-  console.log(item);
+export default function ({ item, setSelectedFriend }) {
+  // console.log(item);
   return (
     <TouchableOpacity
       style={styles.friendItem}
