@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import {
   FlatList,
   TextInput,

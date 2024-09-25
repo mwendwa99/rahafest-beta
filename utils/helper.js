@@ -126,3 +126,12 @@ export function formatTimestamp(timestamp) {
     });
   }
 }
+
+export function getTime(date) {
+  if (!date) return "Invalid date";
+  return new Date(date).toLocaleString("en-US", {
+    hour: "numeric",
+    minute: "numeric",
+    hour12: true,
+  });
+}

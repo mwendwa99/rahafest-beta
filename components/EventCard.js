@@ -5,9 +5,14 @@ import {
   StyleSheet,
   FlatList,
   TouchableOpacity,
+  ScrollView,
 } from "react-native";
 import Text from "./Text";
-import { formatEventDates, formatCurrencyWithCommas } from "../utils/helper";
+import {
+  formatEventDates,
+  formatCurrencyWithCommas,
+  getTime,
+} from "../utils/helper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const EventCard = React.memo(
@@ -69,9 +74,9 @@ const EventCard = React.memo(
             <View>
               <Text value={title} variant="subtitle" />
               <Text
-                value={
-                  formatEventDates(start_date, end_date) || "Date not available"
-                }
+                value={`${getTime(start_date) || "TBD"} to ${
+                  getTime(end_date) || "TBD"
+                }`}
                 variant="body"
                 style={styles.dateText}
               />
@@ -99,6 +104,60 @@ const EventCard = React.memo(
             </View>
           </View>
           {prices.length > 0 && !expired && (
+            <View style={styles.detailsContainer}>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                {prices.map((item) => (
+                  <View
+                    key={item?.id || Math.random().toString()}
+                    style={styles.ticketItem}
+                  >
+                    <View style={styles.row}>
+                      <Text
+                        value={item?.title || "N/A"}
+                        variant="body"
+                        style={styles.ticketTitle}
+                      />
+                      {isAuthenticated && item?.discount_rate > 0 && (
+                        <Text
+                          value={`${Math.round(item.discount_rate)}% off`}
+                          variant="body"
+                          style={styles.discount}
+                        />
+                      )}
+                    </View>
+                    <View style={styles.priceContainer}>
+                      {item?.discountedPrice > 0 ? (
+                        <View style={styles.row}>
+                          <Text
+                            value={`KES ${formatCurrencyWithCommas(
+                              item?.originalPrice || 0
+                            )}`}
+                            variant="body"
+                            style={styles.oldPrice}
+                          />
+                          <Text
+                            value={`KES ${formatCurrencyWithCommas(
+                              item?.discountedPrice.toFixed(2) || 0
+                            )}`}
+                            variant="body"
+                            style={styles.newPrice}
+                          />
+                        </View>
+                      ) : (
+                        <Text
+                          value={`KES ${formatCurrencyWithCommas(
+                            item?.originalPrice || 0
+                          )}`}
+                          variant="body"
+                        />
+                      )}
+                    </View>
+                  </View>
+                ))}
+              </ScrollView>
+            </View>
+          )}
+          {/* {prices.length > 0 && !expired && (
             <View style={styles.detailsContainer}>
               <FlatList
                 data={prices}
@@ -154,7 +213,7 @@ const EventCard = React.memo(
                 showsHorizontalScrollIndicator={false}
               />
             </View>
-          )}
+          )} */}
         </View>
       </View>
     );
@@ -177,6 +236,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 200,
     borderRadius: 8,
+    // objectFit: "contain",
   },
   expiredBadge: {
     display: "flex",
