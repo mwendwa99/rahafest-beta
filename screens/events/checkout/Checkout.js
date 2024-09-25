@@ -155,7 +155,7 @@ export default function Checkout({ route, navigation }) {
       return;
     }
 
-    const invoiceData = { data: { attendeeInfo } };
+    const invoiceData = { data: { attendeeInfo }, source_application: 2 };
 
     // console.log(invoiceData);
 
