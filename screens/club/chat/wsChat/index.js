@@ -102,10 +102,10 @@ const WebSocketChat = () => {
 
   // Scroll to bottom immediately when the component is first loaded
   useLayoutEffect(() => {
-    if (flatListRef.current && messages.length > 0) {
-      flatListRef.current.scrollToEnd({ animated: false });
+    if (flatListRef.current) {
+      flatListRef.current.scrollToEnd({ animated: true });
     }
-  }, []);
+  }, [messages]);
 
   // Scroll to bottom when new messages are added
   useEffect(() => {
@@ -285,10 +285,7 @@ const styles = StyleSheet.create({
   otherUserAvatar: {
     marginRight: 10,
   },
-  inputContainer: {
-    flexDirection: "row",
-    // marginBottom: 10,
-  },
+
   input: {
     flex: 1,
     borderWidth: 1,

@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Image, FlatList, Alert } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Image,
+  FlatList,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { useSelector, useDispatch } from "react-redux";
@@ -20,6 +29,7 @@ import {
 import {
   formatEventDates,
   formatPhoneNumberToMpesaFormat,
+  getTime,
 } from "../../../utils/helper";
 import { checkUserAuthentication } from "../../../redux/auth/authSlice";
 import { createInvoice } from "../../../redux/events/eventActions";
@@ -194,101 +204,108 @@ export default function Checkout({ route, navigation }) {
   }
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.row}>
-        <Image source={{ uri: event.banner }} style={styles.banner} />
-        <View style={{ flex: 1, marginLeft: 10 }}>
-          <Text value={event.title} variant="subtitle" />
-          <Text
-            value={formatEventDates(event.start_date, event.end_date)}
-            variant="body"
-            style={{ marginVertical: 1 }}
-          />
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0} // Adjust offset for iOS devices
+        style={{ flex: 1 }}
+      >
+        <ScrollView
+          showsHorizontalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
           <View style={styles.row}>
-            <MaterialCommunityIcons
-              name="map-marker-outline"
-              size={20}
-              color="black"
-            />
-            <Text value={event.location} variant="body" />
+            <Image source={{ uri: event.banner }} style={styles.banner} />
+            <View style={{ flex: 1, marginLeft: 10 }}>
+              <Text value={event.title} variant="subtitle" />
+              <Text
+                // value={formatEventDates(event.start_date, event.end_date)}
+                value={`${getTime(event.start_date) || "TBD"} to ${
+                  getTime(event.end_date) || "TBD"
+                }`}
+                variant="body"
+                style={{ marginVertical: 1 }}
+              />
+              <View style={styles.row}>
+                <MaterialCommunityIcons
+                  name="map-marker-outline"
+                  size={20}
+                  color="black"
+                />
+                <Text value={event.location} variant="body" />
+              </View>
+              <Text
+                value={event.description}
+                variant="small"
+                style={{ marginVertical: 2 }}
+              />
+            </View>
           </View>
-          <Text
-            value={event.description}
-            variant="small"
-            style={{ marginVertical: 2 }}
-          />
-        </View>
-      </View>
-      <View style={styles.detailsContainer}>
-        {(event.ticketTypes && event.ticketTypes.length > 0) ||
-        event.location !== "TBA" ? (
-          <FlatList
-            data={event.ticketTypes}
-            renderItem={({ item }) => (
-              <TicketCard
-                item={item}
-                handleSelectTicketQuantity={handleSelectTicketQuantity}
+          <View style={styles.detailsContainer}>
+            {(event.ticketTypes && event.ticketTypes.length > 0) ||
+            event.location !== "TBA" ? (
+              <ScrollView
+                showsHorizontalScrollIndicator={false}
+                style={{ maxHeight: 300 }}
+              >
+                {event.ticketTypes.map((item) => (
+                  <TicketCard
+                    key={item.id.toString()}
+                    item={item}
+                    handleSelectTicketQuantity={handleSelectTicketQuantity}
+                  />
+                ))}
+              </ScrollView>
+            ) : (
+              <Text
+                value="Tickets will be available soon!"
+                variant="body"
+                style={{
+                  marginVertical: 10,
+                  color: "black",
+                  textAlign: "center",
+                }}
               />
             )}
-            keyExtractor={(item) => item?.id.toString()}
-            showsHorizontalScrollIndicator={false}
-          />
-        ) : (
-          <Text
-            value="Tickets will be available soon!"
-            variant="body"
-            style={{
-              marginVertical: 10,
-              color: "black",
-              textAlign: "center",
-            }}
-          />
-        )}
-      </View>
-      {isAuthenticated && (
-        <UserInfoCard loading={loading} user={user} phone={phoneInput} />
-      )}
+          </View>
+          {isAuthenticated && (
+            <UserInfoCard loading={loading} user={user} phone={phoneInput} />
+          )}
 
-      <View>
-        <Button
-          disabled={event.location === "TBA"}
-          label="Buy Ticket"
-          variant={"contained"}
-          onPress={handleBuyTicket}
-        />
-      </View>
+          <View>
+            <Button
+              disabled={event.location === "TBA"}
+              label="Buy Ticket"
+              variant={"contained"}
+              onPress={handleBuyTicket}
+            />
+          </View>
 
-      {/* User Input Modal */}
-      {/* <ModalComponent
-        visible={showUserInputModal}
-        toggleModal={toggleUserInputModal}
-        transparent={false}
-      >
-        <UserInputForm onClose={() => setShowUserInputModal(false)} />
-      </ModalComponent> */}
+          <ModalComponent
+            visible={showPhoneInputModal}
+            toggleModal={togglePhoneInputModal}
+            transparent={false}
+          >
+            <PhoneInput
+              value={phoneInput}
+              setPhoneInput={setPhoneInput}
+              handlePhoneUpdate={handlePhoneUpdate}
+            />
+          </ModalComponent>
 
-      {/* Phone Input Modal */}
-      <ModalComponent
-        visible={showPhoneInputModal}
-        toggleModal={togglePhoneInputModal}
-        transparent={false}
-      >
-        <PhoneInput
-          value={phoneInput}
-          setPhoneInput={setPhoneInput}
-          handlePhoneUpdate={handlePhoneUpdate}
-        />
-      </ModalComponent>
-
-      {/* once invoice has been generated load payment modal */}
-      {invoice && invoice.id && (
-        <ModalComponent
-          visible={showInvoiceModal}
-          toggleModal={toggleInvoiceModal}
-          transparent={false}
-        >
-          <PaymentModal invoice={invoice} toggleModal={toggleInvoiceModal} />
-        </ModalComponent>
-      )}
+          {invoice && invoice.id && (
+            <ModalComponent
+              visible={showInvoiceModal}
+              toggleModal={toggleInvoiceModal}
+              transparent={false}
+            >
+              <PaymentModal
+                invoice={invoice}
+                toggleModal={toggleInvoiceModal}
+              />
+            </ModalComponent>
+          )}
+        </ScrollView>
+      </KeyboardAvoidingView>
 
       <StatusBar style="dark" />
     </SafeAreaView>
@@ -306,9 +323,9 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
   },
   banner: {
-    height: 250,
+    height: 200,
     width: 200,
     borderRadius: 8,
-    objectFit: "contain",
+    objectFit: "cover",
   },
 });
