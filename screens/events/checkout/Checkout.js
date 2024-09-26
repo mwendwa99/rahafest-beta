@@ -180,7 +180,7 @@ export default function Checkout({ route, navigation }) {
 
     const transformedDataObject = transformAttendeeInfo(invoiceData);
 
-    console.log(transformedDataObject);
+    // console.log(transformedDataObject);
     dispatch(createInvoice(transformedDataObject));
 
     // console.log(invoiceData);
