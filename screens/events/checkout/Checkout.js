@@ -93,10 +93,13 @@ export default function Checkout({ route, navigation }) {
 
   // const toggleUserInputModal = () => setShowUserInputModal(!showUserInputModal);
 
-  const togglePhoneInputModal = () =>
+  const togglePhoneInputModal = () => {
     setShowPhoneInputModal(!showPhoneInputModal);
+  };
 
-  const toggleInvoiceModal = () => setShowInvoiceModal(!showInvoiceModal);
+  const toggleInvoiceModal = () => {
+    setShowInvoiceModal(!showInvoiceModal);
+  };
 
   const handleSelectTicketQuantity = (quantity, ticket) => {
     setTicketQuantities((prevQuantities) => {
@@ -135,6 +138,14 @@ export default function Checkout({ route, navigation }) {
     });
   };
 
+  function transformAttendeeInfo(dataObject) {
+    const transformedAttendeeInfo = dataObject.data.attendeeInfo.flatMap(
+      (attendee) => Array(attendee.quantity).fill({ ...attendee, quantity: 1 })
+    );
+
+    return { ...dataObject, data: { attendeeInfo: transformedAttendeeInfo } };
+  }
+
   const handleBuyTicket = () => {
     if (attendeeInfo.length === 0) {
       alert("Please select at least one ticket");
@@ -167,9 +178,14 @@ export default function Checkout({ route, navigation }) {
 
     const invoiceData = { data: { attendeeInfo }, source_application: 2 };
 
+    const transformedDataObject = transformAttendeeInfo(invoiceData);
+
+    console.log(transformedDataObject);
+    dispatch(createInvoice(transformedDataObject));
+
     // console.log(invoiceData);
 
-    dispatch(createInvoice(invoiceData));
+    // dispatch(createInvoice(invoiceData));
 
     //reset all state
     setTicketQuantities({});
