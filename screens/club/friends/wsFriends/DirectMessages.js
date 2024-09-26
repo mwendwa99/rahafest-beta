@@ -98,6 +98,8 @@ export default function DirectMessages({
           onChangeText={setInputMessage}
           placeholder="Type a message..."
           placeholderTextColor="#fafafa"
+          onSubmitEditing={sendMessage}
+          returnKeyType="send"
         />
         <TouchableOpacity
           style={styles.sendButton}
