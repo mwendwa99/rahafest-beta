@@ -76,9 +76,11 @@ export const formatEventDates = (start_date, end_date) => {
   const endTimeFormatted = formatTime(end_date);
 
   if (isSameDayAndMonth) {
-    return `${startDateFormatted} from ${startTimeFormatted}`;
+    // return `${startDateFormatted} from ${startTimeFormatted}`;
+    return `${startDateFormatted}`;
   } else {
-    return `${startDateFormatted} to ${endDateFormatted} from ${startTimeFormatted}`;
+    // return `${startDateFormatted} to ${endDateFormatted} from ${startTimeFormatted}`;
+    return `${startDateFormatted} to ${endDateFormatted}`;
   }
 };
 

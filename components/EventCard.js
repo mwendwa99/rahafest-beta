@@ -8,11 +8,7 @@ import {
   ScrollView,
 } from "react-native";
 import Text from "./Text";
-import {
-  formatEventDates,
-  formatCurrencyWithCommas,
-  getTime,
-} from "../utils/helper";
+import { formatEventDates, formatCurrencyWithCommas } from "../utils/helper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const EventCard = React.memo(
@@ -74,9 +70,7 @@ const EventCard = React.memo(
             <View>
               <Text value={title} variant="subtitle" />
               <Text
-                value={`${getTime(start_date) || "TBD"} to ${
-                  getTime(end_date) || "TBD"
-                }`}
+                value={`${formatEventDates(start_date, end_date) || "TBD"}`}
                 variant="body"
                 style={styles.dateText}
               />
