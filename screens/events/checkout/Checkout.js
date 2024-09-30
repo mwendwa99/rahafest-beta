@@ -234,12 +234,16 @@ export default function Checkout({ route, navigation }) {
             <View style={{ flex: 1, marginLeft: 10 }}>
               <Text value={event.title} variant="subtitle" />
               <Text
-                // value={formatEventDates(event.start_date, event.end_date)}
+                value={`${formatEventDates(event.start_date, event.end_date)}`}
+                variant="body"
+                style={{ marginVertical: 3 }}
+              />
+              <Text
                 value={`${getTime(event.start_date) || "TBD"} to ${
                   getTime(event.end_date) || "TBD"
                 }`}
                 variant="body"
-                style={{ marginVertical: 1 }}
+                style={{ marginVertical: 3 }}
               />
               <View style={styles.row}>
                 <MaterialCommunityIcons
