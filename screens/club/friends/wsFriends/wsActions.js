@@ -30,7 +30,7 @@ export const handleSendFriendRequest = (ws, friendId) => {
     });
   } else {
     warning("You are disconnected!", 2000);
-    alert("You are disconnected!");
+    // alert("You are disconnected!");
     console.log("Disconnected: Could not send friend request!");
   }
 };

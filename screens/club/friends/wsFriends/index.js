@@ -110,7 +110,8 @@ const FriendsPage = () => {
         break;
 
       case "error":
-        Alert.alert("Server Error", data.message);
+        warning("Server Error");
+        // Alert.alert("Server Error", data.message);
         console.log("Error from DM server:", data);
         break;
       default:
