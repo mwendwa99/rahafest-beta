@@ -26,7 +26,7 @@ export default function Friends({ navigation }) {
 
   return (
     <View style={{ flex: 1 }}>
-      <FriendsPage />
+      <FriendsPage navigation={navigation} />
     </View>
   );
 }

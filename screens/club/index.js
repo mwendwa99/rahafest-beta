@@ -12,6 +12,7 @@ import { Text } from "../../components";
 
 import Live from "./chat/Live";
 import Friends from "./friends";
+import AllUsers from "./friends/wsFriends/AllUsers";
 import Account from "../account";
 import Landing from "./landing/Landing";
 import Merchandise from "./landing/Merchandise";
@@ -123,7 +124,7 @@ export default function ClubNavigator() {
             name="Friends"
             component={Friends}
             options={{
-              headerShown: false,
+              headerShown: true,
               headerShadowVisible: false,
               headerTintColor: "#fff",
               headerStyle: {
@@ -160,6 +161,48 @@ export default function ClubNavigator() {
               ),
               headerTitleAlign: "center",
             }}
+          />
+          <Stack.Screen
+            name="Users"
+            options={{
+              headerShown: true,
+              headerShadowVisible: false,
+              headerTintColor: "#fff",
+              headerStyle: {
+                backgroundColor: "#212529",
+              },
+              headerTitle: (props) => (
+                <Text
+                  value={"All Users"}
+                  {...props}
+                  style={{ color: "#fff" }}
+                  variant={"subtitle"}
+                />
+              ),
+              headerRight: () => (
+                <TouchableOpacity
+                  style={styles.row}
+                  onPress={() =>
+                    Linking.openURL("https://support.rahafest.com")
+                  }
+                >
+                  <MaterialCommunityIcons
+                    name="alert-outline"
+                    size={20}
+                    color="yellow"
+                    style={{ marginRight: 2 }}
+                  />
+                  <Text
+                    // value={`${allUsers.length} members`}
+                    value="report"
+                    variant={"body"}
+                    style={{ color: "yellow" }}
+                  />
+                </TouchableOpacity>
+              ),
+              headerTitleAlign: "center",
+            }}
+            component={AllUsers}
           />
           <Stack.Screen
             name="Merchandise"
