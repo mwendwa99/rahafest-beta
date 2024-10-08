@@ -23,12 +23,17 @@ export const acceptFriendship = (ws, friendId) => {
 };
 
 export const handleSendFriendRequest = (ws, friendId) => {
+  console.log({
+    action: "request-friendship",
+    friend_id: friendId,
+  });
   if (ws.connected) {
     ws.send({
       action: "request-friendship",
       friend_id: friendId,
     });
   } else {
+    console.log(ws);
     warning("You are disconnected!", 2000);
     // alert("You are disconnected!");
     console.log("Disconnected: Could not send friend request!");
