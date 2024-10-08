@@ -14,7 +14,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import PendingFriends from "./PendingFriendRequests";
 import FriendsList from "./FriendsList";
 import DirectMessages from "./DirectMessages";
-import { UserList } from "../../../../components";
+import { ListItem, UserList } from "../../../../components";
 
 import { useWebSocket } from "../../../../hooks";
 import { success, warning } from "../../../../utils/toast";
@@ -24,7 +24,7 @@ import {
   handleSendFriendRequest,
 } from "./wsActions";
 
-const FriendsPage = () => {
+const FriendsPage = ({ navigation }) => {
   const [friends, setFriends] = useState([]);
   const [pendingRequests, setPendingRequests] = useState([]);
   const [directMessages, setDirectMessages] = useState([]);
@@ -204,80 +204,71 @@ const FriendsPage = () => {
     [friendsWs.send]
   );
 
+  const handleNavigate = (screen) => {
+    navigation.navigate(screen);
+  };
+
   return (
-    <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 5 : 0} // Adjust offset for iOS devices
-        style={{ flex: 1 }}
-      >
-        <View style={styles.header}>
-          <View style={styles.statusContainer}>
-            <View
-              style={[
-                styles.statusIndicator,
-                {
-                  backgroundColor: (
-                    selectedFriend ? dmWs.connected : friendsWs.connected
-                  )
-                    ? "green"
-                    : "orange",
-                },
-              ]}
-            />
-            <Text style={styles.statusText}>{title}</Text>
-          </View>
-        </View>
-        {!selectedFriend ? (
-          <>
-            {pendingRequests.length > 0 && (
-              <View style={styles.listContainer}>
-                <Text style={styles.sectionTitle}>Pending Requests</Text>
-                <FlatList
-                  data={pendingRequests}
-                  renderItem={renderPendingRequest}
-                  keyExtractor={(item) => item.id.toString()}
-                  ListEmptyComponent={
-                    <Text style={styles.emptyText}>No pending requests</Text>
-                  }
-                />
-              </View>
-            )}
-            {friends.length > 0 && (
-              <View style={styles.listContainer}>
-                <Text style={styles.sectionTitle}>Your Friends</Text>
-                <FlatList
-                  data={friends}
-                  renderItem={renderFriend}
-                  keyExtractor={(item) => item.id.toString()}
-                  ListEmptyComponent={
-                    <Text style={styles.emptyText}>No friends</Text>
-                  }
-                />
-              </View>
-            )}
-          </>
-        ) : (
-          <DirectMessages
-            flatListRef={flatListRef}
-            directMessages={directMessages}
-            user={user}
-            setInputMessage={setInputMessage}
-            inputMessage={inputMessage}
-            sendMessage={sendMessage}
-            selectedFriend={selectedFriend}
-            connected={dmWs.connected}
-            setSelectedFriend={(id) => {
-              setSelectedFriend(id);
-              if (id === null) {
-                setDirectMessages([]);
-                setTitle("Messages");
-              }
-            }}
-            setTitle={setTitle}
-          />
-        )}
-        {allUsers && allUsers.length > 0 && !selectedFriend && (
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 5 : 0} // Adjust offset for iOS devices
+      style={styles.container}
+    >
+      <ListItem
+        title="Add Friends"
+        iconRight={"chevron-right"}
+        handlePressLink={() => handleNavigate("Users")}
+      />
+      {!selectedFriend ? (
+        <>
+          {pendingRequests.length > 0 && (
+            <View style={styles.listContainer}>
+              <Text style={styles.sectionTitle}>Pending Requests</Text>
+              <FlatList
+                data={pendingRequests}
+                renderItem={renderPendingRequest}
+                keyExtractor={(item) => item.id.toString()}
+                ListEmptyComponent={
+                  <Text style={styles.emptyText}>No pending requests</Text>
+                }
+              />
+            </View>
+          )}
+          {friends.length > 0 && (
+            <View style={styles.listContainer}>
+              <Text style={styles.sectionTitle}>Your Friends</Text>
+              <FlatList
+                data={friends}
+                renderItem={renderFriend}
+                keyExtractor={(item) => item.id.toString()}
+                ListEmptyComponent={
+                  <Text style={styles.emptyText}>No friends</Text>
+                }
+              />
+            </View>
+          )}
+        </>
+      ) : (
+        <DirectMessages
+          flatListRef={flatListRef}
+          directMessages={directMessages}
+          user={user}
+          setInputMessage={setInputMessage}
+          inputMessage={inputMessage}
+          sendMessage={sendMessage}
+          selectedFriend={selectedFriend}
+          connected={dmWs.connected}
+          setSelectedFriend={(id) => {
+            setSelectedFriend(id);
+            if (id === null) {
+              setDirectMessages([]);
+              setTitle("Messages");
+            }
+          }}
+          setTitle={setTitle}
+        />
+      )}
+      {/* {allUsers && allUsers.length > 0 && !selectedFriend && (
           <View style={styles.listContainer}>
             <Text style={styles.sectionTitle}>Add a friend</Text>
             <FlatList
@@ -286,9 +277,8 @@ const FriendsPage = () => {
               keyExtractor={(item) => item.id.toString()}
             />
           </View>
-        )}
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+        )} */}
+    </KeyboardAvoidingView>
   );
 };
 
@@ -297,13 +287,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#1B1B1B",
     paddingHorizontal: 10,
+    margin: 0,
   },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: 10,
-  },
+
   listContainer: {
     flexShrink: 1,
     minHeight: 200,
@@ -315,25 +301,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     padding: 20,
   },
-  statusContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    width: "100%",
-  },
-  statusIndicator: {
-    height: 10,
-    width: 10,
-    borderRadius: 5,
-    marginRight: 5,
-  },
-  statusText: {
-    color: "#fafafa",
-    fontSize: 20,
-    fontWeight: "700",
-    textAlign: "center",
-    alignSelf: "center",
-  },
+
   sectionTitle: {
     color: "#fafafa",
     fontSize: 16,
