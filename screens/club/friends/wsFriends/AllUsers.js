@@ -10,6 +10,7 @@ import {
 import { UserList } from "../../../../components";
 import { useWebSocket } from "../../../../hooks";
 import { useSelector } from "react-redux";
+import { success } from "../../../../utils/toast";
 
 export default function AllUsers() {
   const [allUsers, setAllUsers] = useState([]);
@@ -28,14 +29,7 @@ export default function AllUsers() {
         break;
       case "request-friendship":
         console.log("request friendship response", data);
-        // if (data.status === "success") {
-        //   console.log(data.message);
-        //   success("Friend request sent");
-        // }
-        // if (data.status === "info") {
-        //   console.log(data.message);
-        //   warning(data.message);
-        // }
+        success(data.message);
         setIsLoading(false);
         break;
       default:
