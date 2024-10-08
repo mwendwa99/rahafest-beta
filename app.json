@@ -1,21 +1,23 @@
 {
   "expo": {
-    "name": "Raha App",
-    "slug": "rahafest-beta",
-    "version": "6.0.1",
+    "name": "RahaFest",
+    "slug": "rahafest-tp9rbzxynedfpq-6v3b3",
+    "version": "1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "dark",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#212529"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.mwendwa99.rahafestbeta",
-      "buildNumber": "3",
+      "bundleIdentifier": "com.sapient.rahafest",
+      "buildNumber": "1",
       "config": {
         "googleMapsApiKey": "AIzaSyD3kyMh4P3uCTWP-tlbi4Lq2aYdFnvVSpA"
       }
@@ -25,8 +27,8 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#212529"
       },
-      "package": "com.mwendwa99.rahafestbeta",
-      "versionCode": 16,
+      "package": "com.sapient.rahafest",
+      "versionCode": 1,
       "config": {
         "googleMaps": {
           "apiKey": "AIzaSyD3kyMh4P3uCTWP-tlbi4Lq2aYdFnvVSpA"
@@ -44,8 +46,9 @@
     },
     "extra": {
       "eas": {
-        "projectId": "8463c7e8-0d31-4d61-b074-0bb88e620e46"
+        "projectId": "e9fb104b-76f1-456e-85f7-b6597e6f1351"
       }
-    }
+    },
+    "owner": "mwendwa99"
   }
 }
