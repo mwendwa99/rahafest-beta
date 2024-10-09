@@ -18,11 +18,7 @@ import { ListItem, UserList } from "../../../../components";
 
 import { useWebSocket } from "../../../../hooks";
 import { success, warning } from "../../../../utils/toast";
-import {
-  acceptFriendship,
-  declineFriendRequest,
-  handleSendFriendRequest,
-} from "./wsActions";
+import { handleSendFriendRequest } from "./wsActions";
 
 const FriendsPage = ({ navigation }) => {
   const [friends, setFriends] = useState([]);
@@ -187,23 +183,6 @@ const FriendsPage = ({ navigation }) => {
     [friendsWs.send]
   );
 
-  // const renderPendingRequest = useCallback(
-  //   ({ item }) => {
-  //     return (
-  //       <PendingFriends
-  //         item={item}
-  //         acceptFriendRequest={() =>
-  //           acceptFriendship(friendsWs, item.friend_id)
-  //         }
-  //         rejectFriendRequest={() =>
-  //           declineFriendRequest(friendsWs, item.friend_id)
-  //         }
-  //       />
-  //     );
-  //   },
-  //   [friendsWs.send]
-  // );
-
   const handleNavigate = (screen) => {
     navigation.navigate(screen);
   };
@@ -226,19 +205,7 @@ const FriendsPage = ({ navigation }) => {
       />
       {/* {!selectedFriend ? (
         <>
-          {pendingRequests.length > 0 && (
-            <View style={styles.listContainer}>
-              <Text style={styles.sectionTitle}>Pending Requests</Text>
-              <FlatList
-                data={pendingRequests}
-                renderItem={renderPendingRequest}
-                keyExtractor={(item) => item.id.toString()}
-                ListEmptyComponent={
-                  <Text style={styles.emptyText}>No pending requests</Text>
-                }
-              />
-            </View>
-          )}
+          
           {friends.length > 0 && (
             <View style={styles.listContainer}>
               <Text style={styles.sectionTitle}>Your Friends</Text>

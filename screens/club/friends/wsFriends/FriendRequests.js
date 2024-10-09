@@ -7,12 +7,11 @@ import {
   ActivityIndicator,
 } from "react-native";
 
-import { UserList } from "../../../../components";
 import { useWebSocket } from "../../../../hooks";
 import { useSelector } from "react-redux";
-import { success } from "../../../../utils/toast";
 import PendingFriends from "./PendingFriendRequests";
 import { acceptFriendship, declineFriendRequest } from "./wsActions";
+import { warning, success } from "../../../../utils/toast";
 
 export default function FriendRequests() {
   const [friendRequestList, setFriendRequestList] = useState([]);
@@ -21,19 +20,26 @@ export default function FriendRequests() {
 
   const handleResponse = useCallback((data) => {
     switch (data.action) {
-      case "unique-users":
-        setFriendRequestList(data.users);
+      case "unaccepted-list":
+        setFriendRequestList(data.friendships);
+        setIsLoading(false);
+        break;
+      case "accept-friendship":
+        if (data.status === "success") {
+          alert("Request Accepted!");
+          success("Friend request accepted");
+          console.log("accepted", data);
+        }
+        if (data.status === "info") {
+          console.log(data.message);
+        }
         setIsLoading(false);
         break;
       case "error":
         console.log("Error from friends server:", data);
         setIsLoading(false);
         break;
-      case "request-friendship":
-        console.log("request friendship response", data);
-        success(data.message);
-        setIsLoading(false);
-        break;
+
       default:
         console.log("Websocket response action", data.action);
         break;
@@ -45,21 +51,22 @@ export default function FriendRequests() {
     handleResponse
   );
 
-  // Send a friend request
-  const handleSendFriendRequest = useCallback(
-    (friendId) => {
+  // accept a friend request
+  const handleAcceptRequest = useCallback(
+    (senderId) => {
+      console.log("this is sender", senderId);
       if (friendsWs && friendsWs.connected) {
         try {
           friendsWs.send({
-            action: "request-friendship",
-            friend_id: friendId,
+            action: "accept-friendship",
+            friend_id: senderId,
           });
-          console.log(`Friend request sent to user ID: ${friendId}`);
+          console.log(`Request accepted ID: ${friendId}`);
         } catch (error) {
-          console.error("Failed to send friend request:", error);
+          console.error("Error from websocket request:", error);
         }
       } else {
-        console.error("WebSocket is not connected.");
+        console.error("friend websocket is not connected.");
       }
     },
     [friendsWs]
@@ -67,8 +74,8 @@ export default function FriendRequests() {
 
   useEffect(() => {
     if (friendsWs.connected) {
-      console.log("WebSocket connected, sending unique-users request");
-      friendsWs.send({ action: "unique-users" });
+      console.log("WebSocket connected, sending pending friendship request");
+      friendsWs.send({ action: "unaccepted-list" });
     }
 
     return () => {
@@ -88,21 +95,25 @@ export default function FriendRequests() {
     );
   }
 
+  // console.log(friendRequestList);
+
   return (
     <View style={styles.container}>
       <ScrollView>
         {friendRequestList && friendRequestList.length > 0 ? (
-          friendRequestList.map((user) => (
-            <PendingFriends
-              item={item}
-              acceptFriendRequest={() =>
-                acceptFriendship(friendsWs, item.friend_id)
-              }
-              rejectFriendRequest={() =>
-                declineFriendRequest(friendsWs, item.friend_id)
-              }
-            />
-          ))
+          friendRequestList.map((user) => {
+            // console.log(user.sender_id);
+            return (
+              <PendingFriends
+                item={user}
+                key={user.id}
+                acceptFriendRequest={() => handleAcceptRequest(user.sender_id)}
+                rejectFriendRequest={() =>
+                  declineFriendRequest(friendsWs, user.sender_id)
+                }
+              />
+            );
+          })
         ) : (
           <Text style={styles.sectionTitle}>No users</Text>
         )}

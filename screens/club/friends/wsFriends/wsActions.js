@@ -12,14 +12,19 @@ export const declineFriendRequest = (ws, friendId) => {
 };
 
 export const acceptFriendship = (ws, friendId) => {
-  if (ws.connected) {
-    ws.send({
-      action: "accept-friendship",
-      friend_id: friendId,
-    });
-  } else {
-    console.log("Disconnected: cannot send friend request");
-  }
+  console.log({
+    action: "accept-friendship",
+    friend_id: friendId,
+  });
+
+  // if (ws.connected) {
+  //   ws.send({
+  //     action: "accept-friendship",
+  //     friend_id: friendId,
+  //   });
+  // } else {
+  //   console.log("Disconnected: cannot send friend request");
+  // }
 };
 
 export const handleSendFriendRequest = (ws, friendId) => {
