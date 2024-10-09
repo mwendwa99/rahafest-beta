@@ -7,18 +7,17 @@ import {
   Alert,
   Platform,
   KeyboardAvoidingView,
+  Image,
 } from "react-native";
 import { useSelector } from "react-redux";
-import { SafeAreaView } from "react-native-safe-area-context";
 
-import PendingFriends from "./PendingFriendRequests";
 import FriendsList from "./FriendsList";
-import DirectMessages from "./DirectMessages";
 import { ListItem, UserList } from "../../../../components";
 
 import { useWebSocket } from "../../../../hooks";
 import { success, warning } from "../../../../utils/toast";
-import { handleSendFriendRequest } from "./wsActions";
+
+const noFriends = require("../../../../assets/no-friends.png");
 
 const FriendsPage = ({ navigation }) => {
   const [friends, setFriends] = useState([]);
@@ -28,7 +27,6 @@ const FriendsPage = ({ navigation }) => {
   const [inputMessage, setInputMessage] = useState("");
   const [title, setTitle] = useState("Messages");
   const { token, user } = useSelector((state) => state.auth);
-  const flatListRef = useRef(null);
   const [allUsers, setAllUsers] = useState([]);
 
   // Function to generate a unique key
@@ -171,14 +169,7 @@ const FriendsPage = ({ navigation }) => {
 
   const renderUser = useCallback(
     ({ item }) => {
-      return (
-        <UserList
-          user={item}
-          handleSendFriendRequest={() =>
-            handleSendFriendRequest(friendsWs, item.id)
-          }
-        />
-      );
+      return <UserList user={item} />;
     },
     [friendsWs.send]
   );
@@ -203,6 +194,29 @@ const FriendsPage = ({ navigation }) => {
         iconRight={"chevron-right"}
         handlePressLink={() => handleNavigate("Pending")}
       />
+      <View style={styles.listContainer}>
+        <Text style={styles.sectionTitle}>Your Friends</Text>
+        <FlatList
+          data={friends}
+          renderItem={renderFriend}
+          keyExtractor={(item) => item.id.toString()}
+          ListEmptyComponent={
+            <View
+              style={{
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Image
+                source={noFriends}
+                style={{
+                  objectFit: "contain",
+                }}
+              />
+            </View>
+          }
+        />
+      </View>
       {/* {!selectedFriend ? (
         <>
           
@@ -255,7 +269,7 @@ const styles = StyleSheet.create({
   listContainer: {
     flexShrink: 1,
     minHeight: 200,
-    maxHeight: 250,
+    // maxHeight: 250,
   },
   emptyText: {
     color: "#fafafa",
