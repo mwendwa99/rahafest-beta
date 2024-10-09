@@ -16,7 +16,6 @@ import AllUsers from "./friends/wsFriends/AllUsers";
 import Account from "../account";
 import Landing from "./landing/Landing";
 import Merchandise from "./landing/Merchandise";
-import Events from "../events";
 import Login from "./auth/Login";
 import Register from "./auth/Register";
 import { persistor } from "../../redux/store";
@@ -218,27 +217,6 @@ export default function ClubNavigator() {
                 <Text
                   value="Merchandise"
                   variant={"subtitle"}
-                  style={{ color: "#fff" }}
-                />
-              ),
-              headerTitleAlign: "center",
-            }}
-          />
-          <Stack.Screen
-            name="Events"
-            component={Events}
-            options={{
-              headerShown: true,
-              headerShadowVisible: false,
-              headerTintColor: "#fff",
-              headerStyle: {
-                backgroundColor: "#212529",
-              },
-              headerTitle: (props) => (
-                <Text
-                  value={"Event Deals"}
-                  {...props}
-                  variant="subtitle"
                   style={{ color: "#fff" }}
                 />
               ),
