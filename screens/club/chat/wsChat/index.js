@@ -79,7 +79,7 @@ const WebSocketChat = () => {
           .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
           .map((message) => ({
             ...message,
-            uniqueKey: generateUniqueKey(),
+            uniqueKey: `${message.id}-${generateUniqueKey()}`,
           }));
         setMessages(sortedMessages);
         break;
@@ -88,7 +88,7 @@ const WebSocketChat = () => {
           ...prevMessages,
           {
             ...data.message,
-            uniqueKey: generateUniqueKey(),
+            uniqueKey: `${prevMessages.id}-${generateUniqueKey()}`,
           },
         ]);
         break;
@@ -176,15 +176,6 @@ const WebSocketChat = () => {
         keyboardVerticalOffset={Platform.OS === "ios" ? 50 : 0} // Adjust offset for iOS devices
         style={{ flex: 1 }}
       >
-        <View style={styles.statusContainer}>
-          <View
-            style={[
-              styles.statusIndicator,
-              { backgroundColor: connected ? "green" : "orange" },
-            ]}
-          />
-          <Text style={styles.statusText}>Live Chat</Text>
-        </View>
         <FlatList
           ref={flatListRef}
           data={messages}
@@ -211,7 +202,7 @@ const WebSocketChat = () => {
             <MaterialCommunityIcons name="send" size={20} color="#fafafa" />
           </TouchableOpacity>
         </View>
-        <StatusBar barStyle={"dark-content"} animated={true} />
+        <StatusBar barStyle={"live-content"} animated={true} />
       </KeyboardAvoidingView>
     </SafeAreaView>
   );

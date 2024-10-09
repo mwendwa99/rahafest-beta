@@ -3,7 +3,7 @@ import { Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Avatar } from "react-native-paper";
 import { useSelector } from "react-redux";
 
-export default function ({ item, setSelectedFriend }) {
+export default function ({ item, openDM }) {
   const [title, setTitle] = useState("");
   const { user } = useSelector((state) => state.auth);
 
@@ -16,10 +16,7 @@ export default function ({ item, setSelectedFriend }) {
   }, [item, user.id]);
 
   return (
-    <TouchableOpacity
-      style={styles.friendItem}
-      onPress={() => setSelectedFriend(item.friend)}
-    >
+    <TouchableOpacity style={styles.friendItem} onPress={openDM}>
       <Avatar.Text
         size={40}
         label={title?.charAt(0).toUpperCase() || "?"} // Fallback if title is null/empty
