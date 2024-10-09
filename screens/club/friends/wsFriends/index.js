@@ -187,22 +187,22 @@ const FriendsPage = ({ navigation }) => {
     [friendsWs.send]
   );
 
-  const renderPendingRequest = useCallback(
-    ({ item }) => {
-      return (
-        <PendingFriends
-          item={item}
-          acceptFriendRequest={() =>
-            acceptFriendship(friendsWs, item.friend_id)
-          }
-          rejectFriendRequest={() =>
-            declineFriendRequest(friendsWs, item.friend_id)
-          }
-        />
-      );
-    },
-    [friendsWs.send]
-  );
+  // const renderPendingRequest = useCallback(
+  //   ({ item }) => {
+  //     return (
+  //       <PendingFriends
+  //         item={item}
+  //         acceptFriendRequest={() =>
+  //           acceptFriendship(friendsWs, item.friend_id)
+  //         }
+  //         rejectFriendRequest={() =>
+  //           declineFriendRequest(friendsWs, item.friend_id)
+  //         }
+  //       />
+  //     );
+  //   },
+  //   [friendsWs.send]
+  // );
 
   const handleNavigate = (screen) => {
     navigation.navigate(screen);
@@ -219,7 +219,12 @@ const FriendsPage = ({ navigation }) => {
         iconRight={"chevron-right"}
         handlePressLink={() => handleNavigate("Users")}
       />
-      {!selectedFriend ? (
+      <ListItem
+        title={`Friend Requests (${pendingRequests.length})`}
+        iconRight={"chevron-right"}
+        handlePressLink={() => handleNavigate("Pending")}
+      />
+      {/* {!selectedFriend ? (
         <>
           {pendingRequests.length > 0 && (
             <View style={styles.listContainer}>
@@ -267,17 +272,7 @@ const FriendsPage = ({ navigation }) => {
           }}
           setTitle={setTitle}
         />
-      )}
-      {/* {allUsers && allUsers.length > 0 && !selectedFriend && (
-          <View style={styles.listContainer}>
-            <Text style={styles.sectionTitle}>Add a friend</Text>
-            <FlatList
-              data={allUsers}
-              renderItem={renderUser}
-              keyExtractor={(item) => item.id.toString()}
-            />
-          </View>
-        )} */}
+      )} */}
     </KeyboardAvoidingView>
   );
 };
