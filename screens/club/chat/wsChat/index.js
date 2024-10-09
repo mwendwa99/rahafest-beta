@@ -16,6 +16,7 @@ import {
   StatusBar,
   KeyboardAvoidingView,
   Platform,
+  ActivityIndicator,
 } from "react-native";
 import { Avatar } from "react-native-paper";
 import { useSelector } from "react-redux";
@@ -27,6 +28,7 @@ const WebSocketChat = () => {
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState("");
   const [connected, setConnected] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const { token, user } = useSelector((state) => state.auth);
   const ws = useRef(null);
   const flatListRef = useRef(null);
@@ -82,6 +84,7 @@ const WebSocketChat = () => {
             uniqueKey: `${message.id}-${generateUniqueKey()}`,
           }));
         setMessages(sortedMessages);
+        setIsLoading(false);
         break;
       case "send-message":
         setMessages((prevMessages) => [
@@ -91,12 +94,16 @@ const WebSocketChat = () => {
             uniqueKey: `${prevMessages.id}-${generateUniqueKey()}`,
           },
         ]);
+        setIsLoading(false);
         break;
       case "error":
         console.error("Error from server:", data);
+        setIsLoading(false);
         break;
       default:
         console.warn("Unknown action:", data.action);
+        setIsLoading(false);
+        break;
     }
   }, []);
 
@@ -169,11 +176,20 @@ const WebSocketChat = () => {
     [user.id]
   );
 
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#FFFFFF" />
+        <Text style={styles.loadingText}>Loading messages...</Text>
+      </View>
+    );
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 50 : 0} // Adjust offset for iOS devices
+        keyboardVerticalOffset={Platform.OS === "ios" ? 80 : 80} // Adjust offset for iOS devices
         style={{ flex: 1 }}
       >
         <FlatList
@@ -277,6 +293,18 @@ const styles = StyleSheet.create({
   },
   otherUserAvatar: {
     marginRight: 10,
+  },
+
+  loadingContainer: {
+    flex: 1,
+    backgroundColor: "#1B1B1B",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingText: {
+    color: "#FFFFFF",
+    marginTop: 10,
+    fontSize: 16,
   },
 
   input: {
