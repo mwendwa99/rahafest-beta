@@ -188,11 +188,15 @@ const FriendsPage = ({ navigation }) => {
         title="Add Friends"
         iconRight={"chevron-right"}
         handlePressLink={() => handleNavigate("Users")}
+        disabledRight={true}
+        disabledLeft={true}
       />
       <ListItem
         title={`Friend Requests (${pendingRequests.length})`}
         iconRight={"chevron-right"}
         handlePressLink={() => handleNavigate("Pending")}
+        disabledRight={true}
+        disabledLeft={true}
       />
       <View style={styles.listContainer}>
         <Text style={styles.sectionTitle}>Your Friends</Text>
