@@ -15,14 +15,17 @@ export default function PendingFriends({
   const id = user.id;
 
   // Memoized check for user's ID comparison
-  const isRequester = useMemo(() => id !== item.user, [id, item.user]);
+  const isRequester = useMemo(
+    () => id === item.sender_id,
+    [id, item.sender_id]
+  );
 
   // console.log(isRequester, item.user);
 
-  return isRequester ? (
+  return !isRequester ? (
     <View style={styles.requestItem}>
       <Text style={styles.requestText}>
-        {item.friend_slug || "Anonymous"} wants to be your friend
+        {item.sender_slug || "Anonymous"} wants to be your friend
       </Text>
       <TouchableOpacity
         style={styles.acceptButton}
@@ -40,7 +43,7 @@ export default function PendingFriends({
   ) : (
     <View style={styles.requestItem}>
       <Text style={styles.requestText}>
-        Friend request sent to {item.friend_slug || "Anonymous"} on{" "}
+        Friend request sent to {item.recipient_slug || "Anonymous"}{" "}
         {formatTimestamp(item?.created_at)}
       </Text>
     </View>
