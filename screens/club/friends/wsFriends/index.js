@@ -4,112 +4,40 @@ import {
   Text,
   FlatList,
   StyleSheet,
-  Alert,
   Platform,
   KeyboardAvoidingView,
   Image,
+  ActivityIndicator,
 } from "react-native";
 import { useSelector } from "react-redux";
 
 import FriendsList from "./FriendsList";
-import { ListItem, UserList } from "../../../../components";
+import { ListItem } from "../../../../components";
 
 import { useWebSocket } from "../../../../hooks";
-import { success, warning } from "../../../../utils/toast";
 
 const noFriends = require("../../../../assets/no-friends.png");
 
 const FriendsPage = ({ navigation }) => {
   const [friends, setFriends] = useState([]);
-  const [pendingRequests, setPendingRequests] = useState([]);
-  const [directMessages, setDirectMessages] = useState([]);
-  const [selectedFriend, setSelectedFriend] = useState(null);
-  const [inputMessage, setInputMessage] = useState("");
-  const [title, setTitle] = useState("Messages");
   const { token, user } = useSelector((state) => state.auth);
-  const [allUsers, setAllUsers] = useState([]);
-
-  // Function to generate a unique key
-  const generateUniqueKey = useCallback(() => {
-    return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-  }, []);
+  const [isLoading, setIsLoading] = useState(true);
 
   const handleFriendsMessage = useCallback((data) => {
     switch (data.action) {
       case "accepted-list":
         setFriends(data.friendships);
-        break;
-      case "unaccepted-list":
-        setPendingRequests(data.friendships);
-        break;
-      case "unique-users":
-        setAllUsers(data.users);
-        break;
-      case "accept-friendship":
-        // Handle accepted friendship
-        // console.log("accepted", data);
-        break;
-      case "request-friendship":
-        // console.log(data);
-        if (data.status === "success") {
-          // console.log(data.message);
-          success("Friend request sent");
-        }
-        if (data.status === "info") {
-          // console.log(data.message);
-          warning(data.message);
-        }
-        break;
-      case "add-friendship":
-        // alert("request sent!");
-        success("Request sent!");
-        // console.log(data);
-        break;
-      case "declined-friendship":
-        console.log("declined response", data);
+        setIsLoading(false);
         break;
 
-      case "accepted-friendship":
-        onsole.log("accepted response", data);
-        break;
       case "error":
-        // console.log({ data });
         console.log("Error from friends server:", data);
+        setIsLoading(false);
         break;
       default:
         console.warn("Unknown action from friends server:", data.action);
+        setIsLoading(false);
         break;
-    }
-  }, []);
-
-  const handleDmMessage = useCallback((data) => {
-    switch (data.action) {
-      case "dm-list":
-        const sortedMessages = data.messages
-          .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
-          .map((message) => ({
-            ...message,
-            uniqueKey: generateUniqueKey(),
-          }));
-        setDirectMessages(sortedMessages);
-        break;
-      case "send-dm":
-        setDirectMessages((prevMessages) => [
-          ...prevMessages,
-          {
-            ...data.message,
-            uniqueKey: generateUniqueKey(),
-          },
-        ]);
-        break;
-
-      case "error":
-        warning("Server Error");
-        // Alert.alert("Server Error", data.message);
-        console.log("Error from DM server:", data);
-        break;
-      default:
-        console.warn("Unknown action from DM server:", data);
     }
   }, []);
 
@@ -118,65 +46,38 @@ const FriendsPage = ({ navigation }) => {
     handleFriendsMessage
   );
 
-  const dmWs = useWebSocket(
-    selectedFriend
-      ? `wss://rahaclub.rahafest.com/ws/direct_messages/?token=${token}&friend_id=${selectedFriend}`
-      : null,
-    handleDmMessage
-  );
-
   useEffect(() => {
     if (friendsWs.connected) {
       friendsWs.send({ action: "accepted-list" });
-      friendsWs.send({ action: "unaccepted-list" });
-      friendsWs.send({ action: "unique-users" });
     }
   }, [friendsWs.connected]);
 
-  useEffect(() => {
-    if (dmWs.connected && selectedFriend) {
-      setDirectMessages([]);
-      dmWs.send({ action: "dm-list", friend_id: selectedFriend });
-    }
-  }, [dmWs.connected, selectedFriend]);
-
-  const sendMessage = useCallback(() => {
-    if (inputMessage.trim() && dmWs.connected && selectedFriend) {
-      dmWs.send({
-        action: "send-dm",
-        recipient: selectedFriend,
-        content: inputMessage.trim(),
+  const handleOpenDM = (recipientId, senderId, recipientSlug, senderSlug) => {
+    if (user.id === senderId) {
+      navigation.navigate("DirectMessages", {
+        friendId: recipientId,
+        friendSlug: recipientSlug,
       });
-      setInputMessage("");
+    } else if (user.id === recipientId) {
+      navigation.navigate("DirectMessages", {
+        friendId: senderId,
+        friendSlug: senderSlug,
+      });
     }
-  }, [inputMessage, dmWs.connected, selectedFriend, dmWs.send]);
-
-  const handleFriendSelection = useCallback((item) => {
-    setSelectedFriend(item.friend_id);
-    setTitle(item.friend_slug);
-    setDirectMessages([]); // Clear messages when switching friends
-  }, []);
-
-  const renderFriend = useCallback(
-    ({ item }) => (
-      <FriendsList
-        item={item}
-        setSelectedFriend={() => handleFriendSelection(item)}
-      />
-    ),
-    [handleFriendSelection]
-  );
-
-  const renderUser = useCallback(
-    ({ item }) => {
-      return <UserList user={item} />;
-    },
-    [friendsWs.send]
-  );
+  };
 
   const handleNavigate = (screen) => {
     navigation.navigate(screen);
   };
+
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#FFFFFF" />
+        <Text style={styles.loadingText}>Loading friends...</Text>
+      </View>
+    );
+  }
 
   return (
     <KeyboardAvoidingView
@@ -192,72 +93,45 @@ const FriendsPage = ({ navigation }) => {
         disabledLeft={true}
       />
       <ListItem
-        title={`Friend Requests (${pendingRequests.length})`}
+        title={`Friend Requests `}
         iconRight={"chevron-right"}
         handlePressLink={() => handleNavigate("Pending")}
         disabledRight={true}
         disabledLeft={true}
       />
-      <View style={styles.listContainer}>
-        <Text style={styles.sectionTitle}>Your Friends</Text>
-        <FlatList
-          data={friends}
-          renderItem={renderFriend}
-          keyExtractor={(item) => item.id.toString()}
-          ListEmptyComponent={
-            <View
+      <Text style={styles.sectionTitle}>Your Friends</Text>
+      <FlatList
+        data={friends}
+        renderItem={({ item }) => (
+          <FriendsList
+            item={item}
+            openDM={() =>
+              handleOpenDM(
+                item.recipient_id,
+                item.sender_id,
+                item.recipient_slug,
+                item.sender_slug
+              )
+            } // Pass as a function
+          />
+        )}
+        keyExtractor={(item) => item.id.toString()}
+        ListEmptyComponent={
+          <View
+            style={{
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Image
+              source={noFriends}
               style={{
-                justifyContent: "center",
-                alignItems: "center",
+                objectFit: "contain",
               }}
-            >
-              <Image
-                source={noFriends}
-                style={{
-                  objectFit: "contain",
-                }}
-              />
-            </View>
-          }
-        />
-      </View>
-      {/* {!selectedFriend ? (
-        <>
-          
-          {friends.length > 0 && (
-            <View style={styles.listContainer}>
-              <Text style={styles.sectionTitle}>Your Friends</Text>
-              <FlatList
-                data={friends}
-                renderItem={renderFriend}
-                keyExtractor={(item) => item.id.toString()}
-                ListEmptyComponent={
-                  <Text style={styles.emptyText}>No friends</Text>
-                }
-              />
-            </View>
-          )}
-        </>
-      ) : (
-        <DirectMessages
-          flatListRef={flatListRef}
-          directMessages={directMessages}
-          user={user}
-          setInputMessage={setInputMessage}
-          inputMessage={inputMessage}
-          sendMessage={sendMessage}
-          selectedFriend={selectedFriend}
-          connected={dmWs.connected}
-          setSelectedFriend={(id) => {
-            setSelectedFriend(id);
-            if (id === null) {
-              setDirectMessages([]);
-              setTitle("Messages");
-            }
-          }}
-          setTitle={setTitle}
-        />
-      )} */}
+            />
+          </View>
+        }
+      />
     </KeyboardAvoidingView>
   );
 };
@@ -270,11 +144,6 @@ const styles = StyleSheet.create({
     margin: 0,
   },
 
-  listContainer: {
-    flexShrink: 1,
-    minHeight: 200,
-    // maxHeight: 250,
-  },
   emptyText: {
     color: "#fafafa",
     fontSize: 16,
@@ -289,14 +158,17 @@ const styles = StyleSheet.create({
     marginVertical: 20,
     textAlign: "left",
   },
-  loader: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
+
+  loadingContainer: {
+    flex: 1,
+    backgroundColor: "#1B1B1B",
     justifyContent: "center",
     alignItems: "center",
+  },
+  loadingText: {
+    color: "#FFFFFF",
+    marginTop: 10,
+    fontSize: 16,
   },
 });
 
