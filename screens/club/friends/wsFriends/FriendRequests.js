@@ -10,8 +10,7 @@ import {
 import { useWebSocket } from "../../../../hooks";
 import { useSelector } from "react-redux";
 import PendingFriends from "./PendingFriendRequests";
-import { acceptFriendship, declineFriendRequest } from "./wsActions";
-import { warning, success } from "../../../../utils/toast";
+import { success } from "../../../../utils/toast";
 
 export default function FriendRequests() {
   const [friendRequestList, setFriendRequestList] = useState([]);
@@ -71,6 +70,25 @@ export default function FriendRequests() {
     },
     [friendsWs]
   );
+  const handleDeclineRequest = useCallback(
+    (senderId) => {
+      console.log("this is sender", senderId);
+      if (friendsWs && friendsWs.connected) {
+        try {
+          friendsWs.send({
+            action: "decline-friendship",
+            friend_id: senderId,
+          });
+          console.log(`Request declined ID: ${friendId}`);
+        } catch (error) {
+          console.error("Error from websocket request:", error);
+        }
+      } else {
+        console.error("friend websocket is not connected.");
+      }
+    },
+    [friendsWs]
+  );
 
   useEffect(() => {
     if (friendsWs.connected) {
@@ -109,7 +127,7 @@ export default function FriendRequests() {
                 key={user.id}
                 acceptFriendRequest={() => handleAcceptRequest(user.sender_id)}
                 rejectFriendRequest={() =>
-                  declineFriendRequest(friendsWs, user.sender_id)
+                  handleDeclineRequest(friendsWs, user.sender_id)
                 }
               />
             );

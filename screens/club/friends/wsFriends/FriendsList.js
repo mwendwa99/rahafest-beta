@@ -1,34 +1,31 @@
+import { useEffect, useState } from "react";
 import { Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Avatar } from "react-native-paper";
-import { TabBarItem } from "react-native-tab-view";
+import { useSelector } from "react-redux";
 
 export default function ({ item, setSelectedFriend }) {
-  // console.log(item);
+  const [title, setTitle] = useState("");
+  const { user } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (item) {
+      setTitle(
+        item.recipient_id === user.id ? item.sender_slug : item.recipient_slug
+      );
+    }
+  }, [item, user.id]);
+
   return (
     <TouchableOpacity
       style={styles.friendItem}
-      onPress={() => {
-        setSelectedFriend(item.friend);
-      }}
+      onPress={() => setSelectedFriend(item.friend)}
     >
       <Avatar.Text
         size={40}
-        label={
-          item?.friend_slug
-            ? item.friend_slug.charAt(0).toUpperCase()
-            : item?.user_slug
-            ? item.user_slug.charAt(0).toUpperCase()
-            : "?" // Fallback label if slug is null, empty, or undefined
-        }
+        label={title?.charAt(0).toUpperCase() || "?"} // Fallback if title is null/empty
         labelStyle={{ fontSize: 20 }}
       />
-      <Text style={styles.friendName}>
-        {item?.friend_slug
-          ? item.friend_slug
-          : item?.user_slug
-          ? item.user_slug
-          : "Anonymous"}
-      </Text>
+      <Text style={styles.friendName}>{title || "Anonymous"}</Text>
     </TouchableOpacity>
   );
 }
