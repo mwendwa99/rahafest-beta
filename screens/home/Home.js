@@ -17,11 +17,22 @@ import { useState, useEffect } from "react";
 import { Portal, Modal } from "react-native-paper";
 import { Asset } from "expo-asset";
 
-import { Text, Avatar } from "../../components";
+import { Text, Avatar, AdCarousel } from "../../components";
 
 const background = require("../../assets/background.png");
 const logo = require("../../assets/logo.png");
 const blob = require("../../assets/blob.png");
+
+const ads = [
+  {
+    image: require("../../assets/embassy.png"),
+    title: "Found in Translation: The Treasure of the Italian Language",
+    description:
+      "The Embassy of Italy and the Italian Cultural Institute of Nairobi are pleased to invite you to a special event organized to celebrate this important occasion.",
+    is_active: true,
+    url: "https://forms.gle/ypPWEa5sgXMmSnGi6",
+  },
+];
 
 export default function Home({ navigation }) {
   const [visible, setVisible] = useState(false);
@@ -54,6 +65,10 @@ export default function Home({ navigation }) {
             <Pressable onPress={() => navigation.navigate("Settings")}>
               <Avatar icon="menu" color={"white"} size={50} bgColor="#212529" />
             </Pressable>
+          </View>
+
+          <View style={styles.ads}>
+            <AdCarousel data={ads} />
           </View>
 
           <View style={styles.section}>
@@ -180,6 +195,14 @@ const styles = StyleSheet.create({
     top: 50,
     right: 20,
     zIndex: 100,
+  },
+  ads: {
+    position: "absolute",
+    top: 100,
+    zIndex: 100,
+    // backgroundColor: "white",
+    height: 100,
+    width: Dimensions.get("window").width,
   },
   row: {
     display: "flex",

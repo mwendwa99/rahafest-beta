@@ -18,8 +18,6 @@ export default function News() {
   const { news, loading, error } = useSelector((state) => state.news);
   const dispatch = useDispatch();
 
-  console.log(news);
-
   useEffect(() => {
     dispatch(fetchNews());
   }, [dispatch]);
