@@ -1,28 +1,34 @@
-import { StyleSheet, View, FlatList, Alert } from "react-native";
+import { StyleSheet, View, FlatList, Alert, Dimensions } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
-import { NavCard, Text } from "../../../components";
+import { AdCarousel, NavCard, Text } from "../../../components";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { fetchUser } from "../../../redux/auth/authActions";
 import { StatusBar } from "expo-status-bar";
-import WebSocketChat from "../chat/wsChat";
 
 const navigationItems = [
   { id: "1", icon: "globe", title: "Live Chat", link: "Live" },
   { id: "2", icon: "inbox", title: "Messages", link: "Friends" },
-  // { id: "3", icon: "tags", title: "Merchandise", link: "Merchandise" },
-  // { id: "4", icon: "camera-retro", title: "Gallery", link: "Gallery" },
   { id: "5", icon: "user", title: "Account", link: "Account" },
 ];
 
 const rahaClubDescription =
   "Welcome to Raha Club, your exclusive RahaFest companion";
 
+const ads = [
+  {
+    image: require("../../../assets/embassy.png"),
+    title: "Found in Translation: The Treasure of the Italian Language",
+    description:
+      "The Embassy of Italy and the Italian Cultural Institute of Nairobi are pleased to invite you to a special event organized to celebrate this important occasion.",
+    is_active: true,
+    url: "https://forms.gle/ypPWEa5sgXMmSnGi6",
+  },
+];
+
 export default function Landing({ navigation }) {
   const { user, token, loading } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
-
-  // console.log(user);
 
   useEffect(() => {
     if (!token) {
@@ -52,17 +58,14 @@ export default function Landing({ navigation }) {
     );
   }
 
-  // console.log(user);
-
   return (
     <View style={styles.container}>
-      <View>
+      <View style={{ padding: 10 }}>
         <Text
           value={`Hello, ${user?.first_name || ""}`}
           variant="subtitle"
           color="#000"
         />
-
         <Text value={rahaClubDescription} variant="body" color="#000" />
       </View>
 
@@ -81,7 +84,11 @@ export default function Landing({ navigation }) {
         contentContainerStyle={styles.grid}
       />
 
-      {/* <WebSocketChat /> */}
+      {/* Place Ads View directly after the FlatList */}
+      <View style={styles.ads}>
+        <AdCarousel data={ads} />
+      </View>
+
       <StatusBar style="light" />
     </View>
   );
@@ -90,7 +97,6 @@ export default function Landing({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
   },
   loader: {
     flex: 1,
@@ -101,6 +107,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   cardList: {
-    marginTop: 24,
+    marginTop: 20,
+  },
+  ads: {
+    height: 200,
+    marginVertical: 20,
+    width: Dimensions.get("window").width,
   },
 });
