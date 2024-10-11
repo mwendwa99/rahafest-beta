@@ -25,7 +25,7 @@ const blob = require("../../assets/blob.png");
 
 const ads = [
   {
-    image: require("../../assets/embassy.png"),
+    image: require("../../assets/sns.gif"),
     title: "Found in Translation: The Treasure of the Italian Language",
     description:
       "The Embassy of Italy and the Italian Cultural Institute of Nairobi are pleased to invite you to a special event organized to celebrate this important occasion.",

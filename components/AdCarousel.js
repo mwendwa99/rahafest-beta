@@ -16,7 +16,6 @@ const styles = {
   },
   itemContainer: {
     flex: 1,
-    borderWidth: 1,
     justifyContent: "center",
   },
 };
