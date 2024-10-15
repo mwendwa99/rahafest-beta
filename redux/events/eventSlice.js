@@ -4,6 +4,7 @@ import {
   fetchTicketTypes,
   createInvoice,
   triggerSTK,
+  fetchAds,
 } from "./eventActions";
 
 const initialState = {
@@ -14,6 +15,7 @@ const initialState = {
   error: null,
   invoiceError: null,
   paymentData: null,
+  ads: [],
 };
 
 const eventSlice = createSlice({
@@ -79,6 +81,19 @@ const eventSlice = createSlice({
       .addCase(triggerSTK.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+      .addCase(fetchAds.pending, (state, action) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchAds.fulfilled, (state, action) => {
+        state.ads = action.payload;
+        state.error = null;
+        state.loading = false;
+      })
+      .addCase(fetchAds.rejected, (state, action) => {
+        state.error = action.payload;
+        state.loading = false;
       });
   },
 });

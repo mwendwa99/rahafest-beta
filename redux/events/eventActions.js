@@ -70,3 +70,15 @@ export const triggerSTK = createAsyncThunk(
     }
   }
 );
+
+export const fetchAds = createAsyncThunk(
+  "app/fetchAds",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await ticketApi.get("ads");
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
