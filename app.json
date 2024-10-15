@@ -2,7 +2,7 @@
   "expo": {
     "name": "Raha App",
     "slug": "rahafest-beta",
-    "version": "7.0.1",
+    "version": "7.0.2",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -15,7 +15,7 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.mwendwa99.rahafestbeta",
-      "buildNumber": "2",
+      "buildNumber": "3",
       "config": {
         "googleMapsApiKey": "AIzaSyD3kyMh4P3uCTWP-tlbi4Lq2aYdFnvVSpA"
       }
@@ -26,7 +26,7 @@
         "backgroundColor": "#212529"
       },
       "package": "com.mwendwa99.rahafestbeta",
-      "versionCode": 18,
+      "versionCode": 19,
       "config": {
         "googleMaps": {
           "apiKey": "AIzaSyD3kyMh4P3uCTWP-tlbi4Lq2aYdFnvVSpA"
