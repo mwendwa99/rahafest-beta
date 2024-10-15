@@ -18,25 +18,33 @@ import { Portal, Modal } from "react-native-paper";
 import { Asset } from "expo-asset";
 
 import { Text, Avatar, AdCarousel } from "../../components";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchAds } from "../../redux/events/eventActions";
 
 const background = require("../../assets/background.png");
 const logo = require("../../assets/logo.png");
 const blob = require("../../assets/blob.png");
 
-const ads = [
-  {
-    image: require("../../assets/sns.gif"),
-    title: "Found in Translation: The Treasure of the Italian Language",
-    description:
-      "The Embassy of Italy and the Italian Cultural Institute of Nairobi are pleased to invite you to a special event organized to celebrate this important occasion.",
-    is_active: false,
-    url: "https://forms.gle/ypPWEa5sgXMmSnGi6",
-  },
-];
+// const ads = [
+//   {
+//     image: require("../../assets/sns.gif"),
+//     title: "Found in Translation: The Treasure of the Italian Language",
+//     description:
+//       "The Embassy of Italy and the Italian Cultural Institute of Nairobi are pleased to invite you to a special event organized to celebrate this important occasion.",
+//     is_active: true,
+//     url: "https://forms.gle/ypPWEa5sgXMmSnGi6",
+//   },
+// ];
 
 export default function Home({ navigation }) {
   const [visible, setVisible] = useState(false);
   const [isBackgroundReady, setIsBackgroundReady] = useState(false);
+  const { ads } = useSelector((state) => state.events);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchAds());
+  }, []);
 
   const toggleModal = () => setVisible(!visible);
 

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Dimensions, Image, Linking, View } from "react-native";
+import { Dimensions, Image, Linking, Text, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Carousel from "react-native-reanimated-carousel";
 
@@ -22,7 +22,9 @@ const styles = {
 
 function AdCarousel({ data }) {
   const handlePress = (url) => {
-    Linking.openURL(url);
+    if (url && url !== "") {
+      Linking.openURL(url);
+    }
   };
 
   return (
@@ -42,6 +44,7 @@ function AdCarousel({ data }) {
           return (
             <View style={styles.itemContainer}>
               <TouchableOpacity onPress={() => handlePress(item.url)}>
+                <Text style={{ color: "white" }}>{item.image}</Text>
                 <Image source={item.image} style={{ resizeMode: "cover" }} />
               </TouchableOpacity>
             </View>
