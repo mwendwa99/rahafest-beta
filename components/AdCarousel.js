@@ -44,7 +44,7 @@ function AdCarousel({ data }) {
           return (
             <View style={styles.itemContainer}>
               <TouchableOpacity onPress={() => handlePress(item.url)}>
-                <Text style={{ color: "white" }}>{item.image}</Text>
+                {/* <Text>{item.image}</Text> */}
                 <Image source={item.image} style={{ resizeMode: "cover" }} />
               </TouchableOpacity>
             </View>
