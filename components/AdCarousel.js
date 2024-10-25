@@ -40,14 +40,18 @@ function AdCarousel({ data }) {
         height={100} // Match the ads container height
         autoPlay={true}
         data={data}
+        enabled={false}
         style={styles.carousel}
-        scrollAnimationDuration={1000}
+        scrollAnimationDuration={3000}
         renderItem={({ item }) => {
           if (!item.is_active) return null; // Early return for inactive items
 
           return (
             <View style={styles.itemContainer}>
-              <TouchableOpacity onPress={() => handlePress(item.url)}>
+              <TouchableOpacity
+                disabled={!item.url} // Disable if url is undefined, null, or empty
+                onPress={() => handlePress(item.url)}
+              >
                 <Image
                   source={{ uri: item.image }}
                   style={styles.image} // Add the defined style here
