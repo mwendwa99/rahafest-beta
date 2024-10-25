@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Text, View, Button, Platform } from "react-native";
+import { Text, View, Button, Platform, StatusBar } from "react-native";
 import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
 import Constants from "expo-constants";
@@ -79,6 +79,7 @@ export default function NotificationsContainer() {
           await schedulePushNotification();
         }}
       />
+      <StatusBar barStyle={"dark-content"} />
     </View>
   );
 }
