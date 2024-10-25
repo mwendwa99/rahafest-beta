@@ -10,8 +10,7 @@ import { RootSiblingParent } from "react-native-root-siblings";
 import { store, persistor } from "./redux/store";
 import { PersistGate } from "redux-persist/integration/react";
 import splash from "./assets/splash.png";
-import { ImageBackground } from "react-native";
-import { StatusBar } from "expo-status-bar";
+import { ImageBackground, StatusBar } from "react-native";
 import { theme } from "./theme";
 
 import NotificationsContainer from "./Notifications";
@@ -34,14 +33,15 @@ export default function App() {
           <PaperProvider theme={theme}>
             <SafeAreaProvider>
               <RootSiblingParent>
-                <NotificationsContainer />
-                {/* <Main /> */}
+                <NotificationsContainer>
+                  <Main />
+                </NotificationsContainer>
               </RootSiblingParent>
             </SafeAreaProvider>
           </PaperProvider>
         </NavigationContainer>
       </PersistGate>
-      <StatusBar style="light" />
+      <StatusBar barStyle="light-content" />
     </Provider>
   );
 }
