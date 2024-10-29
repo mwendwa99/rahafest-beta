@@ -1,8 +1,16 @@
-import { useState, useEffect, useRef } from "react";
-import { Text, View, Button, Platform, StatusBar } from "react-native";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  createContext,
+  useContext,
+} from "react";
+import { View, Platform } from "react-native";
 import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
 import Constants from "expo-constants";
+
+const NotificationContext = createContext();
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -11,6 +19,10 @@ Notifications.setNotificationHandler({
     shouldSetBadge: true,
   }),
 });
+
+export function useNotification() {
+  return useContext(NotificationContext);
+}
 
 export default function NotificationsContainer({ children }) {
   const [expoPushToken, setExpoPushToken] = useState("");
@@ -50,38 +62,9 @@ export default function NotificationsContainer({ children }) {
   }, []);
 
   return (
-    <View style={{ flex: 1 }}>{children}</View>
-    // <View
-    //   style={{
-    //     flex: 1,
-    //     alignItems: "center",
-    //     justifyContent: "space-around",
-    //   }}
-    // >
-    //   <Text>Your expo push token: {expoPushToken}</Text>
-    //   <Text>{`Channels: ${JSON.stringify(
-    //     channels.map((c) => c.id),
-    //     null,
-    //     2
-    //   )}`}</Text>
-    //   <View style={{ alignItems: "center", justifyContent: "center" }}>
-    //     <Text>
-    //       Title: {notification && notification.request.content.title}{" "}
-    //     </Text>
-    //     <Text>Body: {notification && notification.request.content.body}</Text>
-    //     <Text>
-    //       Data:{" "}
-    //       {notification && JSON.stringify(notification.request.content.data)}
-    //     </Text>
-    //   </View>
-    //   <Button
-    //     title="Press to schedule a notification"
-    //     onPress={async () => {
-    //       await schedulePushNotification();
-    //     }}
-    //   />
-    //   <StatusBar barStyle={"dark-content"} />
-    // </View>
+    <NotificationContext.Provider value={{ expoPushToken }}>
+      <View style={{ flex: 1 }}>{children}</View>
+    </NotificationContext.Provider>
   );
 }
 
