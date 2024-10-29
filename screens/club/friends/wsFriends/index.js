@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import {
   View,
   Text,
@@ -10,18 +10,24 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useSelector } from "react-redux";
+import { useFocusEffect } from "@react-navigation/native";
 
 import FriendsList from "./FriendsList";
 import { ListItem } from "../../../../components";
-
 import { useWebSocket } from "../../../../hooks";
 
 const noFriends = require("../../../../assets/no-friends.png");
 
 const FriendsPage = ({ navigation }) => {
   const [friends, setFriends] = useState([]);
-  const { token, user } = useSelector((state) => state.auth);
   const [isLoading, setIsLoading] = useState(true);
+  const { token, user } = useSelector((state) => state.auth);
+
+  // Memoize the WebSocket URL to prevent unnecessary re-renders
+  const wsUrl = useMemo(
+    () => `wss://rahaclub.rahafest.com/ws/friendships/?token=${token}`,
+    [token]
+  );
 
   const handleFriendsMessage = useCallback((data) => {
     switch (data.action) {
@@ -29,9 +35,8 @@ const FriendsPage = ({ navigation }) => {
         setFriends(data.friendships);
         setIsLoading(false);
         break;
-
       case "error":
-        console.log("Error from friends server:", data);
+        console.error("Error from friends server:", data);
         setIsLoading(false);
         break;
       default:
@@ -41,34 +46,76 @@ const FriendsPage = ({ navigation }) => {
     }
   }, []);
 
-  const friendsWs = useWebSocket(
-    `wss://rahaclub.rahafest.com/ws/friendships/?token=${token}`,
-    handleFriendsMessage
+  const friendsWs = useWebSocket(wsUrl, handleFriendsMessage);
+
+  // Fetch friends list when the screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      setIsLoading(true);
+      if (friendsWs.connected) {
+        friendsWs.send({ action: "accepted-list" });
+      }
+
+      // Cleanup function
+      return () => {
+        // Optional: Clear friends data when leaving the screen
+        // setFriends([]);
+      };
+    }, [friendsWs.connected])
   );
 
-  useEffect(() => {
-    if (friendsWs.connected) {
-      friendsWs.send({ action: "accepted-list" });
-    }
-  }, [friendsWs.connected]);
+  const handleOpenDM = useCallback(
+    (recipientId, senderId, recipientSlug, senderSlug) => {
+      const params =
+        user.id === senderId
+          ? {
+              friendId: recipientId,
+              friendSlug: recipientSlug,
+            }
+          : {
+              friendId: senderId,
+              friendSlug: senderSlug,
+            };
 
-  const handleOpenDM = (recipientId, senderId, recipientSlug, senderSlug) => {
-    if (user.id === senderId) {
-      navigation.navigate("DirectMessages", {
-        friendId: recipientId,
-        friendSlug: recipientSlug,
-      });
-    } else if (user.id === recipientId) {
-      navigation.navigate("DirectMessages", {
-        friendId: senderId,
-        friendSlug: senderSlug,
-      });
-    }
-  };
+      navigation.navigate("DirectMessages", params);
+    },
+    [user.id, navigation]
+  );
 
-  const handleNavigate = (screen) => {
-    navigation.navigate(screen);
-  };
+  const handleNavigate = useCallback(
+    (screen) => {
+      navigation.navigate(screen);
+    },
+    [navigation]
+  );
+
+  const renderEmptyComponent = useCallback(
+    () => (
+      <View style={styles.emptyContainer}>
+        <Image source={noFriends} style={styles.emptyImage} />
+      </View>
+    ),
+    []
+  );
+
+  const renderFriendItem = useCallback(
+    ({ item }) => (
+      <FriendsList
+        item={item}
+        openDM={() =>
+          handleOpenDM(
+            item.recipient_id,
+            item.sender_id,
+            item.recipient_slug,
+            item.sender_slug
+          )
+        }
+      />
+    ),
+    [handleOpenDM]
+  );
+
+  const keyExtractor = useCallback((item) => item.id.toString(), []);
 
   if (isLoading) {
     return (
@@ -82,55 +129,35 @@ const FriendsPage = ({ navigation }) => {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 5 : 0} // Adjust offset for iOS devices
+      keyboardVerticalOffset={Platform.OS === "ios" ? 5 : 0}
       style={styles.container}
     >
       <ListItem
         title="Add Friends"
-        iconRight={"chevron-right"}
+        iconRight="chevron-right"
         handlePressLink={() => handleNavigate("Users")}
-        disabledRight={true}
-        disabledLeft={true}
+        disabledRight
+        disabledLeft
       />
       <ListItem
-        title={`Friend Requests `}
-        iconRight={"chevron-right"}
+        title="Friend Requests"
+        iconRight="chevron-right"
         handlePressLink={() => handleNavigate("Pending")}
-        disabledRight={true}
-        disabledLeft={true}
+        disabledRight
+        disabledLeft
       />
-      <Text style={styles.sectionTitle}>Your Friends</Text>
+      <Text style={styles.sectionTitle}>
+        Your Friends ({friends?.length || 0})
+      </Text>
       <FlatList
         data={friends}
-        renderItem={({ item }) => (
-          <FriendsList
-            item={item}
-            openDM={() =>
-              handleOpenDM(
-                item.recipient_id,
-                item.sender_id,
-                item.recipient_slug,
-                item.sender_slug
-              )
-            } // Pass as a function
-          />
-        )}
-        keyExtractor={(item) => item.id.toString()}
-        ListEmptyComponent={
-          <View
-            style={{
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <Image
-              source={noFriends}
-              style={{
-                objectFit: "contain",
-              }}
-            />
-          </View>
-        }
+        renderItem={renderFriendItem}
+        keyExtractor={keyExtractor}
+        ListEmptyComponent={renderEmptyComponent}
+        removeClippedSubviews={true}
+        maxToRenderPerBatch={10}
+        windowSize={5}
+        initialNumToRender={10}
       />
     </KeyboardAvoidingView>
   );
@@ -143,14 +170,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     margin: 0,
   },
-
-  emptyText: {
-    color: "#fafafa",
-    fontSize: 16,
-    textAlign: "center",
-    padding: 20,
+  emptyContainer: {
+    justifyContent: "center",
+    alignItems: "center",
   },
-
+  emptyImage: {
+    objectFit: "contain",
+  },
   sectionTitle: {
     color: "#fafafa",
     fontSize: 16,
@@ -158,7 +184,6 @@ const styles = StyleSheet.create({
     marginVertical: 20,
     textAlign: "left",
   },
-
   loadingContainer: {
     flex: 1,
     backgroundColor: "#1B1B1B",
