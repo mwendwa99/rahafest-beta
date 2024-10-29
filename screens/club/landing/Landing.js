@@ -1,11 +1,24 @@
-import { StyleSheet, View, FlatList, Alert, Dimensions } from "react-native";
+import { useEffect, useState } from "react";
+import {
+  StyleSheet,
+  View,
+  FlatList,
+  Alert,
+  Dimensions,
+  Platform,
+} from "react-native";
+
+import { useDispatch, useSelector } from "react-redux";
+import { fetchUser } from "../../../redux/auth/authActions";
+import { fetchAds } from "../../../redux/events/eventActions";
+import { authInstance } from "../../../services/api.service";
+import { useNotification } from "../../../Notifications";
+
 import { ActivityIndicator } from "react-native-paper";
 import { AdCarousel, NavCard, Text } from "../../../components";
-import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
-import { fetchUser } from "../../../redux/auth/authActions";
+
+import * as Device from "expo-device";
 import { StatusBar } from "expo-status-bar";
-import { fetchAds } from "../../../redux/events/eventActions";
 
 const navigationItems = [
   { id: "1", icon: "globe", title: "Live Chat", link: "Live" },
@@ -16,21 +29,13 @@ const navigationItems = [
 const rahaClubDescription =
   "Welcome to Raha Club, your exclusive RahaFest companion";
 
-// const ads = [
-//   {
-//     image: require("../../../assets/sns.gif"),
-//     title: "Found in Translation: The Treasure of the Italian Language",
-//     description:
-//       "The Embassy of Italy and the Italian Cultural Institute of Nairobi are pleased to invite you to a special event organized to celebrate this important occasion.",
-//     is_active: false,
-//     url: "https://forms.gle/ypPWEa5sgXMmSnGi6",
-//   },
-// ];
-
 export default function Landing({ navigation }) {
+  // Move ALL hooks to the top, before any conditional logic
+  const { expoPushToken } = useNotification();
   const { user, token, loading } = useSelector((state) => state.auth);
-  const dispatch = useDispatch();
   const { ads } = useSelector((state) => state.events);
+  const dispatch = useDispatch();
+  const [isDeviceRegistered, setIsDeviceRegistered] = useState(false);
 
   useEffect(() => {
     dispatch(fetchAds());
@@ -48,6 +53,33 @@ export default function Landing({ navigation }) {
     }
   }, [token]);
 
+  useEffect(() => {
+    if (user?.id && expoPushToken && !isDeviceRegistered) {
+      console.info("Attempting device registration...");
+
+      authInstance
+        .post("device", {
+          expo_token: expoPushToken,
+          device_name: Device.deviceName,
+          user_id: user.id,
+          device_type: Device.osName.toLowerCase(),
+        })
+        .then((response) => {
+          console.info("Device registered:", JSON.stringify(response.data));
+          setIsDeviceRegistered(true);
+        })
+        .catch((error) => {
+          console.error("Failed to register device:", error);
+          // Only set registered to true if it's not a server error
+          // This allows retrying on actual failures
+          if (error.response?.status === 409) {
+            // Conflict - device already registered
+            setIsDeviceRegistered(true);
+          }
+        });
+    }
+  }, [user?.id, expoPushToken, isDeviceRegistered]);
+
   const handlePress = (link) => {
     if (link === null || link === undefined) {
       Alert.alert("Coming Soon!", "Stay tuned for updates!");
@@ -56,6 +88,7 @@ export default function Landing({ navigation }) {
     }
   };
 
+  // Move the conditional render AFTER all hooks
   if (loading) {
     return (
       <View style={styles.loader}>
@@ -90,7 +123,6 @@ export default function Landing({ navigation }) {
         contentContainerStyle={styles.grid}
       />
 
-      {/* Place Ads View directly after the FlatList */}
       <View style={styles.ads}>
         <AdCarousel data={ads} />
       </View>

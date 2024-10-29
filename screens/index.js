@@ -12,7 +12,7 @@ import Merchandise from "./club/landing/Merchandise";
 
 const BottomTab = createBottomTabNavigator();
 
-export default function App() {
+export default function App({ expoToken }) {
   const appRoutes = [
     {
       key: "HomeNav",
@@ -123,6 +123,7 @@ function AppNav({ routes }) {
                 />
               ),
             }}
+            initialParams={route.initialParams}
           />
         ))}
     </BottomTab.Navigator>

@@ -13,8 +13,6 @@ import splash from "./assets/splash.png";
 import { ImageBackground, StatusBar } from "react-native";
 import { theme } from "./theme";
 
-import NotificationsContainer from "./Notifications";
-
 export default function App() {
   return (
     <Provider store={store}>
@@ -33,9 +31,7 @@ export default function App() {
           <PaperProvider theme={theme}>
             <SafeAreaProvider>
               <RootSiblingParent>
-                <NotificationsContainer>
-                  <Main />
-                </NotificationsContainer>
+                <Main />
               </RootSiblingParent>
             </SafeAreaProvider>
           </PaperProvider>
