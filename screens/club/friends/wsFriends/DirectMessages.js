@@ -1,10 +1,4 @@
-import React, {
-  useState,
-  useEffect,
-  useRef,
-  useCallback,
-  useLayoutEffect,
-} from "react";
+import React, { useState, useRef, useCallback, useMemo } from "react";
 import {
   View,
   Text,
@@ -23,13 +17,34 @@ import { useSelector } from "react-redux";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useWebSocket } from "../../../../hooks";
 
+const MESSAGES_BATCH_SIZE = 20;
+
 const DirectMessages = ({ route }) => {
   const { friendId, friendSlug } = route.params;
   const [directMessages, setDirectMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState("");
-  const { token, user } = useSelector((state) => state.auth);
   const [isLoading, setIsLoading] = useState(true);
+  const { token, user } = useSelector((state) => state.auth);
+
+  // Use ref instead of state for pending message to avoid re-renders
+  const pendingMessageRef = useRef(null);
+
   const flatListRef = useRef(null);
+  const shouldScrollToBottom = useRef(true);
+
+  const wsUrl = useMemo(
+    () =>
+      friendId
+        ? `wss://rahaclub.rahafest.com/ws/direct_messages/?token=${token}`
+        : null,
+    [friendId, token]
+  );
+
+  const scrollToBottom = useCallback((animated = true) => {
+    if (flatListRef.current && shouldScrollToBottom.current) {
+      flatListRef.current.scrollToEnd({ animated });
+    }
+  }, []);
 
   const generateUniqueKey = useCallback(() => {
     return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -47,69 +62,90 @@ const DirectMessages = ({ route }) => {
             }));
           setDirectMessages(sortedMessages);
           setIsLoading(false);
+          shouldScrollToBottom.current = true;
           break;
+
         case "send-dm":
-          setDirectMessages((prevMessages) => [
-            ...prevMessages,
-            {
-              ...data.message,
-              uniqueKey: `${prevMessages.id}-${generateUniqueKey()}`,
-            },
-          ]);
-          setIsLoading(false);
+          setDirectMessages((prevMessages) => {
+            const pendingId = pendingMessageRef.current;
+            const newMessages = prevMessages.map((msg) =>
+              msg.id === pendingId
+                ? {
+                    ...data.message,
+                    uniqueKey: `${data.message.id}-${generateUniqueKey()}`,
+                  }
+                : msg
+            );
+            shouldScrollToBottom.current = true;
+            return newMessages;
+          });
+          pendingMessageRef.current = null;
           break;
+
         case "error":
-          console.warn("Error from DM server:", data);
+          console.error("Error from DM server:", data);
+          setDirectMessages((prev) =>
+            prev.filter((msg) => msg.id !== pendingMessageRef.current)
+          );
+          pendingMessageRef.current = null;
           setIsLoading(false);
           break;
+
         default:
-          console.warn("Unknown DM action:", data);
+          console.warn("Unknown DM action:", data.action);
           setIsLoading(false);
           break;
       }
     },
     [generateUniqueKey]
-  );
+  ); // Removed pendingMessageId from dependencies
 
-  const dmWs = useWebSocket(
-    friendId
-      ? `wss://rahaclub.rahafest.com/ws/direct_messages/?token=${token}`
-      : null,
-    handleDMResponse
-  );
+  const dmWs = useWebSocket(wsUrl, handleDMResponse);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (dmWs.connected && friendId) {
       setDirectMessages([]);
       dmWs.send({ action: "dm-list", friend_id: friendId });
     }
   }, [dmWs.connected, friendId]);
 
-  useLayoutEffect(() => {
-    if (flatListRef.current) {
-      flatListRef.current.scrollToEnd({ animated: true });
-    }
-  }, [directMessages]);
+  React.useEffect(() => {
+    scrollToBottom();
+  }, [directMessages, scrollToBottom]);
 
   const sendMessage = useCallback(() => {
     if (inputMessage.trim() && dmWs.connected) {
+      const trimmedMessage = inputMessage.trim();
+      const tempId = `temp-${generateUniqueKey()}`;
+
+      const newMessage = {
+        id: tempId,
+        uniqueKey: generateUniqueKey(),
+        content: trimmedMessage,
+        sender: user.id,
+        timestamp: new Date().toISOString(),
+      };
+
+      pendingMessageRef.current = tempId;
+      setDirectMessages((prev) => [...prev, newMessage]);
+
       const messageData = {
         action: "send-dm",
-        content: inputMessage.trim(),
+        content: trimmedMessage,
         recipient: friendId,
       };
 
       dmWs.send(messageData);
       setInputMessage("");
     }
-  }, [inputMessage, dmWs.connected, friendId]);
+  }, [inputMessage, dmWs.connected, friendId, user.id, generateUniqueKey]);
 
-  const renderMessage = useCallback(
-    ({ item }) => {
+  const renderMessage = useMemo(() => {
+    return ({ item }) => {
       const isCurrentUser = item.sender === user.id;
-      const body = item?.content || "";
-      const friendInitials = friendSlug.charAt(0) || "";
-      const userInitials = user?.user_slug.charAt(0) || "";
+      const friendInitials = friendSlug?.charAt(0).toUpperCase() || "?";
+      const userInitials = user?.user_slug?.charAt(0).toUpperCase() || "?";
+      const isPending = item.id === pendingMessageRef.current;
 
       return (
         <View
@@ -121,10 +157,11 @@ const DirectMessages = ({ route }) => {
           <Avatar.Text
             size={40}
             label={isCurrentUser ? userInitials : friendInitials}
-            labelStyle={{ fontSize: 20 }}
-            style={
-              isCurrentUser ? styles.currentUserAvatar : styles.otherUserAvatar
-            }
+            labelStyle={styles.avatarLabel}
+            style={[
+              styles.avatar,
+              isCurrentUser ? styles.currentUserAvatar : styles.otherUserAvatar,
+            ]}
           />
           <View style={styles.messageContent}>
             <Text
@@ -133,14 +170,17 @@ const DirectMessages = ({ route }) => {
                 isCurrentUser ? styles.currentUserText : styles.otherUserText,
               ]}
             >
-              {body}
+              {item.content}
             </Text>
+            {isPending && <Text style={styles.sendingText}>sending...</Text>}
           </View>
         </View>
       );
-    },
-    [user.id, friendSlug]
-  );
+    };
+  }, [user.id, friendSlug]);
+
+  // Rest of the component remains the same...
+  const keyExtractor = useCallback((item) => item.uniqueKey, []);
 
   if (isLoading) {
     return (
@@ -156,13 +196,21 @@ const DirectMessages = ({ route }) => {
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         keyboardVerticalOffset={Platform.OS === "ios" ? 80 : 80}
-        style={{ flex: 1 }}
+        style={styles.keyboardView}
       >
         <FlatList
           ref={flatListRef}
           data={directMessages}
-          keyExtractor={(item) => item.uniqueKey}
+          keyExtractor={keyExtractor}
           renderItem={renderMessage}
+          maxToRenderPerBatch={MESSAGES_BATCH_SIZE}
+          windowSize={5}
+          initialNumToRender={MESSAGES_BATCH_SIZE}
+          onContentSizeChange={() => scrollToBottom(false)}
+          onLayout={() => scrollToBottom(false)}
+          maintainVisibleContentPosition={{
+            minIndexForVisible: 0,
+          }}
         />
         <View style={styles.inputContainer}>
           <TextInput
@@ -175,40 +223,38 @@ const DirectMessages = ({ route }) => {
             returnKeyType="send"
           />
           <TouchableOpacity
-            style={styles.sendButton}
+            style={[
+              styles.sendButton,
+              !dmWs.connected && styles.sendButtonDisabled,
+            ]}
             onPress={sendMessage}
             disabled={!dmWs.connected}
           >
             <MaterialCommunityIcons name="send" size={20} color="#fafafa" />
           </TouchableOpacity>
         </View>
-        <StatusBar barStyle={"light-content"} animated={true} />
       </KeyboardAvoidingView>
+      <StatusBar barStyle="light-content" animated={true} />
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  // ... existing styles ...
+  sendingText: {
+    color: "#999",
+    fontSize: 12,
+    marginTop: 4,
+    fontStyle: "italic",
+    alignSelf: "flex-end",
+  },
   container: {
     flex: 1,
     backgroundColor: "#1B1B1B",
     paddingTop: StatusBar.currentHeight,
-    // paddingHorizontal: 10,
   },
-  statusIndicator: {
-    height: 10,
-    width: 10,
-    borderRadius: 5,
-    marginRight: 5,
-  },
-  inputContainer: {
-    flexDirection: "row",
-    margin: 10,
-  },
-  statusText: {
-    color: "#fafafa",
-    fontSize: 18,
-    fontWeight: "700",
+  keyboardView: {
+    flex: 1,
   },
   messageContainer: {
     margin: 10,
@@ -224,10 +270,6 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     justifyContent: "center",
   },
-  sender: {
-    fontWeight: "bold",
-    marginBottom: 2,
-  },
   messageText: {
     flexWrap: "wrap",
   },
@@ -239,12 +281,14 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     overflow: "hidden",
     width: "auto",
-    // maxWidth: 200,
     alignSelf: "flex-end",
   },
   otherUserText: {
     textAlign: "left",
     color: "#fafafa",
+    backgroundColor: "#333",
+    padding: 10,
+    borderRadius: 10,
   },
   currentUserAvatar: {
     marginLeft: 10,
@@ -252,7 +296,13 @@ const styles = StyleSheet.create({
   otherUserAvatar: {
     marginRight: 10,
   },
-
+  avatarLabel: {
+    fontSize: 20,
+  },
+  inputContainer: {
+    flexDirection: "row",
+    margin: 10,
+  },
   input: {
     flex: 1,
     borderWidth: 1,
@@ -273,7 +323,9 @@ const styles = StyleSheet.create({
     height: 50,
     width: 50,
   },
-
+  sendButtonDisabled: {
+    opacity: 0.5,
+  },
   loadingContainer: {
     flex: 1,
     backgroundColor: "#1B1B1B",
