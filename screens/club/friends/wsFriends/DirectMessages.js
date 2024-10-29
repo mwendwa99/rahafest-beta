@@ -40,9 +40,16 @@ const DirectMessages = ({ route }) => {
     [friendId, token]
   );
 
-  const scrollToBottom = useCallback((animated = true) => {
+  // const scrollToBottom = useCallback((animated = true) => {
+  //   if (flatListRef.current && shouldScrollToBottom.current) {
+  //     flatListRef.current.scrollToEnd({ animated });
+  //   }
+  // }, []);
+  const scrollToBottom = useCallback(() => {
     if (flatListRef.current && shouldScrollToBottom.current) {
-      flatListRef.current.scrollToEnd({ animated });
+      setTimeout(() => {
+        flatListRef.current.scrollToEnd({ animated: true });
+      }, 300);
     }
   }, []);
 
