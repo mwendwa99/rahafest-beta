@@ -46,9 +46,9 @@ const DirectMessages = ({ route }) => {
   //   }
   // }, []);
   const scrollToBottom = useCallback(() => {
-    if (flatListRef.current && shouldScrollToBottom.current) {
+    if (flatListRef?.current && shouldScrollToBottom?.current) {
       setTimeout(() => {
-        flatListRef.current.scrollToEnd({ animated: true });
+        flatListRef?.current?.scrollToEnd({ animated: true });
       }, 300);
     }
   }, []);
@@ -99,6 +99,7 @@ const DirectMessages = ({ route }) => {
           break;
 
         default:
+          console.log(data);
           console.warn("Unknown DM action:", data.action);
           setIsLoading(false);
           break;

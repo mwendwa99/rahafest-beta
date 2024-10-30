@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useRef, useCallback, memo } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useLayoutEffect,
+} from "react";
 import {
   View,
   Text,
@@ -14,44 +20,9 @@ import {
 } from "react-native";
 import { Avatar } from "react-native-paper";
 import { useSelector } from "react-redux";
+// import { SafeAreaView } from "react-native-safe-area-context";
+// import { StatusBar } from "expo-status-bar";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-
-// Memoized message component
-const Message = memo(({ item, isCurrentUser }) => {
-  const username = item?.sender_user_slug || "Anonymous";
-  const initials = username.charAt(0) || "";
-
-  return (
-    <View
-      style={[
-        styles.messageContainer,
-        isCurrentUser ? styles.currentUserMessage : styles.otherUserMessage,
-      ]}
-    >
-      <Avatar.Text
-        size={40}
-        label={initials}
-        labelStyle={{ fontSize: 20 }}
-        style={
-          isCurrentUser ? styles.currentUserAvatar : styles.otherUserAvatar
-        }
-      />
-      <View style={styles.messageContent}>
-        {!isCurrentUser && (
-          <Text style={[styles.sender, styles.otherUserText]}>@{username}</Text>
-        )}
-        <Text
-          style={[
-            styles.messageText,
-            isCurrentUser ? styles.currentUserText : styles.otherUserText,
-          ]}
-        >
-          {item?.content || ""}
-        </Text>
-      </View>
-    </View>
-  );
-});
 
 const WebSocketChat = () => {
   const [messages, setMessages] = useState([]);
@@ -61,8 +32,8 @@ const WebSocketChat = () => {
   const { token, user } = useSelector((state) => state.auth);
   const ws = useRef(null);
   const flatListRef = useRef(null);
-  const shouldScrollToBottom = useRef(true);
 
+  // Function to generate a unique key
   const generateUniqueKey = useCallback(() => {
     return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
   }, []);
@@ -104,33 +75,25 @@ const WebSocketChat = () => {
   }, [connectWebSocket]);
 
   const handleWebSocketMessage = useCallback((data) => {
-    if (!data || !data.action) return;
-
     switch (data.action) {
       case "message-list":
-        if (data.messages) {
-          const sortedMessages = data.messages
-            .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
-            .map((message) => ({
-              ...message,
-              uniqueKey: `${message.id}-${generateUniqueKey()}`,
-            }));
-          setMessages(sortedMessages);
-          setIsLoading(false);
-          shouldScrollToBottom.current = true;
-        }
+        const sortedMessages = data.messages
+          .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
+          .map((message) => ({
+            ...message,
+            uniqueKey: `${message.id}-${generateUniqueKey()}`,
+          }));
+        setMessages(sortedMessages);
+        setIsLoading(false);
         break;
       case "send-message":
-        if (data.message) {
-          setMessages((prevMessages) => [
-            ...prevMessages,
-            {
-              ...data.message,
-              uniqueKey: `${data.message.id}-${generateUniqueKey()}`,
-            },
-          ]);
-          shouldScrollToBottom.current = true;
-        }
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          {
+            ...data.message,
+            uniqueKey: `${prevMessages.id}-${generateUniqueKey()}`,
+          },
+        ]);
         setIsLoading(false);
         break;
       case "error":
@@ -138,30 +101,25 @@ const WebSocketChat = () => {
         setIsLoading(false);
         break;
       default:
-        console.log({ data });
+        console.log(data);
         console.warn("Unknown action:", data.action);
         setIsLoading(false);
         break;
     }
   }, []);
 
-  const scrollToBottom = useCallback(() => {
-    if (flatListRef.current && shouldScrollToBottom.current) {
-      setTimeout(() => {
-        flatListRef.current.scrollToEnd({ animated: true });
-      }, 100);
+  // Scroll to bottom immediately when the component is first loaded
+  useLayoutEffect(() => {
+    if (flatListRef.current) {
+      flatListRef.current.scrollToEnd({ animated: true });
     }
-  }, []);
+  }, [messages]);
 
-  const handleScroll = useCallback(({ nativeEvent }) => {
-    const { contentOffset, contentSize, layoutMeasurement } = nativeEvent;
-    const distanceFromBottom =
-      contentSize.height - layoutMeasurement.height - contentOffset.y;
-    shouldScrollToBottom.current = distanceFromBottom < 50;
-  }, []);
-
+  // Scroll to bottom when new messages are added
   useEffect(() => {
-    scrollToBottom();
+    if (flatListRef.current && messages.length > 0) {
+      flatListRef.current.scrollToEnd({ animated: true });
+    }
   }, [messages]);
 
   const sendMessage = useCallback(() => {
@@ -170,16 +128,52 @@ const WebSocketChat = () => {
         action: "send-message",
         content: inputMessage.trim(),
       };
-      ws.current.send(JSON.stringify(messageData));
       // console.log(messageData);
+      ws.current.send(JSON.stringify(messageData));
       setInputMessage("");
     }
-  }, [inputMessage, connected]);
+  }, [inputMessage, connected, user.id]);
 
   const renderMessage = useCallback(
-    ({ item }) => (
-      <Message item={item} isCurrentUser={item.sender === user.id} />
-    ),
+    ({ item }) => {
+      const isCurrentUser = item.sender === user.id;
+      const username = item?.sender_user_slug || "Anonymous";
+      const body = item?.content || "";
+      const initials = username.charAt(0) || "";
+
+      return (
+        <View
+          style={[
+            styles.messageContainer,
+            isCurrentUser ? styles.currentUserMessage : styles.otherUserMessage,
+          ]}
+        >
+          <Avatar.Text
+            size={40}
+            label={initials}
+            labelStyle={{ fontSize: 20 }}
+            style={
+              isCurrentUser ? styles.currentUserAvatar : styles.otherUserAvatar
+            }
+          />
+          <View style={styles.messageContent}>
+            {!isCurrentUser && (
+              <Text style={[styles.sender, styles.otherUserText]}>
+                @{username}
+              </Text>
+            )}
+            <Text
+              style={[
+                styles.messageText,
+                isCurrentUser ? styles.currentUserText : styles.otherUserText,
+              ]}
+            >
+              {body}
+            </Text>
+          </View>
+        </View>
+      );
+    },
     [user.id]
   );
 
@@ -196,7 +190,7 @@ const WebSocketChat = () => {
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 80 : 80}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 80 : 80} // Adjust offset for iOS devices
         style={{ flex: 1 }}
       >
         <FlatList
@@ -204,16 +198,12 @@ const WebSocketChat = () => {
           data={messages}
           keyExtractor={(item) => item.uniqueKey}
           renderItem={renderMessage}
-          onScroll={handleScroll}
-          onContentSizeChange={scrollToBottom}
-          removeClippedSubviews={Platform.OS === "android"}
-          initialNumToRender={15}
-          maxToRenderPerBatch={10}
-          windowSize={10}
         />
         <View style={styles.inputContainer}>
           <TextInput
-            style={styles.input}
+            style={{
+              ...styles.input,
+            }}
             value={inputMessage}
             onChangeText={setInputMessage}
             placeholder="Type a message..."
@@ -229,7 +219,7 @@ const WebSocketChat = () => {
             <MaterialCommunityIcons name="send" size={20} color="#fafafa" />
           </TouchableOpacity>
         </View>
-        <StatusBar barStyle={"light-content"} animated={true} />
+        <StatusBar barStyle={"live-content"} animated={true} />
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -240,6 +230,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#1B1B1B",
     paddingTop: StatusBar.currentHeight,
+    // paddingHorizontal: 10,
   },
   statusContainer: {
     flexDirection: "row",
@@ -247,10 +238,22 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 2,
     alignSelf: "center",
+    // marginBottom: 10,
+  },
+  statusIndicator: {
+    height: 10,
+    width: 10,
+    borderRadius: 5,
+    marginRight: 5,
   },
   inputContainer: {
     flexDirection: "row",
     margin: 10,
+  },
+  statusText: {
+    color: "#fafafa",
+    fontSize: 18,
+    fontWeight: "700",
   },
   messageContainer: {
     margin: 10,
@@ -278,6 +281,8 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 10,
     overflow: "hidden",
+    width: "auto",
+    // maxWidth: 200,
     alignSelf: "flex-end",
   },
   otherUserText: {
@@ -290,6 +295,7 @@ const styles = StyleSheet.create({
   otherUserAvatar: {
     marginRight: 10,
   },
+
   loadingContainer: {
     flex: 1,
     backgroundColor: "#1B1B1B",
@@ -301,6 +307,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 16,
   },
+
   input: {
     flex: 1,
     borderWidth: 1,
@@ -309,6 +316,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
     color: "#fafafa",
     borderRadius: 20,
+    overflow: "hidden",
   },
   sendButton: {
     backgroundColor: "#B9052C",
@@ -316,11 +324,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     padding: 10,
     borderRadius: 25,
+    overflow: "hidden",
     height: 50,
     width: 50,
-  },
-  sendButtonDisabled: {
-    backgroundColor: "#666",
   },
 });
 
