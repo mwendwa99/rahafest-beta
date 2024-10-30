@@ -52,7 +52,7 @@ export default function AllUsers() {
             action: "request-friendship",
             friend_id: friendId,
           });
-          alert("Request sent!");
+          // alert("Request sent!");
           console.log(`Friend request sent to user ID: ${friendId}`);
         } catch (error) {
           console.error("Failed to send friend request:", error);
