@@ -117,21 +117,15 @@ const FriendsPage = ({ navigation }) => {
 
   const keyExtractor = useCallback((item) => item.id.toString(), []);
 
-  if (isLoading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#FFFFFF" />
-        <Text style={styles.loadingText}>Loading friends...</Text>
-      </View>
-    );
-  }
-
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={Platform.OS === "ios" ? 5 : 0}
       style={styles.container}
     >
+      {isLoading && (
+        <Text style={styles.loadingText}>Fetching latest data...</Text>
+      )}
       <ListItem
         title="Add Friends"
         iconRight="chevron-right"
@@ -184,16 +178,12 @@ const styles = StyleSheet.create({
     marginVertical: 20,
     textAlign: "left",
   },
-  loadingContainer: {
-    flex: 1,
-    backgroundColor: "#1B1B1B",
-    justifyContent: "center",
-    alignItems: "center",
-  },
+
   loadingText: {
     color: "#FFFFFF",
-    marginTop: 10,
-    fontSize: 16,
+    margin: 5,
+    fontSize: 10,
+    textAlign: "center",
   },
 });
 
