@@ -2,6 +2,15 @@ import * as React from "react";
 import { Dimensions, Image, Linking, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Carousel from "react-native-reanimated-carousel";
+import {
+  configureReanimatedLogger,
+  ReanimatedLogLevel,
+} from "react-native-reanimated";
+
+configureReanimatedLogger({
+  level: ReanimatedLogLevel.warn,
+  strict: false,
+});
 
 const { width } = Dimensions.get("window");
 
@@ -32,17 +41,24 @@ function AdCarousel({ data }) {
     }
   };
 
+  // console.log(data);
+
+  const hasMultipleAds = (items) => {
+    const activeAds = items.filter((item) => item.is_active);
+    return activeAds.length > 1;
+  };
+
   return (
     <View style={styles.container}>
       <Carousel
-        loop
+        loop={hasMultipleAds(data)}
         width={styles.carousel.width}
         height={100} // Match the ads container height
         autoPlay={true}
         data={data}
         enabled={false}
         style={styles.carousel}
-        scrollAnimationDuration={3000}
+        scrollAnimationDuration={1500}
         renderItem={({ item }) => {
           if (!item.is_active) return null; // Early return for inactive items
 

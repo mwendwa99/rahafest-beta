@@ -39,6 +39,7 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
+    "mewArchEnabled": true,
     "runtimeVersion": {
       "policy": "appVersion"
     },
