@@ -51,23 +51,11 @@ function AppNav({ routes }) {
   return (
     <BottomTab.Navigator
       screenOptions={{ headerShown: false }}
-      tabBar={({ navigation, state, descriptors, insets }) => (
+      tabBar={({ state, descriptors, navigation }) => (
         <BottomNavigation.Bar
           version={3}
-          style={{
-            backgroundColor: "#212529",
-            margin: 0,
-            padding: 0,
-          }}
-          activeIndicatorStyle={{
-            backgroundColor: "#212529",
-          }}
-          activeColor="orange"
-          inactiveColor="lightgrey"
-          shifting={false}
-          keyboardHidesNavigationBar={true}
           navigationState={state}
-          safeAreaInsets={insets}
+          safeAreaInsets={state.insets}
           onTabPress={({ route, preventDefault }) => {
             const event = navigation.emit({
               type: "tabPress",
@@ -86,46 +74,38 @@ function AppNav({ routes }) {
           }}
           renderIcon={({ route, focused }) => {
             const { options } = descriptors[route.key];
-            if (options.tabBarIcon) {
-              return options.tabBarIcon({ focused, size: 24 });
-            }
-
-            return null;
+            return options?.tabBarIcon
+              ? options.tabBarIcon({ focused, size: 24 })
+              : null;
           }}
-          getLabelText={({ route }) => {
-            const { options } = descriptors[route.key];
-            const label =
-              options.tabBarLabel !== undefined
-                ? options.tabBarLabel
-                : options.title !== undefined
-                ? options.title
-                : route.title;
-
-            return label;
+          getLabelText={({ route }) =>
+            descriptors[route.key]?.options?.title ?? route.name
+          }
+          style={{
+            backgroundColor: "#212529",
+            activeColor: "orange",
+            inactiveColor: "lightgrey",
           }}
         />
       )}
     >
-      {routes &&
-        routes.length > 0 &&
-        routes.map((route) => (
-          <BottomTab.Screen
-            key={route.key}
-            name={route.name}
-            component={route.component}
-            options={{
-              title: route.name,
-              tabBarIcon: ({ size, focused }) => (
-                <MaterialCommunityIcons
-                  name={focused ? route.icon_focused : route.icon_default}
-                  color={focused ? "orange" : "#fafafa"}
-                  size={size}
-                />
-              ),
-            }}
-            initialParams={route.initialParams}
-          />
-        ))}
+      {routes.map((route) => (
+        <BottomTab.Screen
+          key={route.key}
+          name={route.name}
+          component={route.component}
+          options={{
+            title: route.name,
+            tabBarIcon: ({ size, focused }) => (
+              <MaterialCommunityIcons
+                name={focused ? route.icon_focused : route.icon_default}
+                color={focused ? "orange" : "#fafafa"}
+                size={size}
+              />
+            ),
+          }}
+        />
+      ))}
     </BottomTab.Navigator>
   );
 }
