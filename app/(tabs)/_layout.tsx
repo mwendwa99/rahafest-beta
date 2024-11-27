@@ -7,6 +7,9 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: "#ffd33d",
+        tabBarStyle: {
+          backgroundColor: "#212529",
+        },
       }}
     >
       <Tabs.Screen
@@ -23,14 +26,38 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="about"
+        name="events"
         options={{
-          title: "About",
+          title: "Events",
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
-              name={
-                focused ? "information-circle" : "information-circle-outline"
-              }
+              name={focused ? "calendar" : "calendar-outline"}
+              color={color}
+              size={24}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="merchandise"
+        options={{
+          title: "Merchandise",
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? "cart" : "cart-outline"}
+              color={color}
+              size={24}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="club"
+        options={{
+          title: "Club",
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? "star-half" : "star-half-outline"}
               color={color}
               size={24}
             />
