@@ -8,7 +8,14 @@ interface HeaderProps {
 
 export default function Header({ title, style }: HeaderProps) {
   return (
-    <View style={{ flex: 1, flexDirection: "row", width: "100%" }}>
+    <View
+      style={{
+        flex: 1,
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
       <Text
         style={[
           style,

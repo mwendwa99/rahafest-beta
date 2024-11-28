@@ -6,7 +6,7 @@ import Header from "@/components/Header";
 
 const headerStyles = {
   headerStyle: {
-    backgroundColor: "#212529",
+    backgroundColor: "#000",
   },
   headerShadowVisible: false,
   headerTitleStyle: {
