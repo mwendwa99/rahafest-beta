@@ -26,7 +26,7 @@ interface TypographyProps {
 
 const Typography: React.FC<TypographyProps> = ({
   variant = "body1",
-  color,
+  color = "#fafafa",
   align = "left",
   children,
   style,

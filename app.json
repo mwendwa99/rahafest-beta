@@ -29,7 +29,11 @@
         {
           "image": "./assets/images/splash.png",
           "resizeMode": "contain",
-          "backgroundColor": "#000"
+          "backgroundColor": "#000",
+          "dark": {
+            "image": "./assets/images/splash.png",
+            "backgroundColor": "#000000"
+          }
         }
       ]
     ],

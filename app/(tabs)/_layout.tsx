@@ -2,10 +2,25 @@ import React from "react";
 import { Tabs } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
+import Header from "@/components/Header";
+
+const headerStyles = {
+  headerStyle: {
+    backgroundColor: "#212529",
+  },
+  headerShadowVisible: false,
+  headerTitleStyle: {
+    color: "#fafafa",
+  },
+};
+
 export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
+        ...headerStyles,
+
+        headerTitleAlign: "center",
         tabBarActiveTintColor: "#ffd33d",
         tabBarStyle: {
           backgroundColor: "#212529",
@@ -30,6 +45,7 @@ export default function TabLayout() {
         name="events"
         options={{
           title: "Events",
+          headerTitle: (props) => <Header {...props} title="events" />,
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
               name={focused ? "calendar" : "calendar-outline"}

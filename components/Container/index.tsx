@@ -1,12 +1,13 @@
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, TextStyle, View } from "react-native";
 
 type ContainerProps = {
   children: React.ReactNode;
+  style?: TextStyle;
 };
 
-export default function Container({ children }: ContainerProps) {
-  return <View style={styles.container}>{children}</View>;
+export default function Container({ style, children }: ContainerProps) {
+  return <View style={[styles.container, style]}>{children}</View>;
 }
 
 const styles = StyleSheet.create({
