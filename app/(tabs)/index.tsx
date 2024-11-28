@@ -1,6 +1,8 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 
+import { useRouter } from "expo-router";
+
 import ImageBackground from "@/components/ImageBackground";
 import IconButton from "@/components/IconButton";
 import Container from "@/components/Container";
@@ -11,11 +13,17 @@ import social from "@/assets/images/social-btn.png";
 import more from "@/assets/images/more-btn.png";
 
 export default function Index() {
+  const router = useRouter();
   return (
     <Container>
       <ImageBackground uri={backgroundImage}>
         <View style={styles.linksContainer}>
-          <IconButton source={gallery} size={100} title="Gallery" />
+          <IconButton
+            source={gallery}
+            size={100}
+            title="Media"
+            onPress={() => router.push("/media")}
+          />
           <IconButton source={social} size={100} title="Socials" />
           <IconButton source={more} size={100} title="Extras" />
         </View>
