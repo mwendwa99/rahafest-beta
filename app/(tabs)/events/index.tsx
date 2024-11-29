@@ -1,36 +1,23 @@
-import React, { useEffect, useState } from "react";
-import { FlatList, StyleSheet, View } from "react-native";
-import { useSelector } from "react-redux";
-import * as SplashScreen from "expo-splash-screen";
+import React, { useEffect, useState, useCallback } from "react";
+import { FlatList, RefreshControl, StyleSheet, View } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
 
 import Container from "@/components/Container";
 import Typography from "@/components/Typography";
 import EventCard from "@/components/Card/EventCard";
 import Search from "@/components/Search";
+import Loader from "@/components/Loader";
 import { formatEventDates, formatTime } from "@/utils";
 import Ionicons from "@expo/vector-icons/Ionicons";
-
-// Keep the splash screen visible while we fetch the resources
-SplashScreen.preventAutoHideAsync();
+import { fetchAllEvents } from "@/store/app/appActions";
 
 export default function EventsPage() {
   const { allEvents, loading, error } = useSelector((state) => state.app);
   const [searchInput, setSearchInput] = useState("");
   const [filteredEvents, setFilteredEvents] = useState(allEvents);
+  const [refreshing, setRefreshing] = useState(false);
 
-  useEffect(() => {
-    async function prepare() {
-      try {
-        if (!loading || error) {
-          await SplashScreen.hideAsync();
-        }
-      } catch (e) {
-        console.warn(e);
-      }
-    }
-
-    prepare();
-  }, [loading, error]);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     // Filter events based on the search input
@@ -44,6 +31,16 @@ export default function EventsPage() {
       setFilteredEvents(filtered);
     }
   }, [searchInput, allEvents]);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    dispatch(fetchAllEvents());
+    setRefreshing(false);
+  }, [allEvents]);
+
+  if (loading) {
+    return <Loader />;
+  }
 
   return (
     <Container style={styles.container}>
@@ -70,6 +67,9 @@ export default function EventsPage() {
             </View>
           </EventCard>
         )}
+        refreshControl={
+          <RefreshControl onRefresh={onRefresh} refreshing={refreshing} />
+        }
         keyExtractor={(item) => item.id}
       />
     </Container>
