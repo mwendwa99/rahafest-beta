@@ -33,3 +33,18 @@ export const formatEventDates = (start_date: string, end_date: string) => {
     return `${startDateFormatted} & ${endDateFormatted}`;
   }
 };
+
+export function formatCurrency(value: string): string {
+  const numericValue = parseFloat(value); // Convert to a number
+  if (isNaN(numericValue)) {
+    throw new Error("Invalid input. Please provide a valid number string.");
+  }
+
+  return numericValue.toLocaleString("en-US", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  });
+}
+
+// Example usage
+console.log(formatCurrency("6000.00")); // Output: "6,000"

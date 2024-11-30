@@ -1,16 +1,18 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { fetchAllEvents } from "./appActions";
+import { fetchAllEvents, fetchTicketTypes } from "./appActions";
 
-import { EventType } from "@/types";
+import { EventType, EventTicketType } from "@/types";
 
 interface InitialState {
   allEvents: EventType[];
+  ticketTypes: EventTicketType[];
   loading: boolean;
   error: string | null;
 }
 
 const initialState: InitialState = {
   allEvents: [],
+  ticketTypes: [],
   loading: false,
   error: null,
 };
@@ -31,6 +33,19 @@ const eventSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchAllEvents.rejected, (state) => {
+        state.loading = false;
+        state.error = "Failed to fetch all events";
+      })
+      .addCase(fetchTicketTypes.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchTicketTypes.fulfilled, (state, action) => {
+        state.ticketTypes = action.payload;
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(fetchTicketTypes.rejected, (state) => {
         state.loading = false;
         state.error = "Failed to fetch all events";
       });

@@ -99,5 +99,6 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: "#000",
     alignItems: "center",
+    paddingHorizontal: 10,
   },
 });
