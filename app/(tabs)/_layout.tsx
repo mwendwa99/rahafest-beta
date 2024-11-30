@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React from "react";
 import { Tabs } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -45,6 +46,7 @@ export default function TabLayout() {
         name="events"
         options={{
           title: "Events",
+
           headerTitle: (props) => <Header {...props} title="events" />,
           tabBarIcon: ({ color, focused }) => (
             <Ionicons

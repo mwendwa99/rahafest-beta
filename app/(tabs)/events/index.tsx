@@ -1,6 +1,8 @@
+//@ts-nocheck
 import React, { useEffect, useState, useCallback } from "react";
 import { FlatList, RefreshControl, StyleSheet, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
+import { useRouter } from "expo-router";
 
 import Container from "@/components/Container";
 import Typography from "@/components/Typography";
@@ -10,6 +12,7 @@ import Loader from "@/components/Loader";
 import { formatEventDates, formatTime } from "@/utils";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { fetchAllEvents } from "@/store/app/appActions";
+import Error from "@/components/Error";
 
 export default function EventsPage() {
   const { allEvents, loading, error } = useSelector((state) => state.app);
@@ -18,6 +21,10 @@ export default function EventsPage() {
   const [refreshing, setRefreshing] = useState(false);
 
   const dispatch = useDispatch();
+  const router = useRouter();
+
+  // console.log(allEvents);
+  // console.log(error);
 
   useEffect(() => {
     // Filter events based on the search input
@@ -34,6 +41,7 @@ export default function EventsPage() {
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
+
     dispatch(fetchAllEvents());
     setRefreshing(false);
   }, [allEvents]);
@@ -49,11 +57,22 @@ export default function EventsPage() {
         searchInput={searchInput}
         setSearchInput={setSearchInput}
       />
+      {error && typeof error === "string" && <Error message={error} />}
+
       <FlatList
         data={filteredEvents}
+        style={{
+          flex: 1,
+          width: "100%",
+        }}
         renderItem={({ item }) => (
           <EventCard
-            onPress={() => alert(item.title)}
+            onPress={() =>
+              router.push({
+                pathname: `/events/${item.id}`,
+                params: { event: JSON.stringify(item) },
+              })
+            }
             key={item?.id}
             image={item?.banner}
           >

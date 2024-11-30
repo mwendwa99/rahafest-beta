@@ -10,7 +10,9 @@ interface CardProps {
 export default function EventCard({ image, onPress, children }: CardProps) {
   return (
     <Pressable style={styles.container} onPress={onPress}>
-      <Image source={{ uri: image }} style={styles.image} />
+      <View style={styles.imageWrapper}>
+        <Image source={{ uri: image }} style={styles.image} />
+      </View>
       <View style={styles.content}>{children}</View>
     </Pressable>
   );
@@ -19,13 +21,23 @@ export default function EventCard({ image, onPress, children }: CardProps) {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "#262626",
-    width: 380,
+    width: "100%",
     minHeight: 300,
-    borderRadius: 8,
-    margin: 7,
+    borderRadius: 20,
+    marginVertical: 5,
     padding: 10,
   },
-  image: { height: 200, width: "100%", borderRadius: 10 },
+  imageWrapper: {
+    height: 200,
+    width: "100%",
+    borderRadius: 10,
+    overflow: "hidden", // Ensures the content respects the rounded corners
+  },
+  image: {
+    height: "100%",
+    width: "100%",
+    resizeMode: "cover", // Ensures the image fills and crops excess
+  },
   content: {
     marginVertical: 10,
   },

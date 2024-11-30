@@ -30,6 +30,6 @@ export const formatEventDates = (start_date: string, end_date: string) => {
     return `${startDateFormatted}`;
   } else {
     // return `${startDateFormatted} to ${endDateFormatted} from ${startTimeFormatted}`;
-    return `${startDateFormatted} to ${endDateFormatted}`;
+    return `${startDateFormatted} & ${endDateFormatted}`;
   }
 };

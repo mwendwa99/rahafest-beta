@@ -6,9 +6,10 @@ interface HeaderProps {
   style?: TextStyle;
 }
 
-export default function Header({ title, style }: HeaderProps) {
+export default function Header({ title, style, ...props }: HeaderProps) {
   return (
     <View
+      {...props}
       style={{
         flex: 1,
         flexDirection: "row",
