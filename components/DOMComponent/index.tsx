@@ -5,17 +5,17 @@ import { useWindowDimensions } from "react-native";
 
 import RenderHTML from "react-native-render-html";
 
-export default function DOMComponent({ html }) {
-  const { width } = useWindowDimensions();
+import { LogBox } from "react-native";
 
-  const source2 = {
-    html,
-  };
+LogBox.ignoreLogs(["TNodeChildrenRenderer: Support for defaultProps"]);
+
+export default function DOMComponent({ html = "" }) {
+  const { width } = useWindowDimensions();
 
   return (
     <RenderHTML
       contentWidth={width}
-      source={source2}
+      source={{ html }}
       baseStyle={{ color: "white" }}
     />
   );

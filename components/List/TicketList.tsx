@@ -1,5 +1,5 @@
 import { formatCurrency } from "@/utils";
-import React from "react";
+import React, { useCallback } from "react";
 import {
   Text,
   View,
@@ -7,8 +7,10 @@ import {
   TextInput,
   KeyboardAvoidingView,
   Platform,
+  ScrollView,
+  Keyboard,
+  TouchableWithoutFeedback,
 } from "react-native";
-import { Picker } from "@react-native-picker/picker";
 
 interface TicketListProps {
   title: string;
@@ -20,30 +22,41 @@ interface TicketListProps {
 export default function TicketList({
   title,
   price,
-  quantity,
+  quantity = 0,
   setQuantity,
 }: TicketListProps) {
+  const handleInputChange = (value: string) => {
+    const num = parseInt(value, 10);
+    if (!isNaN(num) && num >= 0 && num <= 10) {
+      setQuantity(num);
+    }
+  };
+
+  const dismissKeyboard = useCallback(() => {
+    Keyboard.dismiss();
+  }, []);
+
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
+    <TouchableWithoutFeedback onPress={dismissKeyboard}>
       <View style={styles.container}>
         <View style={styles.column}>
           <Text style={styles.title}>{title}</Text>
           <Text style={styles.subtitle}>KES {formatCurrency(price)}</Text>
         </View>
-        <Picker
-          selectedValue={quantity}
-          onValueChange={(itemValue) => setQuantity(itemValue)}
-          style={styles.input}
-        >
-          {Array.from({ length: 11 }, (_, index) => (
-            <Picker.Item key={index} label={`${index}`} value={index} />
-          ))}
-        </Picker>
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.input}
+            keyboardType="number-pad"
+            value={quantity.toString()}
+            onChangeText={handleInputChange}
+            placeholder="0"
+            maxLength={2}
+            returnKeyType="done"
+            onSubmitEditing={dismissKeyboard}
+          />
+        </View>
       </View>
-    </KeyboardAvoidingView>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -52,22 +65,34 @@ const styles = StyleSheet.create({
     width: "100%",
     flexDirection: "row",
     justifyContent: "space-between",
-    marginVertical: 10,
+    alignItems: "center",
+    paddingVertical: 10,
+    paddingHorizontal: 15,
   },
   column: {
+    flex: 1,
     flexDirection: "column",
     justifyContent: "space-between",
+    marginRight: 15,
   },
   title: {
     color: "#fafafa",
-    fontWeight: 600,
+    fontWeight: "600",
   },
   subtitle: {
     color: "#d3d3d3",
   },
+  inputContainer: {
+    justifyContent: "center",
+    alignItems: "flex-end",
+  },
   input: {
-    minWidth: 100,
-    height: 50,
+    minWidth: 50,
+    height: 40,
     backgroundColor: "#c3c3c3",
+    textAlign: "center",
+    color: "#000",
+    borderRadius: 5,
+    padding: 5,
   },
 });

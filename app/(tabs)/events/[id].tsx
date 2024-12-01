@@ -1,16 +1,24 @@
 //@ts-nocheck
 import React, { useEffect, useState } from "react";
-import { FlatList, Image, ScrollView, StyleSheet, View } from "react-native";
+import {
+  FlatList,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  View,
+} from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { useDispatch, useSelector } from "react-redux";
 import { useLocalSearchParams } from "expo-router";
 
 import Container from "@/components/Container";
 import Typography from "@/components/Typography";
-import { formatEventDates } from "@/utils";
 import DOMComponent from "@/components/DOMComponent";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchTicketTypes } from "@/store/app/appActions";
 import TicketList from "@/components/List/TicketList";
+import { formatEventDates } from "@/utils";
+import { fetchTicketTypes } from "@/store/app/appActions";
 
 export default function EventPage() {
   const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
@@ -33,8 +41,18 @@ export default function EventPage() {
   }, [id]);
 
   return (
-    <Container style={styles.container}>
-      <ScrollView>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={styles.container}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
+    >
+      <ScrollView
+        bounces={false}
+        keyboardShouldPersistTaps="handled"
+        contentContainerStyle={{
+          paddingBottom: Platform.OS === "ios" ? 120 : 0,
+        }}
+      >
         <Image source={{ uri: parsedEvent?.banner }} height={200} />
         <View style={styles.row}>
           <Typography variant="h2">{parsedEvent.title}</Typography>
@@ -74,7 +92,7 @@ export default function EventPage() {
             ))}
         </View>
       </ScrollView>
-    </Container>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -82,6 +100,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: "#000",
     padding: 10,
+    flex: 1,
   },
   row: {
     marginVertical: 5,
