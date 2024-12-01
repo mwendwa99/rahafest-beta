@@ -99,6 +99,7 @@ const EventRegistrationForm = () => {
         placeholder={placeholder}
         returnKeyType="done"
         onSubmitEditing={dismissKeyboard}
+        placeholderTextColor={"#c3c3c3"}
       />
       {errors[key] && <Text style={styles.errorText}>{errors[key]}</Text>}
     </View>
@@ -112,7 +113,6 @@ const EventRegistrationForm = () => {
 
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.title}>User Info</Text>
       <Text style={styles.subtitle}>
         Registering {totalTickets} ticket{totalTickets > 1 ? "s" : ""}
       </Text>
@@ -148,13 +148,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: "#fff",
+    backgroundColor: "#000",
   },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 20,
-    textAlign: "center",
+  subtitle: {
+    color: "#c3c3c3",
   },
   inputContainer: {
     marginBottom: 15,
@@ -170,6 +167,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 10,
     fontSize: 16,
+    color: "#c3c3c3",
   },
   errorText: {
     color: "red",
@@ -190,7 +188,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   summaryContainer: {
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#c3c3c3",
     padding: 15,
     borderRadius: 5,
     marginBottom: 20,
