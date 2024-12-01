@@ -44,6 +44,7 @@ export default function TicketList({
           <Text style={styles.subtitle}>KES {formatCurrency(price)}</Text>
         </View>
         <View style={styles.inputContainer}>
+          <Text style={styles.label}>quantity</Text>
           <TextInput
             style={styles.input}
             keyboardType="number-pad"
@@ -82,16 +83,24 @@ const styles = StyleSheet.create({
   subtitle: {
     color: "#d3d3d3",
   },
+  label: {
+    color: "#d3d3d3",
+    fontSize: 8,
+    marginBottom: 2,
+  },
   inputContainer: {
+    flexDirection: "column",
     justifyContent: "center",
-    alignItems: "flex-end",
+    alignItems: "center",
   },
   input: {
     minWidth: 50,
     height: 40,
-    backgroundColor: "#c3c3c3",
+    borderWidth: 2,
+    borderColor: "#c3c3c3",
+    width: 50,
     textAlign: "center",
-    color: "#000",
+    color: "#c3c3c3",
     borderRadius: 5,
     padding: 5,
   },

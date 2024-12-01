@@ -19,6 +19,7 @@ import DOMComponent from "@/components/DOMComponent";
 import TicketList from "@/components/List/TicketList";
 import { formatEventDates } from "@/utils";
 import { fetchTicketTypes } from "@/store/app/appActions";
+import Button from "@/components/Button";
 
 export default function EventPage() {
   const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
@@ -53,7 +54,11 @@ export default function EventPage() {
           paddingBottom: Platform.OS === "ios" ? 120 : 0,
         }}
       >
-        <Image source={{ uri: parsedEvent?.banner }} height={200} />
+        <Image
+          source={{ uri: parsedEvent?.banner }}
+          height={200}
+          style={styles.image}
+        />
         <View style={styles.row}>
           <Typography variant="h2">{parsedEvent.title}</Typography>
           <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -91,6 +96,7 @@ export default function EventPage() {
               />
             ))}
         </View>
+        <Button>Buy tickets</Button>
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -101,6 +107,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#000",
     padding: 10,
     flex: 1,
+  },
+  image: {
+    borderRadius: 10,
   },
   row: {
     marginVertical: 5,
