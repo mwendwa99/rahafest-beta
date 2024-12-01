@@ -31,6 +31,12 @@ export default function EventLayout() {
           headerShown: false,
         }}
       />
+      <Stack.Screen
+        name="checkout"
+        options={{
+          headerShown: false,
+        }}
+      />
     </Stack>
   );
 }

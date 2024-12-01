@@ -1,20 +1,29 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { fetchAllEvents, fetchTicketTypes } from "./appActions";
+import {
+  fetchAllEvents,
+  fetchTicketTypes,
+  createInvoice,
+  triggerSTK,
+} from "./appActions";
 
-import { EventType, EventTicketType } from "@/types";
+import { EventType, EventTicketType, InvoiceResponseType } from "@/types";
 
 interface InitialState {
   allEvents: EventType[];
   ticketTypes: EventTicketType[];
+  invoice: InvoiceResponseType;
   loading: boolean;
   error: string | null;
+  payment_status: string;
 }
 
 const initialState: InitialState = {
   allEvents: [],
   ticketTypes: [],
+  invoice: null,
   loading: false,
   error: null,
+  payment_status: "UNPAID",
 };
 
 const eventSlice = createSlice({
@@ -48,6 +57,30 @@ const eventSlice = createSlice({
       .addCase(fetchTicketTypes.rejected, (state) => {
         state.loading = false;
         state.error = "Failed to fetch all events";
+      })
+      .addCase(createInvoice.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(createInvoice.fulfilled, (state, action) => {
+        state.invoice = action.payload;
+        state.loading = false;
+      })
+      .addCase(createInvoice.rejected, (state) => {
+        state.error = "Failed to create invoice";
+        state.loading = false;
+      })
+      .addCase(triggerSTK.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(triggerSTK.fulfilled, (state, action) => {
+        state.payment_status = action.payload.payment_status;
+        state.loading = false;
+      })
+      .addCase(triggerSTK.rejected, (state) => {
+        state.error = "Failed to initiate payment";
+        state.loading = false;
       });
   },
 });

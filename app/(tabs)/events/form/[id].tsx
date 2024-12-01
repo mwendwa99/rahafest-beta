@@ -1,7 +1,8 @@
 //@ts-nocheck
+import { createInvoice } from "@/store/app/appActions";
 import { formatCurrency } from "@/utils";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -10,12 +11,18 @@ import {
   StyleSheet,
   ScrollView,
   Keyboard,
+  ActivityIndicator,
 } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
 
 const EventRegistrationForm = () => {
   const params = useLocalSearchParams();
   const { eventId, tickets } = params;
   const router = useRouter();
+
+  const dispatch = useDispatch();
+  const { invoice } = useSelector((state) => state.app);
+  const [loading, setLoading] = useState(false); // Track loading state
 
   // Parse the tickets data
   const selectedTickets = JSON.parse(tickets as string);
@@ -44,18 +51,13 @@ const EventRegistrationForm = () => {
       tempErrors.last_name = "Last name is required";
     }
 
-    const phoneRegex = /^\d{10}$/;
-    if (!formData.phone || !phoneRegex.test(formData.phone)) {
-      tempErrors.phone = "Please enter a valid 10-digit phone number";
-    }
-
     setErrors(tempErrors);
     return Object.keys(tempErrors).length === 0;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (validateForm()) {
-      // Create attendeeInfo array for all tickets
+      setLoading(true); // Start loading before dispatch
       const attendeeInfo = selectedTickets.flatMap((ticket) => {
         return Array(ticket.quantity).fill({
           event: parseInt(eventId),
@@ -63,22 +65,54 @@ const EventRegistrationForm = () => {
           email: formData.email,
           first_name: formData.first_name,
           last_name: formData.last_name,
-          phone: formData.phone,
+          phone: formData.phone, // Use the updated phone number
           amount_paid: parseFloat(ticket.price),
           RF_id: null,
         });
       });
 
       const processedData = {
-        attendeeInfo,
+        data: {
+          attendeeInfo,
+        },
       };
 
       console.dir(processedData);
-      // Here you would make your API call with the processedData
+      await dispatch(createInvoice(processedData));
+      setLoading(false); // End loading after dispatch is complete
     } else {
       alert("Form Error", "Please check all fields and try again");
     }
   };
+
+  // UseEffect to format the phone number
+  useEffect(() => {
+    if (formData.phone) {
+      let phone = formData.phone;
+
+      if (phone.startsWith("01")) {
+        phone = "2541" + phone.slice(2); // Replace '01' with '2541'
+      } else if (phone.startsWith("07")) {
+        phone = "2547" + phone.slice(2); // Replace '07' with '2547'
+      }
+
+      // Update phone number if it's changed
+      if (phone !== formData.phone) {
+        setFormData((prevData) => ({ ...prevData, phone }));
+      }
+    }
+  }, [formData.phone]);
+
+  // UseEffect to navigate to checkout page if invoice exists and is valid
+  useEffect(() => {
+    if (invoice && Object.keys(invoice).length > 0) {
+      // Ensure the invoice has valid data before navigating
+      if (invoice.invoice_number) {
+        router.push("/events/checkout");
+      }
+    }
+  }, [invoice, router]);
+
   const dismissKeyboard = useCallback(() => {
     Keyboard.dismiss();
   }, []);
@@ -137,8 +171,16 @@ const EventRegistrationForm = () => {
       {renderInput("Last Name", "last_name", "default", "Enter your last name")}
       {renderInput("Phone", "phone", "phone-pad", "Enter your phone number")}
 
-      <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-        <Text style={styles.buttonText}>Submit</Text>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={handleSubmit}
+        disabled={loading} // Disable button while loading
+      >
+        {loading ? (
+          <ActivityIndicator size="small" color="#fff" />
+        ) : (
+          <Text style={styles.buttonText}>Submit</Text>
+        )}
       </TouchableOpacity>
     </ScrollView>
   );
@@ -177,7 +219,7 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: "#FE1648",
     padding: 15,
-    borderRadius: 5,
+    borderRadius: 20,
     marginTop: 20,
     marginBottom: 40,
   },

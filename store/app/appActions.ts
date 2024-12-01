@@ -58,3 +58,30 @@ export const fetchTicketTypes = createAsyncThunk<
     return rejectWithValue(axiosError.response?.data as string);
   }
 });
+
+export const createInvoice = createAsyncThunk(
+  "event/createInvoice",
+  async (invoiceData, { rejectWithValue }) => {
+    try {
+      const response = await ticketApi.post("create-invoice", invoiceData);
+
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError;
+      return rejectWithValue(axiosError.response?.data as string);
+    }
+  }
+);
+
+export const triggerSTK = createAsyncThunk(
+  "app/triggerSTK",
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await ticketApi.post("initiate-payment", data);
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError;
+      return rejectWithValue(axiosError.response?.data as string);
+    }
+  }
+);
