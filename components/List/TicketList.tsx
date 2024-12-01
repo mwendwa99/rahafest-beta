@@ -1,5 +1,5 @@
 import { formatCurrency } from "@/utils";
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Text,
   View,
@@ -25,9 +25,21 @@ export default function TicketList({
   quantity = 0,
   setQuantity,
 }: TicketListProps) {
+  // Keep track of the input value as a string
+  const [inputValue, setInputValue] = useState(quantity.toString());
+
   const handleInputChange = (value: string) => {
+    // Always update the input value first
+    setInputValue(value);
+
+    // If empty string, set quantity to 0
+    if (value === "") {
+      setQuantity(0);
+      return;
+    }
+
     const num = parseInt(value, 10);
-    if (!isNaN(num) && num >= 0 && num <= 10) {
+    if (!isNaN(num) && num >= 0) {
       setQuantity(num);
     }
   };
@@ -35,6 +47,11 @@ export default function TicketList({
   const dismissKeyboard = useCallback(() => {
     Keyboard.dismiss();
   }, []);
+
+  // Update input value when quantity prop changes
+  useEffect(() => {
+    setInputValue(quantity.toString());
+  }, [quantity]);
 
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
@@ -48,7 +65,7 @@ export default function TicketList({
           <TextInput
             style={styles.input}
             keyboardType="number-pad"
-            value={quantity.toString()}
+            value={inputValue}
             onChangeText={handleInputChange}
             placeholder="0"
             maxLength={2}

@@ -25,6 +25,12 @@ export default function EventLayout() {
           headerShown: false,
         }}
       />
+      <Stack.Screen
+        name="form/[id]"
+        options={{
+          headerShown: false,
+        }}
+      />
     </Stack>
   );
 }

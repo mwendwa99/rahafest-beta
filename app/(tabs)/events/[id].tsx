@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 
 import Container from "@/components/Container";
 import Typography from "@/components/Typography";
@@ -23,6 +23,8 @@ import Button from "@/components/Button";
 
 export default function EventPage() {
   const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
+
+  const router = useRouter();
 
   const handleQuantityChange = (id: string, quantity: number) => {
     setQuantities((prev) => ({
@@ -40,6 +42,20 @@ export default function EventPage() {
   useEffect(() => {
     dispatch(fetchTicketTypes(id));
   }, [id]);
+
+  const prepareSelectedTickets = () => {
+    const selected = ticketTypes.filter((ticket) => quantities[ticket.id] > 0);
+    if (selected.length === 0) {
+      // Handle no tickets selected
+      return null;
+    }
+
+    return selected.map((ticket) => ({
+      ticketId: ticket.id,
+      quantity: quantities[ticket.id],
+      price: ticket.price,
+    }));
+  };
 
   return (
     <KeyboardAvoidingView
@@ -96,7 +112,28 @@ export default function EventPage() {
               />
             ))}
         </View>
-        <Button>Buy tickets</Button>
+        {ticketTypes && ticketTypes.length > 0 && (
+          <Button
+            onPress={() => {
+              const selectedTickets = prepareSelectedTickets();
+              if (!selectedTickets) {
+                // Show alert or message that no tickets are selected
+                alert("Please select tickets before proceeding");
+                return;
+              }
+
+              router.push({
+                pathname: `/events/form/${id}`,
+                params: {
+                  eventId: id,
+                  tickets: JSON.stringify(selectedTickets),
+                },
+              });
+            }}
+          >
+            Buy tickets
+          </Button>
+        )}
       </ScrollView>
     </KeyboardAvoidingView>
   );
