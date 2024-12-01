@@ -1,21 +1,20 @@
 //@ts-nocheck
 import React, { useState } from "react";
-import { View, Text, StyleSheet, Alert } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { triggerSTK } from "@/store/app/appActions";
-import { handleVisaProceed } from "./security";
+import { generateHostedCheckoutData } from "./security"; // Use the refactored Visa function
 import Typography from "@/components/Typography";
 import Button from "@/components/Button";
 import Container from "@/components/Container";
 import { useRouter } from "expo-router";
-
-import { WebView } from "react-native-webview"; // Import WebView
+import VisaPaymentWebView from "./WebView"; // Import the WebView component
 
 const CheckoutPage = () => {
   const [mpesaLoading, setMpesaLoading] = useState(false);
   const [visaLoading, setVisaLoading] = useState(false);
-  const [showVisaWebView, setShowVisaWebView] = useState(false); // State to control WebView visibility
-  const [visaUrl, setVisaUrl] = useState(""); // Store the Visa payment URL
+  const [showVisaWebView, setShowVisaWebView] = useState(false);
+  const [formData, setFormData] = useState<string | null>(null); // For Visa query string
 
   const router = useRouter();
   const { invoice } = useSelector((state) => state.app);
@@ -36,7 +35,7 @@ const CheckoutPage = () => {
             primary_email: email as string,
           })
         );
-        router.replace("/");
+        router.replace("/"); // Redirect after payment
       } catch (error) {
         console.error("Error during MPESA payment:", error);
       } finally {
@@ -44,22 +43,22 @@ const CheckoutPage = () => {
       }
     } else if (paymentMethod === "visa") {
       setVisaLoading(true);
-
       try {
-        // Call handleVisaProceed and get the Visa URL
-        const visaPaymentUrl = await handleVisaProceed(invoice);
-        setVisaUrl(visaPaymentUrl); // Store the URL
-        setShowVisaWebView(true); // Show WebView
-
-        setVisaLoading(false);
+        const formData = generateHostedCheckoutData(invoice);
+        setFormData(formData);
+        setShowVisaWebView(true);
       } catch (error) {
-        setVisaLoading(false);
         console.error("Error during Visa payment:", error);
+      } finally {
+        setVisaLoading(false);
       }
     }
   };
 
-  return (
+  return showVisaWebView && formData ? (
+    // Render WebView for Visa payment
+    <VisaPaymentWebView formData={formData} />
+  ) : (
     <Container style={styles.container}>
       <Typography variant="h1">Purchase Summary</Typography>
       <Typography>Invoice Number: {invoice?.invoice_number}</Typography>
@@ -79,15 +78,6 @@ const CheckoutPage = () => {
           {visaLoading ? "Loading..." : "Pay with Visa"}
         </Button>
       </View>
-
-      {/* Show WebView for Visa payment */}
-      {showVisaWebView && (
-        <WebView
-          source={{ uri: visaUrl }}
-          onLoad={() => setVisaLoading(false)}
-          style={{ flex: 1 }}
-        />
-      )}
     </Container>
   );
 };
@@ -96,8 +86,8 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: "#000",
     padding: 20,
+    flex: 1,
   },
-
   buttonsContainer: {
     marginVertical: 24,
     flexDirection: "row",

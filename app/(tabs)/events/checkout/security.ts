@@ -12,32 +12,27 @@ const buildDataToSign = (params: Record<string, string>): string => {
 // Sign the data
 const signData = (data: string, secretKey: string): string => {
   const hash = HmacSHA256(data, secretKey);
-  return Base64.stringify(hash); // Convert to Base64
+  return Base64.stringify(hash);
 };
 
-export const handleVisaProceed = async (
+// Generate form data object instead of query string
+export const generateHostedCheckoutData = (
   invoice: Record<string, string | number>
-): Promise<string> => {
-  // Return type is a string (URL)
-  const SECRET_KEY = invoice.secret_key;
+): Record<string, string> => {
+  const SECRET_KEY = invoice.secret_key as string;
   const timestamp = new Date().toISOString().replace(/\.[0-9]{3}/, "");
 
-  // Generate a unique transaction UUID
-  const generateUUID = () => {
-    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
-      /[xy]/g,
-      function (c) {
-        const r = (Math.random() * 16) | 0;
-        const v = c === "x" ? r : (r & 0x3) | 0x8;
-        return v.toString(16);
-      }
-    );
-  };
+  const generateUUID = () =>
+    "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+      const r = (Math.random() * 16) | 0;
+      const v = c === "x" ? r : (r & 0x3) | 0x8;
+      return v.toString(16);
+    });
 
   const params = {
     access_key: invoice.access_key as string,
     profile_id: invoice.profile_id as string,
-    transaction_uuid: generateUUID(), // Generate new UUID for each transaction
+    transaction_uuid: generateUUID(),
     signed_date_time: timestamp,
     locale: "en",
     transaction_type: "sale",
@@ -52,11 +47,5 @@ export const handleVisaProceed = async (
   const dataToSign = buildDataToSign(params);
   const signature = signData(dataToSign, SECRET_KEY);
 
-  // Prepare the form data to submit via POST to Visa's secure payment system
-  const allParams = { ...params, signature };
-
-  const queryString = new URLSearchParams(allParams as any).toString();
-
-  // Return the full URL with query parameters
-  return `https://testsecureacceptance.cybersource.com/pay?${queryString}`;
+  return { ...params, signature };
 };
