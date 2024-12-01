@@ -9,24 +9,24 @@ import Button from "@/components/Button";
 import Container from "@/components/Container";
 import { useRouter } from "expo-router";
 
+import { WebView } from "react-native-webview"; // Import WebView
+
 const CheckoutPage = () => {
   const [mpesaLoading, setMpesaLoading] = useState(false);
   const [visaLoading, setVisaLoading] = useState(false);
+  const [showVisaWebView, setShowVisaWebView] = useState(false); // State to control WebView visibility
+  const [visaUrl, setVisaUrl] = useState(""); // Store the Visa payment URL
 
   const router = useRouter();
-
   const { invoice } = useSelector((state) => state.app);
   const dispatch = useDispatch();
   const { amount_paid, first_name, last_name, phone, email } =
     invoice?.data?.attendeeInfo[0] || "";
 
-  // Handle the payment option selection
   const handlePaymentOption = async (paymentMethod: string) => {
     if (paymentMethod === "mpesa") {
       setMpesaLoading(true);
-
       try {
-        // Dispatch the STK trigger and wait for it to complete
         await dispatch(
           triggerSTK({
             invoice_number: invoice?.invoice_number as string,
@@ -36,20 +36,26 @@ const CheckoutPage = () => {
             primary_email: email as string,
           })
         );
-        // Once dispatch is successful, navigate to the home page
         router.replace("/");
       } catch (error) {
         console.error("Error during MPESA payment:", error);
-        // Handle any errors that occur during dispatch
       } finally {
         setMpesaLoading(false);
       }
     } else if (paymentMethod === "visa") {
       setVisaLoading(true);
-      // Call your Visa payment function
-      await handleVisaProceed(invoice);
-      setVisaLoading(false);
-      // You can navigate to the home page here as well if needed
+
+      try {
+        // Call handleVisaProceed and get the Visa URL
+        const visaPaymentUrl = await handleVisaProceed(invoice);
+        setVisaUrl(visaPaymentUrl); // Store the URL
+        setShowVisaWebView(true); // Show WebView
+
+        setVisaLoading(false);
+      } catch (error) {
+        setVisaLoading(false);
+        console.error("Error during Visa payment:", error);
+      }
     }
   };
 
@@ -67,12 +73,21 @@ const CheckoutPage = () => {
       {/* Payment Options */}
       <View style={styles.buttonsContainer}>
         <Button onPress={() => handlePaymentOption("mpesa")}>
-          Pay with M-PESA
+          {mpesaLoading ? "Loading..." : "Pay with M-PESA"}
         </Button>
         <Button onPress={() => handlePaymentOption("visa")}>
-          Pay with Visa
+          {visaLoading ? "Loading..." : "Pay with Visa"}
         </Button>
       </View>
+
+      {/* Show WebView for Visa payment */}
+      {showVisaWebView && (
+        <WebView
+          source={{ uri: visaUrl }}
+          onLoad={() => setVisaLoading(false)}
+          style={{ flex: 1 }}
+        />
+      )}
     </Container>
   );
 };
@@ -84,7 +99,7 @@ const styles = StyleSheet.create({
   },
 
   buttonsContainer: {
-    marginTop: 24,
+    marginVertical: 24,
     flexDirection: "row",
     justifyContent: "space-around",
   },

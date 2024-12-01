@@ -77,7 +77,6 @@ const EventRegistrationForm = () => {
         },
       };
 
-      console.dir(processedData);
       await dispatch(createInvoice(processedData));
       setLoading(false); // End loading after dispatch is complete
     } else {

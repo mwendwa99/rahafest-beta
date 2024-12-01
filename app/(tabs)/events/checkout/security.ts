@@ -17,7 +17,8 @@ const signData = (data: string, secretKey: string): string => {
 
 export const handleVisaProceed = async (
   invoice: Record<string, string | number>
-) => {
+): Promise<string> => {
+  // Return type is a string (URL)
   const SECRET_KEY = invoice.secret_key;
   const timestamp = new Date().toISOString().replace(/\.[0-9]{3}/, "");
 
@@ -51,19 +52,11 @@ export const handleVisaProceed = async (
   const dataToSign = buildDataToSign(params);
   const signature = signData(dataToSign, SECRET_KEY);
 
-  const form = document.createElement("form");
-  form.method = "POST";
-  form.action = "https://testsecureacceptance.cybersource.com/pay";
-
+  // Prepare the form data to submit via POST to Visa's secure payment system
   const allParams = { ...params, signature };
-  Object.entries(allParams).forEach(([key, value]) => {
-    const input = document.createElement("input");
-    input.type = "hidden";
-    input.name = key;
-    input.value = value as string;
-    form.appendChild(input);
-  });
 
-  document.body.appendChild(form);
-  form.submit();
+  const queryString = new URLSearchParams(allParams as any).toString();
+
+  // Return the full URL with query parameters
+  return `https://testsecureacceptance.cybersource.com/pay?${queryString}`;
 };
