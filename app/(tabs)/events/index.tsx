@@ -67,6 +67,7 @@ export default function EventsPage() {
         }}
         renderItem={({ item }) => (
           <EventCard
+            expired={item?.expired}
             onPress={() =>
               router.push({
                 pathname: `/events/${item.id}`,

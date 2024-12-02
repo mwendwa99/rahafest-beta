@@ -21,7 +21,7 @@ export const fetchAllEvents = createAsyncThunk<
       }))
       .sort(
         (a: EventType, b: EventType) =>
-          new Date(a.end_date).getTime() - new Date(b.end_date).getTime()
+          new Date(b.end_date).getTime() - new Date(a.end_date).getTime()
       );
 
     return filteredEvents;
