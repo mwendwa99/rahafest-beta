@@ -10,6 +10,7 @@ import {
 import Container from "../Container";
 import Typography from "../Typography";
 import Button from "../Button";
+import { Link } from "expo-router";
 
 const styles = StyleSheet.create({
   input: {
@@ -119,7 +120,8 @@ const PasswordStrengthIndicator = memo(({ password }) => {
 
 const RegisterForm = () => {
   const [formData, setFormData] = useState({
-    fullName: "",
+    firstName: "",
+    lastName: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -130,11 +132,18 @@ const RegisterForm = () => {
   const validateForm = useCallback(() => {
     const newErrors = {};
 
-    // Full Name validation
-    if (!formData.fullName.trim()) {
-      newErrors.fullName = "Full name is required";
-    } else if (formData.fullName.trim().length < 2) {
-      newErrors.fullName = "Name must be at least 2 characters";
+    // First Name validation
+    if (!formData.firstName.trim()) {
+      newErrors.firstName = "First name is required";
+    } else if (formData.firstName.trim().length < 2) {
+      newErrors.firstName = "Name must be at least 2 characters";
+    }
+
+    // Last Name validation
+    if (!formData.lastName.trim()) {
+      newErrors.lastName = "First name is required";
+    } else if (formData.lastName.trim().length < 2) {
+      newErrors.lastName = "Name must be at least 2 characters";
     }
 
     // Email validation
@@ -203,10 +212,17 @@ const RegisterForm = () => {
       </Typography>
 
       <FormInput
-        placeholder="Full Name"
-        value={formData.fullName}
-        onChangeText={handleChange("fullName")}
-        error={errors.fullName}
+        placeholder="First Name"
+        value={formData.firstName}
+        onChangeText={handleChange("firstName")}
+        error={errors.firstName}
+      />
+
+      <FormInput
+        placeholder="Last Name"
+        value={formData.lastName}
+        onChangeText={handleChange("lastName")}
+        error={errors.lastName}
       />
 
       <FormInput
@@ -240,6 +256,17 @@ const RegisterForm = () => {
         secureTextEntry
         error={errors.confirmPassword}
       />
+      <Typography variant="body2" align="center" gutterBottom>
+        by clicking on register you agree to our{" "}
+        <Link
+          href={
+            "https://docs.google.com/document/d/1LzwcqLXVUnnsV9jgzGNj_ZPyZ3oIepuw/edit?pli=1"
+          }
+          style={{ color: "yellow" }}
+        >
+          policy
+        </Link>
+      </Typography>
 
       <Button onPress={handleSubmit}>Register</Button>
     </View>
