@@ -74,6 +74,7 @@ const FormInput = memo(
         onChangeText={onChangeText}
         secureTextEntry={secureTextEntry}
         autoCapitalize="none"
+        placeholderTextColor="#888888"
       />
       {error && <Typography style={styles.error}>{error}</Typography>}
     </>
@@ -141,7 +142,7 @@ const RegisterForm = () => {
 
     // Last Name validation
     if (!formData.lastName.trim()) {
-      newErrors.lastName = "First name is required";
+      newErrors.lastName = "Last name is required";
     } else if (formData.lastName.trim().length < 2) {
       newErrors.lastName = "Name must be at least 2 characters";
     }
@@ -206,70 +207,72 @@ const RegisterForm = () => {
   );
 
   return (
-    <View style={styles.form}>
-      <Typography variant="h1" style={{ marginBottom: 24 }}>
-        Register
-      </Typography>
+    <ScrollView showsVerticalScrollIndicator={false}>
+      <View style={styles.form}>
+        <Typography variant="h1" style={{ marginBottom: 24 }}>
+          Register
+        </Typography>
 
-      <FormInput
-        placeholder="First Name"
-        value={formData.firstName}
-        onChangeText={handleChange("firstName")}
-        error={errors.firstName}
-      />
+        <FormInput
+          placeholder="First Name"
+          value={formData.firstName}
+          onChangeText={handleChange("firstName")}
+          error={errors.firstName}
+        />
 
-      <FormInput
-        placeholder="Last Name"
-        value={formData.lastName}
-        onChangeText={handleChange("lastName")}
-        error={errors.lastName}
-      />
+        <FormInput
+          placeholder="Last Name"
+          value={formData.lastName}
+          onChangeText={handleChange("lastName")}
+          error={errors.lastName}
+        />
 
-      <FormInput
-        placeholder="Email"
-        value={formData.email}
-        onChangeText={handleChange("email")}
-        error={errors.email}
-      />
+        <FormInput
+          placeholder="Email"
+          value={formData.email}
+          onChangeText={handleChange("email")}
+          error={errors.email}
+        />
 
-      <FormInput
-        placeholder="Phone Number"
-        value={formData.phoneNumber}
-        onChangeText={handleChange("phoneNumber")}
-        error={errors.phoneNumber}
-      />
+        <FormInput
+          placeholder="Phone Number"
+          value={formData.phoneNumber}
+          onChangeText={handleChange("phoneNumber")}
+          error={errors.phoneNumber}
+        />
 
-      <FormInput
-        placeholder="Password"
-        value={formData.password}
-        onChangeText={handleChange("password")}
-        secureTextEntry
-        error={errors.password}
-      />
+        <FormInput
+          placeholder="Password"
+          value={formData.password}
+          onChangeText={handleChange("password")}
+          secureTextEntry
+          error={errors.password}
+        />
 
-      <PasswordStrengthIndicator password={formData.password} />
+        <PasswordStrengthIndicator password={formData.password} />
 
-      <FormInput
-        placeholder="Confirm Password"
-        value={formData.confirmPassword}
-        onChangeText={handleChange("confirmPassword")}
-        secureTextEntry
-        error={errors.confirmPassword}
-      />
-      <Typography variant="body2" align="center" gutterBottom>
-        by clicking on register you agree to our{" "}
-        <Link
-          href={
-            "https://docs.google.com/document/d/1LzwcqLXVUnnsV9jgzGNj_ZPyZ3oIepuw/edit?pli=1"
-          }
-          style={{ color: "yellow" }}
-        >
-          policy
-        </Link>
-      </Typography>
+        <FormInput
+          placeholder="Confirm Password"
+          value={formData.confirmPassword}
+          onChangeText={handleChange("confirmPassword")}
+          secureTextEntry
+          error={errors.confirmPassword}
+        />
+        <Typography variant="body2" align="center" gutterBottom>
+          by clicking on register you agree to our{" "}
+          <Link
+            href={
+              "https://docs.google.com/document/d/1LzwcqLXVUnnsV9jgzGNj_ZPyZ3oIepuw/edit?pli=1"
+            }
+            style={{ color: "yellow" }}
+          >
+            policy
+          </Link>
+        </Typography>
 
-      <Button onPress={handleSubmit}>Register</Button>
-    </View>
+        <Button onPress={handleSubmit}>Register</Button>
+      </View>
+    </ScrollView>
   );
 };
 

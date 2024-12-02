@@ -51,6 +51,7 @@ const FormInput = memo(
         onChangeText={onChangeText}
         secureTextEntry={secureTextEntry}
         autoCapitalize="none"
+        placeholderTextColor="#888888"
       />
       {error && <Typography style={styles.error}>{error}</Typography>}
     </>
@@ -127,13 +128,6 @@ const LoginForm = () => {
         error={errors.password}
       />
 
-      {/* <Pressable
-        style={styles.button}
-        onPress={handleSubmit}
-        android_ripple={{ color: "rgba(0, 0, 0, 0.1)" }}
-      >
-        <Typography style={styles.buttonText}>Login</Typography>
-      </Pressable> */}
       <Button onPress={handleSubmit}>Login</Button>
     </View>
   );

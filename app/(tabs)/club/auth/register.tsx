@@ -14,7 +14,7 @@ export default function Register() {
   return (
     <Container bgColor="#000">
       <RegisterForm onRegisterSuccess={handleRegisterSuccess} />
-      <Link href="club/auth/login">
+      <Link href="club/auth/login" style={{ marginVertical: 10 }}>
         <Typography variant="body1" align="center">
           Aleady have an account? Login
         </Typography>
