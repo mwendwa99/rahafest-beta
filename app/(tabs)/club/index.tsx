@@ -1,12 +1,26 @@
 import React from "react";
 
-import Container from "@/components/Container";
-import { Text } from "react-native";
+import { useEffect } from "react";
+import { View, Button } from "react-native";
+import { router } from "expo-router";
+import { useAuth } from "@/context/auth"; // We'll create this next
 
-export default function ClubPage() {
+export default function ClubScreen() {
+  const { isAuthenticated } = useAuth();
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.replace("club/auth/login");
+    }
+  }, [isAuthenticated]);
+
+  const handleNavigateToLive = () => {
+    router.push("club/live");
+  };
+
   return (
-    <Container>
-      <Text>Cluuurb</Text>
-    </Container>
+    <View style={{ flex: 1 }}>
+      <Button title="Go to Live" onPress={handleNavigateToLive} />
+    </View>
   );
 }

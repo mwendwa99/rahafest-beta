@@ -4,6 +4,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { Stack } from "expo-router";
 import store, { persistor } from "@/store";
 import { PersistGate } from "redux-persist/integration/react";
+import { AuthProvider } from "@/context/auth";
 
 // Prevent auto-hiding the splash screen
 SplashScreen.preventAutoHideAsync();
@@ -21,10 +22,12 @@ export default function RootLayout() {
         loading={null}
         persistor={persistor}
       >
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="media" />
-        </Stack>
+        <AuthProvider>
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="media" />
+          </Stack>
+        </AuthProvider>
       </PersistGate>
     </Provider>
   );
