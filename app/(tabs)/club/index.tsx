@@ -1,5 +1,6 @@
-import React, { useEffect } from "react";
-import { View, Button, ActivityIndicator } from "react-native";
+// club/index.tsx
+import React from "react";
+import { View, Button } from "react-native";
 import { useRouter } from "expo-router";
 
 export default function ClubScreen() {
@@ -7,7 +8,7 @@ export default function ClubScreen() {
 
   return (
     <View style={{ flex: 1 }}>
-      <Button title="Go to Live" onPress={() => router.push("club/live")} />
+      <Button title="Go to Live" onPress={() => router.push("/live")} />
     </View>
   );
 }

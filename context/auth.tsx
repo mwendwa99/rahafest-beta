@@ -1,94 +1,74 @@
 // context/auth.tsx
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useCallback } from "react";
 import { useRouter, useSegments } from "expo-router";
-
-type User = {
-  id: string;
-  name: string;
-  email: string;
-  // Add other user properties
-};
 
 type AuthContextType = {
   isAuthenticated: boolean;
-  user: User | null;
-  login: (email: string, password: string) => Promise<void>;
-  logout: () => void;
   isLoading: boolean;
+  login: (email: string, password: string) => Promise<void>;
+  logout: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  useEffect(() => {
-    checkAuthStatus();
-  }, []);
+  // Navigation guard to prevent multiple rapid navigations
+  const navigate = useCallback(
+    (path: string) => {
+      if (!isLoading) {
+        router.replace(path);
+      }
+    },
+    [isLoading]
+  );
 
-  const checkAuthStatus = async () => {
-    try {
-      // Check if user is logged in (e.g., check AsyncStorage for token)
-      // const token = await AsyncStorage.getItem('userToken');
-      // if (token) {
-      //   const userData = await fetchUserData(token);
-      //   setUser(userData);
-      //   setIsAuthenticated(true);
-      // }
-    } catch (error) {
-      console.error("Auth status check failed:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const login = useCallback(
+    async (email: string, password: string) => {
+      if (isLoading) return;
 
-  const login = async (email: string, password: string) => {
+      setIsLoading(true);
+      try {
+        // Your login logic here
+        await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API call
+        setIsAuthenticated(true);
+        navigate("/(tabs)/club");
+      } catch (error) {
+        console.error("Login failed:", error);
+        throw error;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [isLoading, navigate]
+  );
+
+  const logout = useCallback(async () => {
+    if (isLoading) return;
+
     setIsLoading(true);
     try {
-      // Implement your login logic here
-      // const response = await loginAPI(email, password);
-      // await AsyncStorage.setItem('userToken', response.token);
-      // setUser(response.user);
-      setIsAuthenticated(true);
-      router.replace("/(tabs)/club/");
-    } catch (error) {
-      throw error;
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const logout = async () => {
-    setIsLoading(true);
-    try {
-      // Clear stored credentials
-      // await AsyncStorage.removeItem('userToken');
-      setUser(null);
+      // Your logout logic here
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API call
       setIsAuthenticated(false);
-      router.replace("/auth/Login");
+      navigate("/auth/login");
     } catch (error) {
       console.error("Logout failed:", error);
     } finally {
       setIsLoading(false);
     }
-  };
-
-  if (isLoading) {
-    // You might want to show a loading screen here
-    return null; // or a loading component
-  }
+  }, [isLoading, navigate]);
 
   return (
     <AuthContext.Provider
       value={{
         isAuthenticated,
-        user,
+        isLoading,
         login,
         logout,
-        isLoading,
       }}
     >
       {children}
