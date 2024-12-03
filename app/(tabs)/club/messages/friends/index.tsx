@@ -1,11 +1,11 @@
+//@ts-nocheck
 import React, { useEffect } from "react";
-import { View, Text, FlatList, StyleSheet } from "react-native";
+import { Text, FlatList, StyleSheet } from "react-native";
 import Container from "@/components/Container";
 import ItemList from "@/components/List/ItemList";
 import Typography from "@/components/Typography";
 import { useFriendships } from "@/hooks/useFriendhsip";
 import { useAuth } from "@/context/auth";
-import Button from "@/components/Button";
 
 const MessagesPage = () => {
   const { user: currentUser } = useAuth();
@@ -21,7 +21,7 @@ const MessagesPage = () => {
 
   useEffect(() => {
     fetchPendingRequests();
-  }, [users]);
+  }, [isConnected, users]);
 
   const combinedData = [
     { type: "header", text: "" },

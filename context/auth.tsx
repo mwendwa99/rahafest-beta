@@ -104,7 +104,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const initializeAuth = async () => {
       const token = await AsyncStorage.getItem(TOKEN_KEY);
-      console.log("Initial auth token:", token); // Debug log
+      // console.log("Initial auth token:", token); // Debug log
       if (token) {
         setIsAuthenticated(true);
         await getUser();
