@@ -1,5 +1,11 @@
 //@ts-nocheck
-import React, { createContext, useContext, useState, useCallback } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useEffect,
+} from "react";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { authInstance } from "@/services/api.service";
@@ -95,6 +101,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const router = useRouter();
 
+  useEffect(() => {
+    const initializeAuth = async () => {
+      const token = await AsyncStorage.getItem(TOKEN_KEY);
+      console.log("Initial auth token:", token); // Debug log
+      if (token) {
+        setIsAuthenticated(true);
+        await getUser();
+      }
+    };
+    initializeAuth();
+  }, []);
+
   const navigate = useCallback(
     (path: string) => {
       if (!isLoading) {
@@ -130,9 +148,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           password,
         });
 
+        console.log("Login response:", response.data); // Debug log
+
         const { token, roles } = response.data.data;
 
-        await AsyncStorage.setItem(TOKEN_KEY, token);
+        console.log("Token to store:", token); // Debug log
+
+        try {
+          await AsyncStorage.setItem(TOKEN_KEY, token);
+          const storedToken = await AsyncStorage.getItem(TOKEN_KEY);
+          console.log("Stored token verification:", storedToken); // Verify storage
+        } catch (storageError) {
+          console.error("AsyncStorage error:", storageError);
+          throw storageError;
+        }
+
         const userData = { roles };
         await AsyncStorage.setItem(USER_KEY, JSON.stringify(userData));
 
@@ -146,6 +176,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } catch (error: any) {
         const errorMessage = getErrorMessage(error);
         showError(errorMessage);
+        console.error("Login error:", error); // Debug log
       } finally {
         setIsLoading(false);
       }

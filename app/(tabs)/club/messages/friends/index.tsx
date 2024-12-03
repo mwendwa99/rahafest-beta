@@ -4,29 +4,33 @@ import Container from "@/components/Container";
 import { useUniqueUsers } from "@/hooks/useUniqueUsers";
 import ItemList from "@/components/List/ItemList";
 import Typography from "@/components/Typography";
-import { useRouter } from "expo-router";
 
 const MessagesPage = () => {
   const { users, error, isConnected } = useUniqueUsers();
-  const router = useRouter();
 
   return (
     <Container style={styles.container}>
       <Typography style={styles.connection} color="#888888" align="center">
         {isConnected ? "Connected" : "Connecting..."}
       </Typography>
-      <ItemList
-        title={"Add Friends"}
-        // subtitle={item.email}
-        // startIcon={"person-outline"}
-        endIcon="chevron-forward-circle-outline"
-        onPress={() => router.push("club/messages/friends")}
+      {error && <Text style={styles.errorText}>{error}</Text>}
+      <FlatList
+        data={users}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <ItemList
+            title={`${item.first_name} ${item.last_name}`}
+            subtitle={item.email}
+            startIcon={"person-outline"}
+            endIcon="add-circle-outline"
+          />
+        )}
+        ListEmptyComponent={
+          <Text style={styles.noUsers}>
+            {isConnected ? "No unique users found." : "Connecting to server..."}
+          </Text>
+        }
       />
-      {error && (
-        <Typography style={styles.errorText} color="#f00" align="center">
-          {error}
-        </Typography>
-      )}
     </Container>
   );
 };
@@ -47,7 +51,9 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   errorText: {
-    fontSize: 10,
+    fontSize: 16,
+    color: "red",
+    textAlign: "center",
   },
 });
 

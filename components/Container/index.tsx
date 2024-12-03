@@ -17,7 +17,7 @@ export default function Container({
       style={[
         styles.container,
         style,
-        bgColor ? { backgroundColor: bgColor } : null,
+        { backgroundColor: bgColor ? bgColor : "#000" },
       ]}
     >
       {children}
