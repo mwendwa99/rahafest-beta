@@ -80,8 +80,8 @@ const LoginForm = ({ handleLogin }: LoginFormProps) => {
 
     if (!formData.password) {
       newErrors.password = "Password is required";
-    } else if (formData.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
+    } else if (formData.password.length < 4) {
+      newErrors.password = "Password must be at least 4 characters";
     }
 
     setErrors(newErrors);

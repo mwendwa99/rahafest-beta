@@ -72,6 +72,8 @@ const IconButton: React.FC<IconButtonProps> = ({
           backgroundColor: "transparent",
           borderWidth: 1,
           borderColor: disabled ? "rgba(0, 0, 0, 0.12)" : color,
+          height: 60,
+          width: 60,
         };
       case "text":
       default:
