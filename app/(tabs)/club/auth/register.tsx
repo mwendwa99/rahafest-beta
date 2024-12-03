@@ -4,16 +4,14 @@ import { Link, router } from "expo-router";
 import RegisterForm from "@/components/Form/RegisterForm"; // Your existing RegisterForm
 import Container from "@/components/Container";
 import Typography from "@/components/Typography";
+import { useAuth } from "@/context/auth";
 
 export default function Register() {
-  const handleRegisterSuccess = () => {
-    // After successful registration
-    router.replace("/(tabs)/club/");
-  };
+  const { register } = useAuth();
 
   return (
     <Container bgColor="#000">
-      <RegisterForm onRegisterSuccess={handleRegisterSuccess} />
+      <RegisterForm handleRegister={register} />
       <Link href="club/auth/login" style={{ marginVertical: 10 }}>
         <Typography variant="body1" align="center">
           Aleady have an account? Login

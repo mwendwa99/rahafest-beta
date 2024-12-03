@@ -119,7 +119,7 @@ const PasswordStrengthIndicator = memo(({ password }) => {
   );
 });
 
-const RegisterForm = () => {
+const RegisterForm = ({ handleRegister }) => {
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -185,7 +185,15 @@ const RegisterForm = () => {
 
   const handleSubmit = useCallback(() => {
     if (validateForm()) {
-      console.log("Form submitted:", formData);
+      handleRegister(
+        formData.firstName,
+        formData.lastName,
+        formData.email,
+        formData.password,
+        formData.confirmPassword,
+        formData.phoneNumber
+      );
+      // console.log("Form submitted:", formData);
     }
   }, [formData, validateForm]);
 
@@ -214,35 +222,35 @@ const RegisterForm = () => {
         </Typography>
 
         <FormInput
-          placeholder="First Name"
+          placeholder="First Name *"
           value={formData.firstName}
           onChangeText={handleChange("firstName")}
           error={errors.firstName}
         />
 
         <FormInput
-          placeholder="Last Name"
+          placeholder="Last Name *"
           value={formData.lastName}
           onChangeText={handleChange("lastName")}
           error={errors.lastName}
         />
 
         <FormInput
-          placeholder="Email"
+          placeholder="Email *"
           value={formData.email}
           onChangeText={handleChange("email")}
           error={errors.email}
         />
 
         <FormInput
-          placeholder="Phone Number"
+          placeholder="Phone Number *"
           value={formData.phoneNumber}
           onChangeText={handleChange("phoneNumber")}
           error={errors.phoneNumber}
         />
 
         <FormInput
-          placeholder="Password"
+          placeholder="Password *"
           value={formData.password}
           onChangeText={handleChange("password")}
           secureTextEntry
@@ -252,7 +260,7 @@ const RegisterForm = () => {
         <PasswordStrengthIndicator password={formData.password} />
 
         <FormInput
-          placeholder="Confirm Password"
+          placeholder="Confirm Password *"
           value={formData.confirmPassword}
           onChangeText={handleChange("confirmPassword")}
           secureTextEntry

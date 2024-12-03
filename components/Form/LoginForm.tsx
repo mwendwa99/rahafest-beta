@@ -59,7 +59,7 @@ const FormInput = memo(
 );
 
 interface LoginFormProps {
-  handleLogin: () => void;
+  handleLogin: (data) => void;
 }
 
 const LoginForm = ({ handleLogin }: LoginFormProps) => {
@@ -91,7 +91,7 @@ const LoginForm = ({ handleLogin }: LoginFormProps) => {
   const handleSubmit = useCallback(() => {
     if (validateForm()) {
       // console.log("Form submitted:", formData);
-      handleLogin(formData);
+      handleLogin(formData.email, formData.password);
     }
   }, [formData, validateForm]);
 

@@ -13,6 +13,19 @@ interface LoginResponse {
   };
 }
 
+interface RegisterResponse {
+  status: string;
+  message: string;
+  data: {
+    first_name: string;
+    last_name: string;
+    email: string;
+    user_slug: string;
+    phone?: string | null;
+    id: number;
+  };
+}
+
 interface User {
   roles: number[];
 }
@@ -22,6 +35,14 @@ interface AuthContextType {
   isLoading: boolean;
   user: User | null;
   login: (email: string, password: string) => Promise<void>;
+  register: (
+    firstName: string,
+    lastName: string,
+    email: string,
+    password: string,
+    password_confirm: string,
+    phone?: string | undefined
+  ) => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -31,26 +52,29 @@ const USER_KEY = "user";
 const AuthContext = createContext<AuthContextType | null>(null);
 
 function showError(message: string) {
-  Alert.alert("Login Failed", message, [{ text: "OK", onPress: () => {} }]);
+  Alert.alert("Error", message, [{ text: "OK", onPress: () => {} }]);
 }
 
-// Helper to handle various error scenarios with user-friendly messages
+function showSuccess(message: string) {
+  Alert.alert("Success", message, [{ text: "OK", onPress: () => {} }]);
+}
+
 function getErrorMessage(error: any): string {
-  // Network error
   if (!error.response) {
     return "Unable to connect to server. Please check your internet connection.";
   }
 
-  // Server errors
   switch (error.response.status) {
     case 400:
-      return "Invalid email or password. Please check your credentials.";
+      return "Invalid input. Please check your information.";
     case 401:
-      return "Invalid email or password. Please check your credentials.";
+      return "Invalid credentials. Please check your information.";
     case 403:
       return "Your account doesn't have permission to access this feature.";
     case 404:
-      return "Login service not available. Please try again later.";
+      return "Service not available. Please try again later.";
+    case 409:
+      return "An account with this email already exists.";
     case 500:
       return "Server error. Please try again later.";
     default:
@@ -74,24 +98,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 
   const login = useCallback(
-    async (data: { email: string; password: string }) => {
+    async (email: string, password: string) => {
       if (isLoading) return;
 
       setIsLoading(true);
       try {
-        // console.log(email, password);
-        const response = await authInstance.post<LoginResponse>("/login", data);
-
-        // console.log({ response });
+        const response = await authInstance.post<LoginResponse>("/login", {
+          email,
+          password,
+        });
 
         const { token, roles } = response.data.data;
 
-        // Store authentication data
         await AsyncStorage.setItem(TOKEN_KEY, token);
         const userData = { roles };
         await AsyncStorage.setItem(USER_KEY, JSON.stringify(userData));
 
-        // Update state
         setUser(userData);
         setIsAuthenticated(true);
 
@@ -104,6 +126,44 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     },
     [isLoading, navigate]
+  );
+
+  const register = useCallback(
+    async (
+      firstName: string,
+      lastName: string,
+      email: string,
+      password: string,
+      password_confirm: string,
+      phone: string | undefined
+    ) => {
+      if (isLoading) return;
+
+      setIsLoading(true);
+      try {
+        const response = await authInstance.post<RegisterResponse>(
+          "/register",
+          {
+            first_name: firstName,
+            last_name: lastName,
+            email,
+            password,
+            password_confirm,
+            phone: phone || null,
+          }
+        );
+
+        showSuccess(response.data.message);
+        // After successful registration, automatically log in
+        await login(email, password);
+      } catch (error: any) {
+        const errorMessage = getErrorMessage(error);
+        showError(errorMessage);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [isLoading, login]
   );
 
   const logout = useCallback(async () => {
@@ -129,6 +189,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isLoading,
         user,
         login,
+        register,
         logout,
       }}
     >
