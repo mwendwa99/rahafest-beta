@@ -1,29 +1,76 @@
-// context/auth.tsx
 import React, { createContext, useContext, useState, useCallback } from "react";
-import { useRouter, useSegments } from "expo-router";
+import { useRouter } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { authInstance } from "@/services/api.service";
+import { Alert } from "react-native";
 
-type AuthContextType = {
+interface LoginResponse {
+  status: string;
+  message: string;
+  data: {
+    token: string;
+    roles: number[];
+  };
+}
+
+interface User {
+  roles: number[];
+}
+
+interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
+  user: User | null;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
-};
+}
+
+const TOKEN_KEY = "token";
+const USER_KEY = "user";
 
 const AuthContext = createContext<AuthContextType | null>(null);
+
+function showError(message: string) {
+  Alert.alert("Login Failed", message, [{ text: "OK", onPress: () => {} }]);
+}
+
+// Helper to handle various error scenarios with user-friendly messages
+function getErrorMessage(error: any): string {
+  // Network error
+  if (!error.response) {
+    return "Unable to connect to server. Please check your internet connection.";
+  }
+
+  // Server errors
+  switch (error.response.status) {
+    case 400:
+      return "Invalid email or password. Please check your credentials.";
+    case 401:
+      return "Invalid email or password. Please check your credentials.";
+    case 403:
+      return "Your account doesn't have permission to access this feature.";
+    case 404:
+      return "Login service not available. Please try again later.";
+    case 500:
+      return "Server error. Please try again later.";
+    default:
+      return "Something went wrong. Please try again later.";
+  }
+}
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
   const router = useRouter();
 
-  // Navigation guard to prevent multiple rapid navigations
   const navigate = useCallback(
     (path: string) => {
       if (!isLoading) {
         router.replace(path);
       }
     },
-    [isLoading]
+    [isLoading, router]
   );
 
   const login = useCallback(
@@ -32,13 +79,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       setIsLoading(true);
       try {
-        // Your login logic here
-        await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API call
-        setIsAuthenticated(true);
-        navigate("/(tabs)/club");
-      } catch (error) {
-        console.error("Login failed:", error);
-        throw error;
+        const response = await authInstance.post<LoginResponse>("/login", {
+          email,
+          password,
+        });
+
+        console.log({ response });
+
+        // const { token, roles } = response.data.data;
+
+        // // Store authentication data
+        // await AsyncStorage.setItem(TOKEN_KEY, token);
+        // const userData = { roles };
+        // await AsyncStorage.setItem(USER_KEY, JSON.stringify(userData));
+
+        // // Update state
+        // setUser(userData);
+        // setIsAuthenticated(true);
+
+        // navigate("/(tabs)/club");
+      } catch (error: any) {
+        const errorMessage = getErrorMessage(error);
+        showError(errorMessage);
       } finally {
         setIsLoading(false);
       }
@@ -51,12 +113,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     setIsLoading(true);
     try {
-      // Your logout logic here
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API call
+      await AsyncStorage.multiRemove([TOKEN_KEY, USER_KEY]);
       setIsAuthenticated(false);
-      navigate("/auth/login");
+      setUser(null);
+      navigate("/(tabs)");
     } catch (error) {
-      console.error("Logout failed:", error);
+      showError("Failed to logout. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -67,6 +129,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       value={{
         isAuthenticated,
         isLoading,
+        user,
         login,
         logout,
       }}

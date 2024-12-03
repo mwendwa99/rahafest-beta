@@ -5,9 +5,9 @@ import { ActivityIndicator, View } from "react-native";
 import { useAuth } from "@/context/auth";
 
 export default function ClubLayout() {
-  // const { isAuthenticated, isLoading } = useAuth();
-  const isAuthenticated = false;
-  const isLoading = false;
+  const { isAuthenticated, isLoading } = useAuth();
+  // const isAuthenticated = false;
+  // const isLoading = false;
   const router = useRouter();
 
   useEffect(() => {

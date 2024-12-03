@@ -58,7 +58,11 @@ const FormInput = memo(
   )
 );
 
-const LoginForm = () => {
+interface LoginFormProps {
+  handleLogin: () => void;
+}
+
+const LoginForm = ({ handleLogin }: LoginFormProps) => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -86,7 +90,8 @@ const LoginForm = () => {
 
   const handleSubmit = useCallback(() => {
     if (validateForm()) {
-      console.log("Form submitted:", formData);
+      // console.log("Form submitted:", formData);
+      handleLogin(formData);
     }
   }, [formData, validateForm]);
 

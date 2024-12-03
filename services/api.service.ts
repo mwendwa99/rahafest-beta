@@ -146,8 +146,6 @@ const createResponseInterceptor = (instance) => {
 // Apply interceptors to protected instances
 createRequestInterceptor(protectedInstance);
 createRequestInterceptor(authInstance);
-createResponseInterceptor(protectedInstance);
-createResponseInterceptor(authInstance);
 
 export default protectedInstance;
 export { authInstance };
