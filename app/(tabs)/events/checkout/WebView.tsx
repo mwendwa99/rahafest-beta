@@ -5,6 +5,7 @@ interface VisaPaymentWebViewProps {
   formData: Record<string, string>; // Changed from string to object
 }
 
+// <form id="payment-form" method="POST" action="https://testsecureacceptance.cybersource.com/pay">
 const VisaPaymentWebView: React.FC<VisaPaymentWebViewProps> = ({
   formData,
 }) => {
@@ -12,7 +13,7 @@ const VisaPaymentWebView: React.FC<VisaPaymentWebViewProps> = ({
   const htmlForm = `
     <html>
       <body>
-        <form id="payment-form" method="POST" action="https://testsecureacceptance.cybersource.com/pay">
+        <form id="payment-form" method="POST" action="https://secureacceptance.cybersource.com/pay>
           ${Object.entries(formData)
             .map(
               ([key, value]) =>
