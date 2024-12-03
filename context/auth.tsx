@@ -74,30 +74,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 
   const login = useCallback(
-    async (email: string, password: string) => {
+    async (data: { email: string; password: string }) => {
       if (isLoading) return;
 
       setIsLoading(true);
       try {
-        const response = await authInstance.post<LoginResponse>("/login", {
-          email,
-          password,
-        });
+        // console.log(email, password);
+        const response = await authInstance.post<LoginResponse>("/login", data);
 
-        console.log({ response });
+        // console.log({ response });
 
-        // const { token, roles } = response.data.data;
+        const { token, roles } = response.data.data;
 
-        // // Store authentication data
-        // await AsyncStorage.setItem(TOKEN_KEY, token);
-        // const userData = { roles };
-        // await AsyncStorage.setItem(USER_KEY, JSON.stringify(userData));
+        // Store authentication data
+        await AsyncStorage.setItem(TOKEN_KEY, token);
+        const userData = { roles };
+        await AsyncStorage.setItem(USER_KEY, JSON.stringify(userData));
 
-        // // Update state
-        // setUser(userData);
-        // setIsAuthenticated(true);
+        // Update state
+        setUser(userData);
+        setIsAuthenticated(true);
 
-        // navigate("/(tabs)/club");
+        navigate("/(tabs)/club");
       } catch (error: any) {
         const errorMessage = getErrorMessage(error);
         showError(errorMessage);
