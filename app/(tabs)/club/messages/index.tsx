@@ -17,8 +17,6 @@ const MessagesPage = () => {
       </Typography>
       <ItemList
         title={"Add Friends"}
-        // subtitle={item.email}
-        // startIcon={"person-outline"}
         endIcon="chevron-forward-circle-outline"
         onPress={() => router.push("club/messages/friends")}
       />

@@ -1,12 +1,74 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, Text, FlatList, StyleSheet } from "react-native";
 import Container from "@/components/Container";
-import { useUniqueUsers } from "@/hooks/useUniqueUsers";
 import ItemList from "@/components/List/ItemList";
 import Typography from "@/components/Typography";
+import { useFriendships } from "@/hooks/useFriendhsip";
+import { useAuth } from "@/context/auth";
+import Button from "@/components/Button";
 
 const MessagesPage = () => {
-  const { users, error, isConnected } = useUniqueUsers();
+  const { user: currentUser } = useAuth();
+  const {
+    users,
+    isConnected,
+    error,
+    isLoading,
+    sendFriendRequest,
+    fetchPendingRequests,
+    pendingFriendships,
+  } = useFriendships();
+
+  useEffect(() => {
+    fetchPendingRequests();
+  }, [users]);
+
+  const combinedData = [
+    { type: "header", text: "" },
+    ...users,
+    { type: "header", text: "Pending Friendships" },
+    ...pendingFriendships,
+  ];
+
+  const renderItem = ({ item }) => {
+    if (item.type === "header") {
+      return (
+        item.text && (
+          <Typography
+            variant="h6"
+            align="center"
+            gutterBottom
+            style={{ marginVertical: 10 }}
+          >
+            {item.text}
+          </Typography>
+        )
+      );
+    }
+
+    // Render pending friendships
+    if (item.sender_id) {
+      return (
+        <ItemList
+          title={`${item.recipient_slug}`}
+          subtitle={"Pending"}
+          startIcon={"person-outline"}
+          onPress={fetchPendingRequests}
+        />
+      );
+    }
+
+    // Render unique users
+    return (
+      <ItemList
+        title={`${item.first_name} ${item.last_name}`}
+        subtitle={item.email}
+        startIcon={"person-outline"}
+        endIcon={"add-circle-outline"}
+        onPress={() => sendFriendRequest(item.id)}
+      />
+    );
+  };
 
   return (
     <Container style={styles.container}>
@@ -15,19 +77,15 @@ const MessagesPage = () => {
       </Typography>
       {error && <Text style={styles.errorText}>{error}</Text>}
       <FlatList
-        data={users}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <ItemList
-            title={`${item.first_name} ${item.last_name}`}
-            subtitle={item.email}
-            startIcon={"person-outline"}
-            endIcon="add-circle-outline"
-          />
-        )}
+        data={combinedData}
+        keyExtractor={(item, index) =>
+          item.type ? `${item.type}-${index}` : item.id.toString()
+        }
+        renderItem={renderItem}
+        showsVerticalScrollIndicator={true}
         ListEmptyComponent={
           <Text style={styles.noUsers}>
-            {isConnected ? "No unique users found." : "Connecting to server..."}
+            {isConnected ? "No data available." : "Connecting to server..."}
           </Text>
         }
       />
