@@ -1,6 +1,6 @@
 //@ts-nocheck
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Pressable } from "react-native";
 import IconButton from "../IconButton";
 
 interface NavCardProp {
@@ -21,11 +21,12 @@ export default function NavCard({
   onPress,
 }: NavCardProp) {
   return (
-    <View
+    <Pressable
       style={[
         styles.cardContainer,
-        { width: isFullWidth ? "100%" : "48%" }, // Full width for single items
+        { width: isFullWidth ? "100%" : "48%", borderColor: color }, // Full width for single items
       ]}
+      onPress={onPress}
     >
       <IconButton
         name={icon}
@@ -34,7 +35,7 @@ export default function NavCard({
         title={title}
         onPress={onPress}
       />
-    </View>
+    </Pressable>
   );
 }
 
@@ -42,7 +43,6 @@ const styles = StyleSheet.create({
   cardContainer: {
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: "#FFD700",
     height: 150,
     backgroundColor: "#262626",
     justifyContent: "center",

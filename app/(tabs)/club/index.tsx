@@ -28,7 +28,7 @@ export default function ClubScreen() {
   const router = useRouter();
   const { logout, user } = useAuth();
 
-  console.log(user);
+  // console.log(user);
 
   return (
     <Container bgColor="#000" style={{ padding: 20 }}>
@@ -47,7 +47,7 @@ export default function ClubScreen() {
           <NavCard
             key={item.id}
             icon={item.icon}
-            color={"#ffd700"}
+            color={"#F4A329"}
             iconSize={50}
             title={item.title}
             isFullWidth={routes.length % 2 === 1 && index === routes.length - 1}
