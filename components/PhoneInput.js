@@ -13,11 +13,11 @@ export default function PhoneInput({
 }) {
   return (
     <View style={styles.container}>
-      <Text value="Please enter your M-PESA number" variant="subtitle" />
-      <Text
+      <Text value="Please enter your phone number" variant="subtitle" />
+      {/* <Text
         value="This will be used to send you a payment prompt"
         variant="body"
-      />
+      /> */}
       <Input
         placeholder="Phone Number"
         type="phone-pad"
