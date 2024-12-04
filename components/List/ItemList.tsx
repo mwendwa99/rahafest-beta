@@ -43,13 +43,7 @@ const ItemList: React.FC<ItemListProps> = ({
           <Ionicons name={startIcon} size={24} style={styles.startIcon} />
         )}
         {avatar && !startIcon && (
-          <Avatar
-            width={50}
-            height={50}
-            fontSize={24}
-            names={avatar}
-            size={24}
-          />
+          <Avatar width={50} height={50} fontSize={24} names={avatar} />
         )}
       </View>
       <View style={styles.textWrapper}>

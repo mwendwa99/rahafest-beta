@@ -8,6 +8,7 @@ import {
   Image,
   ImageSourcePropType,
   Text,
+  View,
 } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
@@ -103,7 +104,7 @@ const IconButton: React.FC<IconButtonProps> = ({
   const renderIcon = () => {
     if (source) {
       return (
-        <>
+        <View>
           <Image
             source={source}
             style={{
@@ -119,7 +120,7 @@ const IconButton: React.FC<IconButtonProps> = ({
               {title}
             </Text>
           )}
-        </>
+        </View>
       );
     }
     if (name) {

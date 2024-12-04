@@ -99,7 +99,7 @@ const MessagesPage = () => {
                 : item.recipient_slug
             }
             endIcon="send-outline"
-            onPress={() => router.push("club/messages/friends")}
+            onPress={() => router.push("club/messages/dms")}
           />
         )}
         showsVerticalScrollIndicator={true}
