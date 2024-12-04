@@ -38,6 +38,7 @@ import {
   clearPaymentData,
 } from "../../../redux/events/eventSlice";
 import { success, warning } from "../../../utils/toast";
+import WebView from "react-native-webview";
 
 export default function Checkout({ route, navigation }) {
   const { event } = route.params || {};
@@ -253,10 +254,22 @@ export default function Checkout({ route, navigation }) {
                 />
                 <Text value={event.location} variant="body" />
               </View>
-              <Text
+              {/* <Text
                 value={event.description}
                 variant="small"
                 style={{ marginVertical: 2 }}
+              /> */}
+              <WebView
+                originWhitelist={["*"]}
+                source={{
+                  html: `
+<html>
+      <body style="font-size:50px; font-family:Montserrat san-serif;"> <!-- Adjust font size -->
+        ${event.description}
+      </body>
+      </html>
+  `,
+                }}
               />
             </View>
           </View>
