@@ -319,6 +319,7 @@ export default function Checkout({ route, navigation }) {
               transparent={false}
             >
               <PaymentModal
+                navigation={navigation}
                 invoice={invoice}
                 toggleModal={toggleInvoiceModal}
               />

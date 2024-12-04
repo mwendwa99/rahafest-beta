@@ -1,14 +1,19 @@
-import { View, StyleSheet, Image } from "react-native";
-import React, { useEffect } from "react";
+import { View, StyleSheet, Image, Pressable } from "react-native";
+import React, { useEffect, useState } from "react";
 import Text from "./Text";
 import Button from "./Button";
 
 import { triggerSTK } from "../redux/events/eventActions";
 import { useDispatch, useSelector } from "react-redux";
+import VisaPaymentWebView from "./WebView";
+import { generateHostedCheckoutData } from "./security";
 
-const PaymentModal = ({ invoice, toggleModal }) => {
+const PaymentModal = ({ invoice, toggleModal, navigation }) => {
   const dispatch = useDispatch();
   const { paymentData, error } = useSelector((state) => state.events);
+  const [visaLoading, setVisaLoading] = useState(false);
+  const [formData, setFormData] = useState(null);
+  const [showVisaWebView, setShowVisaWebView] = useState(false);
 
   const handleTriggerSTK = () => {
     const stkData = {
@@ -25,7 +30,24 @@ const PaymentModal = ({ invoice, toggleModal }) => {
     toggleModal();
   };
 
-  return (
+  const handlePayWithVisa = async () => {
+    setVisaLoading(true);
+    try {
+      console.log({ invoice });
+      const formData = generateHostedCheckoutData(invoice);
+      setFormData(formData);
+      setShowVisaWebView(true);
+    } catch (error) {
+      console.error("Error during Visa payment:", error);
+    } finally {
+      setVisaLoading(false);
+    }
+  };
+
+  return showVisaWebView && formData ? (
+    // Render WebView for Visa payment
+    <VisaPaymentWebView formData={formData} />
+  ) : (
     <View style={styles.container}>
       <Text value="Success!" style={{ color: "green" }} variant="subtitle" />
       <View style={{ ...styles.row, justifyContent: "space-between" }}>
@@ -68,7 +90,34 @@ const PaymentModal = ({ invoice, toggleModal }) => {
       />
 
       <View style={{ width: "100%" }}>
-        <Button label="Pay" variant="contained" onPress={handleTriggerSTK} />
+        <Button label="M-PESA" variant="contained" onPress={handleTriggerSTK} />
+      </View>
+
+      <View style={{ width: "100%" }}>
+        <Text
+          value={`OR`}
+          variant="title"
+          style={{ textAlign: "center", color: "#888" }}
+        />
+        <Text
+          value={visaLoading ? "loading" : `Pay with Visa`}
+          variant="subtitle"
+          style={{ textAlign: "left" }}
+        />
+
+        {/* <Button
+          label="VISA - form"
+          variant="contained"
+          onPress={handlePayWithVisa}
+        /> */}
+        <Button
+          label="VISA"
+          variant="contained"
+          onPress={() => {
+            toggleModal();
+            navigation.navigate("VisaCheckout");
+          }}
+        />
       </View>
     </View>
   );
