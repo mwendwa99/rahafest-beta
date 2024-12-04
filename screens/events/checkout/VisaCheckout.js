@@ -15,7 +15,7 @@ export default function VisaCheckout() {
   // console.log({ invoice });
 
   return (
-    <SafeAreaView style={{ flex: 1, padding: 20, justifyContent: "center" }}>
+    <SafeAreaView style={{ flex: 1, justifyContent: "center" }}>
       {showCheckout ? (
         <SecureCheckout
           invoice={invoice}
@@ -24,7 +24,7 @@ export default function VisaCheckout() {
         />
       ) : (
         // Your other payment options UI
-        <View style={{ alignItems: "center" }}>
+        <View style={{ alignItems: "center", padding: 20 }}>
           <Image
             source={visaLogo}
             style={{ height: 200, width: 200 }}
