@@ -1,28 +1,61 @@
-import React, { useEffect, useLayoutEffect } from "react";
-import { View, Text, FlatList, StyleSheet, RefreshControl } from "react-native";
+import React, { useCallback, useEffect, useState } from "react";
+import {
+  View,
+  FlatList,
+  StyleSheet,
+  RefreshControl,
+  Text,
+  TouchableOpacity,
+} from "react-native";
 import Container from "@/components/Container";
 import ItemList from "@/components/List/ItemList";
 import Typography from "@/components/Typography";
-import { useRouter } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import { useFriendships } from "@/hooks/useFriendhsip";
 import { useAuth } from "@/context/auth";
 
+// import React, { useEffect, useState } from "react";
+// import {
+//   View,
+//   Text,
+//   FlatList,
+//   RefreshControl,
+//   TouchableOpacity,
+// } from "react-native";
+// import { useAuth } from "path-to-auth-hook";
+// import { useFriendships } from "path-to-friendships-hook";
+// import { useRouter } from "expo-router";
+
 const MessagesPage = () => {
   const { user } = useAuth();
-  const { userFriends, fetchUserFriends, error, isConnected, isLoading } =
+  const { userFriends, fetchUserFriends, error, isConnected } =
     useFriendships();
+  const [refreshing, setRefreshing] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
     if (isConnected) {
       console.log("WebSocket connected, fetching user friends");
-      fetchUserFriends();
+      handleFetchFriends();
     } else {
       console.log("WebSocket not connected yet");
     }
-  }, [isConnected, fetchUserFriends]); // Empty dependency array to avoid infinite retries
+  }, [isConnected]); // React to isConnected changes
 
-  console.log({ userFriends });
+  const handleFetchFriends = async () => {
+    try {
+      setRefreshing(true);
+      await fetchUserFriends();
+    } catch (err) {
+      console.error("Error fetching friends:", err);
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
+  const onRefresh = () => {
+    handleFetchFriends();
+  };
 
   return (
     <Container style={styles.container}>
@@ -48,10 +81,18 @@ const MessagesPage = () => {
         data={userFriends}
         keyExtractor={(item) => item.id.toString()}
         refreshControl={
-          <RefreshControl onRefresh={fetchUserFriends} refreshing={isLoading} />
+          <RefreshControl
+            onRefresh={fetchUserFriends}
+            refreshing={refreshing}
+          />
         }
         renderItem={({ item }) => (
           <ItemList
+            avatar={
+              item.recipient_id === user.id
+                ? item.sender_slug
+                : item.recipient_slug
+            }
             title={
               item.recipient_id === user.id
                 ? item.sender_slug
@@ -62,15 +103,12 @@ const MessagesPage = () => {
           />
         )}
         showsVerticalScrollIndicator={true}
-        // ListEmptyComponent={
-        //   <Text style={styles.noUsers}>
-        //     {isConnected ? "No data available." : "Connecting to server..."}
-        //   </Text>
-        // }
       />
     </Container>
   );
 };
+
+// export default MessagesPage;
 
 const styles = StyleSheet.create({
   container: {

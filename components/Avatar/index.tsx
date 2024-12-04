@@ -3,9 +3,17 @@ import { View, Text, StyleSheet } from "react-native";
 
 interface AvatarProps {
   names: string;
+  width: number;
+  height: number;
+  fontSize: number;
 }
 
-export default function Avatar({ names }: AvatarProps) {
+export default function Avatar({
+  names,
+  width = 200,
+  height = 200,
+  fontSize = 50,
+}: AvatarProps) {
   // Extract initials
   const initials = names
     .split(",") // Split the names string into an array
@@ -19,7 +27,12 @@ export default function Avatar({ names }: AvatarProps) {
   const color = `hsl(${hashCode % 360}, 70%, 60%)`; // Create a color from the hash
 
   return (
-    <View style={[styles.avatar, { backgroundColor: color }]}>
+    <View
+      style={[
+        styles.avatar,
+        { backgroundColor: color, width, height, fontSize },
+      ]}
+    >
       <Text style={styles.text}>{initials}</Text>
     </View>
   );
@@ -27,8 +40,6 @@ export default function Avatar({ names }: AvatarProps) {
 
 const styles = StyleSheet.create({
   avatar: {
-    width: 200,
-    height: 200,
     borderRadius: 100, // Makes it circular
     justifyContent: "center",
     alignItems: "center",
@@ -36,7 +47,6 @@ const styles = StyleSheet.create({
   },
   text: {
     color: "#fff",
-    fontSize: 50,
     fontWeight: "bold",
   },
 });

@@ -47,7 +47,6 @@ export const useFriendships = () => {
         break;
 
       case "accepted-list":
-        // console.log("Setting userFriends:", data.friendships);
         setUserFriends(data.friendships || []);
         setError(null);
         break;
@@ -111,7 +110,7 @@ export const useFriendships = () => {
 
   // Fetch user userFriends
   const fetchUserFriends = useCallback(() => {
-    // console.log("Fetching userFriends...");
+    console.log("Fetching userFriends...");
     setIsLoading(true);
     setError(null);
 

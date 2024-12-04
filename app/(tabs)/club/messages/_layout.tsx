@@ -1,14 +1,25 @@
-import React, { useEffect } from "react";
-import { Stack } from "expo-router";
+import React, { useCallback, useEffect } from "react";
+import { Stack, useFocusEffect } from "expo-router";
 import { useFriendships } from "@/hooks/useFriendhsip";
 
 export default function MessagesLayout() {
-  const { fetchUserFriends } = useFriendships();
+  const { fetchUserFriends, isConnected } = useFriendships();
 
-  useEffect(() => {
-    console.log("Fetching userFriends on component mount");
-    fetchUserFriends();
-  }, []);
+  // useEffect(() => {
+  //   console.log("Fetching userFriends on component mount");
+  //   fetchUserFriends();
+  // }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (isConnected) {
+        fetchUserFriends();
+      }
+      return () => {
+        // Cleanup if needed
+      };
+    }, [isConnected, fetchUserFriends])
+  );
 
   return (
     <Stack>

@@ -21,20 +21,45 @@ export const useWebSocket = <T>({
   retryDelay = 3000,
 }: WebSocketHookProps<T>) => {
   const [isConnected, setIsConnected] = useState(false);
+  const [isReady, setIsReady] = useState(false);
   const [connectionError, setConnectionError] = useState<string | null>(null);
   const socketRef = useRef<WebSocket | null>(null);
+  const messageQueueRef = useRef<object[]>([]);
   const retryCountRef = useRef(0);
   const shouldAttemptReconnectRef = useRef(true);
   const isInitialConnectionRef = useRef(true);
+  const pingIntervalRef = useRef<NodeJS.Timeout>();
 
-  const connectSocket = useCallback(async () => {
-    // Prevent connection if already connected
-    if (socketRef.current?.readyState === WebSocket.OPEN) {
+  // Function to process queued messages
+  const processMessageQueue = useCallback(() => {
+    if (!socketRef.current || socketRef.current.readyState !== WebSocket.OPEN) {
       return;
     }
 
-    // Prevent multiple connection attempts
+    console.log(
+      `Processing message queue (${messageQueueRef.current.length} messages)`
+    );
+    while (messageQueueRef.current.length > 0) {
+      const message = messageQueueRef.current[0];
+      try {
+        socketRef.current.send(JSON.stringify(message));
+        console.log("Successfully sent queued message:", message);
+        messageQueueRef.current.shift(); // Remove sent message
+      } catch (err) {
+        console.error("Failed to send queued message:", err);
+        break;
+      }
+    }
+  }, []);
+
+  const connectSocket = useCallback(async () => {
+    if (socketRef.current?.readyState === WebSocket.OPEN) {
+      console.log("WebSocket already connected");
+      return;
+    }
+
     if (!isInitialConnectionRef.current && !shouldAttemptReconnectRef.current) {
+      console.log("Reconnection not allowed");
       return;
     }
 
@@ -42,7 +67,6 @@ export const useWebSocket = <T>({
       const token = await AsyncStorage.getItem(tokenKey);
       if (!token) throw new Error("Token not found in storage.");
 
-      // Convert ws:// to wss:// and http:// to https://
       let wsUrl = url
         .replace(/^ws:\/\//i, "wss://")
         .replace(/^http:\/\//i, "https://");
@@ -63,6 +87,7 @@ export const useWebSocket = <T>({
 
       const connectionTimeout = setTimeout(() => {
         if (ws.readyState !== WebSocket.OPEN) {
+          console.log("Connection timeout, closing socket");
           ws.close();
           throw new Error("Connection timeout");
         }
@@ -70,26 +95,46 @@ export const useWebSocket = <T>({
 
       ws.onopen = () => {
         clearTimeout(connectionTimeout);
-        if (!isConnected) {
-          console.log("WebSocket connected successfully");
-          setIsConnected(true);
-          setConnectionError(null);
-          retryCountRef.current = 0;
-        }
+        console.log("WebSocket connected successfully");
+        setIsConnected(true);
+        setConnectionError(null);
+        retryCountRef.current = 0;
 
-        if (initialMessage) {
-          try {
-            ws.send(JSON.stringify(initialMessage));
-          } catch (err) {
-            console.error("Failed to send initial message:", err);
+        // Setup ping interval to keep connection alive
+        pingIntervalRef.current = setInterval(() => {
+          if (ws.readyState === WebSocket.OPEN) {
+            try {
+              ws.send(JSON.stringify({ type: "ping" }));
+              console.log("Ping sent");
+            } catch (err) {
+              console.warn("Failed to send ping:", err);
+            }
           }
-        }
+        }, 30000);
+
+        // Delay before sending initial message and processing queue
+        setTimeout(() => {
+          if (initialMessage && ws.readyState === WebSocket.OPEN) {
+            try {
+              ws.send(JSON.stringify(initialMessage));
+              console.log("Initial message sent");
+            } catch (err) {
+              console.error("Failed to send initial message:", err);
+              messageQueueRef.current.unshift(initialMessage);
+            }
+          }
+          processMessageQueue();
+          setIsReady(true);
+        }, 500);
       };
 
       ws.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
-          onMessage(data);
+          if (data.type !== "pong") {
+            // Ignore pong responses
+            onMessage(data);
+          }
         } catch (err) {
           console.error("Failed to parse WebSocket message:", err);
           if (onError) onError("Failed to parse WebSocket message.");
@@ -99,7 +144,9 @@ export const useWebSocket = <T>({
       ws.onerror = (event: any) => {
         clearTimeout(connectionTimeout);
         const errorMessage = event.message || "WebSocket connection error";
+        console.error("WebSocket error:", errorMessage);
         setConnectionError(errorMessage);
+        setIsReady(false);
 
         if (onError) {
           const error = {
@@ -114,12 +161,23 @@ export const useWebSocket = <T>({
 
       ws.onclose = (event) => {
         clearTimeout(connectionTimeout);
+        if (pingIntervalRef.current) {
+          clearInterval(pingIntervalRef.current);
+        }
+
+        console.log(
+          `WebSocket closed with code: ${event.code}, reason: ${event.reason}`
+        );
         setIsConnected(false);
+        setIsReady(false);
 
         if (
           shouldAttemptReconnectRef.current &&
           retryCountRef.current < maxRetries
         ) {
+          console.log(
+            `Attempting reconnection ${retryCountRef.current + 1}/${maxRetries}`
+          );
           retryCountRef.current += 1;
           setTimeout(connectSocket, retryDelay);
         }
@@ -127,7 +185,9 @@ export const useWebSocket = <T>({
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : "Failed to connect";
+      console.error("Connection error:", errorMessage);
       setConnectionError(errorMessage);
+      setIsReady(false);
       if (onError) onError(errorMessage);
 
       if (
@@ -138,7 +198,40 @@ export const useWebSocket = <T>({
         setTimeout(connectSocket, retryDelay);
       }
     }
-  }, [url, tokenKey, maxRetries, retryDelay, isConnected]); // Removed initialMessage from dependencies
+  }, [url, tokenKey, maxRetries, retryDelay, processMessageQueue]);
+
+  const sendMessage = useCallback(
+    (message: object) => {
+      console.log("Attempting to send message:", message);
+
+      if (
+        !socketRef.current ||
+        socketRef.current.readyState !== WebSocket.OPEN
+      ) {
+        console.log("Socket not ready, queueing message");
+        messageQueueRef.current.push(message);
+
+        // Attempt to reconnect if socket is closed
+        if (
+          !socketRef.current ||
+          socketRef.current.readyState === WebSocket.CLOSED
+        ) {
+          connectSocket();
+        }
+        return;
+      }
+
+      try {
+        socketRef.current.send(JSON.stringify(message));
+        console.log("Message sent successfully");
+      } catch (err) {
+        console.error("Failed to send message:", err);
+        messageQueueRef.current.push(message);
+        if (onError) onError("Failed to send message");
+      }
+    },
+    [connectSocket]
+  );
 
   useEffect(() => {
     shouldAttemptReconnectRef.current = true;
@@ -149,6 +242,9 @@ export const useWebSocket = <T>({
 
     return () => {
       shouldAttemptReconnectRef.current = false;
+      if (pingIntervalRef.current) {
+        clearInterval(pingIntervalRef.current);
+      }
       if (socketRef.current) {
         socketRef.current.close();
         socketRef.current = null;
@@ -156,18 +252,5 @@ export const useWebSocket = <T>({
     };
   }, [connectSocket]);
 
-  const sendMessage = useCallback((message: object) => {
-    if (socketRef.current?.readyState === WebSocket.OPEN) {
-      try {
-        socketRef.current.send(JSON.stringify(message));
-      } catch (err) {
-        console.error("Failed to send message:", err);
-        if (onError) onError("Failed to send message");
-      }
-    } else {
-      console.warn("Cannot send message - WebSocket is not connected");
-    }
-  }, []);
-
-  return { isConnected, sendMessage, connectionError };
+  return { isConnected, isReady, sendMessage, connectionError };
 };

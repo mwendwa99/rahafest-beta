@@ -9,6 +9,7 @@ import {
   TextStyle,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import Avatar from "../Avatar";
 
 type ItemListProps = {
   title: string;
@@ -18,9 +19,11 @@ type ItemListProps = {
   disabled?: boolean;
   style?: ViewStyle;
   onPress?: (event: GestureResponderEvent) => void;
+  avatar?: string;
 };
 
 const ItemList: React.FC<ItemListProps> = ({
+  avatar,
   title,
   subtitle,
   startIcon,
@@ -36,8 +39,17 @@ const ItemList: React.FC<ItemListProps> = ({
       activeOpacity={disabled ? 1 : 0.7}
     >
       <View style={styles.iconWrapper}>
-        {startIcon && (
+        {startIcon && !avatar && (
           <Ionicons name={startIcon} size={24} style={styles.startIcon} />
+        )}
+        {avatar && !startIcon && (
+          <Avatar
+            width={50}
+            height={50}
+            fontSize={24}
+            names={avatar}
+            size={24}
+          />
         )}
       </View>
       <View style={styles.textWrapper}>
