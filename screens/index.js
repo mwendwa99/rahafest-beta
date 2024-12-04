@@ -2,6 +2,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { BottomNavigation } from "react-native-paper";
 import { CommonActions } from "@react-navigation/native";
+import { Text } from "react-native";
 
 import HomeNavigator from "./home";
 import EventNavigator from "./events";
@@ -81,16 +82,32 @@ function AppNav({ routes }) {
           getLabelText={({ route }) =>
             descriptors[route.key]?.options?.title ?? route.name
           }
+          activeIndicatorStyle={{
+            backgroundColor: "transparent",
+            color: "white",
+          }}
           style={{
             backgroundColor: "#212529",
             activeColor: "orange",
             inactiveColor: "lightgrey",
           }}
+          renderLabel={({ route, focused }) => (
+            <Text
+              style={{
+                color: focused ? "orange" : "lightgrey",
+                fontSize: 12, // Optional: Adjust font size if needed
+                textAlign: "center",
+              }}
+            >
+              {descriptors[route.key]?.options?.title ?? route.name}
+            </Text>
+          )}
         />
       )}
     >
       {routes.map((route) => (
         <BottomTab.Screen
+          barStyle={{ backgroundColor: "#694fad" }}
           key={route.key}
           name={route.name}
           component={route.component}
