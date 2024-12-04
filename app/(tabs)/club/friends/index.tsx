@@ -65,7 +65,7 @@ const MessagesPage = () => {
       <ItemList
         title={"Add Friends"}
         endIcon="chevron-forward-circle-outline"
-        onPress={() => router.push("club/messages/friends")}
+        onPress={() => router.push("club/friends/friendships")}
       />
       {error && (
         <Typography style={styles.errorText} color="#f00" align="center">
@@ -99,7 +99,7 @@ const MessagesPage = () => {
                 : item.recipient_slug
             }
             endIcon="send-outline"
-            onPress={() => router.push("club/messages/dms")}
+            onPress={() => router.push("club/friends/dms")}
           />
         )}
         showsVerticalScrollIndicator={true}

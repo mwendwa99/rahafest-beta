@@ -18,8 +18,8 @@ const routes = [
   {
     id: "2",
     icon: "chatbubble-ellipses-outline",
-    title: "Messages",
-    link: "club/messages",
+    title: "Friends",
+    link: "club/friends",
   },
   { id: "5", icon: "person-outline", title: "Account", link: "club/profile" },
 ];
