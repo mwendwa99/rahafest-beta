@@ -42,7 +42,8 @@ export default function DMPage() {
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 130 : undefined}
       style={styles.container}
     >
       <Container style={styles.innerContainer}>
