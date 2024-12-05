@@ -31,9 +31,8 @@ export default function ClubScreen() {
   // console.log(user);
 
   return (
-    <Container bgColor="#000" padding={20}>
-      <View style={[styles.row, { alignItems: "center" }]}>
-        <Typography variant="h5">Welcome back {user?.first_name}!</Typography>
+    <Container bgColor="#000" padding={20} style={{ paddingTop: 100 }}>
+      <View style={styles.btnContainer}>
         <IconButton
           name="log-out-outline"
           size={24}
@@ -41,6 +40,14 @@ export default function ClubScreen() {
           color="#f00"
           onPress={logout}
         />
+      </View>
+      <View style={[styles.row, { alignItems: "center" }]}>
+        <Typography variant="h5" gutterBottom>
+          Hello {user?.first_name}!
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          Welcome to Raha Club, your exclusive RahaFest companion.
+        </Typography>
       </View>
       <View style={styles.row}>
         {routes.map((item, index) => (
@@ -65,5 +72,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap", // Allows wrapping
     justifyContent: "space-between", // Ensures even spacing
+  },
+  btnContainer: {
+    position: "absolute",
+    top: 50,
+    right: 20,
   },
 });

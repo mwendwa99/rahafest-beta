@@ -3,9 +3,9 @@ import { View, Text, StyleSheet } from "react-native";
 
 interface AvatarProps {
   names: string;
-  width: number;
-  height: number;
-  fontSize: number;
+  width?: number;
+  height?: number;
+  fontSize?: number;
 }
 
 export default function Avatar({

@@ -10,7 +10,7 @@ export default function Login() {
   const { login } = useAuth();
 
   return (
-    <Container bgColor="#000">
+    <Container bgColor="#000" style={{ paddingTop: 100 }}>
       {/* @ts-ignore */}
       <LoginForm handleLogin={login} />
       <Link href="club/auth/register">

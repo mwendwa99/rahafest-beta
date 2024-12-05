@@ -15,12 +15,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <Container
-      bgColor="#000"
-      style={{
-        padding: 10,
-      }}
-    >
+    <Container bgColor="#000" padding={20} style={{ paddingTop: 50 }}>
       <View style={styles.page}>
         <Avatar names={`${user?.first_name},${user?.last_name}`} />
         <View style={styles.row}>

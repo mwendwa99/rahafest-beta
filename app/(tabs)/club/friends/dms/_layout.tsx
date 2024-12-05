@@ -13,7 +13,7 @@ export default function DMLayout() {
         options={{
           headerShown: true,
           headerTitle: (props) => (
-            <Typography variant="body1">{friendSlug}</Typography>
+            <Typography variant="h6">{friendSlug}</Typography>
           ),
           headerStyle: {
             backgroundColor: "#000", // Transparent background

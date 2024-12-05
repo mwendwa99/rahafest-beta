@@ -73,6 +73,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="club"
         options={{
+          headerShown: false,
           title: "Club",
           tabBarIcon: ({ color, focused }) => (
             <Ionicons

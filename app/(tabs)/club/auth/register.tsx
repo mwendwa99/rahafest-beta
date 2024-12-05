@@ -10,7 +10,7 @@ export default function Register() {
   const { register } = useAuth();
 
   return (
-    <Container bgColor="#000">
+    <Container bgColor="#000" style={{ paddingTop: 50 }}>
       <RegisterForm handleRegister={register} />
       <Link href="club/auth/login" style={{ marginVertical: 10 }}>
         <Typography variant="body1" align="center">
