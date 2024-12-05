@@ -72,7 +72,7 @@ const MessagesPage = () => {
   // console.log(userFriends);
 
   return (
-    <Container style={styles.container}>
+    <Container style={styles.container} padding={20} style={{ paddingTop: 50 }}>
       <Typography style={styles.connection} color="#888888" align="center">
         {isConnected ? "Connected" : "Connecting..."}
       </Typography>
