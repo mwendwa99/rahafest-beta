@@ -10,18 +10,18 @@ import NavCard from "@/components/Card/NavCard";
 
 const routes = [
   {
-    id: "1",
+    id: 1,
     icon: "chatbubbles-outline",
     title: "Live Chat",
     link: "club/live",
   },
   {
-    id: "2",
+    id: 2,
     icon: "chatbubble-ellipses-outline",
     title: "Friends",
     link: "club/friends",
   },
-  { id: "5", icon: "person-outline", title: "Account", link: "club/profile" },
+  { id: 5, icon: "person-outline", title: "Account", link: "club/profile" },
 ];
 
 export default function ClubScreen() {

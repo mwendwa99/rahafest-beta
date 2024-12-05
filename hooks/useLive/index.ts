@@ -2,17 +2,16 @@ import { useState, useCallback, useEffect } from "react";
 import { useWebSocket } from "../useWebSocket";
 import { useAuth } from "@/context/auth";
 
-export const useDM = () => {
-  const [privateChat, setPrivateChat] = useState([]);
+export const useLive = () => {
+  const [liveChat, setLiveChat] = useState([]);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [currentFriendId, setCurrentFriendId] = useState(null);
   const { user } = useAuth();
 
   const { isConnected, sendMessage, connectionError } = useWebSocket({
-    url: "wss://rahaclub.rahafest.com/ws/direct_messages",
+    url: "wss://rahaclub.rahafest.com/ws/messages",
     tokenKey: "token",
-    initialMessage: { action: "dm-list" },
+    initialMessage: { action: "message-list" },
     onMessage: (data) => {
       handleWebSocketMessage(data);
     },
@@ -32,24 +31,23 @@ export const useDM = () => {
     }
 
     switch (data.action) {
-      case "dm-list":
-        setPrivateChat(data.messages || []);
+      case "message-list":
+        // Handle initial message list
+        const messages = data.messages || [];
+        setLiveChat(messages);
         setError(null);
         break;
 
-      case "send-dm":
+      case "send-message":
+        // Handle real-time message updates
         if (data.message) {
-          setPrivateChat((prevChat) => {
-            // Check if message already exists in chat
-            const messageExists = prevChat.some(
-              (msg) => msg.id === data.message.id
+          setLiveChat((prevChat) => {
+            // Remove any temporary version of this message if it exists
+            const filteredChat = prevChat.filter(
+              (msg) => !msg.pending && msg.id !== data.message.id
             );
 
-            if (messageExists) {
-              return prevChat;
-            }
-
-            return [...prevChat, data.message];
+            return [...filteredChat, data.message];
           });
           setError(null);
         }
@@ -63,10 +61,10 @@ export const useDM = () => {
   };
 
   // Send new message with optimistic update
-  const sendDM = useCallback(
+  const sendLiveMessage = useCallback(
     (content) => {
-      if (!currentFriendId || !content.trim()) {
-        setError("Invalid message or recipient");
+      if (!content.trim()) {
+        setError("Message content cannot be empty");
         return;
       }
 
@@ -74,30 +72,21 @@ export const useDM = () => {
       const tempMessage = {
         id: `temp-${Date.now()}`,
         content: content.trim(),
-        sender: user?.id, // Replace with actual user ID
+        sender: user?.id, // Should be replaced with actual user ID from your auth system
+        sender_user_slug: user?.user_slug, // Should be replaced with actual user slug
         timestamp: new Date().toISOString(),
+        is_active: true,
         pending: true,
       };
 
       // Add message optimistically
-      setPrivateChat((prevChat) => [...prevChat, tempMessage]);
+      setLiveChat((prevChat) => [...prevChat, tempMessage]);
 
       // Send the actual message
       sendMessage({
-        action: "send-dm",
-        recipient: currentFriendId,
+        action: "send-message",
         content: content.trim(),
       });
-    },
-    [currentFriendId, sendMessage]
-  );
-
-  const fetchChat = useCallback(
-    (friendId) => {
-      setIsLoading(true);
-      setError(null);
-      setCurrentFriendId(friendId);
-      sendMessage({ action: "dm-list", friend_id: friendId });
     },
     [sendMessage]
   );
@@ -110,8 +99,7 @@ export const useDM = () => {
 
   useEffect(() => {
     return () => {
-      setPrivateChat([]);
-      setCurrentFriendId(null);
+      setLiveChat([]);
     };
   }, []);
 
@@ -119,8 +107,7 @@ export const useDM = () => {
     isLoading,
     error,
     isConnected,
-    fetchChat,
-    sendDM,
-    privateChat,
+    sendLiveMessage,
+    liveChat,
   };
 };
