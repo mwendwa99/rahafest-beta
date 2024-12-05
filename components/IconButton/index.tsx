@@ -49,7 +49,7 @@ const IconButton: React.FC<IconButtonProps> = ({
   };
 
   const buttonSize = size + 16;
-  const imageSize = size * 0.8; // Slightly smaller than the icon size for better visual balance
+  const imageSize = size * 0.8;
 
   const getVariantStyle = (): ViewStyle => {
     switch (variant) {
@@ -104,7 +104,7 @@ const IconButton: React.FC<IconButtonProps> = ({
   const renderIcon = () => {
     if (source) {
       return (
-        <View>
+        <View style={styles.iconContainer}>
           <Image
             source={source}
             style={{
@@ -116,7 +116,7 @@ const IconButton: React.FC<IconButtonProps> = ({
             }}
           />
           {title && (
-            <Text style={{ color: "#fff", fontWeight: 600, fontSize: 12 }}>
+            <Text style={[styles.titleText, { color: getIconColor() }]}>
               {title}
             </Text>
           )}
@@ -125,14 +125,14 @@ const IconButton: React.FC<IconButtonProps> = ({
     }
     if (name) {
       return (
-        <>
-          <Ionicons name={name} size={size} color={getIconColor()} />{" "}
+        <View style={styles.iconContainer}>
+          <Ionicons name={name} size={size} color={getIconColor()} />
           {title && (
-            <Text style={{ color: "#fff", fontWeight: 600, fontSize: 12 }}>
+            <Text style={[styles.titleText, { color: getIconColor() }]}>
               {title}
             </Text>
           )}
-        </>
+        </View>
       );
     }
     return null;
@@ -177,6 +177,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 50,
+  },
+  iconContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  titleText: {
+    fontWeight: "600",
+    fontSize: 12,
+    marginTop: 4,
   },
 });
 

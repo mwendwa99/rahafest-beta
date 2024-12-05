@@ -22,10 +22,11 @@ export default function Index() {
             source={gallery}
             size={100}
             title="Media"
+            color="#fff"
             onPress={() => router.push("/media")}
           />
-          <IconButton source={social} size={100} title="Socials" />
-          <IconButton source={more} size={100} title="Extras" />
+          <IconButton color="#fff" source={social} size={100} title="Socials" />
+          <IconButton color="#fff" source={more} size={100} title="Extras" />
         </View>
       </ImageBackground>
     </Container>

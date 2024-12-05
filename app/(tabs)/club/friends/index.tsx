@@ -53,9 +53,23 @@ const MessagesPage = () => {
     }
   };
 
-  const onRefresh = () => {
-    handleFetchFriends();
+  const getOtherPersonId = (
+    item: { sender_id: number; recipient_id: number },
+    userId: number
+  ): number => {
+    return item.recipient_id === userId ? item.sender_id : item.recipient_id;
   };
+
+  const getOtherPersonSlug = (
+    item: { sender_id: number; recipient_id: number },
+    userId: number
+  ): number => {
+    return item.recipient_id === userId
+      ? item.sender_slug
+      : item.recipient_slug;
+  };
+
+  // console.log(userFriends);
 
   return (
     <Container style={styles.container}>
@@ -86,22 +100,26 @@ const MessagesPage = () => {
             refreshing={refreshing}
           />
         }
-        renderItem={({ item }) => (
-          <ItemList
-            avatar={
-              item.recipient_id === user.id
-                ? item.sender_slug
-                : item.recipient_slug
-            }
-            title={
-              item.recipient_id === user.id
-                ? item.sender_slug
-                : item.recipient_slug
-            }
-            endIcon="send-outline"
-            onPress={() => router.push("club/friends/dms")}
-          />
-        )}
+        renderItem={({ item }) => {
+          const otherPersonSlug = getOtherPersonSlug(item, user.id);
+          const otherPersonId = getOtherPersonId(item, user.id);
+
+          return (
+            <ItemList
+              avatar={otherPersonSlug}
+              title={otherPersonSlug}
+              endIcon="send-outline"
+              onPress={() =>
+                router.push({
+                  pathname: "club/friends/dms",
+                  params: {
+                    friendId: otherPersonId,
+                  },
+                })
+              }
+            />
+          );
+        }}
         showsVerticalScrollIndicator={true}
       />
     </Container>

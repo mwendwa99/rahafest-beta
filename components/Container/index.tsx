@@ -12,7 +12,7 @@ export default function Container({
   style,
   children,
   bgColor,
-  padding = 20,
+  padding,
 }: ContainerProps) {
   return (
     <View

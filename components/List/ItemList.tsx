@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Avatar from "../Avatar";
+import Typography from "../Typography";
 
 type ItemListProps = {
   title: string;
@@ -47,13 +48,15 @@ const ItemList: React.FC<ItemListProps> = ({
         )}
       </View>
       <View style={styles.textWrapper}>
-        <Text style={[styles.title, disabled && styles.disabledText]}>
+        <Typography style={[styles.title, disabled && styles.disabledText]}>
           {title}
-        </Text>
+        </Typography>
         {subtitle && (
-          <Text style={[styles.subtitle, disabled && styles.disabledText]}>
+          <Typography
+            style={[styles.subtitle, disabled && styles.disabledText]}
+          >
             {subtitle}
-          </Text>
+          </Typography>
         )}
       </View>
       <Ionicons

@@ -2,8 +2,6 @@ import { useState, useCallback, useEffect } from "react";
 import { useWebSocket } from "../useWebSocket";
 
 export const useDms = () => {
-  const [pendingFriendships, setPendingFriendships] = useState([]);
-  const [users, setUsers] = useState([]);
   const [privateChat, setPrivateChat] = useState([]);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -66,8 +64,6 @@ export const useDms = () => {
   }, [connectionError]);
 
   return {
-    pendingFriendships,
-    users,
     isLoading,
     error,
     isConnected,

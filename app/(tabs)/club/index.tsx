@@ -31,7 +31,7 @@ export default function ClubScreen() {
   // console.log(user);
 
   return (
-    <Container bgColor="#000" style={{ padding: 20 }}>
+    <Container bgColor="#000" padding={20}>
       <View style={[styles.row, { alignItems: "center" }]}>
         <Typography variant="h5">Welcome back {user?.first_name}!</Typography>
         <IconButton
