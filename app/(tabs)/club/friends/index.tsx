@@ -114,6 +114,7 @@ const MessagesPage = () => {
                   pathname: "club/friends/dms",
                   params: {
                     friendId: otherPersonId,
+                    friendSlug: otherPersonSlug,
                   },
                 })
               }

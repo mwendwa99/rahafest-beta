@@ -69,7 +69,7 @@ export const useFriendships = () => {
         break;
 
       default:
-        console.warn(`Unhandled action: ${data.action}`);
+        console.warn(`Unhandled action: ${JSON.stringify(data)}`);
     }
 
     setIsLoading(false);
