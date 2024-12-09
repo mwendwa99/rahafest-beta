@@ -17,6 +17,7 @@ import AllUsers from "./friends/wsFriends/AllUsers";
 import FriendRequests from "./friends/wsFriends/FriendRequests";
 import DirectMessages from "./friends/wsFriends/DirectMessages";
 import Account from "../account";
+import Deals from "./deals";
 import Landing from "./landing/Landing";
 import Merchandise from "./landing/Merchandise";
 import Login from "./auth/Login";
@@ -324,6 +325,27 @@ export default function ClubNavigator() {
                 headerTitle: (props) => (
                   <Text
                     value={"Account"}
+                    {...props}
+                    variant={"subtitle"}
+                    style={{ color: "#fff" }}
+                  />
+                ),
+                headerTitleAlign: "center",
+              }}
+            />
+            <Stack.Screen
+              name="Deals"
+              component={Deals}
+              options={{
+                headerShown: true,
+                headerShadowVisible: false,
+                headerTintColor: "#fff",
+                headerStyle: {
+                  backgroundColor: "#212529",
+                },
+                headerTitle: (props) => (
+                  <Text
+                    value={"Deals"}
                     {...props}
                     variant={"subtitle"}
                     style={{ color: "#fff" }}

@@ -4,153 +4,184 @@ import {
   RefreshControl,
   View,
   Text as RNText,
-  ScrollView,
   ActivityIndicator,
+  StatusBar,
 } from "react-native";
 import { EventCard, Text } from "../../components";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { fetchEvents, fetchTicketTypes } from "../../redux/events/eventActions";
 import { clearEventsError } from "../../redux/events/eventSlice";
+import EventList from "../../components/EventList";
+import { formatEventDates } from "../../utils/helper";
 
 export default function Events({ navigation }) {
   const dispatch = useDispatch();
   const { events, loading, error } = useSelector((state) => state.events);
   const { user, token } = useSelector((state) => state.auth);
-  const [mergedEvents, setMergedEvents] = useState([]);
-  const isAuthenticated = !!(user && token);
 
-  const abortControllerRef = useRef(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [processedEvents, setProcessedEvents] = useState([]);
 
-  useEffect(() => {
-    abortControllerRef.current = new AbortController();
-    dispatch(fetchEvents(abortControllerRef.current.signal));
+  const calculateTicketPricing = (ticket) => {
+    const discountRate = ticket.discount_rate || 0;
+    const currentPrice = parseFloat(ticket.price);
+    const originalPrice = currentPrice / (1 - discountRate / 100);
 
-    return () => {
-      dispatch(clearEventsError());
-      abortControllerRef.current?.abort();
+    return {
+      ...ticket,
+      originalPrice: originalPrice.toFixed(2),
+      currentPrice: currentPrice.toFixed(2),
+      discount: (originalPrice - currentPrice).toFixed(2),
+      discountPercentage: discountRate,
     };
-  }, [dispatch]);
+  };
 
-  useEffect(() => {
-    const fetchAndMergeData = async () => {
-      if (events.length > 0) {
-        const controller = new AbortController();
-        const signal = controller.signal;
-        abortControllerRef.current = controller;
+  const processEvents = useCallback(async () => {
+    if (!events?.length) return;
 
+    try {
+      const ticketResults = [];
+      for (const event of events) {
         try {
-          const updatedEvents = await Promise.all(
-            events.map(async (event) => {
-              if (event.id) {
-                const ticketTypesForEvent = await dispatch(
-                  fetchTicketTypes(event.id, signal)
-                );
-                return {
-                  ...event,
-                  ticketTypes: ticketTypesForEvent.payload || [],
-                };
-              }
-              return { ...event, ticketTypes: [] };
-            })
-          );
-          setMergedEvents(updatedEvents);
-        } catch (err) {
-          if (err.name !== "AbortError") {
-            console.error("Error fetching ticket types:", err);
-          }
+          const action = await dispatch(fetchTicketTypes(event.id));
+          const tickets = action.payload || action.data || [];
+          ticketResults.push({
+            eventId: event.id,
+            tickets: tickets && tickets.map(calculateTicketPricing),
+          });
+        } catch (error) {
+          console.error(`Error fetching tickets for event ${event.id}:`, error);
         }
       }
-    };
 
-    if (events.length) fetchAndMergeData();
-  }, [events, dispatch]);
+      const ticketMap = ticketResults.reduce((acc, { eventId, tickets }) => {
+        acc[eventId] = tickets;
+        return acc;
+      }, {});
 
-  const handleRefresh = useCallback(() => {
+      setProcessedEvents(
+        events
+          .map((event) => ({
+            ...event,
+            tickets: ticketMap[event.id] || [],
+          }))
+          .filter(
+            (event) => event.tickets.some((ticket) => !ticket.is_rahaclub_vip) //non vip tickets
+          )
+      );
+    } catch (error) {
+      console.error("Error in processEvents:", error);
+    } finally {
+      setIsProcessing(false);
+      setIsLoading(false);
+    }
+  }, [dispatch, events]);
+
+  useEffect(() => {
+    setIsLoading(true);
     dispatch(fetchEvents());
-    dispatch(clearEventsError());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (!isProcessing) processEvents();
+  }, [events, processEvents, isProcessing]);
+
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    try {
+      dispatch(clearEventsError());
+      await dispatch(fetchEvents());
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
 
   const handleNavigateToCheckout = useCallback(
     (event) => {
       navigation.navigate("CheckoutNavigator", {
         screen: "Checkout",
-        params: { event },
+        params: { data },
       });
     },
     [navigation]
   );
 
-  const renderHeader = useCallback(
-    () => (
-      <View>
-        <RNText variant={"title"} style={styles.headerText}>
-          Upcoming Events
-        </RNText>
-      </View>
-    ),
-    []
+  const renderItem = ({ item }) => {
+    switch (item.type) {
+      case "header":
+        return (
+          <View>
+            <RNText variant={"title"} style={styles.headerText}>
+              Upcoming Events
+            </RNText>
+          </View>
+        );
+      case "footer":
+        return (
+          <View>
+            <RNText variant={"title"} style={styles.headerText}>
+              Past Events
+            </RNText>
+          </View>
+        );
+      default:
+        return (
+          <View key={item.id}>
+            <EventList
+              id={item?.id}
+              title={item?.title}
+              subtitle={item?.organization.organization_name}
+              image={item?.banner}
+              date={formatEventDates(item?.start_date, item?.end_date)}
+              location={item?.location}
+              expired={item?.expired}
+              tickets={item?.tickets}
+              onPress={handleNavigateToCheckout}
+            />
+          </View>
+        );
+    }
+  };
+
+  const data = useMemo(
+    () => [
+      { type: "header", key: "upcoming-header" },
+      ...(processedEvents.filter((item) => !item.expired).reverse() || []),
+      { type: "footer", key: "past-footer" },
+      ...(processedEvents.filter((item) => item.expired).reverse() || []),
+    ],
+    [processedEvents]
   );
-
-  const renderFooter = useCallback(
-    () => (
-      <View>
-        <RNText variant={"title"} style={styles.headerText}>
-          Past Events
-        </RNText>
-      </View>
-    ),
-    []
-  );
-
-  const renderItem = useCallback(
-    ({ item }) => {
-      if (item.type === "header") return renderHeader();
-      if (item.type === "footer") return renderFooter();
-
-      return (
-        <View key={item.id}>
-          <EventCard
-            event={item}
-            ticketTypes={item.ticketTypes}
-            isAuthenticated={isAuthenticated}
-            handleNavigate={handleNavigateToCheckout}
-          />
-        </View>
-      );
-    },
-    [isAuthenticated, handleNavigateToCheckout, renderHeader, renderFooter]
-  );
-
-  const data = [
-    { type: "header", key: "upcoming-header" },
-    ...(mergedEvents && mergedEvents.filter((item) => !item.expired).reverse()), // Reverse upcoming events
-    { type: "footer", key: "past-footer" },
-    ...(mergedEvents && mergedEvents.filter((item) => item.expired).reverse()), // Reverse past events
-  ];
 
   return (
     <SafeAreaView style={styles.container}>
-      {loading && !mergedEvents.length ? (
+      {loading && !processedEvents.length ? (
         <View style={styles.centered}>
-          <ActivityIndicator animating={true} />
+          <ActivityIndicator color={"pink"} size={50} />
         </View>
       ) : (
         <FlatList
-          data={data || []}
+          data={data}
           renderItem={renderItem}
-          keyExtractor={(item) => (item.id ? item.id.toString() : item.key)}
+          keyExtractor={(item, index) =>
+            item.id ? item.id.toString() : `${item.type}-${index}`
+          }
           numColumns={1}
           contentContainerStyle={styles.contentContainer}
           showsVerticalScrollIndicator={false}
           refreshControl={
-            <RefreshControl refreshing={loading} onRefresh={handleRefresh} />
+            <RefreshControl
+              refreshing={isRefreshing}
+              onRefresh={handleRefresh}
+            />
           }
         />
       )}
-      <StatusBar style="dark" />
+      <StatusBar barStyle={"dark-content"} />
     </SafeAreaView>
   );
 }
@@ -159,6 +190,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fafafa",
+    paddingHorizontal: 20,
   },
   contentContainer: {
     paddingVertical: 20,
@@ -173,5 +205,11 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 10,
     textAlign: "center",
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#fff",
   },
 });
