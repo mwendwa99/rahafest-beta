@@ -8,7 +8,7 @@ import { Image, View } from "react-native";
 import visaLogo from "../../../assets/visa.png";
 
 // In your screen/component:
-export default function VisaCheckout() {
+export default function VisaCheckout({ navigation }) {
   const { invoice } = useSelector((state) => state.events);
   const [showCheckout, setShowCheckout] = useState(false);
 

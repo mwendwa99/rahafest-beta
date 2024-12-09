@@ -7,7 +7,6 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
-  ScrollView,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
@@ -20,7 +19,6 @@ import {
   UserInfoCard,
   TicketCard,
   Button,
-  // UserInputForm,
   ModalComponent,
   PhoneInput,
   PaymentModal,
@@ -51,11 +49,8 @@ export default function Checkout({ route, navigation }) {
 
   const dispatch = useDispatch();
 
-  // console.log(user);
-
   const [attendeeInfo, setAttendeeInfo] = useState([]);
   const [ticketQuantities, setTicketQuantities] = useState({});
-  // const [showUserInputModal, setShowUserInputModal] = useState(false);
   const [showPhoneInputModal, setShowPhoneInputModal] = useState(false);
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
   const [phoneInput, setPhoneInput] = useState("");
@@ -85,22 +80,15 @@ export default function Checkout({ route, navigation }) {
     };
   }, []);
 
-  //once the invoice has been created, show the payment modal
   useEffect(() => {
     if (invoice && invoice.id) {
       setShowInvoiceModal(true);
     }
   }, [invoice]);
 
-  // const toggleUserInputModal = () => setShowUserInputModal(!showUserInputModal);
-
-  const togglePhoneInputModal = () => {
+  const togglePhoneInputModal = () =>
     setShowPhoneInputModal(!showPhoneInputModal);
-  };
-
-  const toggleInvoiceModal = () => {
-    setShowInvoiceModal(!showInvoiceModal);
-  };
+  const toggleInvoiceModal = () => setShowInvoiceModal(!showInvoiceModal);
 
   const handleSelectTicketQuantity = (quantity, ticket) => {
     setTicketQuantities((prevQuantities) => {
@@ -110,7 +98,7 @@ export default function Checkout({ route, navigation }) {
       Object.keys(updatedQuantities).forEach((ticketId) => {
         const qty = updatedQuantities[ticketId];
         if (qty > 0) {
-          const ticket = event.ticketTypes.find(
+          const ticket = event.ticket_types.find(
             (t) => t.id === parseInt(ticketId, 10)
           );
           for (let i = 0; i < qty; i++) {
@@ -139,13 +127,13 @@ export default function Checkout({ route, navigation }) {
     });
   };
 
-  function transformAttendeeInfo(dataObject) {
+  const transformAttendeeInfo = (dataObject) => {
     const transformedAttendeeInfo = dataObject.data.attendeeInfo.flatMap(
       (attendee) => Array(attendee.quantity).fill({ ...attendee, quantity: 1 })
     );
 
     return { ...dataObject, data: { attendeeInfo: transformedAttendeeInfo } };
-  }
+  };
 
   const handleBuyTicket = () => {
     if (attendeeInfo.length === 0) {
@@ -155,9 +143,7 @@ export default function Checkout({ route, navigation }) {
 
     if (!isAuthenticated) {
       alert("Please login to buy a ticket");
-      navigation.navigate("ClubNavigator", {
-        screen: "Login",
-      });
+      navigation.navigate("ClubNavigator", { screen: "Login" });
       return;
     }
 
@@ -166,7 +152,6 @@ export default function Checkout({ route, navigation }) {
       return;
     }
 
-    //validate that all required fields are filled
     const requiredFields = ["first_name", "last_name", "phone", "email"];
     const missingFields = attendeeInfo.filter((attendee) =>
       requiredFields.some((field) => !attendee[field])
@@ -178,17 +163,10 @@ export default function Checkout({ route, navigation }) {
     }
 
     const invoiceData = { data: { attendeeInfo }, source_application: 2 };
-
     const transformedDataObject = transformAttendeeInfo(invoiceData);
 
-    // console.log(transformedDataObject);
     dispatch(createInvoice(transformedDataObject));
 
-    // console.log(invoiceData);
-
-    // dispatch(createInvoice(invoiceData));
-
-    //reset all state
     setTicketQuantities({});
     setAttendeeInfo([]);
   };
@@ -204,7 +182,6 @@ export default function Checkout({ route, navigation }) {
       alert("please enter your phone number");
     }
   };
-  // console.log({ data: { attendeeInfo } });
 
   if (invoiceLoading) {
     return (
@@ -219,129 +196,131 @@ export default function Checkout({ route, navigation }) {
       </View>
     );
   }
+
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0} // Adjust offset for iOS devices
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
         style={{ flex: 1 }}
       >
-        <ScrollView
-          showsHorizontalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-        >
-          <View style={styles.row}>
-            <Image source={{ uri: event.banner }} style={styles.banner} />
-            <View style={{ flex: 1, marginLeft: 10 }}>
-              <Text value={event.title} variant="subtitle" />
-              <Text
-                value={`${formatEventDates(event.start_date, event.end_date)}`}
-                variant="body"
-                style={{ marginVertical: 3 }}
-              />
-              <Text
-                value={`${getTime(event.start_date) || "TBD"} to ${
-                  getTime(event.end_date) || "TBD"
-                }`}
-                variant="body"
-                style={{ marginVertical: 3 }}
-              />
+        <FlatList
+          data={[event]} // Wrap the event in an array for FlatList rendering
+          keyExtractor={(item, index) => item.id.toString()}
+          renderItem={({ item }) => (
+            <>
               <View style={styles.row}>
-                <MaterialCommunityIcons
-                  name="map-marker-outline"
-                  size={20}
-                  color="black"
-                />
-                <Text value={event.location} variant="body" />
-              </View>
-              <Text
-                value={event.description}
-                variant="small"
-                style={{ marginVertical: 2 }}
-              />
-              {/* <WebView
-                originWhitelist={["*"]}
-                source={{
-                  html: `
-                        <html>
-                              <body style="font-size:50px; font-family:Montserrat san-serif;"> <!-- Adjust font size -->
-                                ${event?.description}
-                              </body>
-                              </html>
-                    `,
-                }}
-              /> */}
-            </View>
-          </View>
-          <View style={styles.detailsContainer}>
-            {(event.ticketTypes && event.ticketTypes.length > 0) ||
-            event.location !== "TBA" ? (
-              <ScrollView
-                showsHorizontalScrollIndicator={false}
-                style={{ maxHeight: 300 }}
-              >
-                {event.ticketTypes &&
-                  event.ticketTypes.map((item) => (
-                    <TicketCard
-                      key={item.id.toString()}
-                      item={item}
-                      handleSelectTicketQuantity={handleSelectTicketQuantity}
+                <Image source={{ uri: item.banner }} style={styles.banner} />
+                <View style={{ flex: 1, marginLeft: 10 }}>
+                  <Text value={item.title} variant="subtitle" />
+                  <Text
+                    value={`${formatEventDates(
+                      item.start_date,
+                      item.end_date
+                    )}`}
+                    variant="body"
+                    style={{ marginVertical: 3 }}
+                  />
+                  <Text
+                    value={`${getTime(item.start_date) || "TBD"} to ${
+                      getTime(item.end_date) || "TBD"
+                    }`}
+                    variant="body"
+                    style={{ marginVertical: 3 }}
+                  />
+                  <View style={styles.row}>
+                    <MaterialCommunityIcons
+                      name="map-marker-outline"
+                      size={20}
+                      color="black"
                     />
-                  ))}
-              </ScrollView>
-            ) : (
-              <Text
-                value="Tickets will be available soon!"
-                variant="body"
-                style={{
-                  marginVertical: 10,
-                  color: "black",
-                  textAlign: "center",
-                }}
-              />
-            )}
-          </View>
-          {isAuthenticated && (
-            <UserInfoCard loading={loading} user={user} phone={phoneInput} />
+                    <Text value={item.location} variant="body" />
+                  </View>
+                  {item?.description ? (
+                    <WebView
+                      originWhitelist={["*"]}
+                      source={{
+                        html: `<html><body style="font-size:50px; font-family:Montserrat;">${item.description}</body></html>`,
+                      }}
+                    />
+                  ) : (
+                    <Text value="No description available" variant="body" />
+                  )}
+                </View>
+              </View>
+
+              <View style={styles.detailsContainer}>
+                {item.ticket_types && item.ticket_types.length > 0 ? (
+                  <FlatList
+                    data={item.ticket_types.filter((item) => item.is_active)}
+                    keyExtractor={(ticket) => ticket.id.toString()}
+                    renderItem={({ item: ticket }) => (
+                      <TicketCard
+                        key={ticket.id.toString()}
+                        item={ticket}
+                        handleSelectTicketQuantity={handleSelectTicketQuantity}
+                      />
+                    )}
+                  />
+                ) : (
+                  <Text
+                    value="Tickets will be available soon!"
+                    variant="body"
+                    style={{
+                      marginVertical: 10,
+                      color: "black",
+                      textAlign: "center",
+                    }}
+                  />
+                )}
+              </View>
+
+              {isAuthenticated && (
+                <UserInfoCard
+                  loading={loading}
+                  user={user}
+                  phone={phoneInput}
+                />
+              )}
+
+              <View>
+                <Button
+                  disabled={item.location === "TBA"}
+                  label="Buy Ticket"
+                  variant={"contained"}
+                  onPress={handleBuyTicket}
+                />
+              </View>
+
+              <ModalComponent
+                visible={showPhoneInputModal}
+                toggleModal={togglePhoneInputModal}
+                transparent={false}
+              >
+                <PhoneInput
+                  value={phoneInput}
+                  setPhoneInput={setPhoneInput}
+                  handlePhoneUpdate={handlePhoneUpdate}
+                />
+              </ModalComponent>
+
+              {invoice && invoice.id && (
+                <ModalComponent
+                  visible={showInvoiceModal}
+                  toggleModal={toggleInvoiceModal}
+                  transparent={false}
+                >
+                  <PaymentModal
+                    navigation={navigation}
+                    invoice={invoice}
+                    toggleModal={toggleInvoiceModal}
+                  />
+                </ModalComponent>
+              )}
+            </>
           )}
-
-          <View>
-            <Button
-              disabled={event.location === "TBA"}
-              label="Buy Ticket"
-              variant={"contained"}
-              onPress={handleBuyTicket}
-            />
-          </View>
-
-          <ModalComponent
-            visible={showPhoneInputModal}
-            toggleModal={togglePhoneInputModal}
-            transparent={false}
-          >
-            <PhoneInput
-              value={phoneInput}
-              setPhoneInput={setPhoneInput}
-              handlePhoneUpdate={handlePhoneUpdate}
-            />
-          </ModalComponent>
-
-          {invoice && invoice.id && (
-            <ModalComponent
-              visible={showInvoiceModal}
-              toggleModal={toggleInvoiceModal}
-              transparent={false}
-            >
-              <PaymentModal
-                navigation={navigation}
-                invoice={invoice}
-                toggleModal={toggleInvoiceModal}
-              />
-            </ModalComponent>
-          )}
-        </ScrollView>
+        />
       </KeyboardAvoidingView>
-
       <StatusBar style="dark" />
     </SafeAreaView>
   );
@@ -361,6 +340,5 @@ const styles = StyleSheet.create({
     height: 200,
     width: 200,
     borderRadius: 8,
-    objectFit: "cover",
   },
 });
