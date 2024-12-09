@@ -254,23 +254,23 @@ export default function Checkout({ route, navigation }) {
                 />
                 <Text value={event.location} variant="body" />
               </View>
-              {/* <Text
+              <Text
                 value={event.description}
                 variant="small"
                 style={{ marginVertical: 2 }}
-              /> */}
-              <WebView
+              />
+              {/* <WebView
                 originWhitelist={["*"]}
                 source={{
                   html: `
-<html>
-      <body style="font-size:50px; font-family:Montserrat san-serif;"> <!-- Adjust font size -->
-        ${event.description}
-      </body>
-      </html>
-  `,
+                        <html>
+                              <body style="font-size:50px; font-family:Montserrat san-serif;"> <!-- Adjust font size -->
+                                ${event?.description}
+                              </body>
+                              </html>
+                    `,
                 }}
-              />
+              /> */}
             </View>
           </View>
           <View style={styles.detailsContainer}>
@@ -280,13 +280,14 @@ export default function Checkout({ route, navigation }) {
                 showsHorizontalScrollIndicator={false}
                 style={{ maxHeight: 300 }}
               >
-                {event.ticketTypes.map((item) => (
-                  <TicketCard
-                    key={item.id.toString()}
-                    item={item}
-                    handleSelectTicketQuantity={handleSelectTicketQuantity}
-                  />
-                ))}
+                {event.ticketTypes &&
+                  event.ticketTypes.map((item) => (
+                    <TicketCard
+                      key={item.id.toString()}
+                      item={item}
+                      handleSelectTicketQuantity={handleSelectTicketQuantity}
+                    />
+                  ))}
               </ScrollView>
             ) : (
               <Text
