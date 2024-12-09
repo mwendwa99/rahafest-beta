@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   Image,
   FlatList,
+  Pressable,
 } from "react-native";
 import { formatCurrencyWithCommas } from "../utils/helper";
 
@@ -42,11 +43,7 @@ export default function EventList({
   }
 
   return (
-    <TouchableOpacity
-      disabled={expired}
-      style={[styles.container]}
-      onPress={onPress}
-    >
+    <Pressable disabled={expired} style={[styles.container]} onPress={onPress}>
       {expired && (
         <View style={styles.chip}>
           <Text style={styles.text}>expired</Text>
@@ -105,7 +102,7 @@ export default function EventList({
           horizontal
         />
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 }
 
