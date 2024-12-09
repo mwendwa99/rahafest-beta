@@ -83,7 +83,7 @@ export default function Events({ navigation }) {
               location={item?.location}
               expired={item?.expired}
               tickets={item?.ticket_types}
-              onPress={handleNavigateToCheckout}
+              onPress={() => handleNavigateToCheckout(item)}
             />
           </View>
         );
@@ -97,16 +97,22 @@ export default function Events({ navigation }) {
         .filter(
           (event) =>
             !event.expired &&
-            event.ticket_types.some((ticket) => !ticket.is_rahaclub_vip)
-        ) // Filter events with VIP tickets
+            event.is_active && // Filter active events
+            event.ticket_types.some(
+              (ticket) => !ticket.is_rahaclub_vip && ticket.is_active // Ensure ticket is active
+            )
+        )
         .reverse() || []),
       { type: "footer", key: "past-footer" },
       ...(events
         .filter(
           (event) =>
             event.expired &&
-            event.ticket_types.some((ticket) => !ticket.is_rahaclub_vip)
-        ) // Filter expired events with VIP tickets
+            event.is_active && // Filter active expired events
+            event.ticket_types.some(
+              (ticket) => !ticket.is_rahaclub_vip && ticket.is_active // Ensure ticket is active
+            )
+        )
         .reverse() || []),
     ],
     [events]
