@@ -20,9 +20,26 @@ export default function EventList({
 }) {
   console.log(JSON.stringify(tickets));
 
-  const hasDiscount = (discountPercentage) => {
-    return discountPercentage > 0 ? true : false;
+  const hasDiscount = (discount_rate) => {
+    console.log({ discount_rate });
+    return discount_rate > 0 ? true : false;
   };
+
+  function calculateOriginalPrice(price, discount_rate) {
+    // Convert price and discount_rate to numbers
+    const numericPrice = Number(price) || 0; // Default to 0 if conversion fails
+    const numericDiscountRate = Number(discount_rate) || 0; // Default to 0 if conversion fails
+
+    // Handle case where discount_rate is 0 or null
+    if (numericDiscountRate === 0) {
+      return numericPrice.toFixed(2); // Return as a string with 2 decimal places
+    }
+
+    // Calculate the original price
+    const originalPrice = numericPrice / (1 - numericDiscountRate / 100);
+    let finalPrice = formatCurrencyWithCommas(originalPrice);
+    return finalPrice;
+  }
 
   return (
     <TouchableOpacity
@@ -48,24 +65,37 @@ export default function EventList({
           keyExtractor={({ item }) => item?.id.toString()}
           renderItem={({ item }) => (
             <View style={styles.ticket}>
-              <Text style={styles.title}>{item.title}</Text>
-              <Text
-                style={[
-                  styles.price,
-                  hasDiscount(item.discountPercentage) && styles.discount,
-                ]}
-              >
-                {formatCurrencyWithCommas(item.originalPrice)}
+              <Text style={styles.title}>
+                {item.title}
+                {/* {hasDiscount(item.discount_rate) ? "true" : "false"} */}
               </Text>
-              {hasDiscount(item.discountPercentage) && (
-                <>
-                  <Text style={styles.text}>
-                    {item.discountPercentage}% off
-                  </Text>
-                  <Text style={[styles.price]}>
-                    {formatCurrencyWithCommas(item.currentPrice)}
-                  </Text>
-                </>
+              <View style={{ flexDirection: "row" }}>
+                <Text
+                  style={[
+                    styles.price,
+                    hasDiscount(item.discount_rate) && styles.discount,
+                  ]}
+                >
+                  {`${formatCurrencyWithCommas(item.price)}`}
+                </Text>
+                <Text
+                  style={[
+                    styles.text,
+                    hasDiscount(item.discount_rate) && {
+                      color: "red",
+                      fontWeight: 700,
+                    },
+                  ]}
+                >
+                  {hasDiscount(item.discount_rate)
+                    ? ` ${item.discount_rate}% off`
+                    : null}
+                </Text>
+              </View>
+              {hasDiscount(item.discount_rate) && (
+                <Text style={[styles.price]}>
+                  {calculateOriginalPrice(item.price, item.discount_rate)}
+                </Text>
               )}
             </View>
           )}
@@ -140,6 +170,6 @@ const styles = StyleSheet.create({
     textDecorationLine: "line-through",
   },
   price: {
-    fontWeight: 500,
+    fontWeight: 700,
   },
 });

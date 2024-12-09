@@ -50,13 +50,17 @@ export function getInitials(name) {
 
 export const formatDate = (date) => {
   const options = { month: "short", day: "numeric" };
-  return new Intl.DateTimeFormat("en-US", options).format(new Date(date));
+  const formattedDate = new Date(date);
+  if (isNaN(formattedDate)) return ""; // Check for invalid date
+  return new Intl.DateTimeFormat("en-US", options).format(formattedDate);
 };
 
 export const formatTime = (date) => {
   const options = { hour: "numeric", minute: "numeric", hour12: true };
+  const formattedTime = new Date(date);
+  if (isNaN(formattedTime)) return ""; // Check for invalid date
   return new Intl.DateTimeFormat("en-US", options)
-    .format(new Date(date))
+    .format(formattedTime)
     .replace("AM", "am")
     .replace("PM", "pm");
 };
@@ -64,6 +68,10 @@ export const formatTime = (date) => {
 export const formatEventDates = (start_date, end_date) => {
   const startDate = new Date(start_date);
   const endDate = new Date(end_date);
+
+  if (isNaN(startDate) || isNaN(endDate)) {
+    return "Invalid event dates"; // Return fallback message if date is invalid
+  }
 
   const isSameDayAndMonth =
     startDate.getDate() === endDate.getDate() &&
@@ -76,10 +84,8 @@ export const formatEventDates = (start_date, end_date) => {
   const endTimeFormatted = formatTime(end_date);
 
   if (isSameDayAndMonth) {
-    // return `${startDateFormatted} from ${startTimeFormatted}`;
     return `${startDateFormatted}`;
   } else {
-    // return `${startDateFormatted} to ${endDateFormatted} from ${startTimeFormatted}`;
     return `${startDateFormatted} and ${endDateFormatted}`;
   }
 };
