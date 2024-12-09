@@ -141,13 +141,17 @@ export default function Checkout({ route, navigation }) {
       return;
     }
 
-    if (!isAuthenticated) {
-      alert("Please login to buy a ticket");
-      navigation.navigate("ClubNavigator", { screen: "Login" });
-      return;
-    }
+    // if (!isAuthenticated) {
+    //   alert("Please login to buy a ticket");
+    //   navigation.navigate("ClubNavigator", { screen: "Login" });
+    //   return;
+    // }
 
-    if (isAuthenticated && phoneInput === "") {
+    // if (isAuthenticated && phoneInput === "") {
+    //   setShowPhoneInputModal(true);
+    //   return;
+    // }
+    if (phoneInput === "") {
       setShowPhoneInputModal(true);
       return;
     }

@@ -24,7 +24,7 @@ export default function Deals({ navigation }) {
 
   const handleNavigateToCheckout = useCallback(
     (event) => {
-      navigation.navigate("CheckoutNavigator", {
+      navigation.navigate("CheckoutChecNavigator", {
         screen: "Checkout",
         params: { event }, // Pass only the clicked event's data
       });

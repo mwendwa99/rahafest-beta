@@ -19,10 +19,7 @@ export default function EventList({
   expired,
   tickets,
 }) {
-  console.log(JSON.stringify(tickets));
-
   const hasDiscount = (discount_rate) => {
-    console.log({ discount_rate });
     return discount_rate > 0 ? true : false;
   };
 
