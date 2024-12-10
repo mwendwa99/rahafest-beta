@@ -17,7 +17,7 @@ const { width } = Dimensions.get("window");
 const styles = {
   container: {
     width,
-    height: 200,
+    // height: 300,
   },
   carousel: {
     width: width * 0.9,
