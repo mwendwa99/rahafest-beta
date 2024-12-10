@@ -18,51 +18,75 @@ export default function EventList({
   image,
   expired,
   tickets,
+  hideDiscounted = false,
+  isActive,
 }) {
   const hasDiscount = (discount_rate) => {
     return discount_rate > 0 ? true : false;
   };
 
-  function calculateOriginalPrice(price, discount_rate) {
-    // Convert price and discount_rate to numbers
-    const numericPrice = Number(price) || 0; // Default to 0 if conversion fails
-    const numericDiscountRate = Number(discount_rate) || 0; // Default to 0 if conversion fails
+  console.log(title, isActive);
 
-    // Handle case where discount_rate is 0 or null
+  function calculateOriginalPrice(price, discount_rate) {
+    const numericPrice = Number(price) || 0;
+    const numericDiscountRate = Number(discount_rate) || 0;
+
     if (numericDiscountRate === 0) {
-      return numericPrice.toFixed(2); // Return as a string with 2 decimal places
+      return numericPrice.toFixed(2);
     }
 
-    // Calculate the original price
     const originalPrice = numericPrice / (1 - numericDiscountRate / 100);
     let finalPrice = formatCurrencyWithCommas(originalPrice);
     return finalPrice;
   }
 
+  // Filter tickets based on hideDiscounted prop
+  const filteredTickets = hideDiscounted
+    ? tickets.filter(
+        (ticket) =>
+          !hasDiscount(ticket.discount_rate) &&
+          ticket.is_active &&
+          ticket.id !== 22
+      )
+    : tickets.filter(
+        (ticket) =>
+          hasDiscount(ticket.discount_rate) &&
+          ticket.is_active &&
+          ticket.id !== 22
+      );
+
+  // console.log(JSON.stringify(filteredTickets));
+
   return (
-    <Pressable disabled={expired} style={[styles.container]} onPress={onPress}>
-      {expired && (
-        <View style={styles.chip}>
-          <Text style={styles.text}>expired</Text>
+    <View style={styles.container}>
+      <Pressable
+        disabled={expired}
+        onPress={onPress}
+        style={styles.mainContent}
+      >
+        {expired && (
+          <View style={styles.chip}>
+            <Text style={styles.text}>expired</Text>
+          </View>
+        )}
+        <Image source={{ uri: image }} style={styles.image} />
+        <View style={styles.column}>
+          <Text style={styles.title}>{title}</Text>
+          <Text style={styles.subtitle}>{subtitle}</Text>
+          <Text>Location: {location}</Text>
+          <Text>{date}</Text>
         </View>
-      )}
-      <Image source={{ uri: image }} style={styles.image} />
-      <View style={styles.column}>
-        <Text style={styles.title}>{title}</Text>
-        <Text style={styles.subtitle}>{subtitle}</Text>
-        <Text>Location: {location}</Text>
-        <Text>{date}</Text>
-      </View>
-      <View style={styles.row}>
+      </Pressable>
+
+      <View style={styles.ticketContainer}>
         <FlatList
-          data={tickets}
+          data={filteredTickets}
           keyExtractor={({ item }) => item?.id.toString()}
+          horizontal
+          showsHorizontalScrollIndicator={true}
           renderItem={({ item }) => (
             <View style={styles.ticket}>
-              <Text style={styles.title}>
-                {item.title}
-                {/* {hasDiscount(item.discount_rate) ? "true" : "false"} */}
-              </Text>
+              <Text style={styles.title}>{item.title}</Text>
               <View style={{ flexDirection: "row" }}>
                 <Text
                   style={[
@@ -77,7 +101,7 @@ export default function EventList({
                     styles.text,
                     hasDiscount(item.discount_rate) && {
                       color: "red",
-                      fontWeight: 700,
+                      fontWeight: "700",
                     },
                   ]}
                 >
@@ -96,10 +120,9 @@ export default function EventList({
           ListEmptyComponent={() => (
             <Text>Tickets will be available soon!</Text>
           )}
-          horizontal
         />
       </View>
-    </Pressable>
+    </View>
   );
 }
 
@@ -111,7 +134,17 @@ const styles = StyleSheet.create({
     padding: 10,
     flexDirection: "column",
     marginVertical: 5,
+    backgroundColor: "#fff",
+    // borderRadius: 8,
+    overflow: "hidden",
   },
+  mainContent: {
+    // padding: 16,
+  },
+  // ticketContainer: {
+  //   paddingHorizontal: 16,
+  //   paddingBottom: 16,
+  // },
   chip: {
     backgroundColor: "#fafafa",
     width: 70,
@@ -143,6 +176,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   ticket: {
+    // width: 40,
     marginVertical: 2,
     flexDirection: "column",
     borderWidth: 1,
