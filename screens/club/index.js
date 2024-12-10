@@ -20,7 +20,6 @@ import Account from "../account";
 import Deals from "./deals";
 import Landing from "./landing/Landing";
 import Merchandise from "./landing/Merchandise";
-import CheckoutNavigator from "../events/checkout";
 import Login from "./auth/Login";
 import Register from "./auth/Register";
 import { persistor } from "../../redux/store";
@@ -398,29 +397,6 @@ export default function ClubNavigator() {
                   </Text>
                 ),
                 headerTitleAlign: "center",
-              }}
-            />
-            <Stack.Screen
-              name="CheckoutNavigator"
-              component={CheckoutNavigator}
-              options={{
-                headerShown: false,
-                headerShadowVisible: false,
-                headerTintColor: "#000",
-                headerStyle: {
-                  backgroundColor: "#fff", // Ensure background color is set correctly
-                  elevation: 0, // Remove shadow on Android
-                  shadowOpacity: 0, // Remove shadow on iOS
-                  borderBottomWidth: 0, // Remove bottom border
-                },
-                headerTitle: (props) => (
-                  <Text
-                    value={""}
-                    {...props}
-                    variant={"subtitle"}
-                    style={{ color: "#000" }}
-                  />
-                ),
               }}
             />
           </>

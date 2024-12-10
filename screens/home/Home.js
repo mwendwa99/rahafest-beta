@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
     top: 100,
     zIndex: 100,
     // backgroundColor: "white",
-    height: 100,
+    height: 200,
     width: Dimensions.get("window").width,
   },
   row: {

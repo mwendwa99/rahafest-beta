@@ -100,7 +100,7 @@ const PaymentModal = ({ invoice, toggleModal, navigation }) => {
           style={{ textAlign: "center", color: "#888" }}
         />
         <Text
-          value={visaLoading ? "loading" : `Pay with Visa`}
+          value={visaLoading ? "loading" : `Pay with Card`}
           variant="subtitle"
           style={{ textAlign: "left" }}
         />
@@ -111,7 +111,7 @@ const PaymentModal = ({ invoice, toggleModal, navigation }) => {
           onPress={handlePayWithVisa}
         /> */}
         <Button
-          label="VISA"
+          label="CARD"
           variant="contained"
           onPress={() => {
             toggleModal();

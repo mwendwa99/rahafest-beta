@@ -125,7 +125,7 @@ export default function Landing({ navigation }) {
       />
 
       <View style={styles.ads}>
-        <AdCarousel data={ads} />
+        <AdCarousel data={ads} variant="XL" />
       </View>
 
       <StatusBar style="light" />

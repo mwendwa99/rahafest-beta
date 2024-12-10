@@ -17,68 +17,94 @@ const { width } = Dimensions.get("window");
 const styles = {
   container: {
     width,
-    height: 100,
+    height: 200,
   },
   carousel: {
-    width: width * 0.9, // 90% of the screen width
-    alignSelf: "center", // Center the carousel
+    width: width * 0.9,
+    alignSelf: "center",
   },
   itemContainer: {
     flex: 1,
     justifyContent: "center",
   },
   image: {
-    width: "100%", // Full width of the carousel item
-    height: 200, // Set height for the image
-    resizeMode: "contain", // Ensure the image covers the area
+    width: "100%",
+    height: 300,
+    resizeMode: "contain",
   },
 };
 
-function AdCarousel({ data }) {
-  const handlePress = (url) => {
+function AdCarousel({ data, variant }) {
+  const handlePress = React.useCallback((url) => {
     if (url && url !== "") {
       Linking.openURL(url);
     }
-  };
+  }, []);
 
-  // console.log(data);
+  // Process the data based on variant
+  const processedData = React.useMemo(() => {
+    // First filter active ads
+    const activeAds = data.filter((item) => item.is_active);
 
-  const hasMultipleAds = (items) => {
-    const activeAds = items.filter((item) => item.is_active);
-    return activeAds.length > 1;
-  };
+    if (variant) {
+      // If variant is specified, create separate carousel items for each matching variant image
+      const variantAds = activeAds.reduce((acc, ad) => {
+        // Find all images that match the variant
+        const matchingImages =
+          ad.ad_images?.filter((img) => img.image_name === variant) || [];
+
+        // Create a carousel item for each matching image
+        const carouselItems = matchingImages.map((img) => ({
+          ...ad,
+          displayImage: img.image,
+        }));
+
+        return [...acc, ...carouselItems];
+      }, []);
+
+      return variantAds.length > 1
+        ? [...variantAds, ...variantAds]
+        : variantAds;
+    } else {
+      // If no variant specified, show all active ads with their default images
+      const defaultAds = activeAds.map((ad) => ({
+        ...ad,
+        displayImage: ad.image,
+      }));
+
+      return defaultAds.length > 1
+        ? [...defaultAds, ...defaultAds]
+        : defaultAds;
+    }
+  }, [data, variant]);
+
+  // Render nothing if no matching ads
+  if (!processedData.length) return null;
 
   return (
     <View style={styles.container}>
       <Carousel
-        loop={hasMultipleAds(data)}
+        loop={true}
         width={styles.carousel.width}
-        height={100} // Match the ads container height
+        height={200}
         autoPlay={true}
-        data={data}
+        data={processedData}
         enabled={false}
         style={styles.carousel}
-        scrollAnimationDuration={1500}
-        renderItem={({ item }) => {
-          if (!item.is_active) return null; // Early return for inactive items
-
-          return (
-            <View style={styles.itemContainer}>
-              <TouchableOpacity
-                disabled={!item.url} // Disable if url is undefined, null, or empty
-                onPress={() => handlePress(item.url)}
-              >
-                <Image
-                  source={{ uri: item.image }}
-                  style={styles.image} // Add the defined style here
-                />
-              </TouchableOpacity>
-            </View>
-          );
-        }}
+        scrollAnimationDuration={2000}
+        renderItem={({ item }) => (
+          <View style={styles.itemContainer}>
+            <TouchableOpacity
+              disabled={!item.url}
+              onPress={() => handlePress(item.url)}
+            >
+              <Image source={{ uri: item.displayImage }} style={styles.image} />
+            </TouchableOpacity>
+          </View>
+        )}
       />
     </View>
   );
 }
 
-export default AdCarousel;
+export default React.memo(AdCarousel);

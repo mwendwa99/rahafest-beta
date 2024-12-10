@@ -3,9 +3,10 @@ import { SecureCheckout } from "../../../components/SecureCheckout";
 import { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "../../../components";
-import { Image, View } from "react-native";
+import { Image, View, Text } from "react-native";
 
 import visaLogo from "../../../assets/visa.png";
+import masterLogo from "../../../assets/mastercard.png";
 
 // In your screen/component:
 export default function VisaCheckout({ navigation }) {
@@ -25,11 +26,25 @@ export default function VisaCheckout({ navigation }) {
       ) : (
         // Your other payment options UI
         <View style={{ alignItems: "center", padding: 20 }}>
-          <Image
-            source={visaLogo}
-            style={{ height: 200, width: 200 }}
-            resizeMode="contain"
-          />
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Image
+              source={visaLogo}
+              style={{ height: 100, width: 100 }}
+              resizeMode="contain"
+            />
+            <Text style={{ fontWeight: 700, fontSize: 20 }}>OR</Text>
+            <Image
+              source={masterLogo}
+              style={{ height: 100, width: 100 }}
+              resizeMode="contain"
+            />
+          </View>
 
           <Button
             label="Proceed"
