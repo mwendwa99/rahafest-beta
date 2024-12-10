@@ -125,7 +125,7 @@ export default function Events({ navigation }) {
 
     return (
       <View style={styles.emptyContainer}>
-        <RNText style={styles.emptyList}>Events coming soon!</RNText>
+        <RNText style={styles.emptyList}>Loading...</RNText>
       </View>
     );
   };

@@ -25,7 +25,7 @@ export default function EventList({
     return discount_rate > 0 ? true : false;
   };
 
-  console.log(title, isActive);
+  // console.log(title, isActive);
 
   function calculateOriginalPrice(price, discount_rate) {
     const numericPrice = Number(price) || 0;

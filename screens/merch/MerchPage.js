@@ -42,11 +42,11 @@ const MerchandiseCard = ({ item }) => {
         </View>
         <View style={styles.ratingContainer}>
           <Text>★ {item.rating}</Text>
-          {item.is_rahaclub_vip && (
+          {/* {item.is_rahaclub_vip && (
             <View style={styles.vipBadge}>
               <Text style={styles.vipText}>VIP</Text>
             </View>
-          )}
+          )} */}
         </View>
         <TouchableOpacity style={styles.addButton}>
           <Text style={styles.addButtonText}>Add to Cart</Text>
