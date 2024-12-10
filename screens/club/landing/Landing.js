@@ -23,7 +23,7 @@ import { StatusBar } from "expo-status-bar";
 const navigationItems = [
   { id: "1", icon: "globe", title: "Live Chat", link: "Live" },
   { id: "2", icon: "inbox", title: "Messages", link: "Friends" },
-  { id: "3", icon: "star", title: "Deals", link: "Deals" },
+  { id: "3", icon: "star", title: "Exlusive Offers", link: "Deals" },
   { id: "4", icon: "user", title: "Account", link: "Account" },
 ];
 
