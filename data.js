@@ -11,30 +11,30 @@ export const products = [
     price: "1,200",
     image: require("./assets/test-merch-2.png"),
   },
-  {
-    id: "3",
-    name: "Black Raha Trouser",
-    price: "3,000",
-    image: require("./assets/test-merch-3.png"),
-  },
-  {
-    id: "4",
-    name: "Black Raha Office Pants",
-    price: "2,500",
-    image: require("./assets/test-merch-4.png"),
-  },
-  {
-    id: "5",
-    name: "Grey Raha Sweatpants",
-    price: "1,500",
-    image: require("./assets/test-merch-5.png"),
-  },
-  {
-    id: "6",
-    name: "Yellow Raha T-shirt",
-    price: "1,000",
-    image: require("./assets/test-merch-6.png"),
-  },
+  //   {
+  //     id: "3",
+  //     name: "Black Raha Trouser",
+  //     price: "3,000",
+  //     image: require("./assets/test-merch-3.png"),
+  //   },
+  //   {
+  //     id: "4",
+  //     name: "Black Raha Office Pants",
+  //     price: "2,500",
+  //     image: require("./assets/test-merch-4.png"),
+  //   },
+  //   {
+  //     id: "5",
+  //     name: "Grey Raha Sweatpants",
+  //     price: "1,500",
+  //     image: require("./assets/test-merch-5.png"),
+  //   },
+  //   {
+  //     id: "6",
+  //     name: "Yellow Raha T-shirt",
+  //     price: "1,000",
+  //     image: require("./assets/test-merch-6.png"),
+  //   },
 ];
 
 export const clothes = [
@@ -42,7 +42,7 @@ export const clothes = [
     id: 1,
     is_active: true,
     name: "Classic Denim Jacket",
-    price: 45.99,
+    price: 4500,
     images: [
       { id: 1, url: "https://picsum.photos/200/300" },
       { id: 2, url: "https://picsum.photos/200/300" },
@@ -79,7 +79,7 @@ export const clothes = [
     id: 2,
     is_active: true,
     name: "Floral Summer Dress",
-    price: 29.99,
+    price: 3000,
     images: [
       { id: 3, url: "https://picsum.photos/200/300" },
       { id: 4, url: "https://picsum.photos/200/300" },
@@ -114,7 +114,7 @@ export const clothes = [
     id: 3,
     is_active: true,
     name: "Men's Running Shoes",
-    price: 60.0,
+    price: 600,
     images: [
       { id: 5, url: "https://picsum.photos/200/300" },
       { id: 6, url: "https://picsum.photos/200/300" },
