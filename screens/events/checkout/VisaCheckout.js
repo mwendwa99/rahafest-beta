@@ -38,7 +38,9 @@ export default function VisaCheckout({ navigation }) {
               style={{ height: 100, width: 100 }}
               resizeMode="contain"
             />
-            <Text style={{ fontWeight: 700, fontSize: 20 }}>OR</Text>
+            <Text style={{ fontWeight: 700, fontSize: 20, margin: 20 }}>
+              OR
+            </Text>
             <Image
               source={masterLogo}
               style={{ height: 100, width: 100 }}
