@@ -1,4 +1,5 @@
-import MerchandisePage from "./MerchPage";
+import MerchPage from "./MerchPage";
+import Merchandise from "../club/landing/Merchandise";
 import ItemPage from "./ItemPage";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -11,7 +12,7 @@ export default function MerchNavigator() {
     <Stack.Navigator initialRouteName="Merchandise">
       <Stack.Screen
         name="Merchandise"
-        component={MerchandisePage}
+        component={Merchandise}
         options={{
           headerShown: true,
           headerShadowVisible: false,
