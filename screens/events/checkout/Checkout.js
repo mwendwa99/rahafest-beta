@@ -39,7 +39,7 @@ import { success, warning } from "../../../utils/toast";
 import WebView from "react-native-webview";
 
 export default function Checkout({ route, navigation }) {
-  const { event } = route.params || {};
+  const { event, showDiscount } = route.params || {};
   const { user, loading, isAuthenticated } = useSelector((state) => state.auth);
   const {
     invoice,
@@ -65,7 +65,7 @@ export default function Checkout({ route, navigation }) {
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
-      console.log("Focused Event:", route.params?.event);
+      // console.log("Focused Event:", route.params?.event);
     });
 
     return unsubscribe;
@@ -209,7 +209,7 @@ export default function Checkout({ route, navigation }) {
     );
   }
 
-  // console.log(event);
+  // console.log(event.ticket_types);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -267,7 +267,10 @@ export default function Checkout({ route, navigation }) {
                 {item.ticket_types && item.ticket_types.length > 0 ? (
                   <FlatList
                     data={item.ticket_types.filter(
-                      (item) => item.is_active && item.id !== 22
+                      (item) =>
+                        item.is_active &&
+                        item.id !== 22 &&
+                        item.is_rahaclub_vip === showDiscount
                     )}
                     keyExtractor={(ticket) => ticket.id.toString()}
                     renderItem={({ item: ticket }) => (

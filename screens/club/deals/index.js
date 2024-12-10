@@ -27,7 +27,7 @@ export default function Deals({ navigation }) {
     (event) => {
       navigation.navigate("CheckoutNavigator", {
         screen: "Checkout",
-        params: { event }, // Pass only the clicked event's data
+        params: { event, showDiscount: true }, // Pass only the clicked event's data
       });
     },
     [navigation]
