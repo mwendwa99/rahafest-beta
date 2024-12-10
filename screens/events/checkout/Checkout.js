@@ -64,6 +64,14 @@ export default function Checkout({ route, navigation }) {
   }
 
   useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      console.log("Focused Event:", route.params?.event);
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
+  useEffect(() => {
     dispatch(checkUserAuthentication());
   }, []);
 
@@ -201,6 +209,8 @@ export default function Checkout({ route, navigation }) {
     );
   }
 
+  // console.log(event);
+
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView
@@ -256,7 +266,9 @@ export default function Checkout({ route, navigation }) {
               <View style={styles.detailsContainer}>
                 {item.ticket_types && item.ticket_types.length > 0 ? (
                   <FlatList
-                    data={item.ticket_types.filter((item) => item.is_active)}
+                    data={item.ticket_types.filter(
+                      (item) => item.is_active && item.id !== 22
+                    )}
                     keyExtractor={(ticket) => ticket.id.toString()}
                     renderItem={({ item: ticket }) => (
                       <TicketCard

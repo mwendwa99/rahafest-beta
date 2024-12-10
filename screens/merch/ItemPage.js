@@ -101,7 +101,19 @@ const ItemPage = () => {
               ]}
               onPress={() => setSelectedColor(color)}
             >
-              <Image source={{ uri: color.image }} style={styles.colorImage} />
+              {color.image ? (
+                <Image
+                  source={{ uri: color.image }}
+                  style={styles.colorImage}
+                />
+              ) : (
+                <View
+                  style={[
+                    styles.colorImage,
+                    { backgroundColor: color.name.toLowerCase() },
+                  ]}
+                />
+              )}
               <Text style={styles.optionText}>{color.name}</Text>
             </TouchableOpacity>
           ))}
@@ -249,6 +261,7 @@ const styles = StyleSheet.create({
     marginRight: 12,
     alignItems: "center",
   },
+
   colorImage: {
     width: 40,
     height: 40,

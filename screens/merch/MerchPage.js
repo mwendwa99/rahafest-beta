@@ -60,7 +60,7 @@ const MerchandisePage = () => {
   const renderItem = ({ item }) => <MerchandiseCard item={item} />;
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <FlatList
         data={clothes}
         renderItem={renderItem}
@@ -69,7 +69,8 @@ const MerchandisePage = () => {
         columnWrapperStyle={styles.row}
         showsVerticalScrollIndicator={false}
       />
-    </SafeAreaView>
+      <Text>Cart</Text>
+    </View>
   );
 };
 
@@ -77,7 +78,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f5f5f5",
-    padding: 8,
+    padding: 10,
   },
   row: {
     justifyContent: "space-between",

@@ -56,7 +56,13 @@ export const clothes = [
     attribute: {
       color: [
         { id: 1, name: "Blue", image: "https://picsum.photos/200/300" },
-        { id: 2, name: "Black", image: "https://picsum.photos/200/300" },
+        {
+          id: 2,
+          name: "Black",
+          // image:
+          //   "https://constantlycreateshop.com/cdn/shop/products/shady-black-denim-washed-jacket-constantly-create-shop-1.jpg?v=1683558032",
+          image: null,
+        },
       ],
       size: [
         { id: 1, name: "M" },

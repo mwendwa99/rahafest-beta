@@ -84,6 +84,8 @@ export default function Events({ navigation }) {
               expired={item?.expired}
               tickets={item?.ticket_types}
               onPress={() => handleNavigateToCheckout(item)}
+              isActive={item?.is_active}
+              hideDiscounted={true}
             />
           </View>
         );
@@ -123,12 +125,20 @@ export default function Events({ navigation }) {
 
     return (
       <View style={styles.emptyContainer}>
-        <Text style={styles.emptyList}>
-          Stay tuned for exclusive VIP deals!
-        </Text>
+        <RNText style={styles.emptyList}>Events coming soon!</RNText>
       </View>
     );
   };
+
+  function getActiveEvents(events) {
+    return events.filter(
+      (event) =>
+        Array.isArray(event.ticket_types) &&
+        event.ticket_types.some(
+          (ticket) => ticket.is_active === false || ticket.id !== 22
+        )
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -138,7 +148,12 @@ export default function Events({ navigation }) {
         </View>
       ) : (
         <FlatList
-          data={data}
+          data={getActiveEvents(data)}
+          // data={data.filter(
+          //   (item) =>
+          //     item.is_active &&
+          //     item.ticket_types.some((ticket) => ticket.is_active)
+          // )}
           renderItem={renderItem}
           keyExtractor={(item, index) =>
             item.id ? item.id.toString() : `${item.type}-${index}`

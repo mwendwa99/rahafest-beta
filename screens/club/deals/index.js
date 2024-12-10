@@ -6,6 +6,7 @@ import {
   RefreshControl,
   ActivityIndicator,
   StatusBar,
+  SafeAreaView,
 } from "react-native";
 import {
   fetchEvents,
@@ -70,11 +71,15 @@ export default function Deals({ navigation }) {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       {isLoading || isRefreshing ? renderLoading() : null}
       <FlatList
-        data={events.filter((item) =>
-          item.ticket_types.some((ticket) => ticket.is_rahaclub_vip)
+        data={events.filter(
+          (item) =>
+            item.is_active &&
+            item.ticket_types.some(
+              (ticket) => ticket.is_rahaclub_vip && ticket.is_active
+            )
         )}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
@@ -87,7 +92,8 @@ export default function Deals({ navigation }) {
             location={item?.location}
             expired={item?.expired}
             tickets={item?.ticket_types}
-            onPress={() => handleNavigateToCheckout(item)} // Pass the specific event here
+            onPress={() => handleNavigateToCheckout(item)}
+            hideDiscounted={false}
           />
         )}
         ListEmptyComponent={renderEmptyList}
@@ -97,7 +103,7 @@ export default function Deals({ navigation }) {
       />
 
       <StatusBar barStyle={"light-content"} />
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -105,6 +111,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
+    margin: 10,
   },
   emptyContainer: {
     flex: 1,
