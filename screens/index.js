@@ -7,7 +7,8 @@ import { Text } from "react-native";
 import HomeNavigator from "./home";
 import EventNavigator from "./events";
 import ClubNavigator from "./club";
-import Merchandise from "./club/landing/Merchandise";
+// import Merchandise from "./club/landing/Merchandise";
+import Merchandise from "./merch";
 
 const BottomTab = createBottomTabNavigator();
 
