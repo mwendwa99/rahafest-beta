@@ -206,7 +206,7 @@ const styles = StyleSheet.create({
   },
   ads: {
     position: "absolute",
-    top: 100,
+    top: 50,
     zIndex: 100,
     // backgroundColor: "white",
     height: 200,
