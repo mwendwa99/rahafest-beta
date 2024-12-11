@@ -12,12 +12,12 @@ import {
   FlatList,
   StyleSheet,
   TouchableOpacity,
-  SafeAreaView,
   StatusBar,
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
   Keyboard,
+  Dimensions,
 } from "react-native";
 import { Avatar } from "react-native-paper";
 import { useSelector } from "react-redux";
@@ -28,9 +28,31 @@ const WebSocketChat = () => {
   const [inputMessage, setInputMessage] = useState("");
   const [connected, setConnected] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
   const { token, user } = useSelector((state) => state.auth);
   const ws = useRef(null);
   const flatListRef = useRef(null);
+
+  // Keyboard event handlers
+  useEffect(() => {
+    const keyboardWillShow = Keyboard.addListener(
+      Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow",
+      (e) => {
+        setKeyboardHeight(e.endCoordinates.height);
+      }
+    );
+    const keyboardWillHide = Keyboard.addListener(
+      Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide",
+      () => {
+        setKeyboardHeight(0);
+      }
+    );
+
+    return () => {
+      keyboardWillShow.remove();
+      keyboardWillHide.remove();
+    };
+  }, []);
 
   const generateUniqueKey = useCallback(() => {
     return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -72,50 +94,47 @@ const WebSocketChat = () => {
     return () => ws.current?.close();
   }, [connectWebSocket]);
 
-  const handleWebSocketMessage = useCallback(
-    (data) => {
-      switch (data.action) {
-        case "message-list":
-          const sortedMessages = data.messages
-            .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
-            .map((message) => ({
-              ...message,
-              uniqueKey: `${message.id}-${generateUniqueKey()}`,
-            }));
-          setMessages(sortedMessages);
-          setIsLoading(false);
-          break;
-        case "send-message":
-          setMessages((prevMessages) => [
+  const handleWebSocketMessage = useCallback((data) => {
+    switch (data.action) {
+      case "message-list":
+        const sortedMessages = data.messages
+          .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
+          .map((message) => ({
+            ...message,
+            uniqueKey: `${message.id}-${generateUniqueKey()}`,
+          }));
+        setMessages(sortedMessages);
+        setIsLoading(false);
+        break;
+      case "send-message":
+        setMessages((prevMessages) => {
+          const messageExists = prevMessages.some(
+            (msg) => msg.id === data.message.id
+          );
+          if (messageExists) return prevMessages;
+
+          return [
             ...prevMessages,
             {
               ...data.message,
               uniqueKey: `${data.message.id}-${generateUniqueKey()}`,
             },
-          ]);
-          setIsLoading(false);
-          break;
-        case "error":
-          console.error("Error from server:", data);
-          setIsLoading(false);
-          break;
-        default:
-          console.log(data);
-          console.warn("Unknown action:", data.action);
-          setIsLoading(false);
-          break;
-      }
-    },
-    [generateUniqueKey]
-  );
+          ];
+        });
+        setIsLoading(false);
+        break;
+      case "error":
+        console.error("Error from server:", data);
+        setIsLoading(false);
+        break;
+      default:
+        console.warn("Unknown action:", data.action);
+        setIsLoading(false);
+        break;
+    }
+  }, []);
 
   useLayoutEffect(() => {
-    if (flatListRef.current) {
-      flatListRef.current.scrollToEnd({ animated: true });
-    }
-  }, [messages]);
-
-  useEffect(() => {
     if (flatListRef.current && messages.length > 0) {
       flatListRef.current.scrollToEnd({ animated: true });
     }
@@ -129,7 +148,9 @@ const WebSocketChat = () => {
       };
       ws.current.send(JSON.stringify(messageData));
       setInputMessage("");
-      Keyboard.dismiss();
+      if (Platform.OS === "android") {
+        Keyboard.dismiss();
+      }
     }
   }, [inputMessage, connected]);
 
@@ -139,14 +160,12 @@ const WebSocketChat = () => {
       const username = item?.sender_user_slug || "Anonymous";
       const body = item?.content || "";
       const initials = username.charAt(0) || "";
-      const isAdmin = item.sender === 57;
 
       return (
         <View
           style={[
             styles.messageContainer,
             isCurrentUser ? styles.currentUserMessage : styles.otherUserMessage,
-            isAdmin ? styles.adminBubble : null,
           ]}
         >
           <Avatar.Text
@@ -188,66 +207,84 @@ const WebSocketChat = () => {
   }
 
   return (
-    <View style={styles.mainContainer}>
-      <StatusBar barStyle="light-content" />
-      <SafeAreaView style={styles.safeArea}>
-        <View style={styles.container}>
+    <View style={styles.container}>
+      {Platform.OS === "ios" ? (
+        <KeyboardAvoidingView
+          behavior="padding"
+          style={styles.keyboardView}
+          keyboardVerticalOffset={90}
+        >
           <FlatList
             ref={flatListRef}
             data={messages}
             keyExtractor={(item) => item.uniqueKey}
             renderItem={renderMessage}
-            style={styles.flatList}
-            contentContainerStyle={styles.flatListContent}
-            keyboardShouldPersistTaps="handled"
-            onScrollBeginDrag={Keyboard.dismiss}
+            contentContainerStyle={[
+              styles.flatListContent,
+              { paddingBottom: keyboardHeight },
+            ]}
           />
-        </View>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
-        >
           <View style={styles.inputContainer}>
             <TextInput
               style={styles.input}
               value={inputMessage}
               onChangeText={setInputMessage}
               placeholder="Type a message..."
-              placeholderTextColor="#666"
+              placeholderTextColor="#fafafa"
               onSubmitEditing={sendMessage}
               returnKeyType="send"
-              multiline={false}
-              blurOnSubmit={true}
-              underlineColorAndroid="transparent"
             />
             <TouchableOpacity
               style={styles.sendButton}
               onPress={sendMessage}
               disabled={!connected}
-              activeOpacity={0.7}
             >
               <MaterialCommunityIcons name="send" size={20} color="#fafafa" />
             </TouchableOpacity>
           </View>
         </KeyboardAvoidingView>
-      </SafeAreaView>
+      ) : (
+        <>
+          <FlatList
+            ref={flatListRef}
+            data={messages}
+            keyExtractor={(item) => item.uniqueKey}
+            renderItem={renderMessage}
+            contentContainerStyle={styles.flatListContent}
+            style={{ flex: 1 }}
+          />
+          <View
+            style={[styles.inputContainer, { marginBottom: keyboardHeight }]}
+          >
+            <TextInput
+              style={styles.input}
+              value={inputMessage}
+              onChangeText={setInputMessage}
+              placeholder="Type a message..."
+              placeholderTextColor="#fafafa"
+              onSubmitEditing={sendMessage}
+              returnKeyType="send"
+            />
+            <TouchableOpacity
+              style={styles.sendButton}
+              onPress={sendMessage}
+              disabled={!connected}
+            >
+              <MaterialCommunityIcons name="send" size={20} color="#fafafa" />
+            </TouchableOpacity>
+          </View>
+        </>
+      )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  mainContainer: {
-    flex: 1,
-    backgroundColor: "#1B1B1B",
-  },
-  safeArea: {
-    flex: 1,
-  },
   container: {
     flex: 1,
     backgroundColor: "#1B1B1B",
   },
-  flatList: {
+  keyboardView: {
     flex: 1,
   },
   flatListContent: {
@@ -260,10 +297,13 @@ const styles = StyleSheet.create({
   },
   currentUserMessage: {
     flexDirection: "row-reverse",
+    maxWidth: "75%",
+    alignSelf: "flex-end",
   },
   messageContent: {
     flex: 1,
     marginHorizontal: 10,
+    maxWidth: "75%",
   },
   sender: {
     fontWeight: "bold",
@@ -279,8 +319,6 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 10,
     overflow: "hidden",
-    width: "auto",
-    alignSelf: "flex-end",
   },
   otherUserText: {
     textAlign: "left",
@@ -291,36 +329,6 @@ const styles = StyleSheet.create({
   },
   otherUserAvatar: {
     marginRight: 10,
-  },
-  inputContainer: {
-    flexDirection: "row",
-    padding: 10,
-    backgroundColor: "#1B1B1B",
-    borderTopWidth: 1,
-    borderTopColor: "#333",
-    alignItems: "center",
-    minHeight: 60,
-  },
-  input: {
-    flex: 1,
-    height: 40,
-    borderWidth: 1,
-    borderColor: "#333",
-    paddingHorizontal: 15,
-    marginRight: 10,
-    color: "#fafafa",
-    borderRadius: 20,
-    backgroundColor: "#2D2D2D",
-    fontSize: 16,
-  },
-  sendButton: {
-    backgroundColor: "#B9052C",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 10,
-    borderRadius: 20,
-    height: 40,
-    width: 40,
   },
   loadingContainer: {
     flex: 1,
@@ -333,18 +341,33 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 16,
   },
-  adminBubble: {
-    backgroundColor: "#6200ea",
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    borderRadius: 25,
+  inputContainer: {
+    flexDirection: "row",
+    padding: 10,
+    backgroundColor: "#1B1B1B",
+    borderTopWidth: 1,
+    borderTopColor: "#333",
+  },
+  input: {
+    flex: 1,
     borderWidth: 1,
-    borderColor: "#bb86fc",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 3,
+    borderColor: "#ccc",
+    padding: 10,
+    marginRight: 10,
+    color: "#fafafa",
+    borderRadius: 20,
+    backgroundColor: "#1B1B1B",
+    minHeight: 40,
+  },
+  sendButton: {
+    backgroundColor: "#B9052C",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 10,
+    borderRadius: 25,
+    overflow: "hidden",
+    height: 50,
+    width: 50,
   },
 });
 
