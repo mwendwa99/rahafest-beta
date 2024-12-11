@@ -6,6 +6,11 @@ import Text from "./Text";
 import { formatCurrencyWithCommas } from "../utils/helper";
 
 const TicketCard = ({ handleSelectTicketQuantity, item }) => {
+  const hasDiscount = item?.discount_rate > 0;
+  const originalPrice = hasDiscount
+    ? Math.round(item?.price / (1 - item?.discount_rate / 100))
+    : item?.price;
+
   return (
     <View style={styles.container}>
       <View>
@@ -15,26 +20,29 @@ const TicketCard = ({ handleSelectTicketQuantity, item }) => {
             variant="body"
             style={{ fontWeight: "bold", marginRight: 2 }}
           />
-          {item?.discount_price > 0 && (
+          {/* {hasDiscount && (
+            <Text
+              value={`${Math.round(item?.discount_rate)}% off`}
+              variant="body"
+              style={styles.discount}
+            />
+          )} */}
+        </View>
+        <View style={styles.priceContainer}>
+          {hasDiscount ? (
             <View style={styles.row}>
+              <Text
+                value={`KES ${formatCurrencyWithCommas(originalPrice)}`}
+                variant="body"
+                style={styles.oldPrice}
+              />
               <Text
                 value={`${Math.round(item?.discount_rate)}% off`}
                 variant="body"
                 style={styles.discount}
               />
-            </View>
-          )}
-        </View>
-        <View style={styles.priceContainer}>
-          {item?.discount_price > 0 ? (
-            <View style={styles.row}>
               <Text
                 value={`KES ${formatCurrencyWithCommas(item?.price)}`}
-                variant="body"
-                style={styles.oldPrice}
-              />
-              <Text
-                value={`KES ${formatCurrencyWithCommas(item?.discount_price)}`}
                 variant="body"
                 style={styles.newPrice}
               />
@@ -43,6 +51,7 @@ const TicketCard = ({ handleSelectTicketQuantity, item }) => {
             <Text
               value={`KES ${formatCurrencyWithCommas(item?.price)}`}
               variant="body"
+              style={styles.newPrice}
             />
           )}
         </View>
@@ -87,6 +96,13 @@ const styles = StyleSheet.create({
   priceContainer: {
     flexDirection: "row",
     alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#c3c3c3",
+    width: "100%",
+    maxWidth: 100,
+    borderRadius: 10,
+    padding: 5,
+    marginVertical: 5,
   },
   oldPrice: {
     fontSize: 12,
