@@ -88,15 +88,20 @@ export default function EventList({
             <View style={styles.ticket}>
               <Text style={styles.title}>{item.title}</Text>
               <View style={{ flexDirection: "row" }}>
-                <Text
-                  style={[
-                    styles.price,
-                    hasDiscount(item.discount_rate) && styles.discount,
-                  ]}
-                >
+                {hasDiscount(item.discount_rate) && (
+                  <Text
+                    style={[
+                      styles.price,
+                      hasDiscount(item.discount_rate) && styles.discount,
+                    ]}
+                  >
+                    {calculateOriginalPrice(item.price, item.discount_rate)}
+                  </Text>
+                )}
+                <Text style={[styles.price]}>
                   {`${formatCurrencyWithCommas(item.price)}`}
                 </Text>
-                <Text
+                {/* <Text
                   style={[
                     styles.text,
                     hasDiscount(item.discount_rate) && {
@@ -108,13 +113,8 @@ export default function EventList({
                   {hasDiscount(item.discount_rate)
                     ? ` ${item.discount_rate}% off`
                     : null}
-                </Text>
+                </Text> */}
               </View>
-              {hasDiscount(item.discount_rate) && (
-                <Text style={[styles.price]}>
-                  {calculateOriginalPrice(item.price, item.discount_rate)}
-                </Text>
-              )}
             </View>
           )}
           ListEmptyComponent={() => (
@@ -194,6 +194,7 @@ const styles = StyleSheet.create({
     color: "grey",
   },
   discount: {
+    fontSize: 10,
     color: "red",
     textDecorationLine: "line-through",
   },

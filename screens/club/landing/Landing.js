@@ -6,6 +6,7 @@ import {
   Alert,
   Dimensions,
   Platform,
+  StatusBar,
 } from "react-native";
 
 import { useDispatch, useSelector } from "react-redux";
@@ -18,7 +19,6 @@ import { ActivityIndicator } from "react-native-paper";
 import { AdCarousel, NavCard, Text } from "../../../components";
 
 import * as Device from "expo-device";
-import { StatusBar } from "expo-status-bar";
 
 const navigationItems = [
   { id: "1", icon: "globe", title: "Live Chat", link: "Live" },
@@ -28,7 +28,7 @@ const navigationItems = [
 ];
 
 const rahaClubDescription =
-  "Welcome to Raha Club, your exclusive RahaFest companion";
+  "Welcome to Raha Club, your exclusive lifestyle companion.";
 
 export default function Landing({ navigation }) {
   // Move ALL hooks to the top, before any conditional logic
@@ -128,7 +128,7 @@ export default function Landing({ navigation }) {
         <AdCarousel data={ads} variant="XL" />
       </View>
 
-      <StatusBar style="light" />
+      <StatusBar barStyle="light-content" />
     </View>
   );
 }

@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Raha",
-    "slug": "rahafest-beta",
+    "slug": "rahafest-mobile",
     "version": "9.0.3",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -36,7 +36,7 @@
         "expo-notifications",
         {
           "icon": "./assets/icon.png",
-          "color": "#ffffff",
+          "color": "#000",
           "defaultChannel": "default",
           "enableBackgroundRemoteNotifications": true
         }

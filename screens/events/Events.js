@@ -149,11 +149,6 @@ export default function Events({ navigation }) {
       ) : (
         <FlatList
           data={getActiveEvents(data)}
-          // data={data.filter(
-          //   (item) =>
-          //     item.is_active &&
-          //     item.ticket_types.some((ticket) => ticket.is_active)
-          // )}
           renderItem={renderItem}
           keyExtractor={(item, index) =>
             item.id ? item.id.toString() : `${item.type}-${index}`
