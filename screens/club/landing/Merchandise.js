@@ -16,7 +16,7 @@ export default function Merchandise() {
         contentContainerStyle={styles.grid}
         showsVerticalScrollIndicator={false}
       />
-      <StatusBar style="dark" />
+      <StatusBar style="light" />
     </SafeAreaView>
   );
 }

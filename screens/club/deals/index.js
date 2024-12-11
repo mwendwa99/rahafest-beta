@@ -6,12 +6,8 @@ import {
   RefreshControl,
   ActivityIndicator,
   StatusBar,
-  SafeAreaView,
 } from "react-native";
-import {
-  fetchEvents,
-  fetchTicketTypes,
-} from "../../../redux/events/eventActions";
+import { fetchEvents } from "../../../redux/events/eventActions";
 import EventList from "../../../components/EventList";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState, useCallback } from "react";
