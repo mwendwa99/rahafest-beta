@@ -18,10 +18,7 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.mwendwa99.rahafestbeta",
-      "buildNumber": "4",
-      "config": {
-        "googleMapsApiKey": "AIzaSyD3kyMh4P3uCTWP-tlbi4Lq2aYdFnvVSpA"
-      }
+      "buildNumber": "5"
     },
     "android": {
       "adaptiveIcon": {
@@ -29,16 +26,22 @@
         "backgroundColor": "#212529"
       },
       "package": "com.mwendwa99.rahafestbeta",
-      "versionCode": 25,
-      "config": {
-        "googleMaps": {
-          "apiKey": "AIzaSyD3kyMh4P3uCTWP-tlbi4Lq2aYdFnvVSpA"
-        }
-      }
+      "versionCode": 26
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icon.png",
+          "color": "#ffffff",
+          "defaultChannel": "default",
+          "enableBackgroundRemoteNotifications": true
+        }
+      ]
+    ],
     "mewArchEnabled": true,
     "runtimeVersion": {
       "policy": "appVersion"
