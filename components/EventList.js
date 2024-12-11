@@ -72,13 +72,13 @@ export default function EventList({
         <Image source={{ uri: image }} style={styles.image} />
         <View style={styles.column}>
           <Text style={styles.title}>{title}</Text>
-          <Text style={styles.subtitle}>{subtitle}</Text>
-          <Text>Location: {location}</Text>
           <Text>{date}</Text>
+          <Text>{location}</Text>
+          <Text style={styles.subtitle}>{subtitle}</Text>
         </View>
       </Pressable>
 
-      <View style={styles.ticketContainer}>
+      {/* <View style={styles.ticketContainer}>
         <FlatList
           data={filteredTickets}
           keyExtractor={({ item }) => item?.id.toString()}
@@ -101,19 +101,6 @@ export default function EventList({
                 <Text style={[styles.price]}>
                   {`${formatCurrencyWithCommas(item.price)}`}
                 </Text>
-                {/* <Text
-                  style={[
-                    styles.text,
-                    hasDiscount(item.discount_rate) && {
-                      color: "red",
-                      fontWeight: "700",
-                    },
-                  ]}
-                >
-                  {hasDiscount(item.discount_rate)
-                    ? ` ${item.discount_rate}% off`
-                    : null}
-                </Text> */}
               </View>
             </View>
           )}
@@ -121,7 +108,7 @@ export default function EventList({
             <Text>Tickets will be available soon!</Text>
           )}
         />
-      </View>
+      </View> */}
     </View>
   );
 }
