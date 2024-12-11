@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, useCallback } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   StyleSheet,
   View,
@@ -16,15 +16,48 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Text, Dropdown } from "../../../components";
 import { clearNewsAndGalleryError } from "../../../redux/news/newsSlice";
 
-const placeholderImage = "../../../assets/placeholder.png"; // Placeholder image path
-
 export default function Media() {
   const dispatch = useDispatch();
   const { gallery, loading, error } = useSelector((state) => state.news);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [accordionState, setAccordionState] = useState({});
+  const [preloadedImages, setPreloadedImages] = useState({});
 
+  // Prefetch all images and update state once
+  useEffect(() => {
+    if (gallery) {
+      const allPrefetchPromises = [];
+      const loadedImagesByCategory = {};
+
+      Object.entries(gallery).forEach(([category, images]) => {
+        loadedImagesByCategory[category] = images.map((img) => ({
+          ...img,
+          loaded: false,
+        }));
+        images.forEach((img) => {
+          const prefetchPromise = Image.prefetch(img.uri)
+            .then(() => {
+              loadedImagesByCategory[category].find(
+                (i) => i.id === img.id
+              ).loaded = true;
+            })
+            .catch(() => {
+              loadedImagesByCategory[category].find(
+                (i) => i.id === img.id
+              ).loaded = false;
+            });
+          allPrefetchPromises.push(prefetchPromise);
+        });
+      });
+
+      Promise.all(allPrefetchPromises).then(() => {
+        setPreloadedImages(loadedImagesByCategory);
+      });
+    }
+  }, [gallery]);
+
+  // Fetch gallery data on mount and clear errors on unmount
   useEffect(() => {
     dispatch(clearNewsAndGalleryError());
     dispatch(fetchGallery());
@@ -37,76 +70,85 @@ export default function Media() {
     dispatch(fetchGallery());
   }, [dispatch]);
 
-  const handleImagePress = (uri) => {
+  const handleImagePress = useCallback((uri) => {
     setSelectedImage(uri);
     setModalVisible(true);
-  };
-  // console.log(gallery);
+  }, []);
 
   const renderImage = useCallback(
-    ({ uri, id }) => (
-      <TouchableOpacity onPress={() => handleImagePress(uri)} key={id}>
+    ({ item }) => (
+      <TouchableOpacity onPress={() => handleImagePress(item.uri)}>
         <View style={styles.imageContainer}>
-          <Image
-            source={{ uri }}
-            style={styles.image}
-            resizeMode="cover"
-            onError={(e) => {
-              console.error("Image failed to load", e.nativeEvent.error);
-            }}
-          />
+          {item.loaded ? (
+            <Image
+              source={{ uri: item.uri }}
+              style={styles.image}
+              resizeMode="cover"
+            />
+          ) : (
+            <View style={[styles.image, styles.placeholderImage]}>
+              <ActivityIndicator size="small" color="orange" />
+            </View>
+          )}
         </View>
       </TouchableOpacity>
     ),
-    []
+    [handleImagePress]
   );
 
-  const toggleAccordion = (key) => {
-    setAccordionState((prevState) => ({
-      ...prevState,
-      [key]: !prevState[key],
+  const toggleAccordion = useCallback((key) => {
+    setAccordionState((prev) => ({
+      ...prev,
+      [key]: !prev[key],
     }));
-  };
+  }, []);
 
-  const renderCategory = ({ item }) => (
-    <View>
-      <Dropdown
-        key={item}
-        showAccordion={accordionState[item]}
-        setShowAccordion={() => toggleAccordion(item)}
-        title={item}
-      >
-        {accordionState[item] && gallery[item].length > 0 ? (
-          <FlatList
-            data={gallery[item]}
-            keyExtractor={(img) => img.id}
-            renderItem={({ item }) => renderImage(item)}
-            numColumns={2}
-            columnWrapperStyle={styles.columnWrapper}
-          />
-        ) : (
-          <View style={styles.noImages}>
-            <Text
-              value="Coming soon"
-              variant="body"
-              style={{ color: "#fff" }}
+  const renderCategory = useCallback(
+    ({ item: category }) => (
+      <View key={category}>
+        <Dropdown
+          showAccordion={accordionState[category]}
+          setShowAccordion={() => toggleAccordion(category)}
+          title={category}
+        >
+          {accordionState[category] && preloadedImages[category]?.length > 0 ? (
+            <FlatList
+              data={preloadedImages[category]}
+              keyExtractor={(img) => img.id.toString()}
+              renderItem={renderImage}
+              numColumns={2}
+              columnWrapperStyle={styles.columnWrapper}
+              initialNumToRender={6}
+              maxToRenderPerBatch={8}
+              windowSize={5}
+              removeClippedSubviews={true}
             />
-          </View>
-        )}
-      </Dropdown>
-    </View>
+          ) : (
+            <View style={styles.noImages}>
+              <Text
+                value="Loading..."
+                variant="body"
+                style={{ color: "#fff" }}
+              />
+            </View>
+          )}
+        </Dropdown>
+      </View>
+    ),
+    [accordionState, preloadedImages, renderImage, toggleAccordion]
   );
 
   if (error) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <RNText>Images will be available soon</RNText>
+      <View style={styles.errorContainer}>
+        <RNText style={styles.errorText}>Images will be available soon</RNText>
         <StatusBar style="dark" />
       </View>
     );
   }
 
-  if (loading) {
+  if (loading && !gallery) {
+    // Show loader only when loading and no gallery data is present
     return (
       <View style={styles.loader}>
         <ActivityIndicator size="large" color="orange" />
@@ -114,18 +156,9 @@ export default function Media() {
     );
   }
 
-  // console.log({ formattedGallery });
-
   return (
     <SafeAreaView style={styles.container}>
-      <Text
-        value={"Raha Gallery"}
-        variant={"title"}
-        style={{
-          textAlign: "center",
-          color: "#fafafa",
-        }}
-      />
+      <Text value="Raha Gallery" variant="title" style={styles.title} />
       {gallery && Object.keys(gallery).length > 0 ? (
         <FlatList
           data={Object.keys(gallery).reverse()}
@@ -133,6 +166,10 @@ export default function Media() {
           renderItem={renderCategory}
           onRefresh={onRefresh}
           refreshing={loading}
+          initialNumToRender={5}
+          maxToRenderPerBatch={10}
+          windowSize={7}
+          removeClippedSubviews={true}
         />
       ) : (
         <View style={styles.noImages}>
@@ -172,24 +209,48 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     width: "100%",
   },
+  title: {
+    textAlign: "center",
+    color: "#fafafa",
+    marginVertical: 10,
+    fontSize: 24,
+    fontWeight: "bold",
+  },
   imageContainer: {
     borderRadius: 6,
     overflow: "hidden",
     margin: 4,
   },
   image: {
-    width: 150, // Adjust width as needed
-    height: 150, // Adjust height as needed
+    width: 150,
+    height: 150,
+  },
+  placeholderImage: {
+    backgroundColor: "#333",
+    justifyContent: "center",
+    alignItems: "center",
   },
   loader: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
+  errorContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  errorText: {
+    color: "#fff",
+    fontSize: 18,
+    textAlign: "center",
+  },
   noImages: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    padding: 20,
   },
   modalBackground: {
     flex: 1,
@@ -207,8 +268,6 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
   },
   columnWrapper: {
-    // padding: 10,
-    // margin: 10,
     justifyContent: "space-evenly",
   },
 });
