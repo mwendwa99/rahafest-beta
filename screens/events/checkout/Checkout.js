@@ -22,6 +22,7 @@ import {
   ModalComponent,
   PhoneInput,
   PaymentModal,
+  UserInputForm,
 } from "../../../components";
 
 import {
@@ -54,6 +55,7 @@ export default function Checkout({ route, navigation }) {
   const [showPhoneInputModal, setShowPhoneInputModal] = useState(false);
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
   const [phoneInput, setPhoneInput] = useState("");
+  const [showUserModal, setShowUserModal] = useState(false);
 
   if (!event) {
     return (
@@ -98,6 +100,43 @@ export default function Checkout({ route, navigation }) {
     setShowPhoneInputModal(!showPhoneInputModal);
   const toggleInvoiceModal = () => setShowInvoiceModal(!showInvoiceModal);
 
+  // const handleSelectTicketQuantity = (quantity, ticket) => {
+  //   setTicketQuantities((prevQuantities) => {
+  //     const updatedQuantities = { ...prevQuantities, [ticket.id]: quantity };
+  //     const newAttendees = [];
+
+  //     Object.keys(updatedQuantities).forEach((ticketId) => {
+  //       const qty = updatedQuantities[ticketId];
+  //       if (qty > 0) {
+  //         const ticket = event.ticket_types.find(
+  //           (t) => t.id === parseInt(ticketId, 10)
+  //         );
+  //         for (let i = 0; i < qty; i++) {
+  //           newAttendees.push({
+  //             ticket_name: ticket.title,
+  //             event_name: event.title,
+  //             first_name: user?.first_name || "",
+  //             last_name: user?.last_name || "",
+  //             phone: formatPhoneNumberToMpesaFormat(
+  //               user?.phone || phoneInput || ""
+  //             ),
+  //             event: event.id,
+  //             email: user?.email || "",
+  //             amount_paid:
+  //               ticket.discount_price > 0
+  //                 ? ticket.discount_price
+  //                 : ticket.price,
+  //             ticket_type: ticket.id,
+  //           });
+  //         }
+  //       }
+  //     });
+
+  //     setAttendeeInfo(newAttendees);
+  //     return updatedQuantities;
+  //   });
+  // };
+
   const handleSelectTicketQuantity = (quantity, ticket) => {
     setTicketQuantities((prevQuantities) => {
       const updatedQuantities = { ...prevQuantities, [ticket.id]: quantity };
@@ -118,7 +157,7 @@ export default function Checkout({ route, navigation }) {
               phone: formatPhoneNumberToMpesaFormat(
                 user?.phone || phoneInput || ""
               ),
-              event_id: event.id,
+              event: event.id,
               email: user?.email || "",
               amount_paid:
                 ticket.discount_price > 0
@@ -143,46 +182,84 @@ export default function Checkout({ route, navigation }) {
     return { ...dataObject, data: { attendeeInfo: transformedAttendeeInfo } };
   };
 
+  // const handleBuyTicket = () => {
+  //   if (attendeeInfo.length === 0) {
+  //     alert("Please select at least one ticket");
+  //     return;
+  //   }
+
+  //   if (phoneInput === "") {
+  //     setShowPhoneInputModal(true);
+  //     return;
+  //   }
+
+  //   const requiredFields = ["first_name", "last_name", "phone", "email"];
+  //   const missingFields = attendeeInfo.filter((attendee) =>
+  //     requiredFields.some((field) => !attendee[field])
+  //   );
+
+  //   if (missingFields.length > 0) {
+  //     // alert("Please fill all required fields");
+  //     setShowUserModal(true);
+  //     return;
+  //   }
+
+  //   const invoiceData = { data: { attendeeInfo }, source_application: 2 };
+  //   const transformedDataObject = transformAttendeeInfo(invoiceData);
+
+  //   dispatch(createInvoice(transformedDataObject));
+
+  //   setTicketQuantities({});
+  //   setAttendeeInfo([]);
+  // };
+
+  // const handlePhoneUpdate = () => {
+  //   if (phoneInput && phoneInput !== "") {
+  //     const formattedPhone = formatPhoneNumberToMpesaFormat(phoneInput);
+  //     setAttendeeInfo((prevInfo) =>
+  //       prevInfo.map((attendee) => ({ ...attendee, phone: formattedPhone }))
+  //     );
+  //     setShowPhoneInputModal(false);
+  //   } else {
+  //     alert("please enter your phone number");
+  //   }
+  // };
+
   const handleBuyTicket = () => {
     if (attendeeInfo.length === 0) {
-      alert("Please select at least one ticket");
+      Alert.alert("Error", "Please select at least one ticket");
       return;
     }
 
-    // if (!isAuthenticated) {
-    //   alert("Please login to buy a ticket");
-    //   navigation.navigate("ClubNavigator", { screen: "Login" });
-    //   return;
-    // }
-
-    // if (isAuthenticated && phoneInput === "") {
-    //   setShowPhoneInputModal(true);
-    //   return;
-    // }
-    if (phoneInput === "") {
+    // First check if we have a phone number
+    if (!phoneInput) {
       setShowPhoneInputModal(true);
       return;
     }
 
+    // Then check if we have all required user information
     const requiredFields = ["first_name", "last_name", "phone", "email"];
-    const missingFields = attendeeInfo.filter((attendee) =>
-      requiredFields.some((field) => !attendee[field])
+    const missingFields = attendeeInfo.some((attendee) =>
+      requiredFields.some((field) => !attendee[field] || attendee[field] === "")
     );
 
-    if (missingFields.length > 0) {
-      alert("Please fill all required fields");
+    if (missingFields) {
+      setShowUserModal(true);
       return;
     }
 
+    // If all checks pass, proceed with creating invoice
     const invoiceData = { data: { attendeeInfo }, source_application: 2 };
     const transformedDataObject = transformAttendeeInfo(invoiceData);
 
-    dispatch(createInvoice(transformedDataObject));
+    // console.log(JSON.stringify(transformedDataObject));
 
+    dispatch(createInvoice(transformedDataObject));
     setTicketQuantities({});
     setAttendeeInfo([]);
   };
 
+  // Update handlePhoneUpdate to only handle the phone update
   const handlePhoneUpdate = () => {
     if (phoneInput && phoneInput !== "") {
       const formattedPhone = formatPhoneNumberToMpesaFormat(phoneInput);
@@ -190,8 +267,20 @@ export default function Checkout({ route, navigation }) {
         prevInfo.map((attendee) => ({ ...attendee, phone: formattedPhone }))
       );
       setShowPhoneInputModal(false);
+
+      // After phone is updated, check if we need to show user modal
+      const requiredFields = ["first_name", "last_name", "email"];
+      const missingFields = attendeeInfo.some((attendee) =>
+        requiredFields.some(
+          (field) => !attendee[field] || attendee[field] === ""
+        )
+      );
+
+      if (missingFields) {
+        setShowUserModal(true);
+      }
     } else {
-      alert("please enter your phone number");
+      Alert.alert("Error", "Please enter your phone number");
     }
   };
 
@@ -209,7 +298,7 @@ export default function Checkout({ route, navigation }) {
     );
   }
 
-  // console.log(event.ticket_types);
+  // console.log(JSON.stringify(attendeeInfo));
 
   return (
     <SafeAreaView style={styles.container}>
@@ -323,6 +412,18 @@ export default function Checkout({ route, navigation }) {
                 />
               </ModalComponent>
 
+              {/* Remove the showInvoiceModal condition that was here before */}
+              <ModalComponent
+                visible={showUserModal}
+                toggleModal={() => setShowUserModal(false)}
+                transparent={false}
+              >
+                <UserInputForm
+                  attendeeInfo={attendeeInfo}
+                  setAttendeeInfo={setAttendeeInfo}
+                  onClose={() => setShowUserModal(false)}
+                />
+              </ModalComponent>
               {invoice && invoice.id && (
                 <ModalComponent
                   visible={showInvoiceModal}
