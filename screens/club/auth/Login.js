@@ -6,16 +6,19 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { loginUser } from "../../../redux/auth/authActions";
 import { clearError } from "../../../redux/auth/authSlice";
-import { Input, Button } from "../../../components";
-import { warning } from "../../../utils/toast";
+import { Input, Button, Text } from "../../../components";
+import { validateEmail } from "../../../utils/form_validation";
 
 import pattern from "../../../assets/pattern.png";
 import { TextInput } from "react-native-paper";
 const logo = require("../../../assets/logo.png");
 
 export default function Login({ navigation }) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+  const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const { error: authError, loading } = useSelector((state) => state.auth);
 
@@ -23,36 +26,69 @@ export default function Login({ navigation }) {
 
   useEffect(() => {
     dispatch(clearError());
+    setErrors({}); // Clear any previous errors
   }, []);
 
   useEffect(() => {
-    if (authError !== null && authError.message === "Invalid Credentials") {
-      console.log(authError);
-      warning(authError.message);
+    if (authError) {
+      // Handle different types of API error responses
+      if (typeof authError === "object") {
+        if (authError.message === "Invalid Credentials") {
+          setErrors({ general: "Invalid email or password" });
+        } else if (typeof authError.message === "object") {
+          // Handle field-specific errors from API
+          const newErrors = {};
+          Object.entries(authError.message).forEach(([field, messages]) => {
+            newErrors[field] = messages[0];
+          });
+          setErrors(newErrors);
+        } else {
+          setErrors({ general: authError.message });
+        }
+      }
     }
   }, [authError]);
 
-  const handleNavigate = (screen) => {
-    navigation.navigate(screen);
+  const handleInputChange = (field, value) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+    // Clear error when user starts typing
+    setErrors((prev) => ({ ...prev, [field]: null, general: null }));
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    // Validate email
+    const emailValidation = validateEmail(formData.email);
+    if (!emailValidation.isValid) {
+      newErrors.email = emailValidation.error;
+    }
+
+    // Validate password
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleLogin = () => {
-    if (password === "" || email === "") {
-      warning("Please fill in all fields");
-      return;
-    }
+    if (!validateForm()) return;
 
     const loginData = {
-      email: email,
-      password: password,
+      email: formData.email,
+      password: formData.password,
     };
-
-    // console.log(loginData);
 
     dispatch(loginUser(loginData));
   };
 
-  // console.log(authError);
+  const getInputError = (field) => {
+    return errors[field] ? (
+      <Text style={{ color: "red" }} value={errors[field]} />
+    ) : null;
+  };
 
   return (
     <ImageBackground
@@ -65,19 +101,30 @@ export default function Login({ navigation }) {
           <Image source={logo} style={styles.logo} />
         </View>
         <View style={styles.section}>
+          {errors.general && (
+            <Text
+              style={{ color: "red", textAlign: "center", marginBottom: 10 }}
+              value={errors.general}
+            />
+          )}
+
           <View style={styles.row}>
             <Input
-              onChange={setEmail}
-              placeholder={"Email"}
+              value={formData.email}
+              onChange={(value) => handleInputChange("email", value)}
+              placeholder="Email"
               keyboardType="email-address"
               inputMode="email"
               autoComplete="email"
             />
           </View>
+          {getInputError("email")}
+
           <View style={styles.row}>
             <Input
-              onChange={(pin) => setPassword(pin)}
-              placeholder={"Password"}
+              value={formData.password}
+              onChange={(value) => handleInputChange("password", value)}
+              placeholder="Password"
               keyboardType="default"
               autoComplete="password"
               secureTextEntry={!showPassword}
@@ -90,16 +137,17 @@ export default function Login({ navigation }) {
               }
             />
           </View>
+          {getInputError("password")}
 
           <Button
-            label={loading ? `logging in...` : "Login"}
+            label={loading ? "Logging in..." : "Login"}
             onPress={handleLogin}
-            variant={"contained"}
+            variant="contained"
           />
           <Button
             label="New here? Register"
-            onPress={() => handleNavigate("Register")}
-            variant={"text"}
+            onPress={() => navigation.navigate("Register")}
+            variant="text"
           />
         </View>
       </View>

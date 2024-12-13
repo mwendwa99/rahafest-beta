@@ -1,98 +1,129 @@
 import { useState, useEffect } from "react";
-import { StyleSheet, View, Platform, Dimensions } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Platform,
+  Dimensions,
+  ScrollView,
+} from "react-native";
 import { ImageBackground } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useDispatch, useSelector } from "react-redux";
 import { Checkbox, TextInput } from "react-native-paper";
 
 import { Input, Button, Text } from "../../../components";
-import { danger, success, warning } from "../../../utils/toast";
+import {
+  validateEmail,
+  validatePhone,
+  validateRequired,
+  validatePassword,
+} from "../../../utils/form_validation";
 import { registerUser } from "../../../redux/auth/authActions";
 
 const pattern = require("../../../assets/pattern.png");
 
 export default function Register({ navigation }) {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [phone, setPhone] = useState("");
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    phone: "",
+  });
+
+  const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
+  const [checked, setChecked] = useState(false);
+
   const dispatch = useDispatch();
   const {
     user,
     error: authError,
     loading,
   } = useSelector((state) => state.auth);
-  const [checked, setChecked] = useState(false);
-  const [error, setError] = useState("");
 
-  const handleInputChange = (value) => {
-    setFirstName(value);
-    setError(value ? "" : "* Field is required");
+  const handleInputChange = (field, value) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+    // Clear error when user starts typing
+    setErrors((prev) => ({ ...prev, [field]: null }));
   };
-
-  // console.log({ user });
-  // console.log({ authError });
 
   useEffect(() => {
     if (authError) {
-      danger("could not register!", 2000);
-      // console.log(authError);
+      // Handle API error responses
+      if (typeof authError === "object" && authError.message) {
+        if (typeof authError.message === "object") {
+          // Handle missing fields error
+          const newErrors = {};
+          Object.entries(authError.message).forEach(([field, messages]) => {
+            newErrors[field] = messages[0];
+          });
+          setErrors(newErrors);
+        } else {
+          // Handle general error message
+          setErrors({ general: authError.message });
+        }
+      }
     }
   }, [authError]);
 
   useEffect(() => {
     if (user && !authError) {
-      success("You have successfully registered!", 2000);
-      navigation.navigate("Login");
+      // Auto-login logic here
+      navigation.navigate("Home"); // Or wherever your main app screen is
     }
   }, [user]);
 
-  const handleNavigate = (screen) => {
-    navigation.navigate(screen);
+  const validateForm = () => {
+    const newErrors = {};
+
+    // Validate required fields
+    const requiredFields = {
+      firstName: "First Name",
+      lastName: "Last Name",
+    };
+
+    Object.entries(requiredFields).forEach(([field, label]) => {
+      const { isValid, error } = validateRequired(formData[field], label);
+      if (!isValid) newErrors[field] = error;
+    });
+
+    // Validate email
+    const emailValidation = validateEmail(formData.email);
+    if (!emailValidation.isValid) newErrors.email = emailValidation.error;
+
+    // Validate phone
+    const phoneValidation = validatePhone(formData.phone);
+    if (!phoneValidation.isValid) newErrors.phone = phoneValidation.error;
+
+    // Validate password
+    const passwordValidation = validatePassword(
+      formData.password,
+      formData.confirmPassword
+    );
+    if (!passwordValidation.isValid)
+      newErrors.password = passwordValidation.error;
+
+    // Validate terms and conditions
+    if (!checked) {
+      newErrors.terms = "You must agree to the terms and conditions";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSignup = () => {
-    if (
-      firstName === "" ||
-      lastName === "" ||
-      password === "" ||
-      confirmPassword === "" ||
-      email === ""
-    ) {
-      warning("All fields are required!");
-      return;
-    }
-
-    // phone should be a valid phone number
-    if (phone.length < 10) {
-      danger("phone number is invalid", 2000);
-      console.log("phone number is invalid");
-      return;
-    }
-
-    // email should be a valid email
-    if (!email.includes("@") || !email.includes(".")) {
-      danger("email is invalid", 2000);
-      console.log("email is invalid");
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      danger("passwords do not match", 2000);
-      console.log("passwords do not match");
-      return;
-    }
+    if (!validateForm()) return;
 
     const registerData = {
-      first_name: firstName,
-      last_name: lastName,
-      password: password,
-      password_confirm: confirmPassword,
-      phone: phone,
-      email: email,
+      first_name: formData.firstName,
+      last_name: formData.lastName,
+      password: formData.password,
+      password_confirm: formData.confirmPassword,
+      phone: formData.phone,
+      email: formData.email,
       tc: checked,
     };
 
@@ -100,62 +131,81 @@ export default function Register({ navigation }) {
 
     dispatch(registerUser(registerData));
   };
+
+  const getInputError = (field) => {
+    return errors[field] ? (
+      <Text style={{ color: "red" }} value={errors[field]} />
+    ) : null;
+  };
+
   return (
     <ImageBackground
       source={pattern}
       resizeMode="repeat"
       style={styles.container}
     >
-      <View style={styles.section}>
+      <ScrollView style={styles.section}>
         <View style={styles.section}>
+          {errors.general && (
+            <Text
+              style={{ color: "red", textAlign: "center", marginBottom: 10 }}
+              value={errors.general}
+            />
+          )}
+
           <View style={styles.column}>
             <Input
               required
-              value={firstName}
-              onChange={handleInputChange}
-              placeholder={"First Name *"}
-              errorMessage={error}
+              value={formData.firstName}
+              onChange={(value) => handleInputChange("firstName", value)}
+              placeholder="First Name *"
             />
-            {error ? <Text style={{ color: "red" }} value={error} /> : null}
+            {getInputError("firstName")}
           </View>
+
           <View style={styles.column}>
             <Input
-              onChange={setLastName}
-              placeholder={"Last Name *"}
               required
+              value={formData.lastName}
+              onChange={(value) => handleInputChange("lastName", value)}
+              placeholder="Last Name *"
             />
-            {error ? <Text style={{ color: "red" }} value={error} /> : null}
+            {getInputError("lastName")}
           </View>
+
           <View style={styles.column}>
             <Input
-              onChange={setEmail}
-              placeholder={"Email *"}
+              value={formData.email}
+              onChange={(value) => handleInputChange("email", value)}
+              placeholder="Email *"
               keyboardType="email-address"
               inputMode="email"
               autoComplete="email"
               required
             />
-            {error ? <Text style={{ color: "red" }} value={error} /> : null}
+            {getInputError("email")}
           </View>
+
           <View style={styles.column}>
             <Input
-              onChange={setPhone}
-              placeholder={"Phone number *"}
-              keyboardType="phone"
-              inputMode="phone"
-              autoComplete="phone"
+              value={formData.phone}
+              onChange={(value) => handleInputChange("phone", value)}
+              placeholder="Phone (e.g., 254712345678) *"
+              keyboardType="phone-pad"
+              inputMode="tel"
+              autoComplete="tel"
               required
             />
-            {error ? <Text style={{ color: "red" }} value={error} /> : null}
+            {getInputError("phone")}
           </View>
+
           <View style={styles.column}>
             <Input
-              onChange={(pin) => setPassword(pin)}
-              placeholder={"Password *"}
+              value={formData.password}
+              onChange={(value) => handleInputChange("password", value)}
+              placeholder="Password *"
               required
-              keyboardType="default"
-              secureTextEntry={showPassword}
-              autoComplete="password"
+              secureTextEntry={!showPassword}
               right={
                 <TextInput.Icon
                   icon={showPassword ? "eye" : "eye-off"}
@@ -163,16 +213,16 @@ export default function Register({ navigation }) {
                 />
               }
             />
-            {error ? <Text style={{ color: "red" }} value={error} /> : null}
+            {getInputError("password")}
           </View>
+
           <View style={styles.column}>
             <Input
-              onChange={(pin) => setConfirmPassword(pin)}
-              placeholder={"Confirm Password *"}
+              value={formData.confirmPassword}
+              onChange={(value) => handleInputChange("confirmPassword", value)}
+              placeholder="Confirm Password *"
               required
-              keyboardType="default"
-              autoComplete="password"
-              secureTextEntry={showPassword}
+              secureTextEntry={!showPassword}
               right={
                 <TextInput.Icon
                   icon={showPassword ? "eye" : "eye-off"}
@@ -180,49 +230,50 @@ export default function Register({ navigation }) {
                 />
               }
             />
-            {error ? <Text style={{ color: "red" }} value={error} /> : null}
+            {getInputError("password")}
           </View>
-          {Platform.OS === "android" && (
+
+          {Platform.OS === "android" ? (
             <View style={styles.row}>
               <Checkbox
                 status={checked ? "checked" : "unchecked"}
-                color="#fff"
-                onPress={() => {
-                  setChecked(!checked);
-                }}
-                style={{ color: "#fff" }}
+                color="#fff" // Color when checked
+                uncheckedColor="#ccc" // Color when unchecked
+                onPress={() => setChecked(!checked)}
               />
               <Text
-                value={"Agree to the terms and conditions"}
-                variant={"body"}
+                value="Agree to the terms and conditions"
+                variant="body"
                 style={{ color: "#fff" }}
               />
             </View>
-          )}
-          {Platform.OS === "ios" && (
+          ) : (
             <Checkbox.Item
               status={checked ? "checked" : "unchecked"}
-              color="#fff"
+              color="#fff" // Color when checked
+              uncheckedColor="#ccc" // Color when unchecked
               labelStyle={{ color: "#fff" }}
-              label="Agree to the terms and conditions"
-              onPress={() => {
-                setChecked(!checked);
-              }}
+              label="Tap here to agree to the terms and conditions"
+              onPress={() => setChecked(!checked)}
             />
           )}
+
+          {getInputError("terms")}
+
           <Button
             label={loading ? "Registering..." : "Register"}
             onPress={handleSignup}
-            variant={"contained"}
+            variant="contained"
           />
+
           <Button
             label="Already have an account? Login"
-            onPress={() => handleNavigate("Login")}
-            variant={"text"}
+            onPress={() => navigation.navigate("Login")}
+            variant="text"
             style={{ color: "#fff" }}
           />
         </View>
-      </View>
+      </ScrollView>
       <StatusBar style="light" />
     </ImageBackground>
   );

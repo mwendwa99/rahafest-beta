@@ -98,44 +98,8 @@ export default function Checkout({ route, navigation }) {
 
   const togglePhoneInputModal = () =>
     setShowPhoneInputModal(!showPhoneInputModal);
+
   const toggleInvoiceModal = () => setShowInvoiceModal(!showInvoiceModal);
-
-  // const handleSelectTicketQuantity = (quantity, ticket) => {
-  //   setTicketQuantities((prevQuantities) => {
-  //     const updatedQuantities = { ...prevQuantities, [ticket.id]: quantity };
-  //     const newAttendees = [];
-
-  //     Object.keys(updatedQuantities).forEach((ticketId) => {
-  //       const qty = updatedQuantities[ticketId];
-  //       if (qty > 0) {
-  //         const ticket = event.ticket_types.find(
-  //           (t) => t.id === parseInt(ticketId, 10)
-  //         );
-  //         for (let i = 0; i < qty; i++) {
-  //           newAttendees.push({
-  //             ticket_name: ticket.title,
-  //             event_name: event.title,
-  //             first_name: user?.first_name || "",
-  //             last_name: user?.last_name || "",
-  //             phone: formatPhoneNumberToMpesaFormat(
-  //               user?.phone || phoneInput || ""
-  //             ),
-  //             event: event.id,
-  //             email: user?.email || "",
-  //             amount_paid:
-  //               ticket.discount_price > 0
-  //                 ? ticket.discount_price
-  //                 : ticket.price,
-  //             ticket_type: ticket.id,
-  //           });
-  //         }
-  //       }
-  //     });
-
-  //     setAttendeeInfo(newAttendees);
-  //     return updatedQuantities;
-  //   });
-  // };
 
   const handleSelectTicketQuantity = (quantity, ticket) => {
     setTicketQuantities((prevQuantities) => {
