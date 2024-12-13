@@ -20,6 +20,7 @@ export default function Input({ onChange, type, errorMessage, ...props }) {
       keyboardType={type}
       outlineStyle={styles.outline}
       error={!!errorMessage}
+      returnKeyType="done"
     />
   );
 }
