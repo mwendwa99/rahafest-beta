@@ -5,7 +5,8 @@ import Input from "./Input";
 import Text from "./Text";
 import { formatCurrencyWithCommas } from "../utils/helper";
 
-const TicketCard = ({ ticketInfo, setTicketInfo, item }) => {
+// TicketCard Component
+const TicketCard = ({ ticketSelections, setTicketSelections, item }) => {
   const hasDiscount = item?.discount_rate > 0;
   const originalPrice = hasDiscount
     ? Math.round(item?.price / (1 - item?.discount_rate / 100))
@@ -50,19 +51,23 @@ const TicketCard = ({ ticketInfo, setTicketInfo, item }) => {
         </View>
       </View>
       <View>
-        <Text value={`Select ticketInfo`} variant="body" />
+        <Text value={`Select tickets`} variant="body" />
         <Input
           placeholder="0"
           type="number-pad"
           returnKeyType="done"
-          defaultValue={ticketInfo.ticketInfo}
+          defaultValue={ticketSelections[item.id]?.quantity?.toString() || "0"}
           onChange={(text) => {
-            const quantity = parseInt(text, 10);
-            setTicketInfo({
-              quantity,
-              ticket_type: item.id,
-              amount_paid: item.price,
-            });
+            const quantity = parseInt(text, 10) || 0;
+            setTicketSelections((prev) => ({
+              ...prev,
+              [item.id]: {
+                quantity,
+                ticket_type: item.id,
+                amount_paid: item.price,
+                title: item.title,
+              },
+            }));
           }}
         />
       </View>
