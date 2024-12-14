@@ -5,7 +5,7 @@ import Input from "./Input";
 import Text from "./Text";
 import { formatCurrencyWithCommas } from "../utils/helper";
 
-const TicketCard = ({ handleSelectTicketQuantity, item }) => {
+const TicketCard = ({ ticketInfo, setTicketInfo, item }) => {
   const hasDiscount = item?.discount_rate > 0;
   const originalPrice = hasDiscount
     ? Math.round(item?.price / (1 - item?.discount_rate / 100))
@@ -20,13 +20,6 @@ const TicketCard = ({ handleSelectTicketQuantity, item }) => {
             variant="body"
             style={{ fontWeight: "bold", marginRight: 2 }}
           />
-          {/* {hasDiscount && (
-            <Text
-              value={`${Math.round(item?.discount_rate)}% off`}
-              variant="body"
-              style={styles.discount}
-            />
-          )} */}
         </View>
         <View style={styles.priceContainer}>
           {hasDiscount ? (
@@ -57,19 +50,19 @@ const TicketCard = ({ handleSelectTicketQuantity, item }) => {
         </View>
       </View>
       <View>
-        <Text value={`Select quantity`} variant="body" />
+        <Text value={`Select ticketInfo`} variant="body" />
         <Input
           placeholder="0"
           type="number-pad"
           returnKeyType="done"
-          defaultValue="0"
+          defaultValue={ticketInfo.ticketInfo}
           onChange={(text) => {
-            const quantity = parseInt(text, 10) || 0;
-            handleSelectTicketQuantity(quantity, item);
-          }}
-          onSubmitEditing={(e) => {
-            const quantity = parseInt(e.nativeEvent.text, 10) || 0;
-            handleSelectTicketQuantity(quantity, item); // Confirm the quantity on return key
+            const quantity = parseInt(text, 10);
+            setTicketInfo({
+              quantity,
+              ticket_type: item.id,
+              amount_paid: item.price,
+            });
           }}
         />
       </View>

@@ -12,7 +12,7 @@ export { default as MerchCard } from "./MerchCard";
 export { default as EventCard } from "./EventCard";
 export { default as Article } from "./Article";
 export { default as Dropdown } from "./Dropdown";
-export { default as UserInputForm } from "./UserInputForm";
+export { default as UserForm } from "./UserForm";
 export { default as UserInfoCard } from "./UserInfoCard";
 export { default as TicketCard } from "./TicketCard";
 export { default as ModalComponent } from "./Modal";
