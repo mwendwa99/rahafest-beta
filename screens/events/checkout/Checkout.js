@@ -1,99 +1,59 @@
-import React, { useState, useEffect } from "react";
-import {
-  View,
-  StyleSheet,
-  Image,
-  FlatList,
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-} from "react-native";
+import React, { useState } from "react";
+import { View, StyleSheet, Image, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { useSelector, useDispatch } from "react-redux";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { ActivityIndicator } from "react-native-paper";
 
 import {
   Text,
-  UserInfoCard,
   TicketCard,
   Button,
   ModalComponent,
-  PhoneInput,
   PaymentModal,
   UserForm,
 } from "../../../components";
 
-import {
-  formatEventDates,
-  formatPhoneNumberToMpesaFormat,
-  getTime,
-} from "../../../utils/helper";
-import { checkUserAuthentication } from "../../../redux/auth/authSlice";
+import { formatEventDates, getTime } from "../../../utils/helper";
 import { createInvoice } from "../../../redux/events/eventActions";
-import {
-  clearInvoiceError,
-  clearPaymentData,
-} from "../../../redux/events/eventSlice";
-import { success, warning } from "../../../utils/toast";
 import WebView from "react-native-webview";
 
 export default function Checkout({ route, navigation }) {
   const { event, showDiscount } = route.params || {};
+
+  const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
+  const { invoice, loading } = useSelector((state) => state.events);
 
-  const [userInfo, setUserInfo] = useState({});
-  const [showModal, setShowModal] = useState(false);
-  const [attendeeInfo, setAttendeeInfo] = useState([]);
-  // New state for tracking multiple ticket selections
-  const [ticketSelections, setTicketSelections] = useState({});
-
-  const [data, setData] = useState({
-    event: event?.id,
-    ticket_type: null,
-    email: null,
-    first_name: userInfo.email,
-    last_name: null,
-    phone: null,
-    amount_paid: null,
-    RF_id: null,
-  });
-
-  const validateUserInfo = () => {
-    if (!userInfo.email) {
-      setShowModal(true);
-      return false;
-    }
-    return true;
+  const initial_user_info_data = {
+    email: user?.email || "",
+    first_name: user?.first_name || "",
+    last_name: user?.last_name || "",
+    phone: user?.phone || "",
   };
 
-  const handleBuyTicket = () => {
-    if (!validateUserInfo()) {
-      alert("User info missing");
-      console.log("User info missing");
-      return;
-    }
+  const [userInfo, setUserInfo] = useState(initial_user_info_data);
+  const [showModal, setShowModal] = useState(false);
+  const [showInvoiceModal, setShowInvoiceModal] = useState(false);
+  const [ticketSelections, setTicketSelections] = useState({});
 
-    // Check if any tickets are selected
-    const totalTickets = Object.values(ticketSelections).reduce(
-      (sum, ticket) => sum + (ticket.quantity || 0),
-      0
-    );
+  const totalTickets = Object.values(ticketSelections).reduce(
+    (sum, ticket) => sum + (ticket.quantity || 0),
+    0
+  );
 
+  const handleBuyTicket = (updatedUserInfo = userInfo) => {
     if (totalTickets <= 0) {
       alert("Please select at least one ticket");
-      console.log("Please select at least one ticket");
       return;
     }
 
     const baseData = {
       event: event?.id,
-      email: userInfo.email,
-      first_name: userInfo.first_name || "",
-      last_name: userInfo.last_name || "",
-      phone: userInfo.phone || "",
+      email: updatedUserInfo.email,
+      first_name: updatedUserInfo.first_name || "",
+      last_name: updatedUserInfo.last_name || "",
+      phone: updatedUserInfo.phone || "",
     };
 
     // Create attendee details for each ticket type
@@ -115,10 +75,14 @@ export default function Checkout({ route, navigation }) {
       []
     );
 
-    console.log("Total tickets selected:", totalTickets);
-    console.log("Attendee Details Created:", attendeeDetails);
+    const transformedApiData = {
+      data: {
+        attendeeInfo: attendeeDetails,
+      },
+    };
 
-    setAttendeeInfo(attendeeDetails);
+    dispatch(createInvoice(transformedApiData));
+    setShowInvoiceModal(true);
   };
 
   return (
@@ -133,7 +97,25 @@ export default function Checkout({ route, navigation }) {
           <UserForm
             userInfo={userInfo}
             setUserInfo={setUserInfo}
-            onClose={() => setShowModal(false)}
+            onClose={(updatedUserInfo) => {
+              setShowModal(false);
+              setUserInfo(updatedUserInfo); // Update the state synchronously
+              handleBuyTicket(updatedUserInfo); // Pass updatedUserInfo
+            }}
+          />
+        </ModalComponent>
+      )}
+
+      {showInvoiceModal && invoice && invoice.id && (
+        <ModalComponent
+          visible={showInvoiceModal}
+          toggleModal={() => setShowInvoiceModal(!showInvoiceModal)}
+          transparent={false}
+        >
+          <PaymentModal
+            navigation={navigation}
+            invoice={invoice}
+            toggleModal={() => setShowInvoiceModal(!showInvoiceModal)}
           />
         </ModalComponent>
       )}
@@ -206,9 +188,15 @@ export default function Checkout({ route, navigation }) {
         </View>
         <Button
           disabled={event.location === "TBA"}
-          label="Buy Ticket"
+          label={loading ? "Loading..." : "Buy Ticket"}
           variant={"contained"}
-          onPress={handleBuyTicket}
+          onPress={() => {
+            if (totalTickets <= 0) {
+              alert("Please select at least one ticket");
+              return;
+            }
+            setShowModal(true);
+          }}
         />
       </ScrollView>
       <StatusBar style="dark" />

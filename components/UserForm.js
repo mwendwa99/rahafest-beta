@@ -11,24 +11,22 @@ import Button from "./Button";
 
 const UserForm = ({ userInfo, setUserInfo, onClose }) => {
   const [formData, setFormData] = useState({
-    first_name: "",
-    last_name: "",
-    email: "",
-    phone: "",
+    first_name: userInfo.first_name || "",
+    last_name: userInfo.last_name || "",
+    email: userInfo.email || "",
+    phone: userInfo.phone || "",
   });
 
   const [errors, setErrors] = useState({});
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    // Clear error when user starts typing
     setErrors((prev) => ({ ...prev, [field]: null }));
   };
 
   const validateForm = () => {
     const newErrors = {};
 
-    // Validate required fields
     const requiredFields = {
       first_name: "First Name",
       last_name: "Last Name",
@@ -39,13 +37,11 @@ const UserForm = ({ userInfo, setUserInfo, onClose }) => {
       if (!isValid) newErrors[field] = error;
     });
 
-    // Validate email
     const emailValidation = validateEmail(formData.email);
     if (!emailValidation.isValid) {
       newErrors.email = emailValidation.error;
     }
 
-    // Validate phone (must start with 254 for Kenya)
     const phoneValidation = validatePhone(formData.phone);
     if (!phoneValidation.isValid) {
       newErrors.phone = phoneValidation.error;
@@ -58,10 +54,9 @@ const UserForm = ({ userInfo, setUserInfo, onClose }) => {
   const handleSubmit = () => {
     if (!validateForm()) return;
 
-    // console.log({ formData });
-
+    // Pass formData to parent component immediately
     setUserInfo(formData);
-    onClose();
+    onClose(formData); // Pass formData to parent
   };
 
   const getInputError = (field) => {
