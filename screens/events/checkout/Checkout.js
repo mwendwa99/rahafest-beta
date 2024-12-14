@@ -47,11 +47,9 @@ export default function Checkout({ route, navigation }) {
   const [userInfo, setUserInfo] = useState({});
   const [showModal, setShowModal] = useState(false);
   const [attendeeInfo, setAttendeeInfo] = useState([]);
-  const [ticketInfo, setTicketInfo] = useState({
-    ticket_type: null,
-    quantity: 0,
-    amount_paid: 0,
-  });
+  // New state for tracking multiple ticket selections
+  const [ticketSelections, setTicketSelections] = useState({});
+
   const [data, setData] = useState({
     event: event?.id,
     ticket_type: null,
@@ -73,32 +71,55 @@ export default function Checkout({ route, navigation }) {
 
   const handleBuyTicket = () => {
     if (!validateUserInfo()) {
+      alert("User info missing");
       console.log("User info missing");
       return;
     }
 
-    setData((prev) => ({
-      ...prev,
+    // Check if any tickets are selected
+    const totalTickets = Object.values(ticketSelections).reduce(
+      (sum, ticket) => sum + (ticket.quantity || 0),
+      0
+    );
+
+    if (totalTickets <= 0) {
+      alert("Please select at least one ticket");
+      console.log("Please select at least one ticket");
+      return;
+    }
+
+    const baseData = {
+      event: event?.id,
       email: userInfo.email,
       first_name: userInfo.first_name || "",
       last_name: userInfo.last_name || "",
       phone: userInfo.phone || "",
-    }));
+    };
 
-    // Update attendeeInfo based on quantity
-    const attendeeDetails = Array(ticketInfo.quantity)
-      .fill()
-      .map((_, index) => ({
-        ...data,
-        ...ticketInfo,
-        RF_id: null,
-      }));
+    // Create attendee details for each ticket type
+    const attendeeDetails = Object.values(ticketSelections).reduce(
+      (acc, ticket) => {
+        if (ticket.quantity > 0) {
+          const ticketAttendees = Array(ticket.quantity)
+            .fill(null)
+            .map(() => ({
+              ...baseData,
+              ticket_type: ticket.ticket_type,
+              amount_paid: ticket.amount_paid,
+              RF_id: null,
+            }));
+          return [...acc, ...ticketAttendees];
+        }
+        return acc;
+      },
+      []
+    );
+
+    console.log("Total tickets selected:", totalTickets);
+    console.log("Attendee Details Created:", attendeeDetails);
 
     setAttendeeInfo(attendeeDetails);
-    console.log("Attendee Info Updated:", attendeeDetails);
   };
-
-  // console.log({ userInfo });
 
   return (
     <SafeAreaView style={styles.container}>
@@ -166,9 +187,8 @@ export default function Checkout({ route, navigation }) {
                   <TicketCard
                     key={item.id.toString()}
                     item={item}
-                    ticketInfo={ticketInfo}
-                    setTicketInfo={setTicketInfo}
-                    // handleSelectTicketQuantity={handleSelectTicketQuantity}
+                    ticketSelections={ticketSelections}
+                    setTicketSelections={setTicketSelections}
                   />
                 ))}
             </View>
