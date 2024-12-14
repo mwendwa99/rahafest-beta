@@ -1,19 +1,19 @@
-import { View, StyleSheet, Image, Pressable } from "react-native";
+import { View, StyleSheet } from "react-native";
 import React, { useEffect, useState } from "react";
 import Text from "./Text";
 import Button from "./Button";
 
 import { triggerSTK } from "../redux/events/eventActions";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import VisaPaymentWebView from "./WebView";
-import { generateHostedCheckoutData } from "./security";
 
 const PaymentModal = ({ invoice, toggleModal, navigation }) => {
   const dispatch = useDispatch();
-  const { paymentData, error } = useSelector((state) => state.events);
   const [visaLoading, setVisaLoading] = useState(false);
   const [formData, setFormData] = useState(null);
   const [showVisaWebView, setShowVisaWebView] = useState(false);
+
+  // console.log(JSON.stringify(invoice));
 
   const handleTriggerSTK = () => {
     const stkData = {
@@ -30,20 +30,6 @@ const PaymentModal = ({ invoice, toggleModal, navigation }) => {
     toggleModal();
   };
 
-  const handlePayWithVisa = async () => {
-    setVisaLoading(true);
-    try {
-      console.log({ invoice });
-      const formData = generateHostedCheckoutData(invoice);
-      setFormData(formData);
-      setShowVisaWebView(true);
-    } catch (error) {
-      console.error("Error during Visa payment:", error);
-    } finally {
-      setVisaLoading(false);
-    }
-  };
-
   return showVisaWebView && formData ? (
     // Render WebView for Visa payment
     <VisaPaymentWebView formData={formData} />
@@ -54,6 +40,7 @@ const PaymentModal = ({ invoice, toggleModal, navigation }) => {
         <Text value={invoice?.invoice_number} variant="title" />
         <Text
           value={invoice?.data?.attendeeInfo[0]?.ticket_name || ""}
+          style={{ color: "red" }}
           variant="title"
         />
       </View>
@@ -105,11 +92,6 @@ const PaymentModal = ({ invoice, toggleModal, navigation }) => {
           style={{ textAlign: "left" }}
         />
 
-        {/* <Button
-          label="VISA - form"
-          variant="contained"
-          onPress={handlePayWithVisa}
-        /> */}
         <Button
           label="CARD"
           variant="contained"
