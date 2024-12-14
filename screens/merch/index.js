@@ -12,7 +12,7 @@ export default function MerchNavigator() {
     <Stack.Navigator initialRouteName="Merchandise">
       <Stack.Screen
         name="Merchandise"
-        component={Merchandise}
+        component={MerchPage}
         options={{
           headerShown: true,
           headerShadowVisible: false,

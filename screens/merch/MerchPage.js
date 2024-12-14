@@ -1,5 +1,5 @@
 // MerchandisePage.js
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -8,10 +8,14 @@ import {
   FlatList,
   StyleSheet,
   Dimensions,
+  RefreshControl,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { clothes } from "../../data";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchMerch } from "../../redux/merch/merchActions";
+import { ActivityIndicator } from "react-native-paper";
+import { formatCurrencyWithCommas } from "../../utils/helper";
 
 const { width } = Dimensions.get("window");
 const cardWidth = (width - 32) / 2; // 2 cards per row with 16px padding on sides
@@ -23,10 +27,11 @@ const MerchandiseCard = ({ item }) => {
   return (
     <TouchableOpacity
       style={styles.card}
-      onPress={() => navigation.navigate("ItemPage", { item })}
+      // onPress={() => navigation.navigate("ItemPage", { item })}
+      onPress={() => alert("Coming soon!")}
     >
       <Image
-        source={{ uri: item.images[0].url }}
+        source={{ uri: item.featured_image }}
         style={styles.image}
         resizeMode="cover"
       />
@@ -35,20 +40,22 @@ const MerchandiseCard = ({ item }) => {
           {item.name}
         </Text>
         <View style={styles.priceContainer}>
-          <Text style={styles.price}>${discountedPrice.toFixed(2)}</Text>
-          {item.discount_rate > 0 && (
-            <Text style={styles.originalPrice}>${item.price.toFixed(2)}</Text>
-          )}
+          <Text style={styles.price}>
+            Kes. {formatCurrencyWithCommas(parseInt(item?.price))}
+          </Text>
         </View>
         <View style={styles.ratingContainer}>
-          <Text>★ {item.rating}</Text>
+          {/* <Text>★ {item.rating}</Text> */}
           {/* {item.is_rahaclub_vip && (
             <View style={styles.vipBadge}>
               <Text style={styles.vipText}>VIP</Text>
             </View>
           )} */}
         </View>
-        <TouchableOpacity style={styles.addButton}>
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={() => alert("Coming soon!")}
+        >
           <Text style={styles.addButtonText}>Add to Cart</Text>
         </TouchableOpacity>
       </View>
@@ -59,17 +66,40 @@ const MerchandiseCard = ({ item }) => {
 const MerchandisePage = () => {
   const renderItem = ({ item }) => <MerchandiseCard item={item} />;
 
+  const { products, loading } = useSelector((state) => state.merch);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchMerch());
+  }, []);
+
+  if (loading) {
+    return <ActivityIndicator size={24} />;
+  }
+
+  const onRefresh = () => {
+    setIsRefreshing(true);
+    dispatch(fetchMerch()).finally(() => setIsRefreshing(false));
+  };
+
+  // console.log(JSON.stringify(products));
+
   return (
     <View style={styles.container}>
       <FlatList
-        data={clothes}
+        data={products}
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
         numColumns={2}
         columnWrapperStyle={styles.row}
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
+        }
       />
-      <Text>Cart</Text>
+      {/* <Text>Cart</Text> */}
     </View>
   );
 };

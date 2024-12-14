@@ -19,7 +19,7 @@ import DirectMessages from "./friends/wsFriends/DirectMessages";
 import Account from "../account";
 import Deals from "./deals";
 import Landing from "./landing/Landing";
-import Merchandise from "./landing/Merchandise";
+import Merchandise from "../merch";
 import CheckoutNavigator from "../events/checkout";
 import Login from "./auth/Login";
 import Register from "./auth/Register";

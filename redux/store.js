@@ -17,13 +17,14 @@ import lineupSlice from "./lineup/lineupSlice";
 import newsSlice from "./news/newsSlice";
 import menuSlice from "./menu/menuSlice";
 import eventSlice from "./events/eventSlice";
+import merchSlice from "./merch/merchSlice";
 
 const rootPersistConfig = {
   key: "root",
   storage: AsyncStorage,
   keyPrefix: "redux-",
   whitelist: ["auth"],
-  blacklist: ["events", "faq", "lineup", "news", "menu"],
+  blacklist: ["events", "faq", "lineup", "news", "menu", "merch"],
 };
 
 const rootReducer = combineReducers({
@@ -33,6 +34,7 @@ const rootReducer = combineReducers({
   news: newsSlice,
   menu: menuSlice,
   events: eventSlice,
+  merch: merchSlice,
 });
 
 const persistedReducer = persistReducer(rootPersistConfig, rootReducer);
