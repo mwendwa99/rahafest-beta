@@ -43,7 +43,7 @@ export const updateUser = createAsyncThunk(
   "auth/updateUser",
   async (data, { rejectWithValue }) => {
     try {
-      const response = await authInstance.put("user", data);
+      const response = await authInstance.patch("user", data);
       return response.data.data;
     } catch (error) {
       danger("server error", 2000);
@@ -99,6 +99,28 @@ export const verifyEmail = createAsyncThunk(
   async (email, { rejectWithValue }) => {
     try {
       const response = await authInstance.post("forgot-password", email);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+export const verifyOTP = createAsyncThunk(
+  "auth/verifyOTP",
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await authInstance.post("verify-otp", data);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+export const createNewPassword = createAsyncThunk(
+  "auth/createNewPassword",
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await authInstance.post("reset-password", data);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);

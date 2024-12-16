@@ -9,27 +9,34 @@ import {
   validateRequired,
 } from "../../../utils/form_validation";
 import { TextInput } from "react-native-paper";
+import { createNewPassword } from "../../../redux/auth/authActions";
+import { useDispatch, useSelector } from "react-redux";
+import { success } from "../../../utils/toast";
 
 export default function CreateNewPassword({ navigation }) {
   const [formData, setFormData] = useState({
     password: "",
-    confirm_password: "",
+    password_confirm: "",
   });
 
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
+  const { otpResponse, loading, error } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     setErrors((prev) => ({ ...prev, [field]: null }));
   };
 
+  console.log(JSON.stringify(error));
+
   const validateForm = () => {
     const newErrors = {};
 
     const requiredFields = {
       password: "password",
-      confirm_password: "confirm_password",
+      password_confirm: "password_confirm",
     };
 
     Object.entries(requiredFields).forEach(([field, label]) => {
@@ -39,7 +46,7 @@ export default function CreateNewPassword({ navigation }) {
 
     const passwordValidation = validatePassword(
       formData.password,
-      formData.confirm_password
+      formData.password_confirm
     );
 
     if (!passwordValidation.isValid)
@@ -49,11 +56,24 @@ export default function CreateNewPassword({ navigation }) {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!validateForm()) return;
 
-    console.log(formData);
-    navigation.navigate("Login");
+    const data = {
+      ...formData,
+      email: otpResponse?.token_data?.user_email,
+    };
+
+    const result = await dispatch(createNewPassword(data));
+
+    if (createNewPassword.fulfilled.match(result)) {
+      console.log("Result of createNewPassword:", result);
+      success("Password reset successful!");
+      navigation.navigate("Login");
+    } else {
+      danger("Password reset failed");
+      console.log("Failed to reset password:", result.error.message);
+    }
   };
 
   const getInputError = (field) => {
@@ -84,8 +104,8 @@ export default function CreateNewPassword({ navigation }) {
 
       <View style={styles.column}>
         <Input
-          value={formData.confirm_password}
-          onChange={(value) => handleInputChange("confirm_password", value)}
+          value={formData.password_confirm}
+          onChange={(value) => handleInputChange("password_confirm", value)}
           placeholder="Confirm Password *"
           required
           secureTextEntry={!showPassword}
@@ -100,7 +120,7 @@ export default function CreateNewPassword({ navigation }) {
       </View>
 
       <Button
-        label="Change Password"
+        label={loading ? "Loading" : "Reset Password"}
         variant="contained"
         onPress={handleSubmit}
         style={styles.submitButton}

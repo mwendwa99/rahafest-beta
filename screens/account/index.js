@@ -8,7 +8,11 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
-import { deleteAccount, fetchUser } from "../../redux/auth/authActions";
+import {
+  deleteAccount,
+  fetchUser,
+  updateUser,
+} from "../../redux/auth/authActions";
 import { Text, Button, Input } from "../../components";
 import { ActivityIndicator, Avatar } from "react-native-paper";
 import { useSelector, useDispatch } from "react-redux";
@@ -46,19 +50,14 @@ export default function Account({ navigation }) {
   };
 
   const handleUpdateProfile = () => {
-    // dispatch(
-    //   updateUser({
-    //     first_name: editFName,
-    //     last_name: editLName,
-    //   })
-    // );
-
-    // console.log({ user });
-    console.log(editFName, editLName);
-    Alert.alert(
-      "Coming Soon!", // Title
-      "You will be able to update your profile in a future update. Stay tuned!" // Message
+    dispatch(
+      updateUser({
+        first_name: editFName,
+        last_name: editLName,
+      })
     );
+
+    setEditMode(false);
   };
 
   const handleLogout = () => {
