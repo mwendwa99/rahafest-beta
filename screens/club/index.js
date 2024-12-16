@@ -26,6 +26,9 @@ import Register from "./auth/Register";
 import { persistor } from "../../redux/store";
 import { warning } from "../../utils/toast";
 import NotificationsContainer from "../../Notifications";
+import VerifyEmail from "./auth/VerifyEmail";
+import VerifyOtp from "./auth/VerifyOtp";
+import CreateNewPassword from "./auth/CreateNewPassword";
 
 const Stack = createNativeStackNavigator();
 
@@ -419,6 +422,69 @@ export default function ClubNavigator() {
                     style={{ fontWeight: "bold", color: "#fff", fontSize: 18 }}
                   >
                     Register
+                  </Text>
+                ),
+                headerTitleAlign: "center",
+              }}
+            />
+            <Stack.Screen
+              name="VerifyEmail"
+              component={VerifyEmail}
+              options={{
+                headerShown: true,
+                headerShadowVisible: false,
+                headerTintColor: "#fff",
+                headerStyle: {
+                  backgroundColor: "#212529",
+                },
+                headerTitle: (props) => (
+                  <Text
+                    {...props}
+                    style={{ fontWeight: "bold", color: "#fff", fontSize: 18 }}
+                  >
+                    Forgot Password
+                  </Text>
+                ),
+                headerTitleAlign: "center",
+              }}
+            />
+            <Stack.Screen
+              name="VerifyOtp"
+              component={VerifyOtp}
+              options={{
+                headerShown: true,
+                headerShadowVisible: false,
+                headerTintColor: "#fff",
+                headerStyle: {
+                  backgroundColor: "#212529",
+                },
+                headerTitle: (props) => (
+                  <Text
+                    {...props}
+                    style={{ fontWeight: "bold", color: "#fff", fontSize: 18 }}
+                  >
+                    Verify OTP
+                  </Text>
+                ),
+                headerTitleAlign: "center",
+              }}
+            />
+            <Stack.Screen
+              name="CreateNewPassword"
+              component={CreateNewPassword}
+              options={{
+                headerShown: true,
+                headerShadowVisible: false,
+                headerTintColor: "#fff",
+                headerStyle: {
+                  backgroundColor: "#212529",
+                },
+                headerTitle: (props) => (
+                  <Text
+                    {...props}
+                    style={{ fontWeight: "bold", color: "#fff", fontSize: 18 }}
+                  >
+                    Reset Password
                   </Text>
                 ),
                 headerTitleAlign: "center",

@@ -1,5 +1,11 @@
 import { useState, useEffect } from "react";
-import { StyleSheet, View, Image } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Image,
+  Text as RNText,
+  Pressable,
+} from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { ImageBackground } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
@@ -138,6 +144,13 @@ export default function Login({ navigation }) {
             />
           </View>
           {getInputError("password")}
+
+          <Pressable
+            style={{ padding: 10, height: 50 }}
+            onPress={() => navigation.navigate("VerifyEmail")}
+          >
+            <Text value={"forgot password?"} style={{ color: "#fafafa" }} />
+          </Pressable>
 
           <Button
             label={loading ? "Logging in..." : "Login"}

@@ -37,12 +37,13 @@ const UserForm = ({ userInfo, setUserInfo, onClose }) => {
       if (!isValid) newErrors[field] = error;
     });
 
-    const emailValidation = validateEmail(formData.email);
+    const emailValidation = validateEmail(formData?.email);
+
     if (!emailValidation.isValid) {
       newErrors.email = emailValidation.error;
     }
 
-    const phoneValidation = validatePhone(formData.phone);
+    const phoneValidation = validatePhone(formData?.phone);
     if (!phoneValidation.isValid) {
       newErrors.phone = phoneValidation.error;
     }
@@ -72,7 +73,7 @@ const UserForm = ({ userInfo, setUserInfo, onClose }) => {
       <View style={styles.inputContainer}>
         <Input
           placeholder="First Name"
-          value={formData.first_name}
+          value={formData?.first_name}
           onChange={(text) => handleInputChange("first_name", text)}
         />
         {getInputError("first_name")}
@@ -81,7 +82,7 @@ const UserForm = ({ userInfo, setUserInfo, onClose }) => {
       <View style={styles.inputContainer}>
         <Input
           placeholder="Last Name"
-          value={formData.last_name}
+          value={formData?.last_name}
           onChange={(text) => handleInputChange("last_name", text)}
         />
         {getInputError("last_name")}
@@ -90,7 +91,7 @@ const UserForm = ({ userInfo, setUserInfo, onClose }) => {
       <View style={styles.inputContainer}>
         <Input
           placeholder="Email"
-          value={formData.email}
+          value={formData?.email}
           keyboardType="email-address"
           inputMode="email"
           autoComplete="email"
@@ -102,11 +103,15 @@ const UserForm = ({ userInfo, setUserInfo, onClose }) => {
       <View style={styles.inputContainer}>
         <Input
           placeholder="Phone Number (e.g., 254712345678)"
-          value={formData.phone}
+          value={formData?.phone}
           keyboardType="number-pad"
           inputMode="tel"
           autoComplete="tel"
           onChange={(text) => handleInputChange("phone", text)}
+        />
+        <Text
+          value="Do not include the '+' symbol"
+          style={{ color: "#888888" }}
         />
         {getInputError("phone")}
       </View>

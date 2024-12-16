@@ -93,3 +93,15 @@ export const deleteAccount = createAsyncThunk(
     }
   }
 );
+
+export const verifyEmail = createAsyncThunk(
+  "auth/verifyEmail",
+  async (email, { rejectWithValue }) => {
+    try {
+      const response = await authInstance.post("forgot-password", email);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);

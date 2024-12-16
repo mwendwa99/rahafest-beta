@@ -6,6 +6,7 @@ import {
   filterUserById,
   fetchAllUsers,
   updateUser,
+  verifyEmail,
 } from "./authActions";
 import { PURGE } from "redux-persist";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -19,6 +20,7 @@ const initialState = {
   loading: false,
   userById: null,
   isAuthenticated: false,
+  otpEmail: null,
 };
 
 const authSlice = createSlice({
@@ -111,6 +113,18 @@ const authSlice = createSlice({
         state.loading = false;
       })
       .addCase(updateUser.rejected, (state, action) => {
+        state.error = action.payload;
+        state.loading = false;
+      })
+      .addCase(verifyEmail.pending, (state, action) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(verifyEmail.fulfilled, (state, action) => {
+        state.otpEmail = action.payload;
+        state.loading = false;
+      })
+      .addCase(verifyEmail.rejected, (state, action) => {
         state.error = action.payload;
         state.loading = false;
       })

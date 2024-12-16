@@ -8,20 +8,40 @@ export const validateEmail = (email) => {
   return { isValid: true, error: null };
 };
 
+export const validateOTP = (otp) => {
+  // First, handle empty input
+  if (!otp) {
+    return { isValid: false, error: "OTP is required" };
+  }
+
+  // Check if the OTP is numeric
+  if (!/^\d+$/.test(otp)) {
+    return { isValid: false, error: "OTP must be numeric" };
+  }
+
+  // Check if the OTP has exactly 6 digits
+  if (otp.length !== 6) {
+    return { isValid: false, error: "OTP must be 6 digits" };
+  }
+
+  // All validations passed
+  return { isValid: true, error: null };
+};
+
 export const validatePhone = (phone) => {
   // First, handle empty input
   if (!phone) {
     return { isValid: false, error: "Phone number is required" };
   }
 
-  // Remove all non-digit characters (including + and spaces)
-  const cleanPhone = phone.replace(/\D/g, "");
+  // Remove all non-digit characters, including spaces and the '+' symbol
+  const cleanPhone = phone.replace(/[^\d]/g, ""); // This removes any non-digit characters
 
   // Check if the number has exactly 12 digits
   if (cleanPhone.length !== 12) {
     return {
       isValid: false,
-      error: "Phone number must be exactly 12 digits including country code",
+      error: "Phone number must include country code e.g. 2547...",
     };
   }
 
