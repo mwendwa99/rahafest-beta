@@ -1,20 +1,30 @@
 import { View, Text, StyleSheet } from "react-native";
 import { Button, Input } from "../../../components";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { Text as CText } from "../../../components";
 import {
   validateEmail,
   validateRequired,
 } from "../../../utils/form_validation";
+import { useDispatch, useSelector } from "react-redux";
+import { verifyEmail } from "../../../redux/auth/authActions";
+import { clearError } from "../../../redux/auth/authSlice";
+import { danger, success } from "../../../utils/toast";
 
 export default function VerifyEmail({ navigation }) {
+  const { otpResponse, error, loading } = useSelector((state) => state.auth);
   const [formData, setFormData] = useState({
     email: "",
   });
-
   const [errors, setErrors] = useState({});
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(clearError());
+    setErrors({});
+  }, []);
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -43,12 +53,18 @@ export default function VerifyEmail({ navigation }) {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!validateForm()) return;
 
-    // console.log(formData);
+    const result = await dispatch(verifyEmail(formData));
 
-    navigation.navigate("VerifyOtp");
+    if (verifyEmail.fulfilled.match(result)) {
+      success("OTP sent! Please check your email.");
+      navigation.navigate("VerifyOtp");
+    } else {
+      danger("Unable to send OTP. Please check your email.");
+      console.error("Failed to verify email:", result.error.message);
+    }
   };
 
   const getInputError = (field) => {
@@ -59,7 +75,7 @@ export default function VerifyEmail({ navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>Verify email</Text>
+      <Text style={styles.title}>Enter email</Text>
       <View style={styles.inputContainer}>
         <Input
           placeholder="Email"
@@ -71,8 +87,10 @@ export default function VerifyEmail({ navigation }) {
         />
         {getInputError("email")}
       </View>
+
       <Button
-        label="Proceed"
+        label={loading ? "Loading" : "Request OTP"}
+        disabled={loading}
         variant="contained"
         onPress={handleSubmit}
         style={styles.submitButton}
@@ -92,6 +110,7 @@ const styles = StyleSheet.create({
     fontWeight: 700,
     marginVertical: 10,
   },
+
   inputContainer: {
     marginVertical: 10,
   },
