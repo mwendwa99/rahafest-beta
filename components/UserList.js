@@ -42,13 +42,6 @@ export default function UserList({
             }}
             variant="body"
           />
-          <Text
-            value={user.email}
-            style={{
-              color: "#fafafa",
-            }}
-            variant="small"
-          />
         </View>
       </View>
       <Button

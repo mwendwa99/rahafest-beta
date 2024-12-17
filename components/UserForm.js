@@ -102,7 +102,7 @@ const UserForm = ({ userInfo, setUserInfo, onClose }) => {
 
       <View style={styles.inputContainer}>
         <Input
-          placeholder="Phone Number (e.g., 254712345678)"
+          placeholder="Phone Number (e.g., 254xxxxxxxxx)"
           value={formData?.phone}
           keyboardType="number-pad"
           inputMode="tel"

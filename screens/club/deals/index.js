@@ -60,7 +60,7 @@ export default function Deals({ navigation }) {
     return (
       <View style={styles.emptyContainer}>
         <Text style={styles.emptyList}>
-          Stay tuned for exclusive VIP deals!
+          Stay tuned for exclusive deals exclusive to Raha Club members!
         </Text>
       </View>
     );
