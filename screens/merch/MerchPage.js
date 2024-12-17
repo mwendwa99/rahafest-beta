@@ -24,11 +24,13 @@ const MerchandiseCard = ({ item }) => {
   const navigation = useNavigation();
   const discountedPrice = item.price * (1 - item.discount_rate / 100);
 
+  // console.log(item);
+
   return (
     <TouchableOpacity
       style={styles.card}
-      // onPress={() => navigation.navigate("ItemPage", { item })}
-      onPress={() => alert("Coming soon!")}
+      onPress={() => navigation.navigate("ItemPage", { item })}
+      // onPress={() => alert("Coming soon!")}
     >
       <Image
         source={{ uri: item.featured_image }}
@@ -44,6 +46,9 @@ const MerchandiseCard = ({ item }) => {
             Kes. {formatCurrencyWithCommas(parseInt(item?.price))}
           </Text>
         </View>
+        <View>
+          <Text style={styles.merchant}>{item?.merchant?.name}</Text>
+        </View>
         <View style={styles.ratingContainer}>
           {/* <Text>★ {item.rating}</Text> */}
           {/* {item.is_rahaclub_vip && (
@@ -52,12 +57,12 @@ const MerchandiseCard = ({ item }) => {
             </View>
           )} */}
         </View>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={styles.addButton}
           onPress={() => alert("Coming soon!")}
         >
           <Text style={styles.addButtonText}>Add to Cart</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
     </TouchableOpacity>
   );
@@ -108,7 +113,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f5f5f5",
-    padding: 10,
+    paddingHorizontal: 10,
   },
   row: {
     justifyContent: "space-between",
@@ -131,6 +136,10 @@ const styles = StyleSheet.create({
   },
   cardContent: {
     padding: 8,
+  },
+  merchant: {
+    color: "#8888",
+    fontSize: 12,
   },
   name: {
     fontSize: 14,

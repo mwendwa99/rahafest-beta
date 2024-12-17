@@ -12,6 +12,7 @@ import { PersistGate } from "redux-persist/integration/react";
 import splash from "./assets/splash.png";
 import { ImageBackground, StatusBar } from "react-native";
 import { theme } from "./theme";
+import { CartProvider } from "./context/CartContext";
 
 export default function App() {
   return (
@@ -27,15 +28,17 @@ export default function App() {
           </ImageBackground>
         }
       >
-        <NavigationContainer>
-          <PaperProvider theme={theme}>
-            <SafeAreaProvider>
-              <RootSiblingParent>
-                <Main />
-              </RootSiblingParent>
-            </SafeAreaProvider>
-          </PaperProvider>
-        </NavigationContainer>
+        <CartProvider>
+          <NavigationContainer>
+            <PaperProvider theme={theme}>
+              <SafeAreaProvider>
+                <RootSiblingParent>
+                  <Main />
+                </RootSiblingParent>
+              </SafeAreaProvider>
+            </PaperProvider>
+          </NavigationContainer>
+        </CartProvider>
       </PersistGate>
       <StatusBar barStyle="light-content" />
     </Provider>

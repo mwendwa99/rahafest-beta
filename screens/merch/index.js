@@ -1,13 +1,20 @@
 import MerchPage from "./MerchPage";
 import Merchandise from "../club/landing/Merchandise";
 import ItemPage from "./ItemPage";
+import CartScreen from "./CartScreen";
+import CheckoutScreen from "./CheckoutScreen";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import { useCart } from "../../context/CartContext";
 
 const Stack = createNativeStackNavigator();
 
 export default function MerchNavigator() {
+  const { state } = useCart();
+  const navigation = useNavigation();
+
   return (
     <Stack.Navigator initialRouteName="Merchandise">
       <Stack.Screen
@@ -27,6 +34,20 @@ export default function MerchNavigator() {
               variant={"subtitle"}
               style={{ color: "#fff" }}
             />
+          ),
+          // Add to your navigation options
+          headerRight: () => (
+            <TouchableOpacity
+              onPress={() => navigation.navigate("Cart")}
+              style={{ marginRight: 15, flexDirection: "row" }}
+            >
+              <Text style={{ color: "#fff", fontWeight: 700, fontSize: 20 }}>
+                🛒
+              </Text>
+              <Text style={{ color: "#fff", fontWeight: 700, fontSize: 20 }}>
+                {`(${state.items.length})`}
+              </Text>
+            </TouchableOpacity>
           ),
           headerTitleAlign: "center",
         }}
@@ -72,6 +93,8 @@ export default function MerchNavigator() {
           ),
         })}
       />
+      <Stack.Screen name="Cart" component={CartScreen} />
+      <Stack.Screen name="Checkout" component={CheckoutScreen} />
     </Stack.Navigator>
   );
 }
