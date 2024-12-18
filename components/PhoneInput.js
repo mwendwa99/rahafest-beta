@@ -1,43 +1,65 @@
-import { StyleSheet, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import React, { useState } from "react";
+import { View, Text, TextInput, StyleSheet } from "react-native";
+import { countries } from "../data/countries";
+import { Picker } from "@react-native-picker/picker";
 
-import React from "react";
-import Input from "./Input";
-import Button from "./Button";
-import Text from "./Text";
+const PhoneInputComponent = () => {
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [selectedCountry, setSelectedCountry] = useState("KE");
+  console.log({ phoneNumber });
 
-export default function PhoneInput({
-  value,
-  setPhoneInput,
-  handlePhoneUpdate,
-}) {
+  const handlePhoneNumberChange = (text) => {
+    const formattedText = text.replace(
+      /^0/,
+      countries.find((c) => c.code === selectedCountry).callingCode
+    );
+    setPhoneNumber(formattedText);
+  };
+
   return (
     <View style={styles.container}>
-      <Text value="Please enter your phone number" variant="subtitle" />
-      {/* <Text
-        value="This will be used to send you a payment prompt"
-        variant="body"
-      /> */}
-      <Input
-        placeholder="Phone Number"
-        type="phone-pad"
-        value={value}
-        onChange={(text) => setPhoneInput(text)} // Handle input without closing
-        style={{ width: "90%" }}
-      />
-      <Button
-        label="Confirm"
-        variant={"contained"}
-        onPress={handlePhoneUpdate} // Update all attendees and close modal
+      <Picker
+        selectedValue={selectedCountry}
+        onValueChange={(itemValue) => setSelectedCountry(itemValue)}
+        style={styles.picker}
+      >
+        {countries.map((country) => (
+          <Picker.Item
+            key={country.code}
+            label={`${country.name} (+${country.callingCode})`}
+            value={country.code}
+          />
+        ))}
+      </Picker>
+      <TextInput
+        style={styles.input}
+        placeholder="Enter phone number"
+        keyboardType="phone-pad"
+        value={phoneNumber}
+        onChangeText={handlePhoneNumberChange}
       />
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
-    height: 300,
+    flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#fff",
+    padding: 10,
+  },
+  picker: {
+    height: 50,
+    width: 150,
+    marginRight: 10,
+  },
+  input: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 5,
+    padding: 10,
   },
 });
+
+export default PhoneInputComponent;
