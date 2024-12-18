@@ -11,10 +11,18 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { useCart } from "../../context/CartContext";
 import { formatCurrencyWithCommas } from "../../utils/helper";
+import { createOrder } from "../../redux/merch/merchActions";
+import { useDispatch, useSelector } from "react-redux";
+import { clearOrderState } from "../../redux/merch/merchSlice";
+import { PhoneInput } from "../../components";
+import { validatePhone } from "../../utils/form_validation";
 
 const CheckoutScreen = () => {
   const navigation = useNavigation();
   const { state, dispatch } = useCart();
+  const dispatchAction = useDispatch();
+  const { order } = useSelector((state) => state.merch);
+  const [isLoading, setIsloading] = useState(false);
 
   const [billingInfo, setBillingInfo] = useState({
     first_name: "",
@@ -24,6 +32,10 @@ const CheckoutScreen = () => {
   });
 
   const [errors, setErrors] = useState({});
+
+  const normalizedPhone = billingInfo.phone.startsWith("+")
+    ? billingInfo.phone
+    : `+${billingInfo.phone}`;
 
   const validateForm = () => {
     const newErrors = {};
@@ -36,15 +48,8 @@ const CheckoutScreen = () => {
       newErrors.last_name = "Last name is required";
     }
 
-    // Remove symbols and non-numeric characters
-    const sanitizedPhone = billingInfo.phone.replace(/[^0-9]/g, "");
-
-    if (!sanitizedPhone.trim()) {
-      newErrors.phone = "Phone number is required";
-    } else if (!/^254\d{9}$/.test(sanitizedPhone)) {
-      newErrors.phone =
-        "Please enter a valid Kenyan phone number (254xxxxxxxxx)";
-    }
+    const phoneValidation = validatePhone(billingInfo.phone);
+    if (!phoneValidation.isValid) newErrors.phone = phoneValidation.error;
 
     if (!billingInfo.email.trim()) {
       newErrors.email = "Email is required";
@@ -66,52 +71,98 @@ const CheckoutScreen = () => {
 
     return {
       items: formattedItems,
-      billing_info: billingInfo,
+      billing_info: {
+        ...billingInfo,
+        phone: normalizedPhone,
+      },
     };
   };
 
-  // console.log(JSON.stringify(state.items));
+  const handleSubmit = async () => {
+    try {
+      setIsloading(true);
 
-  const handleSubmit = () => {
-    if (!validateForm()) {
-      Alert.alert("Error", "Please fill in all required fields correctly");
-      return;
+      if (!validateForm()) {
+        Alert.alert("Error", "Please fill in all required fields correctly");
+        setIsloading(false);
+        return;
+      }
+
+      if (state.items.length === 0) {
+        Alert.alert("Error", "Your cart is empty");
+        setIsloading(false);
+        return;
+      }
+
+      const orderData = formatOrderData();
+      console.log("Submitting order:", JSON.stringify(orderData));
+
+      dispatchAction(clearOrderState());
+      const resultAction = await dispatchAction(createOrder(orderData));
+
+      if (createOrder.fulfilled.match(resultAction)) {
+        const orderResponse = resultAction.payload;
+        if (orderResponse?.order_number) {
+          Alert.alert("Success", "Your order has been placed successfully!", [
+            {
+              text: "OK",
+              onPress: () => {
+                dispatch({
+                  type: "CLEAR_CART",
+                });
+                navigation.navigate("Payment");
+              },
+            },
+          ]);
+        } else {
+          Alert.alert("Error", "Order created but no order number received.");
+        }
+      } else {
+        const errorResponse = resultAction.payload;
+        let errorMessage = "Failed to place the order. Please try again.";
+
+        if (errorResponse?.message) {
+          try {
+            // Extract the part after "An unexpected error occurred:"
+            const errorPart = errorResponse.message.split(
+              "An unexpected error occurred:"
+            )[1];
+
+            if (errorPart) {
+              // Clean and parse the error message string into an object
+              const cleanedErrorPart = errorPart.trim();
+              const errorObject = JSON.parse(
+                cleanedErrorPart.replace(/'/g, '"')
+              ); // Fix single quotes to double quotes
+
+              // Loop through the error object to find the error string for any field
+              for (const field in errorObject) {
+                if (
+                  Array.isArray(errorObject[field]) &&
+                  errorObject[field][0]?.string
+                ) {
+                  errorMessage = errorObject[field][0].string;
+                  break; // Display the first error found
+                }
+              }
+            } else {
+              errorMessage = errorResponse.message;
+            }
+          } catch (parseError) {
+            console.error("Error parsing error message:", parseError);
+            errorMessage = "Wrong phone number format";
+          }
+        }
+
+        console.log(errorMessage);
+        Alert.alert("Error", errorMessage);
+      }
+    } catch (error) {
+      console.error("Order creation failed:", error);
+      Alert.alert("Error", "An unexpected error occurred. Please try again.");
+    } finally {
+      setIsloading(false);
     }
-
-    if (state.items.length === 0) {
-      Alert.alert("Error", "Your cart is empty");
-      return;
-    }
-
-    const orderData = formatOrderData();
-
-    Alert.alert("Thank you!", "You will be able to pre-order soon!", [
-      {
-        text: "OK",
-        onPress: () => {
-          dispatch({ type: "CLEAR_CART" });
-          navigation.navigate("Merchandise");
-        },
-      },
-    ]);
-
-    // console.log(JSON.stringify(orderData));
-
-    // Here you would typically make an API call to submit the order
-    // For now, we'll just show a success message
-    // Alert.alert(
-    //   "Order Submitted",
-    //   "Your order has been received successfully!",
-    //   [
-    //     {
-    //       text: "OK",
-    //       onPress: () => {
-    //         dispatch({ type: "CLEAR_CART" });
-    //         navigation.navigate("MerchandisePage");
-    //       },
-    //     },
-    //   ]
-    // );
   };
 
   return (
@@ -128,6 +179,7 @@ const CheckoutScreen = () => {
               setBillingInfo({ ...billingInfo, first_name: text })
             }
             placeholder="Enter your first name"
+            placeholderTextColor={"#888"}
           />
           {errors.first_name && (
             <Text style={styles.errorText}>{errors.first_name}</Text>
@@ -143,6 +195,7 @@ const CheckoutScreen = () => {
               setBillingInfo({ ...billingInfo, last_name: text })
             }
             placeholder="Enter your last name"
+            placeholderTextColor={"#888"}
           />
           {errors.last_name && (
             <Text style={styles.errorText}>{errors.last_name}</Text>
@@ -157,9 +210,11 @@ const CheckoutScreen = () => {
             onChangeText={(text) =>
               setBillingInfo({ ...billingInfo, phone: text })
             }
-            placeholder="254xxxxxxxxx"
+            placeholder="+254xxxxxxxxx"
             keyboardType="phone-pad"
+            placeholderTextColor={"#888"}
           />
+          {/* <PhoneInput /> */}
           {errors.phone && <Text style={styles.errorText}>{errors.phone}</Text>}
         </View>
 
@@ -174,6 +229,7 @@ const CheckoutScreen = () => {
             placeholder="Enter your email"
             keyboardType="email-address"
             autoCapitalize="none"
+            placeholderTextColor={"#888"}
           />
           {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
         </View>
@@ -203,7 +259,9 @@ const CheckoutScreen = () => {
       </View>
 
       <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-        <Text style={styles.submitButtonText}>Place Order</Text>
+        <Text style={styles.submitButtonText}>
+          {isLoading ? "Loading..." : "Place Order"}
+        </Text>
       </TouchableOpacity>
     </ScrollView>
   );
@@ -237,6 +295,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
+    // color: "#888",
   },
   inputError: {
     borderColor: "#ff4444",
