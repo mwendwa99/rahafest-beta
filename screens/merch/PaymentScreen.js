@@ -66,6 +66,8 @@ const PaymentScreen = ({ navigation }) => {
         .finally(() => {
           setIsLoading(false);
         });
+    } else if (selectedPayment === "card") {
+      navigation.navigate("PayWithCard");
     }
   };
 
@@ -149,6 +151,7 @@ const PaymentScreen = ({ navigation }) => {
           >
             <Text style={styles.paymentText}>Pay with M-PESA</Text>
           </TouchableOpacity>
+          <Text style={[styles.paymentText, { fontWeight: 700 }]}>OR</Text>
 
           <TouchableOpacity
             style={[
@@ -276,7 +279,7 @@ const styles = StyleSheet.create({
     borderColor: "#ddd",
     borderRadius: 8,
     padding: 16,
-    marginBottom: 8,
+    marginVertical: 8,
   },
   selectedPayment: {
     borderColor: "#2196F3",

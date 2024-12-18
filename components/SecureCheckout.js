@@ -41,7 +41,7 @@ export const SecureCheckout = ({ invoice, onClose }) => {
       transaction_type: "sale",
       amount: (invoice.total_amount || 0).toString(),
       currency: invoice.currency,
-      reference_number: invoice.invoice_number,
+      reference_number: invoice.invoice_number || invoice.order_number,
       unsigned_field_names: "",
       signed_field_names:
         "access_key,profile_id,transaction_uuid,signed_field_names,unsigned_field_names,signed_date_time,locale,transaction_type,reference_number,amount,currency",

@@ -79,6 +79,7 @@ export default function Checkout({ route, navigation }) {
       data: {
         attendeeInfo: attendeeDetails,
       },
+      source_application: 2,
     };
 
     dispatch(createInvoice(transformedApiData));

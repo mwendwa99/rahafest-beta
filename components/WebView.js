@@ -3,7 +3,7 @@ import { WebView } from "react-native-webview";
 
 // <form id="payment-form" method="POST" action="https://testsecureacceptance.cybersource.com/pay">
 const VisaPaymentWebView = ({ formData }) => {
-  console.log({ formData });
+  // console.log({ formData });
   // Create an HTML form that will be auto-submitted
   const htmlForm = `
     <html>

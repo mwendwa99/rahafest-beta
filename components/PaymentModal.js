@@ -13,14 +13,21 @@ const PaymentModal = ({ invoice, toggleModal, navigation }) => {
   const [formData, setFormData] = useState(null);
   const [showVisaWebView, setShowVisaWebView] = useState(false);
 
+  console.log(JSON.stringify(formData));
+
   // console.log(JSON.stringify(invoice));
 
   const handleTriggerSTK = () => {
+    const phone = (invoice?.data?.attendeeInfo[0]?.phone || "").replace(
+      "+",
+      ""
+    ); // Remove '+' from phone
+
     const stkData = {
       id: invoice?.id || "",
       invoice_number: invoice?.invoice_number || "",
       total_amount: invoice?.total_amount || "",
-      phone: invoice?.data?.attendeeInfo[0]?.phone || "",
+      phone: phone, // Use the cleaned phone number
       fcm_token: null,
       primary_email: invoice?.data?.attendeeInfo[0]?.email || "",
     };
