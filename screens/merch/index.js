@@ -1,6 +1,7 @@
 import MerchPage from "./MerchPage";
 import Merchandise from "../club/landing/Merchandise";
 import ItemPage from "./ItemPage";
+import PayWithCard from "./PayWithCard";
 import CartScreen from "./CartScreen";
 import CheckoutScreen from "./CheckoutScreen";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -15,6 +16,8 @@ const Stack = createNativeStackNavigator();
 export default function MerchNavigator() {
   const { state } = useCart();
   const navigation = useNavigation();
+
+  console.log(JSON.stringify(state.items));
 
   return (
     <Stack.Navigator initialRouteName="Merchandise">
@@ -33,20 +36,23 @@ export default function MerchNavigator() {
               value={"Raha Club"}
               {...props}
               variant={"subtitle"}
-              style={{ color: "#fff" }}
+              style={{ color: "#fff", fontSize: 16, fontWeight: 700 }}
             />
           ),
           // Add to your navigation options
           headerRight: () => (
             <TouchableOpacity
               onPress={() => navigation.navigate("Cart")}
-              style={{ marginRight: 15, flexDirection: "row" }}
+              style={styles.cartButton}
             >
-              <Text style={{ color: "#fff", fontWeight: 700, fontSize: 20 }}>
-                🛒
-              </Text>
-              <Text style={{ color: "#fff", fontWeight: 700, fontSize: 20 }}>
-                {`(${state.items.length})`}
+              <Text>🛒</Text>
+              <Text style={styles.cartCounter}>
+                {` ${
+                  state?.items?.reduce(
+                    (total, item) => total + item.quantity,
+                    0
+                  ) || 0
+                }`}
               </Text>
             </TouchableOpacity>
           ),
@@ -97,6 +103,7 @@ export default function MerchNavigator() {
       <Stack.Screen name="Cart" component={CartScreen} />
       <Stack.Screen name="Checkout" component={CheckoutScreen} />
       <Stack.Screen name="Payment" component={PaymentScreen} />
+      <Stack.Screen name="PayWithCard" component={PayWithCard} />
     </Stack.Navigator>
   );
 }
@@ -111,5 +118,18 @@ const styles = StyleSheet.create({
   headerTitleText: {
     color: "#fff",
     textAlign: "center",
+  },
+  cartButton: {
+    marginRight: 15,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    // backgroundColor: "orange",
+    padding: 8,
+  },
+  cartCounter: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: 700,
   },
 });

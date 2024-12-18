@@ -75,6 +75,7 @@ const CheckoutScreen = () => {
         ...billingInfo,
         phone: normalizedPhone,
       },
+      source_application: 2,
     };
   };
 

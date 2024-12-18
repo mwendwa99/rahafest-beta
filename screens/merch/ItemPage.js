@@ -115,7 +115,7 @@ const ItemPage = ({ navigation }) => {
         )}
 
         {/* Color Selection */}
-        <Text style={styles.sectionTitle}>Color</Text>
+        <Text style={styles.sectionTitle}>Color*</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           {colors.map((color) => (
             <TouchableOpacity
@@ -143,7 +143,7 @@ const ItemPage = ({ navigation }) => {
         </ScrollView>
 
         {/* Size Selection */}
-        <Text style={styles.sectionTitle}>Size</Text>
+        <Text style={styles.sectionTitle}>Size*</Text>
         <View style={styles.optionsRow}>
           {sizes.map((size) => (
             <TouchableOpacity

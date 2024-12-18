@@ -109,10 +109,6 @@ const UserForm = ({ userInfo, setUserInfo, onClose }) => {
           autoComplete="tel"
           onChange={(text) => handleInputChange("phone", text)}
         />
-        <Text
-          value="Do not include the '+' symbol"
-          style={{ color: "#888888" }}
-        />
         {getInputError("phone")}
       </View>
 
