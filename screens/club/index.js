@@ -25,7 +25,7 @@ import Login from "./auth/Login";
 import Register from "./auth/Register";
 import { persistor } from "../../redux/store";
 import { warning } from "../../utils/toast";
-import NotificationsContainer from "../../Notifications";
+// import NotificationsContainer from "../../Notifications";
 import VerifyEmail from "./auth/VerifyEmail";
 import VerifyOtp from "./auth/VerifyOtp";
 import CreateNewPassword from "./auth/CreateNewPassword";
@@ -61,439 +61,439 @@ export default function ClubNavigator() {
   }, [token]);
 
   return (
-    <NotificationsContainer>
-      <Stack.Navigator initialRouteName="Club">
-        {token ? (
-          <>
-            <Stack.Screen
-              name="Club"
-              component={Landing}
-              options={{
-                headerShown: true,
-                headerShadowVisible: false,
-                headerTintColor: "#fff",
-                headerStyle: {
-                  backgroundColor: "#212529",
-                },
-                headerTitle: (props) => (
+    // <NotificationsContainer>
+    <Stack.Navigator initialRouteName="Club">
+      {token ? (
+        <>
+          <Stack.Screen
+            name="Club"
+            component={Landing}
+            options={{
+              headerShown: true,
+              headerShadowVisible: false,
+              headerTintColor: "#fff",
+              headerStyle: {
+                backgroundColor: "#212529",
+              },
+              headerTitle: (props) => (
+                <Text
+                  value={"Raha Club"}
+                  {...props}
+                  variant={"subtitle"}
+                  style={{ color: "#fff" }}
+                />
+              ),
+              headerTitleAlign: "center",
+            }}
+          />
+          <Stack.Screen
+            name="Live"
+            component={Live}
+            options={({ navigation }) => ({
+              headerShown: true,
+              headerShadowVisible: false,
+              headerTintColor: "#fff",
+              headerStyle: {
+                backgroundColor: "#212529",
+              },
+              headerTitleAlign: "center",
+              headerTitle: (props) => (
+                <View style={styles.row}>
                   <Text
-                    value={"Raha Club"}
-                    {...props}
+                    value={"Live Chat"}
                     variant={"subtitle"}
-                    style={{ color: "#fff" }}
+                    style={styles.headerTitleText}
                   />
-                ),
-                headerTitleAlign: "center",
-              }}
-            />
-            <Stack.Screen
-              name="Live"
-              component={Live}
-              options={({ navigation }) => ({
-                headerShown: true,
-                headerShadowVisible: false,
-                headerTintColor: "#fff",
-                headerStyle: {
-                  backgroundColor: "#212529",
-                },
-                headerTitleAlign: "center",
-                headerTitle: (props) => (
-                  <View style={styles.row}>
-                    <Text
-                      value={"Live Chat"}
-                      variant={"subtitle"}
-                      style={styles.headerTitleText}
-                    />
-                  </View>
-                ),
-                headerRight: () => (
-                  <TouchableOpacity
-                    style={styles.row}
-                    onPress={() =>
-                      Linking.openURL("https://support.rahafest.com")
-                    }
-                  >
-                    <MaterialCommunityIcons
-                      name="alert-outline"
-                      size={20}
-                      color="yellow"
-                      style={{ marginRight: 2 }}
-                    />
-                    <Text
-                      // value={`${allUsers.length} members`}
-                      value="report"
-                      variant={"body"}
-                      style={{ color: "yellow" }}
-                    />
-                  </TouchableOpacity>
-                ),
-              })}
-            />
-            <Stack.Screen
-              name="Friends"
-              component={Friends}
-              options={{
-                headerShown: true,
-                headerShadowVisible: false,
-                headerTintColor: "#fff",
-                headerStyle: {
-                  backgroundColor: "#212529",
-                },
-                headerTitle: (props) => (
+                </View>
+              ),
+              headerRight: () => (
+                <TouchableOpacity
+                  style={styles.row}
+                  onPress={() =>
+                    Linking.openURL("https://support.rahafest.com")
+                  }
+                >
+                  <MaterialCommunityIcons
+                    name="alert-outline"
+                    size={20}
+                    color="yellow"
+                    style={{ marginRight: 2 }}
+                  />
                   <Text
-                    value={"Friends"}
-                    {...props}
-                    style={{ color: "#fff" }}
-                    variant={"subtitle"}
+                    // value={`${allUsers.length} members`}
+                    value="report"
+                    variant={"body"}
+                    style={{ color: "yellow" }}
                   />
-                ),
-                headerRight: () => (
-                  <TouchableOpacity
-                    style={styles.row}
-                    onPress={() =>
-                      Linking.openURL("https://support.rahafest.com")
-                    }
-                  >
-                    <MaterialCommunityIcons
-                      name="alert-outline"
-                      size={20}
-                      color="yellow"
-                      style={{ marginRight: 2 }}
-                    />
-                    <Text
-                      value="report"
-                      variant={"body"}
-                      style={{ color: "yellow" }}
-                    />
-                  </TouchableOpacity>
-                ),
-                headerTitleAlign: "center",
-              }}
-            />
-            <Stack.Screen
-              name="DirectMessages"
-              component={DirectMessages}
-              options={({ route }) => ({
-                headerShown: true,
+                </TouchableOpacity>
+              ),
+            })}
+          />
+          <Stack.Screen
+            name="Friends"
+            component={Friends}
+            options={{
+              headerShown: true,
+              headerShadowVisible: false,
+              headerTintColor: "#fff",
+              headerStyle: {
+                backgroundColor: "#212529",
+              },
+              headerTitle: (props) => (
+                <Text
+                  value={"Friends"}
+                  {...props}
+                  style={{ color: "#fff" }}
+                  variant={"subtitle"}
+                />
+              ),
+              headerRight: () => (
+                <TouchableOpacity
+                  style={styles.row}
+                  onPress={() =>
+                    Linking.openURL("https://support.rahafest.com")
+                  }
+                >
+                  <MaterialCommunityIcons
+                    name="alert-outline"
+                    size={20}
+                    color="yellow"
+                    style={{ marginRight: 2 }}
+                  />
+                  <Text
+                    value="report"
+                    variant={"body"}
+                    style={{ color: "yellow" }}
+                  />
+                </TouchableOpacity>
+              ),
+              headerTitleAlign: "center",
+            }}
+          />
+          <Stack.Screen
+            name="DirectMessages"
+            component={DirectMessages}
+            options={({ route }) => ({
+              headerShown: true,
 
-                headerShadowVisible: false,
-                headerTintColor: "#fff",
-                headerStyle: {
-                  backgroundColor: "#212529",
-                },
-                headerTitle: (props) => (
-                  <Text
-                    value={route.params?.friendSlug || "Direct Messages"}
-                    {...props}
-                    style={{ color: "#fff" }}
-                    variant={"subtitle"}
+              headerShadowVisible: false,
+              headerTintColor: "#fff",
+              headerStyle: {
+                backgroundColor: "#212529",
+              },
+              headerTitle: (props) => (
+                <Text
+                  value={route.params?.friendSlug || "Direct Messages"}
+                  {...props}
+                  style={{ color: "#fff" }}
+                  variant={"subtitle"}
+                />
+              ),
+              headerRight: () => (
+                <TouchableOpacity
+                  style={styles.row}
+                  onPress={() =>
+                    Linking.openURL("https://support.rahafest.com")
+                  }
+                >
+                  <MaterialCommunityIcons
+                    name="alert-outline"
+                    size={20}
+                    color="yellow"
+                    style={{ marginRight: 2 }}
                   />
-                ),
-                headerRight: () => (
-                  <TouchableOpacity
-                    style={styles.row}
-                    onPress={() =>
-                      Linking.openURL("https://support.rahafest.com")
-                    }
-                  >
-                    <MaterialCommunityIcons
-                      name="alert-outline"
-                      size={20}
-                      color="yellow"
-                      style={{ marginRight: 2 }}
-                    />
-                    <Text
-                      value="report"
-                      variant={"body"}
-                      style={{ color: "yellow" }}
-                    />
-                  </TouchableOpacity>
-                ),
-                headerTitleAlign: "center",
-              })}
-            />
-            <Stack.Screen
-              name="Pending"
-              component={FriendRequests}
-              options={{
-                headerShown: true,
-                headerShadowVisible: false,
-                headerTintColor: "#fff",
-                headerStyle: {
-                  backgroundColor: "#212529",
-                },
-                headerTitle: (props) => (
                   <Text
-                    value={"Pending Requests"}
-                    {...props}
-                    style={{ color: "#fff" }}
-                    variant={"subtitle"}
+                    value="report"
+                    variant={"body"}
+                    style={{ color: "yellow" }}
                   />
-                ),
-                headerRight: () => (
-                  <TouchableOpacity
-                    style={styles.row}
-                    onPress={() =>
-                      Linking.openURL("https://support.rahafest.com")
-                    }
-                  >
-                    <MaterialCommunityIcons
-                      name="alert-outline"
-                      size={20}
-                      color="yellow"
-                      style={{ marginRight: 2 }}
-                    />
-                    <Text
-                      value="report"
-                      variant={"body"}
-                      style={{ color: "yellow" }}
-                    />
-                  </TouchableOpacity>
-                ),
-                headerTitleAlign: "center",
-              }}
-            />
-            <Stack.Screen
-              name="Users"
-              options={{
-                headerShown: true,
-                headerShadowVisible: false,
-                headerTintColor: "#fff",
-                headerStyle: {
-                  backgroundColor: "#212529",
-                },
-                headerTitle: (props) => (
+                </TouchableOpacity>
+              ),
+              headerTitleAlign: "center",
+            })}
+          />
+          <Stack.Screen
+            name="Pending"
+            component={FriendRequests}
+            options={{
+              headerShown: true,
+              headerShadowVisible: false,
+              headerTintColor: "#fff",
+              headerStyle: {
+                backgroundColor: "#212529",
+              },
+              headerTitle: (props) => (
+                <Text
+                  value={"Pending Requests"}
+                  {...props}
+                  style={{ color: "#fff" }}
+                  variant={"subtitle"}
+                />
+              ),
+              headerRight: () => (
+                <TouchableOpacity
+                  style={styles.row}
+                  onPress={() =>
+                    Linking.openURL("https://support.rahafest.com")
+                  }
+                >
+                  <MaterialCommunityIcons
+                    name="alert-outline"
+                    size={20}
+                    color="yellow"
+                    style={{ marginRight: 2 }}
+                  />
                   <Text
-                    value={"All Users"}
-                    {...props}
-                    style={{ color: "#fff" }}
-                    variant={"subtitle"}
+                    value="report"
+                    variant={"body"}
+                    style={{ color: "yellow" }}
                   />
-                ),
-                headerRight: () => (
-                  <TouchableOpacity
-                    style={styles.row}
-                    onPress={() =>
-                      Linking.openURL("https://support.rahafest.com")
-                    }
-                  >
-                    <MaterialCommunityIcons
-                      name="alert-outline"
-                      size={20}
-                      color="yellow"
-                      style={{ marginRight: 2 }}
-                    />
-                    <Text
-                      // value={`${allUsers.length} members`}
-                      value="report"
-                      variant={"body"}
-                      style={{ color: "yellow" }}
-                    />
-                  </TouchableOpacity>
-                ),
-                headerTitleAlign: "center",
-              }}
-              component={AllUsers}
-            />
-            <Stack.Screen
-              name="Merchandise"
-              component={Merchandise}
-              options={{
-                headerShown: false,
-                headerShadowVisible: false,
-                headerTintColor: "#fff",
-                headerStyle: {
-                  backgroundColor: "#212529",
-                },
-                headerTitle: (props) => (
+                </TouchableOpacity>
+              ),
+              headerTitleAlign: "center",
+            }}
+          />
+          <Stack.Screen
+            name="Users"
+            options={{
+              headerShown: true,
+              headerShadowVisible: false,
+              headerTintColor: "#fff",
+              headerStyle: {
+                backgroundColor: "#212529",
+              },
+              headerTitle: (props) => (
+                <Text
+                  value={"All Users"}
+                  {...props}
+                  style={{ color: "#fff" }}
+                  variant={"subtitle"}
+                />
+              ),
+              headerRight: () => (
+                <TouchableOpacity
+                  style={styles.row}
+                  onPress={() =>
+                    Linking.openURL("https://support.rahafest.com")
+                  }
+                >
+                  <MaterialCommunityIcons
+                    name="alert-outline"
+                    size={20}
+                    color="yellow"
+                    style={{ marginRight: 2 }}
+                  />
                   <Text
-                    value="Merchandise"
-                    variant={"subtitle"}
-                    style={{ color: "#fff" }}
+                    // value={`${allUsers.length} members`}
+                    value="report"
+                    variant={"body"}
+                    style={{ color: "yellow" }}
                   />
-                ),
-                headerTitleAlign: "center",
-              }}
-            />
+                </TouchableOpacity>
+              ),
+              headerTitleAlign: "center",
+            }}
+            component={AllUsers}
+          />
+          <Stack.Screen
+            name="Merchandise"
+            component={Merchandise}
+            options={{
+              headerShown: false,
+              headerShadowVisible: false,
+              headerTintColor: "#fff",
+              headerStyle: {
+                backgroundColor: "#212529",
+              },
+              headerTitle: (props) => (
+                <Text
+                  value="Merchandise"
+                  variant={"subtitle"}
+                  style={{ color: "#fff" }}
+                />
+              ),
+              headerTitleAlign: "center",
+            }}
+          />
 
-            <Stack.Screen
-              name="Account"
-              component={Account}
-              options={{
-                headerShown: true,
-                headerShadowVisible: false,
-                headerTintColor: "#fff",
-                headerStyle: {
-                  backgroundColor: "#212529",
-                },
-                headerTitle: (props) => (
-                  <Text
-                    value={"Account"}
-                    {...props}
-                    variant={"subtitle"}
-                    style={{ color: "#fff" }}
-                  />
-                ),
-                headerTitleAlign: "center",
-              }}
-            />
-            <Stack.Screen
-              name="Deals"
-              component={Deals}
-              options={{
-                headerShown: true,
-                headerShadowVisible: false,
-                headerTintColor: "#fff",
-                headerStyle: {
-                  backgroundColor: "#212529",
-                },
-                headerTitle: (props) => (
-                  <Text
-                    value={"Deals"}
-                    {...props}
-                    variant={"subtitle"}
-                    style={{ color: "#fff" }}
-                  />
-                ),
-                headerTitleAlign: "center",
-              }}
-            />
+          <Stack.Screen
+            name="Account"
+            component={Account}
+            options={{
+              headerShown: true,
+              headerShadowVisible: false,
+              headerTintColor: "#fff",
+              headerStyle: {
+                backgroundColor: "#212529",
+              },
+              headerTitle: (props) => (
+                <Text
+                  value={"Account"}
+                  {...props}
+                  variant={"subtitle"}
+                  style={{ color: "#fff" }}
+                />
+              ),
+              headerTitleAlign: "center",
+            }}
+          />
+          <Stack.Screen
+            name="Deals"
+            component={Deals}
+            options={{
+              headerShown: true,
+              headerShadowVisible: false,
+              headerTintColor: "#fff",
+              headerStyle: {
+                backgroundColor: "#212529",
+              },
+              headerTitle: (props) => (
+                <Text
+                  value={"Deals"}
+                  {...props}
+                  variant={"subtitle"}
+                  style={{ color: "#fff" }}
+                />
+              ),
+              headerTitleAlign: "center",
+            }}
+          />
 
-            <Stack.Screen
-              name="CheckoutNavigator"
-              component={CheckoutNavigator}
-              options={{
-                headerShown: false,
-                headerShadowVisible: false,
-                headerTintColor: "#000",
-                headerStyle: {
-                  backgroundColor: "#fff", // Ensure background color is set correctly
-                  elevation: 0, // Remove shadow on Android
-                  shadowOpacity: 0, // Remove shadow on iOS
-                  borderBottomWidth: 0, // Remove bottom border
-                },
-                headerTitle: (props) => (
-                  <Text
-                    value={""}
-                    {...props}
-                    variant={"subtitle"}
-                    style={{ color: "#000" }}
-                  />
-                ),
-              }}
-            />
-          </>
-        ) : (
-          <>
-            <Stack.Screen
-              name="Login"
-              component={Login}
-              options={{
-                headerShown: true,
-                headerShadowVisible: false,
-                headerTintColor: "#fff",
-                headerStyle: {
-                  backgroundColor: "#212529",
-                },
-                headerTitle: (props) => (
-                  <Text
-                    {...props}
-                    style={{ fontWeight: "bold", color: "#fff", fontSize: 18 }}
-                  >
-                    Login
-                  </Text>
-                ),
-                headerTitleAlign: "center",
-              }}
-            />
-            <Stack.Screen
-              name="Register"
-              component={Register}
-              options={{
-                headerShown: true,
-                headerShadowVisible: false,
-                headerTintColor: "#fff",
-                headerStyle: {
-                  backgroundColor: "#212529",
-                },
-                headerTitle: (props) => (
-                  <Text
-                    {...props}
-                    style={{ fontWeight: "bold", color: "#fff", fontSize: 18 }}
-                  >
-                    Register
-                  </Text>
-                ),
-                headerTitleAlign: "center",
-              }}
-            />
-            <Stack.Screen
-              name="VerifyEmail"
-              component={VerifyEmail}
-              options={{
-                headerShown: true,
-                headerShadowVisible: false,
-                headerTintColor: "#fff",
-                headerStyle: {
-                  backgroundColor: "#212529",
-                },
-                headerTitle: (props) => (
-                  <Text
-                    {...props}
-                    style={{ fontWeight: "bold", color: "#fff", fontSize: 18 }}
-                  >
-                    Forgot Password
-                  </Text>
-                ),
-                headerTitleAlign: "center",
-              }}
-            />
-            <Stack.Screen
-              name="VerifyOtp"
-              component={VerifyOtp}
-              options={{
-                headerShown: true,
-                headerShadowVisible: false,
-                headerTintColor: "#fff",
-                headerStyle: {
-                  backgroundColor: "#212529",
-                },
-                headerTitle: (props) => (
-                  <Text
-                    {...props}
-                    style={{ fontWeight: "bold", color: "#fff", fontSize: 18 }}
-                  >
-                    Verify OTP
-                  </Text>
-                ),
-                headerTitleAlign: "center",
-              }}
-            />
-            <Stack.Screen
-              name="CreateNewPassword"
-              component={CreateNewPassword}
-              options={{
-                headerShown: true,
-                headerShadowVisible: false,
-                headerTintColor: "#fff",
-                headerStyle: {
-                  backgroundColor: "#212529",
-                },
-                headerTitle: (props) => (
-                  <Text
-                    {...props}
-                    style={{ fontWeight: "bold", color: "#fff", fontSize: 18 }}
-                  >
-                    Reset Password
-                  </Text>
-                ),
-                headerTitleAlign: "center",
-              }}
-            />
-          </>
-        )}
-      </Stack.Navigator>
-    </NotificationsContainer>
+          <Stack.Screen
+            name="CheckoutNavigator"
+            component={CheckoutNavigator}
+            options={{
+              headerShown: false,
+              headerShadowVisible: false,
+              headerTintColor: "#000",
+              headerStyle: {
+                backgroundColor: "#fff", // Ensure background color is set correctly
+                elevation: 0, // Remove shadow on Android
+                shadowOpacity: 0, // Remove shadow on iOS
+                borderBottomWidth: 0, // Remove bottom border
+              },
+              headerTitle: (props) => (
+                <Text
+                  value={""}
+                  {...props}
+                  variant={"subtitle"}
+                  style={{ color: "#000" }}
+                />
+              ),
+            }}
+          />
+        </>
+      ) : (
+        <>
+          <Stack.Screen
+            name="Login"
+            component={Login}
+            options={{
+              headerShown: true,
+              headerShadowVisible: false,
+              headerTintColor: "#fff",
+              headerStyle: {
+                backgroundColor: "#212529",
+              },
+              headerTitle: (props) => (
+                <Text
+                  {...props}
+                  style={{ fontWeight: "bold", color: "#fff", fontSize: 18 }}
+                >
+                  Login
+                </Text>
+              ),
+              headerTitleAlign: "center",
+            }}
+          />
+          <Stack.Screen
+            name="Register"
+            component={Register}
+            options={{
+              headerShown: true,
+              headerShadowVisible: false,
+              headerTintColor: "#fff",
+              headerStyle: {
+                backgroundColor: "#212529",
+              },
+              headerTitle: (props) => (
+                <Text
+                  {...props}
+                  style={{ fontWeight: "bold", color: "#fff", fontSize: 18 }}
+                >
+                  Register
+                </Text>
+              ),
+              headerTitleAlign: "center",
+            }}
+          />
+          <Stack.Screen
+            name="VerifyEmail"
+            component={VerifyEmail}
+            options={{
+              headerShown: true,
+              headerShadowVisible: false,
+              headerTintColor: "#fff",
+              headerStyle: {
+                backgroundColor: "#212529",
+              },
+              headerTitle: (props) => (
+                <Text
+                  {...props}
+                  style={{ fontWeight: "bold", color: "#fff", fontSize: 18 }}
+                >
+                  Forgot Password
+                </Text>
+              ),
+              headerTitleAlign: "center",
+            }}
+          />
+          <Stack.Screen
+            name="VerifyOtp"
+            component={VerifyOtp}
+            options={{
+              headerShown: true,
+              headerShadowVisible: false,
+              headerTintColor: "#fff",
+              headerStyle: {
+                backgroundColor: "#212529",
+              },
+              headerTitle: (props) => (
+                <Text
+                  {...props}
+                  style={{ fontWeight: "bold", color: "#fff", fontSize: 18 }}
+                >
+                  Verify OTP
+                </Text>
+              ),
+              headerTitleAlign: "center",
+            }}
+          />
+          <Stack.Screen
+            name="CreateNewPassword"
+            component={CreateNewPassword}
+            options={{
+              headerShown: true,
+              headerShadowVisible: false,
+              headerTintColor: "#fff",
+              headerStyle: {
+                backgroundColor: "#212529",
+              },
+              headerTitle: (props) => (
+                <Text
+                  {...props}
+                  style={{ fontWeight: "bold", color: "#fff", fontSize: 18 }}
+                >
+                  Reset Password
+                </Text>
+              ),
+              headerTitleAlign: "center",
+            }}
+          />
+        </>
+      )}
+    </Stack.Navigator>
+    // </NotificationsContainer>
   );
 }
 

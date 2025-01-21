@@ -13,6 +13,7 @@ import splash from "./assets/splash.png";
 import { ImageBackground, StatusBar } from "react-native";
 import { theme } from "./theme";
 import { CartProvider } from "./context/CartContext";
+import NotificationsContainer from "./Notifications";
 
 export default function App() {
   return (
@@ -28,17 +29,19 @@ export default function App() {
           </ImageBackground>
         }
       >
-        <CartProvider>
-          <NavigationContainer>
-            <PaperProvider theme={theme}>
-              <SafeAreaProvider>
-                <RootSiblingParent>
-                  <Main />
-                </RootSiblingParent>
-              </SafeAreaProvider>
-            </PaperProvider>
-          </NavigationContainer>
-        </CartProvider>
+        <NotificationsContainer>
+          <CartProvider>
+            <NavigationContainer>
+              <PaperProvider theme={theme}>
+                <SafeAreaProvider>
+                  <RootSiblingParent>
+                    <Main />
+                  </RootSiblingParent>
+                </SafeAreaProvider>
+              </PaperProvider>
+            </NavigationContainer>
+          </CartProvider>
+        </NotificationsContainer>
       </PersistGate>
       <StatusBar barStyle="light-content" />
     </Provider>

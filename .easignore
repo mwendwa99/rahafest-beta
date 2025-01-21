@@ -39,5 +39,3 @@ yarn-error.*
 
 # windows
 %ProgramData%
-
-google-services.json
