@@ -30,10 +30,10 @@ export default function App({ expoToken }) {
     },
     {
       key: "Merchandise",
-      name: "Merchandise",
+      name: "Market Place",
       component: Merchandise,
-      icon_focused: "cart",
-      icon_default: "cart-outline",
+      icon_focused: "shopping",
+      icon_default: "shopping-outline",
     },
     {
       key: "Club",
