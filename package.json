@@ -46,7 +46,8 @@
     "react-native-webview": "^13.12.5",
     "react-redux": "^9.1.0",
     "redux-persist": "^6.0.0",
-    "@react-native-picker/picker": "2.9.0"
+    "@react-native-picker/picker": "2.9.0",
+    "expo-dev-client": "~5.0.10"
   },
   "devDependencies": {
     "@babel/core": "^7.24.0",

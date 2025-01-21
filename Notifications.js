@@ -31,6 +31,8 @@ export default function NotificationsContainer({ children }) {
   const notificationListener = useRef();
   const responseListener = useRef();
 
+  console.log({ expoPushToken });
+
   useEffect(() => {
     registerForPushNotificationsAsync().then(
       (token) => token && setExpoPushToken(token)
