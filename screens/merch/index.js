@@ -31,14 +31,7 @@ export default function MerchNavigator() {
           headerStyle: {
             backgroundColor: "#212529",
           },
-          headerTitle: (props) => (
-            <Text
-              value={"Raha Club"}
-              {...props}
-              variant={"subtitle"}
-              style={{ color: "#fff", fontSize: 16, fontWeight: 700 }}
-            />
-          ),
+          headerTitle: "Market Place",
           // Add to your navigation options
           headerRight: () => (
             <TouchableOpacity
