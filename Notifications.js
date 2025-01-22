@@ -45,11 +45,13 @@ export default function NotificationsContainer({ children }) {
     }
     notificationListener.current =
       Notifications.addNotificationReceivedListener((notification) => {
+        console.log("Notification received::", notification);
         setNotification(notification);
       });
 
     responseListener.current =
       Notifications.addNotificationResponseReceivedListener((response) => {
+        console.log("User response::", response);
         console.log(response);
       });
 

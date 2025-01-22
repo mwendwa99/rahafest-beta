@@ -23,7 +23,7 @@ import * as Device from "expo-device";
 const navigationItems = [
   { id: "1", icon: "globe", title: "Live Chat", link: "Live" },
   { id: "2", icon: "inbox", title: "Messages", link: "Friends" },
-  { id: "3", icon: "star", title: "Exlusive Offers", link: "Deals" },
+  { id: "3", icon: "star", title: "Exclusive Offers", link: "Deals" },
   { id: "4", icon: "user", title: "Account", link: "Account" },
 ];
 
