@@ -4,6 +4,7 @@ import ItemPage from "./ItemPage";
 import PayWithCard from "./PayWithCard";
 import CartScreen from "./CartScreen";
 import CheckoutScreen from "./CheckoutScreen";
+import Market from "./Market";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -17,10 +18,22 @@ export default function MerchNavigator() {
   const { state } = useCart();
   const navigation = useNavigation();
 
-  console.log(JSON.stringify(state.items));
-
   return (
-    <Stack.Navigator initialRouteName="Merchandise">
+    <Stack.Navigator initialRouteName="Market">
+      <Stack.Screen
+        name="Market"
+        component={Market}
+        options={{
+          headerShown: true,
+          headerShadowVisible: false,
+          headerTintColor: "#fff",
+          headerStyle: {
+            backgroundColor: "#212529",
+          },
+          headerTitle: "Market Place",
+          headerTitleAlign: "center",
+        }}
+      />
       <Stack.Screen
         name="Merchandise"
         component={MerchPage}
@@ -31,7 +44,7 @@ export default function MerchNavigator() {
           headerStyle: {
             backgroundColor: "#212529",
           },
-          headerTitle: "Market Place",
+          headerTitle: "Merchandise",
           // Add to your navigation options
           headerRight: () => (
             <TouchableOpacity
