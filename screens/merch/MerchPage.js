@@ -114,6 +114,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f5f5f5",
     paddingHorizontal: 10,
+    marginVertical: 10,
   },
   row: {
     justifyContent: "space-between",
