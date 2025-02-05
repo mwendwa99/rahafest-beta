@@ -17,9 +17,11 @@ import { formatEventDates } from "../../utils/helper";
 
 export default function Events({ navigation }) {
   const dispatch = useDispatch();
-  const { events, loading, error } = useSelector((state) => state.events);
-
-  // console.log(JSON.stringify(events));
+  const {
+    events = [],
+    loading,
+    error,
+  } = useSelector((state) => state.events ?? {});
 
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -47,112 +49,125 @@ export default function Events({ navigation }) {
     (event) => {
       navigation.navigate("CheckoutNavigator", {
         screen: "Checkout",
-        params: { event, showDiscount: false }, // Pass only the clicked event's data
+        params: { event, showDiscount: false },
       });
     },
     [navigation]
   );
 
-  const renderItem = ({ item }) => {
-    switch (item.type) {
-      case "header":
-        return (
-          <View>
-            <RNText variant={"title"} style={styles.headerText}>
-              Upcoming Events
-            </RNText>
-          </View>
-        );
-      case "footer":
-        return (
-          <View>
-            <RNText variant={"title"} style={styles.headerText}>
-              Past Events
-            </RNText>
-          </View>
-        );
-      default:
-        return (
-          <View key={item.id}>
-            <EventList
-              id={item?.id}
-              title={item?.title}
-              subtitle={item?.organization.organization_name}
-              image={item?.banner}
-              date={formatEventDates(item?.start_date, item?.end_date)}
-              location={item?.location}
-              expired={item?.expired}
-              tickets={item?.ticket_types}
-              onPress={() => handleNavigateToCheckout(item)}
-              isActive={item?.is_active}
-              hideDiscounted={true}
-            />
-          </View>
-        );
-    }
-  };
-
-  const data = useMemo(
-    () => [
-      { type: "header", key: "upcoming-header" },
-      ...(events
-        .filter(
-          (event) =>
-            !event.expired &&
-            event.is_active && // Filter active events
-            event.ticket_types.some(
-              (ticket) => !ticket.is_rahaclub_vip && ticket.is_active // Ensure ticket is active
+  const renderItem = useCallback(
+    ({ item }) => {
+      switch (item?.type) {
+        case "header":
+          const isExpired = Boolean(item?.expired || !item?.is_active);
+          return (
+            !isExpired && (
+              <View>
+                <RNText variant="title" style={styles.headerText}>
+                  Upcoming Events
+                </RNText>
+              </View>
             )
-        )
-        .reverse() || []),
-      { type: "footer", key: "past-footer" },
-      ...(events
-        .filter(
-          (event) =>
-            event.expired &&
-            event.is_active && // Filter active expired events
-            event.ticket_types.some(
-              (ticket) => !ticket.is_rahaclub_vip && ticket.is_active // Ensure ticket is active
-            )
-        )
-        .reverse() || []),
-    ],
-    [events]
+          );
+        case "footer":
+          return (
+            <View>
+              <RNText variant="title" style={styles.headerText}>
+                Past Events
+              </RNText>
+            </View>
+          );
+        default: {
+          const isExpired = Boolean(item?.expired || !item?.is_active);
+          return (
+            <View key={item?.id}>
+              <EventList
+                id={item?.id?.toString() ?? "--"}
+                title={item?.title || "--"}
+                subtitle={item?.event_organizer || "--"}
+                image={item?.banner || ""}
+                date={
+                  formatEventDates(item?.start_date, item?.end_date) || "--"
+                }
+                location={item?.venue || "--"}
+                expired={isExpired}
+                tickets={
+                  Array.isArray(item?.ticket_types) ? item.ticket_types : []
+                }
+                onPress={() => handleNavigateToCheckout(item)}
+                isActive={Boolean(item?.is_active)}
+                hideDiscounted={true}
+              />
+            </View>
+          );
+        }
+      }
+    },
+    [handleNavigateToCheckout]
   );
 
-  const renderEmptyList = () => {
-    if (isLoading) return null;
+  const data = useMemo(() => {
+    const safeEvents = Array.isArray(events) ? events : [];
 
+    // Get current date for comparison
+    const now = new Date();
+
+    // Separate events into upcoming and past based on end_date
+    const { upcoming, past } = safeEvents.reduce(
+      (acc, event) => {
+        if (!event) return acc;
+
+        const endDate = event?.end_date ? new Date(event.end_date) : null;
+        // If no end_date, treat as past event
+        if (!endDate) {
+          acc.past.push(event);
+          return acc;
+        }
+
+        if (endDate > now) {
+          acc.upcoming.push(event);
+        } else {
+          acc.past.push(event);
+        }
+        return acc;
+      },
+      { upcoming: [], past: [] }
+    );
+
+    return [
+      { type: "header", key: "upcoming-header" },
+      ...upcoming.reverse(),
+      { type: "footer", key: "past-footer" },
+      ...past.reverse(),
+    ];
+  }, [events]);
+
+  const renderEmptyList = useCallback(() => {
+    if (isLoading) return null;
     return (
       <View style={styles.emptyContainer}>
-        <RNText style={styles.emptyList}>Loading...</RNText>
+        <RNText style={styles.emptyText}>No events available</RNText>
       </View>
     );
-  };
+  }, [isLoading]);
 
-  function getActiveEvents(events) {
-    return events.filter(
-      (event) =>
-        Array.isArray(event.ticket_types) &&
-        event.ticket_types.some(
-          (ticket) => ticket.is_active === false || ticket.id !== 22
-        )
-    );
-  }
+  const keyExtractor = useCallback(
+    (item, index) =>
+      item?.id ? item.id.toString() : `${item?.type || "item"}-${index}`,
+    []
+  );
 
   return (
     <SafeAreaView style={styles.container}>
-      {isLoading && !events.length ? (
+      {isLoading && !events?.length ? (
         <View style={styles.centered}>
-          <ActivityIndicator color={"pink"} size={50} />
+          <ActivityIndicator color="pink" size={50} />
         </View>
       ) : (
         <FlatList
-          data={getActiveEvents(data)}
+          data={data}
           renderItem={renderItem}
-          keyExtractor={(item, index) =>
-            item.id ? item.id.toString() : `${item.type}-${index}`
-          }
+          keyExtractor={keyExtractor}
           numColumns={1}
           contentContainerStyle={styles.contentContainer}
           showsVerticalScrollIndicator={false}
@@ -165,7 +180,7 @@ export default function Events({ navigation }) {
           ListEmptyComponent={renderEmptyList}
         />
       )}
-      <StatusBar barStyle={"dark-content"} />
+      <StatusBar barStyle="dark-content" />
     </SafeAreaView>
   );
 }
@@ -190,10 +205,14 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     textAlign: "center",
   },
-  loadingContainer: {
+  emptyContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#fff",
+    padding: 20,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: "#666",
   },
 });

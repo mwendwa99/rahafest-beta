@@ -8,43 +8,46 @@ import {
   Image,
 } from "react-native";
 import { market_categories } from "./marketdata";
+import UnderDevelopment from "../../components/UnderDevelopment";
 
 export default function Market({ navigation }) {
   const [selectedCategory, setSelectedCategory] = useState(
     market_categories[0]
   );
 
-  return (
-    <View style={styles.container}>
-      {/* Categories Horizontal List */}
-      <View style={styles.category_section}>
-        <FlatList
-          data={market_categories}
-          renderItem={({ item }) => (
-            <TouchableOpacity onPress={() => setSelectedCategory(item)}>
-              <CategoryCard title={item.title} image={item.image} />
-            </TouchableOpacity>
-          )}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-        />
-      </View>
+  return <UnderDevelopment />;
 
-      {/* Sub-categories Vertical List */}
-      <FlatList
-        data={selectedCategory.sub_categories}
-        renderItem={({ item }) => (
-          <SubCategoryCard
-            title={item.title}
-            image={item.image}
-            handlePress={() => navigation.navigate("Merchandise")}
-          />
-        )}
-        keyExtractor={(item) => item.id.toString()}
-        contentContainerStyle={styles.subCategoryList}
-      />
-    </View>
-  );
+  // return (
+  //   <View style={styles.container}>
+  //     {/* Categories Horizontal List */}
+  //     <View style={styles.category_section}>
+  //       <FlatList
+  //         data={market_categories}
+  //         renderItem={({ item }) => (
+  //           <TouchableOpacity onPress={() => setSelectedCategory(item)}>
+  //             <CategoryCard title={item.title} image={item.image} />
+  //           </TouchableOpacity>
+  //         )}
+  //         horizontal
+  //         showsHorizontalScrollIndicator={false}
+  //       />
+  //     </View>
+
+  //     {/* Sub-categories Vertical List */}
+  //     <FlatList
+  //       data={selectedCategory.sub_categories}
+  //       renderItem={({ item }) => (
+  //         <SubCategoryCard
+  //           title={item.title}
+  //           image={item.image}
+  //           handlePress={() => navigation.navigate("Merchandise")}
+  //         />
+  //       )}
+  //       keyExtractor={(item) => item.id.toString()}
+  //       contentContainerStyle={styles.subCategoryList}
+  //     />
+  //   </View>
+  // );
 }
 
 // Rest of your components remain the same
