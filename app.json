@@ -2,7 +2,7 @@
   "expo": {
     "name": "Raha",
     "slug": "rahafest-beta",
-    "version": "10.0.3",
+    "version": "10.0.4",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "notification": {
@@ -18,7 +18,7 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.mwendwa99.rahafestbeta",
-      "buildNumber": "3"
+      "buildNumber": "4"
     },
     "android": {
       "adaptiveIcon": {
@@ -26,7 +26,7 @@
         "backgroundColor": "#212529"
       },
       "package": "com.mwendwa99.rahafestbeta",
-      "versionCode": 33,
+      "versionCode": 34,
       "googleServicesFile": "./google-services.json"
     },
     "web": {
