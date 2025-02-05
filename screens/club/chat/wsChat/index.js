@@ -31,152 +31,159 @@ const WebSocketChat = () => {
   const { token, user } = useSelector((state) => state.auth);
   const ws = useRef(null);
   const flatListRef = useRef(null);
-
-  const generateUniqueKey = useCallback(() => {
-    return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-  }, []);
+  const reconnectAttempts = useRef(0);
+  const reconnectTimeout = useRef(null);
 
   const connectWebSocket = useCallback(() => {
     if (!token) return;
 
-    ws.current = new WebSocket(
-      `wss://rahaclub.rahafest.com/ws/messages/?token=${token}`
-    );
+    const setupWebSocket = () => {
+      ws.current = new WebSocket(
+        `wss://rahaclub.rahafest.com/ws/messages/?token=${token}`
+      );
 
-    ws.current.onopen = () => {
-      setConnected(true);
-      ws.current.send(JSON.stringify({ action: "message-list" }));
+      ws.current.onopen = () => {
+        reconnectAttempts.current = 0;
+        setConnected(true);
+        ws.current.send(JSON.stringify({ action: "message-list" }));
+      };
+
+      ws.current.onmessage = (e) => {
+        const data = JSON.parse(e.data);
+        handleWebSocketMessage(data);
+      };
+
+      ws.current.onerror = (e) => {
+        console.error("WebSocket error:", e);
+      };
+
+      ws.current.onclose = (e) => {
+        console.log("WebSocket disconnected, reconnecting...");
+        setConnected(false);
+        const delay = Math.min(
+          3000 * Math.pow(2, reconnectAttempts.current),
+          30000
+        );
+        reconnectTimeout.current = setTimeout(setupWebSocket, delay);
+        reconnectAttempts.current++;
+      };
     };
 
-    ws.current.onmessage = (e) => {
-      const data = JSON.parse(e.data);
-      handleWebSocketMessage(data);
-    };
+    setupWebSocket();
 
-    ws.current.onerror = (e) => {
-      console.error("WebSocket error:", e);
-      if (e.error) {
-        console.error("Error details:", e.error);
-      }
-    };
-
-    ws.current.onclose = (e) => {
-      console.log("WebSocket Disconnected. Code:", e.code, "Reason:", e.reason);
-      setConnected(false);
-      setTimeout(connectWebSocket, 3000);
+    return () => {
+      clearTimeout(reconnectTimeout.current);
+      ws.current?.close();
     };
   }, [token]);
 
   useEffect(() => {
     connectWebSocket();
-    return () => ws.current?.close();
+    return () => {
+      clearTimeout(reconnectTimeout.current);
+      ws.current?.close();
+    };
   }, [connectWebSocket]);
 
-  const handleWebSocketMessage = useCallback(
-    (data) => {
-      switch (data.action) {
-        case "message-list":
-          const sortedMessages = data.messages
-            .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
-            .map((message) => ({
-              ...message,
-              uniqueKey: `${message.id}-${generateUniqueKey()}`,
-            }));
-          setMessages(sortedMessages);
-          setIsLoading(false);
-          break;
-        case "send-message":
-          setMessages((prevMessages) => [
-            ...prevMessages,
-            {
-              ...data.message,
-              uniqueKey: `${data.message.id}-${generateUniqueKey()}`,
-            },
-          ]);
-          setIsLoading(false);
-          break;
-        case "error":
-          console.error("Error from server:", data);
-          setIsLoading(false);
-          break;
-        default:
-          console.log(data);
-          console.warn("Unknown action:", data.action);
-          setIsLoading(false);
-          break;
-      }
-    },
-    [generateUniqueKey]
-  );
-
-  useLayoutEffect(() => {
-    if (flatListRef.current) {
-      flatListRef.current.scrollToEnd({ animated: true });
+  const handleWebSocketMessage = useCallback((data) => {
+    switch (data.action) {
+      case "message-list":
+        setMessages(
+          data.messages.sort(
+            (a, b) => new Date(a.timestamp) - new Date(b.timestamp)
+          )
+        );
+        setIsLoading(false);
+        break;
+      case "send-message":
+        setMessages((prev) => [...prev, data.message]);
+        break;
+      case "error":
+        console.error("Server error:", data);
+        break;
+      default:
+        console.warn("Unknown action:", data.action);
     }
-  }, [messages]);
+  }, []);
 
-  useEffect(() => {
+  const sendMessage = useCallback(() => {
+    if (inputMessage.trim() && ws.current && connected) {
+      // Optimistic update
+      const tempMessage = {
+        id: `temp-${Date.now()}`,
+        content: inputMessage.trim(),
+        sender: user.id,
+        timestamp: new Date().toISOString(),
+        isPending: true,
+      };
+
+      setMessages((prev) => [...prev, tempMessage]);
+      setInputMessage("");
+      Keyboard.dismiss();
+
+      // Actual WebSocket send
+      ws.current.send(
+        JSON.stringify({
+          action: "send-message",
+          content: inputMessage.trim(),
+        })
+      );
+    }
+  }, [inputMessage, connected, user.id]);
+
+  const scrollToBottom = useCallback(() => {
     if (flatListRef.current && messages.length > 0) {
       flatListRef.current.scrollToEnd({ animated: true });
     }
   }, [messages]);
 
-  const sendMessage = useCallback(() => {
-    if (inputMessage.trim() && ws.current && connected) {
-      const messageData = {
-        action: "send-message",
-        content: inputMessage.trim(),
-      };
-      ws.current.send(JSON.stringify(messageData));
-      setInputMessage("");
-      Keyboard.dismiss();
-    }
-  }, [inputMessage, connected]);
+  const MessageItem = React.memo(({ item, isCurrentUser }) => {
+    const username = item?.sender_user_slug || "Anonymous";
+    const initials = username.charAt(0) || "";
+    const isAdmin = item.sender === 57;
 
-  const renderMessage = useCallback(
-    ({ item }) => {
-      const isCurrentUser = item.sender === user.id;
-      const username = item?.sender_user_slug || "Anonymous";
-      const body = item?.content || "";
-      const initials = username.charAt(0) || "";
-      const isAdmin = item.sender === 57;
-
-      return (
-        <View
-          style={[
-            styles.messageContainer,
-            isCurrentUser ? styles.currentUserMessage : styles.otherUserMessage,
-            isAdmin ? styles.adminBubble : null,
-          ]}
-        >
-          <Avatar.Text
-            size={40}
-            label={initials}
-            labelStyle={{ fontSize: 20 }}
-            style={
-              isCurrentUser ? styles.currentUserAvatar : styles.otherUserAvatar
-            }
-          />
-          <View style={styles.messageContent}>
-            {!isCurrentUser && (
-              <Text style={[styles.sender, styles.otherUserText]}>
-                {username}
-              </Text>
-            )}
-            <Text
-              style={[
-                styles.messageText,
-                isCurrentUser ? styles.currentUserText : styles.otherUserText,
-              ]}
-            >
-              {body}
+    return (
+      <View
+        style={[
+          styles.messageContainer,
+          isCurrentUser ? styles.currentUserMessage : styles.otherUserMessage,
+          isAdmin && styles.adminBubble,
+        ]}
+      >
+        <Avatar.Text
+          size={40}
+          label={initials}
+          labelStyle={{ fontSize: 20 }}
+          style={
+            isCurrentUser ? styles.currentUserAvatar : styles.otherUserAvatar
+          }
+        />
+        <View style={styles.messageContent}>
+          {!isCurrentUser && (
+            <Text style={[styles.sender, styles.otherUserText]}>
+              {username}
             </Text>
-          </View>
+          )}
+          <Text
+            style={[
+              styles.messageText,
+              isCurrentUser ? styles.currentUserText : styles.otherUserText,
+              item.isPending && styles.pendingMessage,
+            ]}
+          >
+            {item.content}
+            {item.isPending && (
+              <ActivityIndicator
+                size="small"
+                color="#666"
+                style={styles.pendingIndicator}
+              />
+            )}
+          </Text>
         </View>
-      );
-    },
-    [user.id]
-  );
+      </View>
+    );
+  });
 
   if (isLoading) {
     return (
@@ -191,21 +198,32 @@ const WebSocketChat = () => {
     <View style={styles.mainContainer}>
       <StatusBar barStyle="light-content" />
       <SafeAreaView style={styles.safeArea}>
-        <View style={styles.container}>
-          <FlatList
-            ref={flatListRef}
-            data={messages}
-            keyExtractor={(item) => item.uniqueKey}
-            renderItem={renderMessage}
-            style={styles.flatList}
-            contentContainerStyle={styles.flatListContent}
-            keyboardShouldPersistTaps="handled"
-            onScrollBeginDrag={Keyboard.dismiss}
-          />
-        </View>
+        <FlatList
+          ref={flatListRef}
+          data={messages}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <MessageItem item={item} isCurrentUser={item.sender === user.id} />
+          )}
+          style={styles.flatList}
+          contentContainerStyle={styles.flatListContent}
+          onContentSizeChange={scrollToBottom}
+          onLayout={scrollToBottom}
+          keyboardShouldPersistTaps="handled"
+          initialNumToRender={20}
+          maxToRenderPerBatch={10}
+          windowSize={21}
+          removeClippedSubviews={true}
+        />
+        {/* <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 85 : 20}
+        > */}
+        {/* <View> */}
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
-          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 80 : 20}
+          style={styles.keyboardAvoidingView}
         >
           <View style={styles.inputContainer}>
             <TextInput
@@ -229,6 +247,7 @@ const WebSocketChat = () => {
               <MaterialCommunityIcons name="send" size={20} color="#fafafa" />
             </TouchableOpacity>
           </View>
+          {/* </View> */}
         </KeyboardAvoidingView>
       </SafeAreaView>
     </View>
@@ -292,27 +311,27 @@ const styles = StyleSheet.create({
   otherUserAvatar: {
     marginRight: 10,
   },
-  inputContainer: {
-    flexDirection: "row",
-    padding: 10,
-    backgroundColor: "#1B1B1B",
-    borderTopWidth: 1,
-    borderTopColor: "#333",
-    alignItems: "center",
-    minHeight: 60,
-  },
-  input: {
-    flex: 1,
-    height: 40,
-    borderWidth: 1,
-    borderColor: "#333",
-    paddingHorizontal: 15,
-    marginRight: 10,
-    color: "#fafafa",
-    borderRadius: 20,
-    backgroundColor: "#2D2D2D",
-    fontSize: 16,
-  },
+  // inputContainer: {
+  //   flexDirection: "row",
+  //   padding: 10,
+  //   backgroundColor: "#1B1B1B",
+  //   borderTopWidth: 1,
+  //   borderTopColor: "#333",
+  //   alignItems: "center",
+  //   minHeight: 60,
+  // },
+  // input: {
+  //   flex: 1,
+  //   height: 40,
+  //   borderWidth: 1,
+  //   borderColor: "#333",
+  //   paddingHorizontal: 15,
+  //   marginRight: 10,
+  //   color: "#fafafa",
+  //   borderRadius: 20,
+  //   backgroundColor: "#2D2D2D",
+  //   fontSize: 16,
+  // },
   sendButton: {
     backgroundColor: "#B9052C",
     alignItems: "center",
@@ -345,6 +364,40 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 3,
+  },
+  pendingMessage: {
+    opacity: 0.7,
+  },
+  pendingIndicator: {
+    marginLeft: 5,
+  },
+  inputContainer: {
+    flexDirection: "row",
+    padding: 15,
+    backgroundColor: "#1B1B1B",
+    borderTopWidth: 1,
+    borderTopColor: "#333",
+    alignItems: "center",
+    minHeight: 70, // Increased minimum height
+    paddingBottom: 25, // Added bottom padding for iOS safe area
+  },
+  input: {
+    flex: 1,
+    minHeight: 45, // Increased minimum height
+    borderWidth: 1,
+    borderColor: "#B9052C", // More visible border color
+    paddingHorizontal: 15,
+    marginRight: 10,
+    color: "#fafafa",
+    borderRadius: 25,
+    backgroundColor: "#2D2D2D",
+    fontSize: 16,
+    includeFontPadding: true, // Ensure text vertical centering
+  },
+  // Add these new styles:
+  keyboardAvoidingView: {
+    position: "relative",
+    zIndex: 999,
   },
 });
 
