@@ -1,160 +1,143 @@
+import React, { useEffect, useState, useCallback } from "react";
 import {
   StyleSheet,
   FlatList,
-  RefreshControl,
   View,
-  Text as RNText,
+  Text,
   ActivityIndicator,
   StatusBar,
+  RefreshControl,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useDispatch, useSelector } from "react-redux";
-import { useEffect, useState, useMemo, useCallback } from "react";
 import EventList from "../../components/EventList";
 import { formatEventDates } from "../../utils/helper";
+import api from "../../services/api.service";
 
 export default function Events({ navigation }) {
-  const dispatch = useDispatch();
+  const [events, setEvents] = useState({ upcoming: [], past: [] });
+  const [loading, setLoading] = useState({ upcoming: false, past: false });
+  const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState(null);
 
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  // Fetch 5 events for the specified type once.
+  async function fetchEvents(type = "upcoming") {
+    setLoading((prev) => ({ ...prev, [type]: true }));
+    setError(null);
+    try {
+      const baseUrl = "public/events/list?page_size=5&is_active=1";
+      const upcomingParam =
+        type === "upcoming" ? "&upcoming=true" : "&upcoming=false";
+      const url = `${baseUrl}${upcomingParam}`;
+      const response = await api.get(url);
+      const newEvents = response.data.data.items;
+      setEvents((prev) => ({
+        ...prev,
+        [type]: newEvents,
+      }));
+    } catch (err) {
+      console.log(JSON.stringify(err));
+      setError(`Failed to fetch ${type} events: ${err.message}`);
+    } finally {
+      setLoading((prev) => ({ ...prev, [type]: false }));
+    }
+  }
 
-  const handleNavigateToCheckout = useCallback(
-    (event) => {
-      navigation.navigate("CheckoutNavigator", {
-        screen: "Checkout",
-        params: { event, showDiscount: false },
-      });
-    },
+  // Initial load: fetch both upcoming and past events (each 5 items)
+  useEffect(() => {
+    fetchEvents("upcoming");
+    fetchEvents("past");
+  }, []);
+
+  const handleRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await Promise.all([fetchEvents("upcoming"), fetchEvents("past")]);
+    setRefreshing(false);
+  }, []);
+
+  const renderEventItem = useCallback(
+    ({ item }) => (
+      <EventList
+        id={item?.id?.toString()}
+        title={item?.title}
+        subtitle={item?.event_organizer?.organization_name}
+        image={item?.banner}
+        date={formatEventDates(item?.start_date, item?.end_date)}
+        location={item?.venue}
+        expired={!item?.is_active || item?.is_expired}
+        tickets={item?.ticket_types || []}
+        onPress={() =>
+          navigation.navigate("CheckoutNavigator", {
+            screen: "Checkout",
+            params: { event: item, showDiscount: false },
+          })
+        }
+        isActive={item?.is_active}
+        hideDiscounted
+      />
+    ),
     [navigation]
   );
 
-  const renderItem = useCallback(
-    ({ item }) => {
-      switch (item?.type) {
-        case "header":
-          const isExpired = Boolean(item?.expired || !item?.is_active);
-          return (
-            !isExpired && (
-              <View>
-                <RNText variant="title" style={styles.headerText}>
-                  Upcoming Events
-                </RNText>
-              </View>
-            )
-          );
-        case "footer":
-          return (
-            <View>
-              <RNText variant="title" style={styles.headerText}>
-                Past Events
-              </RNText>
-            </View>
-          );
-        default: {
-          const isExpired = Boolean(item?.expired || !item?.is_active);
-          return (
-            <View key={item?.id}>
-              <EventList
-                id={item?.id?.toString() ?? "--"}
-                title={item?.title || "--"}
-                subtitle={item?.event_organizer || "--"}
-                image={item?.banner || ""}
-                date={
-                  formatEventDates(item?.start_date, item?.end_date) || "--"
-                }
-                location={item?.venue || "--"}
-                expired={isExpired}
-                tickets={
-                  Array.isArray(item?.ticket_types) ? item.ticket_types : []
-                }
-                onPress={() => handleNavigateToCheckout(item)}
-                isActive={Boolean(item?.is_active)}
-                hideDiscounted={true}
-              />
-            </View>
-          );
-        }
-      }
+  // Render each section without infinite scroll (no onEndReached)
+  const renderSection = useCallback(
+    (type) => {
+      if (!events[type].length) return null;
+      return (
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>
+            {type === "upcoming" ? "Upcoming Events" : "Past Events"}
+          </Text>
+          <FlatList
+            data={events[type]}
+            renderItem={renderEventItem}
+            keyExtractor={(item) => item?.id?.toString()}
+            showsVerticalScrollIndicator={false}
+            removeClippedSubviews={true}
+            maxToRenderPerBatch={5}
+            windowSize={5}
+            initialNumToRender={5}
+          />
+        </View>
+      );
     },
-    [handleNavigateToCheckout]
+    [events, renderEventItem]
   );
 
-  const data = useMemo(() => {
-    const safeEvents = Array.isArray([]) ? [] : [];
-
-    // Get current date for comparison
-    const now = new Date();
-
-    // Separate events into upcoming and past based on end_date
-    const { upcoming, past } = safeEvents.reduce(
-      (acc, event) => {
-        if (!event) return acc;
-
-        const endDate = event?.end_date ? new Date(event.end_date) : null;
-        // If no end_date, treat as past event
-        if (!endDate) {
-          acc.past.push(event);
-          return acc;
-        }
-
-        if (endDate > now) {
-          acc.upcoming.push(event);
-        } else {
-          acc.past.push(event);
-        }
-        return acc;
-      },
-      { upcoming: [], past: [] }
-    );
-
-    return [
-      { type: "header", key: "upcoming-header" },
-      ...upcoming.reverse(),
-      { type: "footer", key: "past-footer" },
-      ...past.reverse(),
-    ];
-  }, [events]);
-
-  const renderEmptyList = useCallback(() => {
-    if (isLoading) return null;
+  if (
+    loading.upcoming &&
+    loading.past &&
+    !events.upcoming.length &&
+    !events.past.length
+  ) {
     return (
-      <View style={styles.emptyContainer}>
-        <RNText style={styles.emptyText}>No events available</RNText>
+      <View style={styles.centered}>
+        <ActivityIndicator color="#B41818" size="large" />
       </View>
     );
-  }, [isLoading]);
-
-  const keyExtractor = useCallback(
-    (item, index) =>
-      item?.id ? item.id.toString() : `${item?.type || "item"}-${index}`,
-    []
-  );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
-      {isLoading && !events?.length ? (
-        <View style={styles.centered}>
-          <ActivityIndicator color="pink" size={50} />
-        </View>
-      ) : (
-        <FlatList
-          data={data}
-          renderItem={renderItem}
-          keyExtractor={keyExtractor}
-          numColumns={1}
-          contentContainerStyle={styles.contentContainer}
-          showsVerticalScrollIndicator={false}
-          refreshControl={
-            <RefreshControl
-              refreshing={isRefreshing}
-              onRefresh={handleRefresh}
-            />
-          }
-          ListEmptyComponent={renderEmptyList}
-        />
-      )}
       <StatusBar barStyle="dark-content" />
+      <FlatList
+        ListHeaderComponent={renderSection("upcoming")}
+        ListFooterComponent={renderSection("past")}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            colors={["#B41818"]}
+          />
+        }
+        data={[]} // using header/footer for sections only
+        renderItem={null}
+        showsVerticalScrollIndicator={false}
+      />
+      {error && (
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>{error}</Text>
+        </View>
+      )}
     </SafeAreaView>
   );
 }
@@ -165,28 +148,31 @@ const styles = StyleSheet.create({
     backgroundColor: "#fafafa",
     paddingHorizontal: 20,
   },
-  contentContainer: {
-    paddingVertical: 20,
-  },
   centered: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
-  headerText: {
-    fontSize: 24,
+  section: {
+    marginBottom: 20,
+  },
+  sectionTitle: {
+    fontSize: 20,
     fontWeight: "bold",
-    marginBottom: 10,
+    marginVertical: 10,
+    paddingHorizontal: 20,
+  },
+  errorContainer: {
+    position: "absolute",
+    bottom: 20,
+    left: 20,
+    right: 20,
+    backgroundColor: "#ff0000aa",
+    padding: 10,
+    borderRadius: 5,
+  },
+  errorText: {
+    color: "white",
     textAlign: "center",
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
-  },
-  emptyText: {
-    fontSize: 16,
-    color: "#666",
   },
 });
