@@ -13,6 +13,20 @@ import EventList from "../../components/EventList";
 import { formatEventDates } from "../../utils/helper";
 import api from "../../services/api.service";
 
+const FUN_ERROR_MESSAGES = [
+  "Oops! Let's try again!",
+  "Uh oh! Give it another shot!",
+  "Looks like the events are taking a coffee break. Refresh to wake them up!",
+  "Whoops! Try again!",
+  "Darn it! We tripped over a wire fetching events. Let's reload!",
+];
+
+function getRandomErrorMessage() {
+  return FUN_ERROR_MESSAGES[
+    Math.floor(Math.random() * FUN_ERROR_MESSAGES.length)
+  ];
+}
+
 export default function Events({ navigation }) {
   const [events, setEvents] = useState({ upcoming: [], past: [] });
   const [loading, setLoading] = useState({ upcoming: false, past: false });
@@ -36,7 +50,11 @@ export default function Events({ navigation }) {
       }));
     } catch (err) {
       console.log(JSON.stringify(err));
-      setError(`Failed to fetch ${type} events: ${err.message}`);
+      const funMessage = getRandomErrorMessage();
+      setError(funMessage);
+      setTimeout(() => {
+        setError(null);
+      }, 5000); // Error message disappears after 3 seconds
     } finally {
       setLoading((prev) => ({ ...prev, [type]: false }));
     }
