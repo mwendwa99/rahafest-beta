@@ -18,7 +18,7 @@ import {
   validateRequired,
   validatePassword,
 } from "../../../utils/form_validation";
-import { registerUser } from "../../../redux/auth/authActions";
+import { registerUser } from "../../../store/auth/authActions";
 
 const pattern = require("../../../assets/pattern.png");
 

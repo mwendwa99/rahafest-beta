@@ -10,13 +10,13 @@ import {
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { validateMpesaPhone } from "../../utils/form_validation";
-import { triggerSTK } from "../../redux/merch/merchActions";
+// import { triggerSTK } from "../../redux/merch/merchActions";
 import { useCart } from "../../context/CartContext";
 
 const PaymentScreen = ({ navigation }) => {
-  const { order, mpesa_response, error, loading } = useSelector(
-    (state) => state.merch
-  );
+  // const { order, mpesa_response, error, loading } = useSelector(
+  //   (state) => state.merch
+  // );
   const [selectedPayment, setSelectedPayment] = useState(null);
   const [errors, setErrors] = useState({});
   const [phone, setPhone] = useState("");

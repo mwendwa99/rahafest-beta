@@ -13,7 +13,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { clothes } from "../../data";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchMerch } from "../../redux/merch/merchActions";
+// import { fetchMerch } from "../../redux/merch/merchActions";
 import { ActivityIndicator } from "react-native-paper";
 import { formatCurrencyWithCommas } from "../../utils/helper";
 
@@ -71,7 +71,7 @@ const MerchandiseCard = ({ item }) => {
 const MerchandisePage = () => {
   const renderItem = ({ item }) => <MerchandiseCard item={item} />;
 
-  const { products, loading } = useSelector((state) => state.merch);
+  // const { products, loading } = useSelector((state) => state.merch);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const dispatch = useDispatch();
@@ -94,7 +94,7 @@ const MerchandisePage = () => {
   return (
     <View style={styles.container}>
       <FlatList
-        data={products}
+        data={[]}
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
         numColumns={2}

@@ -10,40 +10,14 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState, useMemo, useCallback } from "react";
-import { fetchEvents } from "../../redux/events/eventActions";
-import { clearEventsError } from "../../redux/events/eventSlice";
 import EventList from "../../components/EventList";
 import { formatEventDates } from "../../utils/helper";
 
 export default function Events({ navigation }) {
   const dispatch = useDispatch();
-  const {
-    events = [],
-    loading,
-    error,
-  } = useSelector((state) => state.events ?? {});
 
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    setIsLoading(true);
-    try {
-      dispatch(fetchEvents());
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  const handleRefresh = async () => {
-    setIsRefreshing(true);
-    try {
-      dispatch(clearEventsError());
-      await dispatch(fetchEvents());
-    } finally {
-      setIsRefreshing(false);
-    }
-  };
 
   const handleNavigateToCheckout = useCallback(
     (event) => {
@@ -107,7 +81,7 @@ export default function Events({ navigation }) {
   );
 
   const data = useMemo(() => {
-    const safeEvents = Array.isArray(events) ? events : [];
+    const safeEvents = Array.isArray([]) ? [] : [];
 
     // Get current date for comparison
     const now = new Date();

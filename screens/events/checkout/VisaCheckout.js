@@ -10,7 +10,7 @@ import masterLogo from "../../../assets/mastercard.png";
 
 // In your screen/component:
 export default function VisaCheckout({ navigation }) {
-  const { invoice } = useSelector((state) => state.events);
+  // const { invoice } = useSelector((state) => state.events);
   const [showCheckout, setShowCheckout] = useState(false);
 
   // console.log({ invoice });
@@ -19,7 +19,7 @@ export default function VisaCheckout({ navigation }) {
     <SafeAreaView style={{ flex: 1, justifyContent: "center" }}>
       {showCheckout ? (
         <SecureCheckout
-          invoice={invoice}
+          invoice={{}}
           // onClose={() => setShowCheckout(false)}
           onClose={() => navigation.goBack()} // or however you want to handle closing
         />

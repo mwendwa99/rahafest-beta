@@ -9,7 +9,7 @@ import {
   validateRequired,
 } from "../../../utils/form_validation";
 import { TextInput } from "react-native-paper";
-import { createNewPassword } from "../../../redux/auth/authActions";
+import { createNewPassword } from "../../../store/auth/authActions";
 import { useDispatch, useSelector } from "react-redux";
 import { success } from "../../../utils/toast";
 

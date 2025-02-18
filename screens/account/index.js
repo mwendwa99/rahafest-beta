@@ -12,11 +12,11 @@ import {
   deleteAccount,
   fetchUser,
   updateUser,
-} from "../../redux/auth/authActions";
+} from "../../store/auth/authActions";
 import { Text, Button, Input } from "../../components";
 import { ActivityIndicator, Avatar } from "react-native-paper";
 import { useSelector, useDispatch } from "react-redux";
-import { persistor } from "../../redux/store";
+import { persistor } from "../../store";
 import { success } from "../../utils/toast";
 
 export default function Account({ navigation }) {

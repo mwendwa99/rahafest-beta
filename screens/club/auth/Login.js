@@ -10,8 +10,8 @@ import { StatusBar } from "expo-status-bar";
 import { ImageBackground } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
-import { loginUser } from "../../../redux/auth/authActions";
-import { clearError } from "../../../redux/auth/authSlice";
+import { loginUser } from "../../../store/auth/authActions";
+import { clearError } from "../../../store/auth/authSlice";
 import { Input, Button, Text } from "../../../components";
 import { validateEmail } from "../../../utils/form_validation";
 

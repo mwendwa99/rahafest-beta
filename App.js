@@ -7,7 +7,7 @@ import { Provider } from "react-redux";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { RootSiblingParent } from "react-native-root-siblings";
 
-import { store, persistor } from "./redux/store";
+import { store, persistor } from "./store";
 import { PersistGate } from "redux-persist/integration/react";
 import splash from "./assets/splash.png";
 import { ImageBackground, StatusBar } from "react-native";

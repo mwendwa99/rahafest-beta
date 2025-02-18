@@ -10,70 +10,20 @@ import {
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchGallery } from "../../../redux/news/newsActions";
 import { ActivityIndicator } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Text, Dropdown } from "../../../components";
-import { clearNewsAndGalleryError } from "../../../redux/news/newsSlice";
+// import { clearNewsAndGalleryError } from "../../../redux/news/newsSlice";
 
 export default function Media() {
-  const dispatch = useDispatch();
-  const { gallery, loading, error } = useSelector((state) => state.news);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [accordionState, setAccordionState] = useState({});
   const [preloadedImages, setPreloadedImages] = useState({});
 
   // Prefetch all images and update state once
-  useEffect(() => {
-    if (gallery) {
-      const allPrefetchPromises = [];
-      const loadedImagesByCategory = {};
-
-      Object.entries(gallery).forEach(([category, images]) => {
-        loadedImagesByCategory[category] = images.map((img) => ({
-          ...img,
-          loaded: false,
-        }));
-        images.forEach((img) => {
-          const prefetchPromise = Image.prefetch(img.uri)
-            .then(() => {
-              loadedImagesByCategory[category].find(
-                (i) => i.id === img.id
-              ).loaded = true;
-            })
-            .catch(() => {
-              loadedImagesByCategory[category].find(
-                (i) => i.id === img.id
-              ).loaded = false;
-            });
-          allPrefetchPromises.push(prefetchPromise);
-        });
-      });
-
-      Promise.all(allPrefetchPromises).then(() => {
-        setPreloadedImages(loadedImagesByCategory);
-      });
-    }
-  }, [gallery]);
 
   // Fetch gallery data on mount and clear errors on unmount
-  useEffect(() => {
-    dispatch(clearNewsAndGalleryError());
-    dispatch(fetchGallery());
-    return () => {
-      dispatch(clearNewsAndGalleryError());
-    };
-  }, [dispatch]);
-
-  const onRefresh = useCallback(() => {
-    dispatch(fetchGallery());
-  }, [dispatch]);
-
-  const handleImagePress = useCallback((uri) => {
-    setSelectedImage(uri);
-    setModalVisible(true);
-  }, []);
 
   const renderImage = useCallback(
     ({ item }) => (
@@ -159,7 +109,7 @@ export default function Media() {
   return (
     <SafeAreaView style={styles.container}>
       <Text value="Raha Gallery" variant="title" style={styles.title} />
-      {gallery && Object.keys(gallery).length > 0 ? (
+      {[] && Object.keys(gallery).length > 0 ? (
         <FlatList
           data={Object.keys(gallery).reverse()}
           keyExtractor={(item) => item.toString()}

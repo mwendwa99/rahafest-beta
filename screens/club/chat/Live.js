@@ -3,7 +3,7 @@ import { StyleSheet, TextInput, SafeAreaView } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
 import { useNavigation } from "@react-navigation/native";
-import { clearError } from "../../../redux/auth/authSlice";
+import { clearError } from "../../../store/auth/authSlice";
 import WebSocketChat from "./wsChat";
 
 export default function LiveMessages({ sessionId }) {

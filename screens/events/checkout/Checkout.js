@@ -15,7 +15,7 @@ import {
 } from "../../../components";
 
 import { formatEventDates, getTime } from "../../../utils/helper";
-import { createInvoice } from "../../../redux/events/eventActions";
+// import { createInvoice } from "../../../redux/events/eventActions";
 import WebView from "react-native-webview";
 
 export default function Checkout({ route, navigation }) {
@@ -23,7 +23,6 @@ export default function Checkout({ route, navigation }) {
 
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
-  const { invoice, loading } = useSelector((state) => state.events);
 
   const initial_user_info_data = {
     email: user?.email || "",
@@ -107,7 +106,7 @@ export default function Checkout({ route, navigation }) {
         </ModalComponent>
       )}
 
-      {showInvoiceModal && invoice && invoice.id && (
+      {showInvoiceModal && (
         <ModalComponent
           visible={showInvoiceModal}
           toggleModal={() => setShowInvoiceModal(!showInvoiceModal)}

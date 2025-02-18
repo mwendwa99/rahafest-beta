@@ -2,10 +2,10 @@ import { View, StyleSheet } from "react-native";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { fetchAllUsers } from "../../../redux/auth/authActions";
+import { fetchAllUsers } from "../../../store/auth/authActions";
 import FriendsPage from "./wsFriends";
 
-import { clearError } from "../../../redux/auth/authSlice";
+import { clearError } from "../../../store/auth/authSlice";
 
 export default function Friends({ navigation }) {
   const dispatch = useDispatch();

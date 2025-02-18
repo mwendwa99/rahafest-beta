@@ -2,8 +2,8 @@ import { View, StyleSheet, Alert, ScrollView, StatusBar } from "react-native";
 import { ListItem } from "../../components";
 import { useSelector, useDispatch } from "react-redux";
 import { success } from "../../utils/toast";
-import { persistor } from "../../redux/store";
-import { deleteAccount } from "../../redux/auth/authActions";
+import { persistor } from "../../store";
+import { deleteAccount } from "../../store/auth/authActions";
 
 export default function Settings({ navigation }) {
   const dispatch = useDispatch();

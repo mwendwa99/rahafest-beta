@@ -6,7 +6,7 @@ import { useState } from "react";
 import { Text as CText } from "../../../components";
 import { validateOTP, validateRequired } from "../../../utils/form_validation";
 import { useDispatch, useSelector } from "react-redux";
-import { verifyOTP } from "../../../redux/auth/authActions";
+import { verifyOTP } from "../../../store/auth/authActions";
 import { danger, success } from "../../../utils/toast";
 
 export default function VerifyOtp({ navigation }) {

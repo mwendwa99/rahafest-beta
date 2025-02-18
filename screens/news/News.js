@@ -8,7 +8,7 @@ import {
 
 import { Article, Text } from "../../components";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchNews } from "../../redux/news/newsActions";
+// import { fetchNews } from "../../redux/news/newsActions";
 import React, { useEffect } from "react";
 import { ActivityIndicator } from "react-native-paper";
 import { StatusBar } from "expo-status-bar";

@@ -10,8 +10,8 @@ import {
 } from "react-native";
 
 import { useDispatch, useSelector } from "react-redux";
-import { fetchUser } from "../../../redux/auth/authActions";
-import { fetchAds } from "../../../redux/events/eventActions";
+import { fetchUser } from "../../../store/auth/authActions";
+// import { fetchAds } from "../../../redux/events/eventActions";
 import { authInstance } from "../../../services/api.service";
 import { useNotification } from "../../../Notifications";
 
@@ -34,7 +34,6 @@ export default function Landing({ navigation }) {
   // Move ALL hooks to the top, before any conditional logic
   const { expoPushToken } = useNotification();
   const { user, token, loading } = useSelector((state) => state.auth);
-  const { ads } = useSelector((state) => state.events);
   const dispatch = useDispatch();
   const [isDeviceRegistered, setIsDeviceRegistered] = useState(false);
 
@@ -125,7 +124,7 @@ export default function Landing({ navigation }) {
       />
 
       <View style={styles.ads}>
-        <AdCarousel data={ads} variant="XL" />
+        <AdCarousel data={[]} variant="XL" />
       </View>
 
       <StatusBar barStyle="light-content" />

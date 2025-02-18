@@ -9,8 +9,8 @@ import {
   validateRequired,
 } from "../../../utils/form_validation";
 import { useDispatch, useSelector } from "react-redux";
-import { verifyEmail } from "../../../redux/auth/authActions";
-import { clearError } from "../../../redux/auth/authSlice";
+import { verifyEmail } from "../../../store/auth/authActions";
+import { clearError } from "../../../store/auth/authSlice";
 import { danger, success } from "../../../utils/toast";
 
 export default function VerifyEmail({ navigation }) {

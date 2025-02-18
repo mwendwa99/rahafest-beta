@@ -11,9 +11,9 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { useCart } from "../../context/CartContext";
 import { formatCurrencyWithCommas } from "../../utils/helper";
-import { createOrder } from "../../redux/merch/merchActions";
+// import { createOrder } from "../../redux/merch/merchActions";
 import { useDispatch, useSelector } from "react-redux";
-import { clearOrderState } from "../../redux/merch/merchSlice";
+// import { clearOrderState } from "../../redux/merch/merchSlice";
 import { PhoneInput } from "../../components";
 import { validatePhone } from "../../utils/form_validation";
 
@@ -21,7 +21,7 @@ const CheckoutScreen = () => {
   const navigation = useNavigation();
   const { state, dispatch } = useCart();
   const dispatchAction = useDispatch();
-  const { order } = useSelector((state) => state.merch);
+  // const { order } = useSelector((state) => state.merch);
   const [isLoading, setIsloading] = useState(false);
 
   const [billingInfo, setBillingInfo] = useState({
@@ -99,7 +99,7 @@ const CheckoutScreen = () => {
       console.log("Submitting order:", JSON.stringify(orderData));
 
       dispatchAction(clearOrderState());
-      const resultAction = await dispatchAction(createOrder(orderData));
+      // const resultAction = await dispatchAction(createOrder(orderData));
 
       if (createOrder.fulfilled.match(resultAction)) {
         const orderResponse = resultAction.payload;

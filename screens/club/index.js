@@ -4,8 +4,8 @@ import { useNavigation } from "@react-navigation/native";
 import { StyleSheet, View, TouchableOpacity, Linking } from "react-native";
 
 import { useDispatch, useSelector } from "react-redux";
-import { fetchUser } from "../../redux/auth/authActions";
-import { clearError } from "../../redux/auth/authSlice";
+import { fetchUser } from "../../store/auth/authActions";
+import { clearError } from "../../store/auth/authSlice";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
@@ -23,7 +23,7 @@ import Merchandise from "../merch";
 import CheckoutNavigator from "../events/checkout";
 import Login from "./auth/Login";
 import Register from "./auth/Register";
-import { persistor } from "../../redux/store";
+import { persistor } from "../../store";
 import { warning } from "../../utils/toast";
 // import NotificationsContainer from "../../Notifications";
 import VerifyEmail from "./auth/VerifyEmail";

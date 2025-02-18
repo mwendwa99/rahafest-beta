@@ -7,14 +7,12 @@ import {
   ActivityIndicator,
   StatusBar,
 } from "react-native";
-import { fetchEvents } from "../../../redux/events/eventActions";
 import EventList from "../../../components/EventList";
-import { useDispatch, useSelector } from "react-redux";
-import { useEffect, useState, useCallback } from "react";
+import { useDispatch } from "react-redux";
+import { useState, useCallback } from "react";
 import { formatEventDates } from "../../../utils/helper";
 
 export default function Deals({ navigation }) {
-  const { events } = useSelector((state) => state.events);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const dispatch = useDispatch();
@@ -28,16 +26,6 @@ export default function Deals({ navigation }) {
     },
     [navigation]
   );
-
-  // Initial fetch of events
-  useEffect(() => {
-    const fetchInitialData = async () => {
-      setIsLoading(true);
-      await dispatch(fetchEvents());
-      setIsLoading(false); // Set to false after fetching is complete
-    };
-    fetchInitialData();
-  }, [dispatch]);
 
   const handleRefresh = async () => {
     setIsRefreshing(true);
@@ -71,13 +59,7 @@ export default function Deals({ navigation }) {
       {/* <SafeAreaView> */}
       {isLoading || isRefreshing ? renderLoading() : null}
       <FlatList
-        data={events.filter(
-          (item) =>
-            item.is_active &&
-            item.ticket_types.some(
-              (ticket) => ticket.is_rahaclub_vip && ticket.is_active
-            )
-        )}
+        data={[]}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <EventList
