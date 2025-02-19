@@ -11,7 +11,7 @@ const isDevelopment = () => {
 // Get the appropriate base URL depending on environment
 const getBaseUrl = () => {
   if (isDevelopment()) {
-    return "https://testapi.ticketraha.com/api/";
+    return "https://api.ticketraha.com/api/";
   }
   return "https://api.ticketraha.com/api/";
 };

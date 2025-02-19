@@ -22,7 +22,7 @@ export default function MerchNavigator() {
     <Stack.Navigator initialRouteName="Market">
       <Stack.Screen
         name="Market"
-        component={Market}
+        component={MerchPage}
         options={{
           headerShown: true,
           headerShadowVisible: false,

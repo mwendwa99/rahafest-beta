@@ -9,20 +9,18 @@ import {
   StyleSheet,
   Dimensions,
   RefreshControl,
+  ActivityIndicator, // Import ActivityIndicator from react-native
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { clothes } from "../../data";
-import { useDispatch, useSelector } from "react-redux";
-// import { fetchMerch } from "../../redux/merch/merchActions";
-import { ActivityIndicator } from "react-native-paper";
 import { formatCurrencyWithCommas } from "../../utils/helper";
+import api from "../../services/api.service"; // Import your api service
 
 const { width } = Dimensions.get("window");
 const cardWidth = (width - 32) / 2; // 2 cards per row with 16px padding on sides
 
 const MerchandiseCard = ({ item }) => {
   const navigation = useNavigation();
-  const discountedPrice = item.price * (1 - item.discount_rate / 100);
+  const discountedPrice = item.price * (1 - item.discount_rate / 100); // discount_rate is not in the response, keep it for now, might be unused
 
   // console.log(item);
 
@@ -71,30 +69,55 @@ const MerchandiseCard = ({ item }) => {
 const MerchandisePage = () => {
   const renderItem = ({ item }) => <MerchandiseCard item={item} />;
 
-  // const { products, loading } = useSelector((state) => state.merch);
   const [isRefreshing, setIsRefreshing] = useState(false);
-
-  const dispatch = useDispatch();
+  const [products, setProducts] = useState([]); // ADD STATE FOR PRODUCTS
+  const [loading, setLoading] = useState(false); // ADD STATE FOR LOADING
 
   useEffect(() => {
-    dispatch(fetchMerch());
+    loadProducts(); // Call loadProducts function on component mount
   }, []);
 
-  if (loading) {
-    return <ActivityIndicator size={24} />;
-  }
+  const loadProducts = async () => {
+    setLoading(true); // Set loading to true before API call
+    try {
+      const response = await api.get("/all-products"); // Use api service to fetch data
+      if (response.data.status === "success") {
+        setProducts(response.data.data.items); // Update products state with fetched items
+      } else {
+        console.error("Failed to load products:", response.data.message);
+        // Optionally show an error message to the user
+      }
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      // Optionally show an error message to the user
+    } finally {
+      setLoading(false); // Set loading to false after API call completes (success or error)
+      setIsRefreshing(false); // Stop refreshing animation
+    }
+  };
 
   const onRefresh = () => {
     setIsRefreshing(true);
-    dispatch(fetchMerch()).finally(() => setIsRefreshing(false));
+    loadProducts(); // Call loadProducts function on refresh
   };
 
-  // console.log(JSON.stringify(products));
+  if (loading) {
+    return (
+      <View
+        style={[
+          styles.container,
+          { justifyContent: "center", alignItems: "center" },
+        ]}
+      >
+        <ActivityIndicator size="large" color="#007AFF" />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
       <FlatList
-        data={[]}
+        data={products} // Use products state for FlatList data
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
         numColumns={2}
