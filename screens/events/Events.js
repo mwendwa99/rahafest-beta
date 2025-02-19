@@ -83,10 +83,15 @@ export default function Events({ navigation }) {
         location={item?.venue}
         expired={!item?.is_active || item?.is_expired}
         tickets={item?.ticket_types || []}
+        // onPress={() =>
+        //   navigation.navigate("CheckoutNavigator", {
+        //     screen: "Checkout",
+        //     params: { event: item, showDiscount: false },
+        //   })
+        // }
         onPress={() =>
-          navigation.navigate("CheckoutNavigator", {
-            screen: "Checkout",
-            params: { event: item, showDiscount: false },
+          navigation.navigate("Event", {
+            params: { title: item.title },
           })
         }
         isActive={item?.is_active}

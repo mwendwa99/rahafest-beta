@@ -2,6 +2,8 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Text } from "../../components";
 import Events from "./Events";
 import CheckoutNavigator from "./checkout";
+import EventScreen from "./event";
+import CheckoutScreen from "./event/Checkout";
 
 const Stack = createNativeStackNavigator();
 
@@ -16,6 +18,20 @@ export default function EventNavigator() {
         }}
       />
       <Stack.Screen
+        name="Event"
+        component={EventScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="Checkout"
+        component={CheckoutScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      {/* <Stack.Screen
         name="CheckoutNavigator"
         component={CheckoutNavigator}
         options={{
@@ -37,7 +53,7 @@ export default function EventNavigator() {
             />
           ),
         }}
-      />
+      /> */}
     </Stack.Navigator>
   );
 }
