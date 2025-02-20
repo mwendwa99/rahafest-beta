@@ -12,7 +12,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUser } from "../../../store/auth/authActions";
 // import { fetchAds } from "../../../redux/events/eventActions";
-import { authInstance } from "../../../services/api.service";
+import api from "../../../services/club.api.service";
 import { useNotification } from "../../../Notifications";
 
 import { ActivityIndicator } from "react-native-paper";
@@ -37,9 +37,9 @@ export default function Landing({ navigation }) {
   const dispatch = useDispatch();
   const [isDeviceRegistered, setIsDeviceRegistered] = useState(false);
 
-  useEffect(() => {
-    dispatch(fetchAds());
-  }, []);
+  // useEffect(() => {
+  //   dispatch(fetchAds());
+  // }, []);
 
   useEffect(() => {
     if (!token) {
@@ -57,7 +57,7 @@ export default function Landing({ navigation }) {
     if (user?.id && expoPushToken && !isDeviceRegistered) {
       console.info("Attempting device registration...");
 
-      authInstance
+      api
         .post("device", {
           expo_token: expoPushToken,
           device_name: Device.deviceName,

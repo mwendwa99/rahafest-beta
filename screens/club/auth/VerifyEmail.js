@@ -62,7 +62,7 @@ export default function VerifyEmail({ navigation }) {
       success("OTP sent! Please check your email.");
       navigation.navigate("VerifyOtp");
     } else {
-      danger("Unable to send OTP. Please check your email.");
+      danger("Unable to send OTP.");
       console.error("Failed to verify email:", result.error.message);
     }
   };
@@ -89,7 +89,7 @@ export default function VerifyEmail({ navigation }) {
       </View>
 
       <Button
-        label={loading ? "Loading" : "Request OTP"}
+        label={loading ? "Loading" : "Send OTP"}
         disabled={loading}
         variant="contained"
         onPress={handleSubmit}

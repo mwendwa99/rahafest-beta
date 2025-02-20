@@ -14,7 +14,7 @@ import { formatEventDates } from "../../../utils/helper";
 
 export default function Deals({ navigation }) {
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
 
   const handleNavigateToCheckout = useCallback(
@@ -53,13 +53,14 @@ export default function Deals({ navigation }) {
       </View>
     );
   };
+  const deals = null;
 
   return (
     <View style={styles.container}>
       {/* <SafeAreaView> */}
       {isLoading || isRefreshing ? renderLoading() : null}
       <FlatList
-        data={[]}
+        data={deals}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <EventList

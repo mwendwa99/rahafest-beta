@@ -87,6 +87,8 @@ export default function Login({ navigation }) {
       password: formData.password,
     };
 
+    // console.log(loginData);
+
     dispatch(loginUser(loginData));
   };
 
