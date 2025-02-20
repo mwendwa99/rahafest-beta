@@ -41,6 +41,12 @@
           "defaultChannel": "default",
           "enableBackgroundRemoteNotifications": true
         }
+      ],
+      [
+        "expo-av",
+        {
+          "microphonePermission": "Allow Raha to access your microphone."
+        }
       ]
     ],
     "mewArchEnabled": true,
