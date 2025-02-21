@@ -279,6 +279,7 @@ const CheckoutScreen = ({ navigation, route }) => {
                 placeholder="Enter coupon code"
                 value={couponCode}
                 onChangeText={setCouponCode}
+                placeholderTextColor={"#666"}
               />
               <TouchableOpacity
                 style={styles.couponButton}
@@ -306,16 +307,6 @@ const CheckoutScreen = ({ navigation, route }) => {
               </View>
               <Text style={styles.paymentOptionText}>M-Pesa</Text>
             </TouchableOpacity>
-
-            {/* <TouchableOpacity
-              style={styles.paymentOption}
-              onPress={() => setPaymentMethod("card")}
-            >
-              <View style={styles.radio}>
-                {paymentMethod === "card" && <View style={styles.radioInner} />}
-              </View>
-              <Text style={styles.paymentOptionText}>Card</Text>
-            </TouchableOpacity> */}
           </View>
 
           {paymentMethod === "mpesa" && (
@@ -325,6 +316,7 @@ const CheckoutScreen = ({ navigation, route }) => {
               value={phoneNumber}
               onChangeText={setPhoneNumber}
               keyboardType="phone-pad"
+              placeholderTextColor={"#666"}
             />
           )}
 

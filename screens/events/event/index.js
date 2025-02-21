@@ -18,6 +18,7 @@ import { useRoute } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import WebView from "react-native-webview";
 import { formatDate, stripHtmlTags } from "../../../utils/helper";
+import { StatusBar } from "expo-status-bar";
 
 const { width } = Dimensions.get("window");
 const isMobile = width < 768; // Simple mobile check - adjust as needed
@@ -31,6 +32,7 @@ const EventScreen = ({ navigation }) => {
   const [snackbarOpen, setSnackbarOpen] = useState(false); // Using Alert instead of Snackbar
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success"); // Not used with Alert
+  const [filteredTickets, setFilteredTickets] = useState([]); // State to hold filtered tickets
 
   const route = useRoute();
   const searchTitle = route.params.params?.title;
@@ -75,6 +77,16 @@ const EventScreen = ({ navigation }) => {
       // Document title/meta tags are less relevant in React Native.
       // You might set screen title in navigation options if using React Navigation.
       // Example: navigation.setOptions({ title: event.title });
+
+      // Filter tickets based on criteria
+      const activeTickets = event.ticket_types.filter((ticket) => {
+        return (
+          ticket.is_active === true &&
+          ticket.is_rahaclub_vip === false &&
+          ticket.show_on_mobile_app === true
+        );
+      });
+      setFilteredTickets(activeTickets); // Set the filtered tickets
     }
   }, [event]);
 
@@ -321,17 +333,22 @@ const EventScreen = ({ navigation }) => {
           )}
         </View>
 
-        {event.ticket_types && event.ticket_types.length > 0 && (
+        {filteredTickets.length > 0 && ( // Use filteredTickets here
           <View style={styles.ticketsSection}>
             <Text style={styles.ticketsTitle}>Available Tickets</Text>
-            {event.ticket_types.map((ticket, index) => (
-              <TicketSelection
-                key={ticket.id}
-                ticket={ticket}
-                onTicketDetailsChange={handleTicketDetailsChange}
-                index={index}
-              />
-            ))}
+            {filteredTickets.map(
+              (
+                ticket,
+                index // Map over filteredTickets
+              ) => (
+                <TicketSelection
+                  key={ticket.id}
+                  ticket={ticket}
+                  onTicketDetailsChange={handleTicketDetailsChange}
+                  index={index}
+                />
+              )
+            )}
             <TouchableOpacity
               style={styles.proceedButton}
               onPress={handleCreateInvoice}
@@ -341,6 +358,7 @@ const EventScreen = ({ navigation }) => {
           </View>
         )}
       </ScrollView>
+      <StatusBar style="dark" />
     </SafeAreaView>
   );
 };
@@ -350,9 +368,9 @@ export default EventScreen;
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    paddingHorizontal: isMobile ? 16 : 24,
-    paddingVertical: isMobile ? 16 : 40,
-    backgroundColor: "#fff", // Assuming white background
+    paddingHorizontal: 24,
+    // paddingVertical: isMobile ? 16 : 40,
+    // backgroundColor: "#fff", // Assuming white background
   },
   loadingContainer: {
     flex: 1,
@@ -375,7 +393,7 @@ const styles = StyleSheet.create({
     height: isMobile ? 200 : 400, // Adjust image height for mobile/web
     borderRadius: 8, // Similar to borderRadius on web Paper
     marginBottom: 20,
-    resizeMode: isMobile ? "cover" : "cover", // Adjust resizeMode for mobile/web
+    resizeMode: isMobile ? "contain" : "cover", // Adjust resizeMode for mobile/web
   },
   eventTitle: {
     fontSize: isMobile ? 24 : 30, // Adjust font size for mobile/web

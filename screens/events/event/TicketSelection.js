@@ -6,6 +6,8 @@ import {
   StyleSheet,
   Switch,
   TouchableOpacity,
+  Platform, // Import Platform
+  ActionSheetIOS, // Import ActionSheetIOS
 } from "react-native";
 import { Picker } from "@react-native-picker/picker"; // Import the Picker from the community library
 
@@ -18,6 +20,7 @@ const TicketSelection = ({
   const [quantity, setQuantity] = useState(0);
   const [userDetails, setUserDetails] = useState([]);
   const [applyAllTickets, setApplyAllTickets] = useState(defaultApplyAll);
+  const isTicketSelectionDisabled = ticket.available_tickets === 0; // Determine if selection is disabled
 
   useEffect(() => {
     if (quantity > userDetails.length) {
@@ -41,7 +44,7 @@ const TicketSelection = ({
   }, [quantity, userDetails, ticket.id, onTicketDetailsChange]);
 
   const handleQuantityChange = (itemValue) => {
-    // Picker returns itemValue directly now
+    // Picker or ActionSheet returns itemValue
     setQuantity(Math.max(0, itemValue));
   };
 
@@ -79,6 +82,35 @@ const TicketSelection = ({
     }
   };
 
+  const showActionSheet = () => {
+    if (isTicketSelectionDisabled) {
+      return; // Do nothing if selection is disabled
+    }
+    const quantityOptions = [...Array(11)]
+      .map((_, i) => {
+        const value = i;
+        if (value <= ticket.available_tickets) {
+          return String(value);
+        } else {
+          return null;
+        }
+      })
+      .filter((option) => option !== null);
+
+    ActionSheetIOS.showActionSheetWithOptions(
+      {
+        options: [...quantityOptions, "Cancel"],
+        cancelButtonIndex: quantityOptions.length,
+        title: "Select Quantity",
+      },
+      (buttonIndex) => {
+        if (buttonIndex !== undefined && buttonIndex < quantityOptions.length) {
+          handleQuantityChange(parseInt(quantityOptions[buttonIndex], 10));
+        }
+      }
+    );
+  };
+
   return (
     <View style={styles.ticketSelectionContainer}>
       <Text style={styles.ticketTitle}>
@@ -86,28 +118,48 @@ const TicketSelection = ({
       </Text>
 
       <Text style={styles.quantityLabel}> Quantity</Text>
-      {/* Using Picker from @react-native-picker/picker */}
-      <Picker
-        selectedValue={quantity}
-        style={styles.quantityPicker}
-        onValueChange={handleQuantityChange}
-      >
-        {[...Array(11)].map((_, i) => {
-          const value = i;
-          if (value <= ticket.available_tickets) {
-            return (
-              <Picker.Item
-                key={value}
-                label={String(value)}
-                value={value}
-                style={{ borderWidth: 1, borderColor: "#c3c3c3" }}
-              />
-            );
-          } else {
-            return null;
-          }
-        })}
-      </Picker>
+      {Platform.OS === "ios" ? (
+        <TouchableOpacity
+          style={[
+            styles.quantityPickerIOS,
+            isTicketSelectionDisabled && styles.quantityPickerDisabledIOS, // Apply disabled style
+          ]}
+          onPress={showActionSheet}
+          disabled={isTicketSelectionDisabled} // Disable TouchableOpacity when tickets are sold out
+        >
+          <Text
+            style={[
+              styles.quantityPickerTextIOS,
+              isTicketSelectionDisabled && styles.quantityPickerTextDisabledIOS, // Apply disabled text style
+            ]}
+          >
+            {quantity}
+          </Text>
+        </TouchableOpacity>
+      ) : (
+        <Picker
+          selectedValue={quantity}
+          style={styles.quantityPicker}
+          onValueChange={handleQuantityChange}
+          enabled={!isTicketSelectionDisabled} // Disable Picker when tickets are sold out
+        >
+          {[...Array(11)].map((_, i) => {
+            const value = i;
+            if (value <= ticket.available_tickets) {
+              return (
+                <Picker.Item
+                  key={value}
+                  label={String(value)}
+                  value={value}
+                  style={{ borderWidth: 1, borderColor: "#c3c3c3" }}
+                />
+              );
+            } else {
+              return null;
+            }
+          })}
+        </Picker>
+      )}
 
       {quantity > 0 && (
         <View style={styles.userDetailsBox}>
@@ -222,6 +274,27 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 4,
     marginBottom: 16,
+  },
+  quantityPickerIOS: {
+    height: 40, // Mimic height of Android picker
+    borderColor: "#ccc",
+    borderWidth: 1,
+    borderRadius: 4,
+    marginBottom: 16,
+    justifyContent: "center", // Center text vertically
+    paddingHorizontal: 10,
+    backgroundColor: "#fff", // Default background color
+  },
+  quantityPickerTextIOS: {
+    fontSize: 16, // Match text size of Android picker
+    color: "black", // Default text color
+  },
+  quantityPickerDisabledIOS: {
+    backgroundColor: "#f2f2f2", // Light grey background for disabled state
+    borderColor: "#ddd", // Lighter border for disabled state
+  },
+  quantityPickerTextDisabledIOS: {
+    color: "#999", // Grey text color for disabled state
   },
   userDetailsBox: {
     marginTop: 16,
