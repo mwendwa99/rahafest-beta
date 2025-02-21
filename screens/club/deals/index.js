@@ -1,120 +1,178 @@
+// Events.js
+import React, { useEffect, useState, useCallback } from "react";
 import {
-  View,
-  FlatList,
   StyleSheet,
+  FlatList,
+  View,
   Text,
-  RefreshControl,
   ActivityIndicator,
   StatusBar,
+  RefreshControl,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import EventList from "../../../components/EventList";
-import { useDispatch } from "react-redux";
-import { useState, useCallback } from "react";
 import { formatEventDates } from "../../../utils/helper";
+import api from "../../../services/api.service";
 
-export default function Deals({ navigation }) {
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const dispatch = useDispatch();
+const FUN_ERROR_MESSAGES = [
+  "Oops! Let's try again!",
+  "Uh oh! Give it another shot!",
+  "Looks like the events are taking a coffee break. Refresh to wake them up!",
+  "Whoops! Try again!",
+  "Darn it! We tripped over a wire fetching events. Let's reload!",
+];
 
-  const handleNavigateToCheckout = useCallback(
-    (event) => {
-      navigation.navigate("CheckoutNavigator", {
-        screen: "Checkout",
-        params: { event, showDiscount: true }, // Pass only the clicked event's data
+function getRandomErrorMessage() {
+  return FUN_ERROR_MESSAGES[
+    Math.floor(Math.random() * FUN_ERROR_MESSAGES.length)
+  ];
+}
+
+export default function Events({ navigation }) {
+  const [events, setEvents] = useState([]); // Single array for events
+  const [loading, setLoading] = useState(false); // Single loading state
+  const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState(null);
+
+  // Fetch events with VIP tickets
+  async function fetchEvents() {
+    setLoading(true);
+    setError(null);
+    try {
+      // Modify API endpoint to fetch events that have at least one VIP ticket
+      const url = `public/events/list?page_size=100`; // Adjust page_size as needed
+      const response = await api.get(url);
+      let allEvents = response.data.data.items;
+
+      // Filter events to only include those with at least one VIP ticket type
+      const vipEvents = allEvents.filter((event) => {
+        return (
+          // !event.is_expired &&
+          event.ticket_types.some((ticket) => ticket.is_rahaclub_vip === true)
+        );
       });
-    },
+      setEvents(vipEvents); // Set the filtered events
+    } catch (err) {
+      console.log(JSON.stringify(err));
+      const funMessage = getRandomErrorMessage();
+      setError(funMessage);
+      setTimeout(() => {
+        setError(null);
+      }, 5000); // Error message disappears after 5 seconds
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // Initial load: fetch VIP events
+  useEffect(() => {
+    fetchEvents();
+  }, []);
+
+  const handleRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await fetchEvents();
+    setRefreshing(false);
+  }, []);
+
+  const renderEventItem = useCallback(
+    ({ item }) => (
+      <EventList
+        id={item?.id?.toString()}
+        title={item?.title}
+        subtitle={item?.event_organizer?.organization_name}
+        image={item?.banner}
+        date={formatEventDates(item?.start_date, item?.end_date)}
+        location={item?.venue}
+        expired={!item?.is_active || item?.is_expired}
+        tickets={item?.ticket_types || []} // Pass all ticket types for now - filtering will happen in EventScreen
+        onPress={() =>
+          navigation.navigate("EventDeal", {
+            params: { title: item.title },
+          })
+        }
+        isActive={item?.is_active}
+        hideDiscounted
+      />
+    ),
     [navigation]
   );
 
-  const handleRefresh = async () => {
-    setIsRefreshing(true);
-    try {
-      await dispatch(fetchEvents());
-    } finally {
-      setIsRefreshing(false); // Set to false after refreshing is complete
-    }
-  };
-
-  const renderLoading = () => (
-    <View style={styles.loadingContainer}>
-      <ActivityIndicator size="large" color="#0000ff" />
-    </View>
-  );
-
-  const renderEmptyList = () => {
-    if (isLoading) return null;
-
+  if (loading && !events.length) {
     return (
-      <View style={styles.emptyContainer}>
-        <Text style={styles.emptyList}>
-          Stay tuned for exclusive deals exclusive to Raha Club members!
-        </Text>
+      <View style={styles.centered}>
+        <ActivityIndicator color="#B41818" size="large" />
       </View>
     );
-  };
-  const deals = null;
+  }
 
   return (
-    <View style={styles.container}>
-      {/* <SafeAreaView> */}
-      {isLoading || isRefreshing ? renderLoading() : null}
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="dark-content" />
+      {error && (
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>{error}</Text>
+        </View>
+      )}
       <FlatList
-        data={deals}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <EventList
-            id={item?.id}
-            title={item?.title}
-            subtitle={item?.organization.organization_name}
-            image={item?.banner}
-            date={formatEventDates(item?.start_date, item?.end_date)}
-            location={item?.location}
-            expired={item?.expired}
-            tickets={item?.ticket_types}
-            onPress={() => handleNavigateToCheckout(item)}
-            hideDiscounted={false}
-          />
-        )}
-        ListEmptyComponent={renderEmptyList}
+        data={events} // Use the single 'events' array
+        renderItem={renderEventItem}
+        keyExtractor={(item) => item?.id?.toString()}
+        showsVerticalScrollIndicator={false}
+        removeClippedSubviews={true}
+        maxToRenderPerBatch={5}
+        windowSize={5}
+        initialNumToRender={5}
         refreshControl={
-          <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            colors={["#B41818"]}
+          />
         }
-        contentContainerStyle={{
-          paddingBottom: 20, // Add extra padding
-        }}
+        ListEmptyComponent={() =>
+          !loading ? (
+            <Text style={{ textAlign: "center", marginTop: 20, color: "gray" }}>
+              No active deals found please check again later!
+            </Text>
+          ) : null
+        }
       />
-
-      <StatusBar barStyle={"light-content"} />
-      {/* </SafeAreaView> */}
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    backgroundColor: "#fafafa",
+    paddingHorizontal: 20,
   },
-  emptyContainer: {
+  centered: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    padding: 20,
   },
-  emptyList: {
-    fontSize: 16,
-    color: "#666",
+  section: {
+    marginBottom: 20,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginVertical: 10,
+    paddingHorizontal: 20,
+  },
+  errorContainer: {
+    position: "absolute",
+    bottom: 20,
+    left: 20,
+    right: 20,
+    backgroundColor: "#ff0000aa",
+    padding: 10,
+    borderRadius: 5,
+  },
+  errorText: {
+    color: "white",
     textAlign: "center",
-  },
-
-  loadingContainer: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  loadingText: {
-    marginTop: 10,
-    fontSize: 16,
-    color: "#666",
   },
 });

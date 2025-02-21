@@ -18,6 +18,8 @@ import FriendRequests from "./friends/wsFriends/FriendRequests";
 import DirectMessages from "./friends/wsFriends/DirectMessages";
 import Account from "../account";
 import Deals from "./deals";
+import EventDeal from "./deals/event";
+import EventDealCheckout from "./deals/event/Checkout";
 import Landing from "./landing/Landing";
 import Merchandise from "../merch";
 import CheckoutNavigator from "../events/checkout";
@@ -340,6 +342,48 @@ export default function ClubNavigator() {
           <Stack.Screen
             name="Deals"
             component={Deals}
+            options={{
+              headerShown: true,
+              headerShadowVisible: false,
+              headerTintColor: "#fff",
+              headerStyle: {
+                backgroundColor: "#212529",
+              },
+              headerTitle: (props) => (
+                <Text
+                  value={"Deals"}
+                  {...props}
+                  variant={"subtitle"}
+                  style={{ color: "#fff" }}
+                />
+              ),
+              headerTitleAlign: "center",
+            }}
+          />
+          <Stack.Screen
+            name="EventDeal"
+            component={EventDeal}
+            options={{
+              headerShown: true,
+              headerShadowVisible: false,
+              headerTintColor: "#fff",
+              headerStyle: {
+                backgroundColor: "#212529",
+              },
+              headerTitle: (props) => (
+                <Text
+                  value={"Deals"}
+                  {...props}
+                  variant={"subtitle"}
+                  style={{ color: "#fff" }}
+                />
+              ),
+              headerTitleAlign: "center",
+            }}
+          />
+          <Stack.Screen
+            name="EventDealCheckout"
+            component={EventDealCheckout}
             options={{
               headerShown: true,
               headerShadowVisible: false,

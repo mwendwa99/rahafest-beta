@@ -38,7 +38,7 @@ export default function Events({ navigation }) {
     setLoading((prev) => ({ ...prev, [type]: true }));
     setError(null);
     try {
-      const baseUrl = "public/events/list?page_size=5&is_active=1";
+      const baseUrl = "public/events/list?page_size=100&is_active=1";
       const upcomingParam =
         type === "upcoming" ? "&upcoming=true" : "&upcoming=false";
       const url = `${baseUrl}${upcomingParam}`;
