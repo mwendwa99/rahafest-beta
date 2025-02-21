@@ -49,7 +49,7 @@ export default function Events({ navigation }) {
         [type]: newEvents,
       }));
     } catch (err) {
-      console.log(JSON.stringify(err));
+      // console.log(JSON.stringify(err));
       const funMessage = getRandomErrorMessage();
       setError(funMessage);
       setTimeout(() => {

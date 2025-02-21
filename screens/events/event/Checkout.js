@@ -1,3 +1,4 @@
+// CheckoutScreen.js
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import {
   ScrollView,
@@ -14,6 +15,7 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "../../../services/api.service";
+import { SecureCheckout } from "./CyberSource"; // Import SecureCheckout
 
 const { width } = Dimensions.get("window");
 const isMobile = width < 768;
@@ -59,6 +61,7 @@ const CheckoutScreen = ({ navigation, route }) => {
     selectedTickets: [],
     event: null,
   });
+  const [isSecureCheckoutVisible, setSecureCheckoutVisible] = useState(false); // State to control SecureCheckout visibility
 
   // Load checkout data
   useEffect(() => {
@@ -163,15 +166,21 @@ const CheckoutScreen = ({ navigation, route }) => {
           payload
         );
         setSuccess("Please check your phone for the STK push");
-      } else {
-        // Handle card payment - integrate with your payment gateway
-        Alert.alert("Card Payment", "Card payment integration pending");
+      } else if (paymentMethod === "card") {
+        // For card payment, show SecureCheckout WebView
+        setSecureCheckoutVisible(true);
       }
     } catch (err) {
       setError(err?.response?.data?.message || "Payment failed");
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSecureCheckoutClose = () => {
+    setSecureCheckoutVisible(false);
+    // Optionally, you can handle success/failure logic after SecureCheckout is closed
+    // For example, check payment status from backend and navigate accordingly.
   };
 
   if (pageLoading) {
@@ -307,6 +316,15 @@ const CheckoutScreen = ({ navigation, route }) => {
               </View>
               <Text style={styles.paymentOptionText}>M-Pesa</Text>
             </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.paymentOption}
+              onPress={() => setPaymentMethod("card")}
+            >
+              <View style={styles.radio}>
+                {paymentMethod === "card" && <View style={styles.radioInner} />}
+              </View>
+              <Text style={styles.paymentOptionText}>Card</Text>
+            </TouchableOpacity>
           </View>
 
           {paymentMethod === "mpesa" && (
@@ -352,11 +370,31 @@ const CheckoutScreen = ({ navigation, route }) => {
           </Text>
         </View>
       </ScrollView>
+      {/* Conditionally render SecureCheckout WebView */}
+      {isSecureCheckoutVisible && checkoutData.invoice && (
+        <View style={styles.secureCheckoutOverlay}>
+          <SecureCheckout
+            invoice={checkoutData.invoice}
+            onClose={handleSecureCheckoutClose}
+          />
+        </View>
+      )}
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  secureCheckoutOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0,0,0,0.5)", // Semi-transparent background
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 10, // Ensure it's on top
+  },
   container: {
     flex: 1,
     backgroundColor: "#f5f5f5",

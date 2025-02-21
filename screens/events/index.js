@@ -4,6 +4,7 @@ import Events from "./Events";
 import CheckoutNavigator from "./checkout";
 import EventScreen from "./event";
 import CheckoutScreen from "./event/Checkout";
+import { SecureCheckout } from "./event/CyberSource";
 
 const Stack = createNativeStackNavigator();
 
@@ -31,29 +32,13 @@ export default function EventNavigator() {
           headerShown: false,
         }}
       />
-      {/* <Stack.Screen
-        name="CheckoutNavigator"
-        component={CheckoutNavigator}
+      <Stack.Screen
+        name="CyberSource"
+        component={SecureCheckout}
         options={{
           headerShown: false,
-          headerShadowVisible: false,
-          headerTintColor: "#000",
-          headerStyle: {
-            backgroundColor: "#fff", // Ensure background color is set correctly
-            elevation: 0, // Remove shadow on Android
-            shadowOpacity: 0, // Remove shadow on iOS
-            borderBottomWidth: 0, // Remove bottom border
-          },
-          headerTitle: (props) => (
-            <Text
-              value={""}
-              {...props}
-              variant={"subtitle"}
-              style={{ color: "#000" }}
-            />
-          ),
         }}
-      /> */}
+      />
     </Stack.Navigator>
   );
 }

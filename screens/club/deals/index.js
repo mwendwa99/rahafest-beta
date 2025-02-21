@@ -47,7 +47,7 @@ export default function Events({ navigation }) {
       // Filter events to only include those with at least one VIP ticket type
       const vipEvents = allEvents.filter((event) => {
         return (
-          // !event.is_expired &&
+          !event.is_expired &&
           event.ticket_types.some((ticket) => ticket.is_rahaclub_vip === true)
         );
       });
