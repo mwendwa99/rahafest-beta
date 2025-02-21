@@ -275,9 +275,7 @@ const EventScreen = ({ navigation }) => {
             {/* Replace with actual icons or simple Text equivalents */}
             {/* <CalendarTodayIcon style={styles.infoIcon} /> */}
             <Text style={styles.infoIcon}>🗓️</Text>
-            <Text style={styles.infoText}>
-              {formatDate(event.start_date)}, {formatDate(event.end_date)}
-            </Text>
+            <Text style={styles.infoText}>{formatDate(event.start_date)}</Text>
           </View>
           <View style={styles.infoItem}>
             {/* <LocationOnOutlinedIcon style={styles.infoIcon} /> */}
