@@ -8,7 +8,7 @@ import {
   Alert,
   KeyboardAvoidingView,
   StyleSheet,
-  ScrollView,
+  FlatList,
   Platform,
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
@@ -85,105 +85,112 @@ export default function HouseOfRaha() {
     Alert.alert("Success", "Event details submitted successfully");
   };
 
+  // Form content as a separate component to be rendered inside FlatList
+  const FormContent = () => (
+    <>
+      <Image
+        source={require("../../../assets/houseofraha.png")}
+        style={styles.image}
+      />
+
+      <View style={styles.formContainer}>
+        <DropDownPicker
+          style={styles.dropdown}
+          placeholder="Select Event Type"
+          open={open}
+          value={eventType}
+          items={[
+            { label: "House Party", value: "houseParty" },
+            { label: "Birthday Party", value: "birthdayParty" },
+            { label: "Listening Party", value: "listeningParty" },
+            { label: "Live Deejay Mix", value: "liveDeejay" },
+            { label: "Interviews", value: "interviews" },
+          ]}
+          setOpen={setOpen}
+          setValue={setEventType}
+          // Set zIndex to ensure dropdown appears above other elements
+          zIndex={3000}
+          zIndexInverse={1000}
+        />
+
+        <TouchableOpacity
+          style={styles.dateButton}
+          onPress={() => setShowDatePicker(true)}
+        >
+          <Icon name="calendar" size={24} color="#666" />
+          <Text style={styles.dateText}>
+            {date.toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
+          </Text>
+        </TouchableOpacity>
+
+        <DateTimePickerModal
+          isVisible={showDatePicker}
+          mode="datetime"
+          date={date}
+          onConfirm={(selectedDate) => {
+            setShowDatePicker(false);
+            setDate(selectedDate);
+          }}
+          onCancel={() => setShowDatePicker(false)}
+        />
+
+        <TextInput
+          style={styles.input}
+          placeholder="Expected Guests"
+          value={guests}
+          onChangeText={setGuests}
+          keyboardType="numeric"
+        />
+
+        <TextInput
+          style={[styles.input, styles.multiline]}
+          placeholder="Setup Requirements (Optional)"
+          value={setup}
+          onChangeText={setSetup}
+          multiline
+          numberOfLines={3}
+        />
+
+        <TouchableOpacity style={styles.uploadButton} onPress={pickImage}>
+          <Icon name="cloud-upload-outline" size={24} color="#666" />
+          <Text style={styles.uploadText}>Upload Event Poster (Optional)</Text>
+        </TouchableOpacity>
+
+        {poster && (
+          <Image
+            source={{ uri: poster }}
+            style={styles.posterPreview}
+            resizeMode="cover"
+          />
+        )}
+
+        <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+          <Text style={styles.submitButtonText}>Submit Event Details</Text>
+        </TouchableOpacity>
+      </View>
+    </>
+  );
+
   return (
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
     >
-      <ScrollView
+      {/* Replace ScrollView with FlatList to fix the nesting VirtualizedLists error */}
+      <FlatList
+        data={[{ key: "formContent" }]}
+        renderItem={() => <FormContent />}
+        keyExtractor={(item) => item.key}
         contentContainerStyle={styles.scrollContainer}
         showsVerticalScrollIndicator={true}
-      >
-        <Image
-          source={require("../../../assets/houseofraha.png")}
-          style={styles.image}
-        />
-
-        <View style={styles.formContainer}>
-          <DropDownPicker
-            style={styles.dropdown}
-            placeholder="Select Event Type"
-            open={open}
-            value={eventType}
-            items={[
-              { label: "House Party", value: "houseParty" },
-              { label: "Birthday Party", value: "birthdayParty" },
-              { label: "Listening Party", value: "listeningParty" },
-              { label: "Live Deejay Mix", value: "liveDeejay" },
-              { label: "Interviews", value: "interviews" },
-            ]}
-            setOpen={setOpen}
-            setValue={setEventType}
-            // Set zIndex to ensure dropdown appears above other elements
-            zIndex={3000}
-            zIndexInverse={1000}
-          />
-
-          <TouchableOpacity
-            style={styles.dateButton}
-            onPress={() => setShowDatePicker(true)}
-          >
-            <Icon name="calendar" size={24} color="#666" />
-            <Text style={styles.dateText}>
-              {date.toLocaleDateString("en-US", {
-                year: "numeric",
-                month: "short",
-                day: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-              })}
-            </Text>
-          </TouchableOpacity>
-
-          <DateTimePickerModal
-            isVisible={showDatePicker}
-            mode="datetime"
-            date={date}
-            onConfirm={(selectedDate) => {
-              setShowDatePicker(false);
-              setDate(selectedDate);
-            }}
-            onCancel={() => setShowDatePicker(false)}
-          />
-
-          <TextInput
-            style={styles.input}
-            placeholder="Expected Guests"
-            value={guests}
-            onChangeText={setGuests}
-            keyboardType="numeric"
-          />
-
-          <TextInput
-            style={[styles.input, styles.multiline]}
-            placeholder="Setup Requirements (Optional)"
-            value={setup}
-            onChangeText={setSetup}
-            multiline
-            numberOfLines={3}
-          />
-
-          <TouchableOpacity style={styles.uploadButton} onPress={pickImage}>
-            <Icon name="cloud-upload-outline" size={24} color="#666" />
-            <Text style={styles.uploadText}>
-              Upload Event Poster (Optional)
-            </Text>
-          </TouchableOpacity>
-
-          {poster && (
-            <Image
-              source={{ uri: poster }}
-              style={styles.posterPreview}
-              resizeMode="cover"
-            />
-          )}
-
-          <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-            <Text style={styles.submitButtonText}>Submit Event Details</Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
+      />
     </KeyboardAvoidingView>
   );
 }
