@@ -65,30 +65,45 @@ export const formatTime = (date) => {
     .replace("PM", "pm");
 };
 
-export const formatEventDates = (start_date, end_date) => {
+export function formatEventDates(start_date, end_date) {
+  if (!start_date || !end_date) return "Invalid date range";
+
+  // Parse dates without timezone conversion
   const startDate = new Date(start_date);
   const endDate = new Date(end_date);
 
-  if (isNaN(startDate) || isNaN(endDate)) {
-    return "Invalid event dates"; // Return fallback message if date is invalid
-  }
+  // Check if end date is midnight (00:00:00) of the next day
+  const isMidnightNextDay =
+    endDate.getHours() === 0 &&
+    endDate.getMinutes() === 0 &&
+    endDate.getSeconds() === 0 &&
+    new Date(endDate.getTime() - 86400000).getDate() === startDate.getDate() &&
+    new Date(endDate.getTime() - 86400000).getMonth() ===
+      startDate.getMonth() &&
+    new Date(endDate.getTime() - 86400000).getFullYear() ===
+      startDate.getFullYear();
 
-  const isSameDayAndMonth =
-    startDate.getDate() === endDate.getDate() &&
-    startDate.getMonth() === endDate.getMonth() &&
-    startDate.getFullYear() === endDate.getFullYear();
+  // If it's midnight of the next day, adjust the end date to be the previous day
+  const adjustedEndDate = isMidnightNextDay
+    ? new Date(endDate.getTime() - 1) // Subtract 1 ms to get 23:59:59 of the previous day
+    : endDate;
 
-  const startDateFormatted = formatDate(start_date);
-  const endDateFormatted = formatDate(end_date);
-  const startTimeFormatted = formatTime(start_date);
-  const endTimeFormatted = formatTime(end_date);
+  // Extract date components
+  const startYear = startDate.getFullYear();
+  const startMonth = startDate.getMonth();
+  const startDay = startDate.getDate();
 
-  if (isSameDayAndMonth) {
-    return `${startDateFormatted}`;
+  const endYear = adjustedEndDate.getFullYear();
+  const endMonth = adjustedEndDate.getMonth();
+  const endDay = adjustedEndDate.getDate();
+
+  // Compare dates - now using the adjusted end date
+  if (startYear === endYear && startMonth === endMonth && startDay === endDay) {
+    return formatDate(start_date);
   } else {
-    return `${startDateFormatted} and ${endDateFormatted}`;
+    return `${formatDate(start_date)} and ${formatDate(end_date)}`;
   }
-};
+}
 
 export function formatCurrencyWithCommas(number) {
   // Round to the nearest whole number

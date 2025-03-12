@@ -31,6 +31,8 @@ import { warning } from "../../utils/toast";
 import VerifyEmail from "./auth/VerifyEmail";
 import VerifyOtp from "./auth/VerifyOtp";
 import CreateNewPassword from "./auth/CreateNewPassword";
+import HouseOfRaha from "./house_of_raha";
+import RahaRepublic from "./raha_republic";
 
 const Stack = createNativeStackNavigator();
 
@@ -424,6 +426,48 @@ export default function ClubNavigator() {
                   style={{ color: "#000" }}
                 />
               ),
+            }}
+          />
+          <Stack.Screen
+            name="HouseOfRaha"
+            component={HouseOfRaha}
+            options={{
+              headerShown: true,
+              headerShadowVisible: false,
+              headerTintColor: "#fff",
+              headerStyle: {
+                backgroundColor: "#212529",
+              },
+              headerTitle: (props) => (
+                <Text
+                  value={"House of Raha"}
+                  {...props}
+                  variant={"subtitle"}
+                  style={{ color: "#fff" }}
+                />
+              ),
+              headerTitleAlign: "center",
+            }}
+          />
+          <Stack.Screen
+            name="RahaRepublic"
+            component={RahaRepublic}
+            options={{
+              headerShown: true,
+              headerShadowVisible: false,
+              headerTintColor: "#fff",
+              headerStyle: {
+                backgroundColor: "#212529",
+              },
+              headerTitle: (props) => (
+                <Text
+                  value={"House of Raha"}
+                  {...props}
+                  variant={"subtitle"}
+                  style={{ color: "#fff" }}
+                />
+              ),
+              headerTitleAlign: "center",
             }}
           />
         </>

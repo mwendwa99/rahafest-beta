@@ -1,12 +1,12 @@
 // components/NavCard.js
 import React from "react";
 import { TouchableOpacity, View, Text, StyleSheet } from "react-native";
-import { FontAwesome } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 
 const NavCard = ({ icon, title, onPress }) => {
   return (
     <TouchableOpacity style={styles.card} onPress={onPress}>
-      <FontAwesome name={icon} size={32} color="orange" />
+      <Ionicons name={icon} size={32} color="orange" />
       <Text style={styles.title}>{title}</Text>
     </TouchableOpacity>
   );
