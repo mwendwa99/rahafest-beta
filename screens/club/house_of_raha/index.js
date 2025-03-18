@@ -57,6 +57,19 @@ export default function HouseOfRaha() {
     }
   };
 
+  // Memoize the FormContent component to prevent unnecessary re-renders
+  // const MemoizedFormContent = React.useMemo(() => {
+  //   return (
+  //     <>
+  //       <Image
+  //         source={require("../../../assets/houseofraha.png")}
+  //         style={styles.image}
+  //       />
+  //       <View style={styles.formContainer}>{/* Your form elements */}</View>
+  //     </>
+  //   );
+  // }, [open, eventType, date, guests, setup, poster, showDatePicker]);
+
   const handleSubmit = () => {
     // Check required fields
     if (!eventType) {
@@ -73,13 +86,15 @@ export default function HouseOfRaha() {
     }
 
     // Console log the data
-    console.log({
-      eventType,
-      date,
-      guests: parseInt(guests),
-      setup,
-      poster,
-    });
+    console.log(
+      JSON.stringify({
+        eventType,
+        date,
+        guests: parseInt(guests),
+        setup,
+        poster,
+      })
+    );
 
     // You can add your form submission logic here
     Alert.alert("Success", "Event details submitted successfully");
@@ -155,6 +170,7 @@ export default function HouseOfRaha() {
           onChangeText={setSetup}
           multiline
           numberOfLines={3}
+          textAlignVertical="top"
         />
 
         <TouchableOpacity style={styles.uploadButton} onPress={pickImage}>
@@ -183,13 +199,15 @@ export default function HouseOfRaha() {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
     >
-      {/* Replace ScrollView with FlatList to fix the nesting VirtualizedLists error */}
+      {/* Only change these FlatList props */}
       <FlatList
         data={[{ key: "formContent" }]}
         renderItem={() => <FormContent />}
         keyExtractor={(item) => item.key}
         contentContainerStyle={styles.scrollContainer}
         showsVerticalScrollIndicator={true}
+        keyboardShouldPersistTaps="handled"
+        removeClippedSubviews={false}
       />
     </KeyboardAvoidingView>
   );

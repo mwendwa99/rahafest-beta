@@ -461,7 +461,7 @@ export default function ClubNavigator() {
               },
               headerTitle: (props) => (
                 <Text
-                  value={"House of Raha"}
+                  value={"Raha Republic"}
                   {...props}
                   variant={"subtitle"}
                   style={{ color: "#fff" }}
