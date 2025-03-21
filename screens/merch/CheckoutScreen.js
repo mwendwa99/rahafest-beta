@@ -11,17 +11,12 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { useCart } from "../../context/CartContext";
 import { formatCurrencyWithCommas } from "../../utils/helper";
-// import { createOrder } from "../../redux/merch/merchActions";
-import { useDispatch, useSelector } from "react-redux";
-// import { clearOrderState } from "../../redux/merch/merchSlice";
-import { PhoneInput } from "../../components";
 import { validatePhone } from "../../utils/form_validation";
+import api from "../../services/api.service";
 
 const CheckoutScreen = () => {
   const navigation = useNavigation();
   const { state, dispatch } = useCart();
-  const dispatchAction = useDispatch();
-  // const { order } = useSelector((state) => state.merch);
   const [isLoading, setIsloading] = useState(false);
 
   const [billingInfo, setBillingInfo] = useState({
@@ -61,12 +56,22 @@ const CheckoutScreen = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+  const renderAttributes = (attributes) => {
+    if (!attributes || Object.keys(attributes).length === 0) {
+      return null;
+    }
+
+    return Object.entries(attributes)
+      .map(([type, value]) => `${type}: ${value}`)
+      .join(", ");
+  };
+
   const formatOrderData = () => {
+    console.log(state.items);
     const formattedItems = state.items.map((item) => ({
       product: item.id,
       quantity: item.quantity,
-      // attr: [item.selectedSize.id, item.selectedColor.id],
-      attr: [item.selectedSizeId, item.selectedColorId],
+      attr: [item.attributes.id],
     }));
 
     return {
@@ -98,69 +103,62 @@ const CheckoutScreen = () => {
       const orderData = formatOrderData();
       console.log("Submitting order:", JSON.stringify(orderData));
 
-      dispatchAction(clearOrderState());
-      // const resultAction = await dispatchAction(createOrder(orderData));
+      const response = await api.post("orders/create-order", orderData);
 
-      if (createOrder.fulfilled.match(resultAction)) {
-        const orderResponse = resultAction.payload;
-        if (orderResponse?.order_number) {
-          Alert.alert("Success", "Your order has been placed successfully!", [
-            {
-              text: "OK",
-              onPress: () => {
-                dispatch({
-                  type: "CLEAR_CART",
-                });
-                navigation.navigate("Payment");
-              },
+      if (
+        response.data &&
+        response.data.data &&
+        response.data.data.order_number
+      ) {
+        Alert.alert("Success", "Your order has been placed successfully!", [
+          {
+            text: "OK",
+            onPress: () => {
+              dispatch({
+                type: "CLEAR_CART",
+              });
+              // navigation.navigate("Payment");
             },
-          ]);
-        } else {
-          Alert.alert("Error", "Order created but no order number received.");
-        }
+          },
+        ]);
       } else {
-        const errorResponse = resultAction.payload;
-        let errorMessage = "Failed to place the order. Please try again.";
-
-        if (errorResponse?.message) {
-          try {
-            // Extract the part after "An unexpected error occurred:"
-            const errorPart = errorResponse.message.split(
-              "An unexpected error occurred:"
-            )[1];
-
-            if (errorPart) {
-              // Clean and parse the error message string into an object
-              const cleanedErrorPart = errorPart.trim();
-              const errorObject = JSON.parse(
-                cleanedErrorPart.replace(/'/g, '"')
-              ); // Fix single quotes to double quotes
-
-              // Loop through the error object to find the error string for any field
-              for (const field in errorObject) {
-                if (
-                  Array.isArray(errorObject[field]) &&
-                  errorObject[field][0]?.string
-                ) {
-                  errorMessage = errorObject[field][0].string;
-                  break; // Display the first error found
-                }
-              }
-            } else {
-              errorMessage = errorResponse.message;
-            }
-          } catch (parseError) {
-            console.error("Error parsing error message:", parseError);
-            errorMessage = "Wrong phone number format";
-          }
-        }
-
-        console.log(errorMessage);
-        Alert.alert("Error", errorMessage);
+        Alert.alert("Error", "Order created but no order number received.");
       }
     } catch (error) {
+      let errorMessage = "Failed to place the order. Please try again.";
+
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        try {
+          const errorPart = error.response.data.message.split(
+            "An unexpected error occurred:"
+          )[1];
+          if (errorPart) {
+            const cleanedErrorPart = errorPart.trim();
+            const errorObject = JSON.parse(cleanedErrorPart.replace(/'/g, '"'));
+            for (const field in errorObject) {
+              if (
+                Array.isArray(errorObject[field]) &&
+                errorObject[field][0]?.string
+              ) {
+                errorMessage = errorObject[field][0].string;
+                break;
+              }
+            }
+          } else {
+            errorMessage = error.response.data.message;
+          }
+        } catch (parseError) {
+          console.error("Error parsing error message:", parseError);
+          errorMessage = "Wrong phone number format";
+        }
+      }
+
       console.error("Order creation failed:", error);
-      Alert.alert("Error", "An unexpected error occurred. Please try again.");
+      Alert.alert("Error", errorMessage);
     } finally {
       setIsloading(false);
     }
@@ -215,7 +213,6 @@ const CheckoutScreen = () => {
             keyboardType="phone-pad"
             placeholderTextColor={"#888"}
           />
-          {/* <PhoneInput /> */}
           {errors.phone && <Text style={styles.errorText}>{errors.phone}</Text>}
         </View>
 
@@ -241,9 +238,18 @@ const CheckoutScreen = () => {
         {state.items.map((item, index) => (
           <View key={index} style={styles.orderItem}>
             <Text style={styles.itemName}>{item.name}</Text>
-            <Text style={styles.itemDetails}>
-              Size: {item.selectedSize} | Color: {item.selectedColor}
-            </Text>
+            {item.attributes && Object.keys(item.attributes).length > 0 ? (
+              <Text style={styles.cartItemVariant}>
+                {renderAttributes(item.attributes)}
+              </Text>
+            ) : (
+              // For backward compatibility with existing cart items
+              <Text style={styles.cartItemVariant}>
+                {item.selectedSize && `Size: ${item.selectedSize}`}
+                {item.selectedSize && item.selectedColor && ", "}
+                {item.selectedColor && `Color: ${item.selectedColor}`}
+              </Text>
+            )}
             <Text style={styles.itemDetails}>Quantity: {item.quantity}</Text>
             <Text style={styles.itemPrice}>
               Kes.{" "}
@@ -296,7 +302,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
-    // color: "#888",
   },
   inputError: {
     borderColor: "#ff4444",

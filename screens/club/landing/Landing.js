@@ -25,8 +25,8 @@ const navigationItems = [
   { id: "2", icon: "mail", title: "Messages", link: "Friends" },
   { id: "3", icon: "star", title: "Exclusive Offers", link: "Deals" },
   { id: "4", icon: "person", title: "Account", link: "Account" },
-  { id: "5", icon: "home", title: "House of Raha", link: "HouseOfRaha" },
-  { id: "6", icon: "disc", title: "Raha Republic", link: "RahaRepublic" },
+  // { id: "5", icon: "home", title: "House of Raha", link: "HouseOfRaha" },
+  // { id: "6", icon: "disc", title: "Raha Republic", link: "RahaRepublic" },
 ];
 
 const rahaClubDescription =

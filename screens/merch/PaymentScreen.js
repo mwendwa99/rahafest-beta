@@ -71,8 +71,8 @@ const PaymentScreen = ({ navigation }) => {
     }
   };
 
-  console.log(JSON.stringify(error));
-  console.log(JSON.stringify(mpesa_response));
+  // console.log(JSON.stringify(error));
+  // console.log(JSON.stringify(mpesa_response));
 
   const renderProductItem = (product) => (
     <View key={product.product_id} style={styles.productCard}>

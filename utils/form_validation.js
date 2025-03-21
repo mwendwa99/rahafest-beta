@@ -47,14 +47,14 @@ export const validatePhone = (phone) => {
   }
 
   // Check if starts with '+'
-  if (!phone.startsWith("+")) {
-    return {
-      isValid: false,
-      error: "Phone number must start with '+'",
-      normalizedPhone: null,
-      country: null,
-    };
-  }
+  // if (!phone.startsWith("+")) {
+  //   return {
+  //     isValid: false,
+  //     error: "Phone number must start with '+'",
+  //     normalizedPhone: null,
+  //     country: null,
+  //   };
+  // }
 
   // Remove all whitespace and non-digit characters (except leading +)
   const trimmedPhone = phone.replace(/\s+/g, "");

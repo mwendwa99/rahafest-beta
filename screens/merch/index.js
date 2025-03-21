@@ -11,6 +11,8 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { useCart } from "../../context/CartContext";
 import PaymentScreen from "./PaymentScreen";
+import CategoryProducts from "./CategoryProducts";
+import ProductDetail from "./ProductDetail";
 
 const Stack = createNativeStackNavigator();
 
@@ -22,7 +24,7 @@ export default function MerchNavigator() {
     <Stack.Navigator initialRouteName="Market">
       <Stack.Screen
         name="Market"
-        component={MerchPage}
+        component={Market}
         options={{
           headerShown: true,
           headerShadowVisible: false,
@@ -37,6 +39,68 @@ export default function MerchNavigator() {
       <Stack.Screen
         name="Merchandise"
         component={MerchPage}
+        options={{
+          headerShown: true,
+          headerShadowVisible: false,
+          headerTintColor: "#fff",
+          headerStyle: {
+            backgroundColor: "#212529",
+          },
+          headerTitle: "Merchandise",
+          // Add to your navigation options
+          headerRight: () => (
+            <TouchableOpacity
+              onPress={() => navigation.navigate("Cart")}
+              style={styles.cartButton}
+            >
+              <Text>🛒</Text>
+              <Text style={styles.cartCounter}>
+                {` ${
+                  state?.items?.reduce(
+                    (total, item) => total + item.quantity,
+                    0
+                  ) || 0
+                }`}
+              </Text>
+            </TouchableOpacity>
+          ),
+          headerTitleAlign: "center",
+        }}
+      />
+      <Stack.Screen
+        name="CategoryProducts"
+        component={CategoryProducts}
+        options={{
+          headerShown: true,
+          headerShadowVisible: false,
+          headerTintColor: "#fff",
+          headerStyle: {
+            backgroundColor: "#212529",
+          },
+          headerTitle: "Merchandise",
+          // Add to your navigation options
+          headerRight: () => (
+            <TouchableOpacity
+              onPress={() => navigation.navigate("Cart")}
+              style={styles.cartButton}
+            >
+              <Text>🛒</Text>
+              <Text style={styles.cartCounter}>
+                {` ${
+                  state?.items?.reduce(
+                    (total, item) => total + item.quantity,
+                    0
+                  ) || 0
+                }`}
+              </Text>
+            </TouchableOpacity>
+          ),
+          headerTitleAlign: "center",
+        }}
+      />
+      <Stack.Screen
+        name="ProductDetail"
+        component={ProductDetail}
         options={{
           headerShown: true,
           headerShadowVisible: false,

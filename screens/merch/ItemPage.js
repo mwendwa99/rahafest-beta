@@ -14,8 +14,6 @@ import { useCart } from "../../context/CartContext";
 import { formatCurrencyWithCommas } from "../../utils/helper";
 import { success } from "../../utils/toast";
 
-const { width } = Dimensions.get("window");
-
 const ItemPage = ({ navigation }) => {
   const route = useRoute();
   const { item } = route.params;

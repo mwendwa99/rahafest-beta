@@ -29,6 +29,17 @@ export default function CartScreen({ navigation }) {
     });
   };
 
+  // Render attributes based on the new dynamic attributes structure
+  const renderAttributes = (attributes) => {
+    if (!attributes || Object.keys(attributes).length === 0) {
+      return null;
+    }
+
+    return Object.entries(attributes)
+      .map(([type, value]) => `${type}: ${value}`)
+      .join(", ");
+  };
+
   const renderCartItem = ({ item }) => (
     <View style={styles.cartItem}>
       <Image
@@ -37,9 +48,19 @@ export default function CartScreen({ navigation }) {
       />
       <View style={styles.cartItemDetails}>
         <Text style={styles.cartItemName}>{item.name}</Text>
-        <Text style={styles.cartItemVariant}>
-          Size: {item.selectedSize}, Color: {item.selectedColor}
-        </Text>
+        {/* Display dynamic attributes */}
+        {item.attributes && Object.keys(item.attributes).length > 0 ? (
+          <Text style={styles.cartItemVariant}>
+            {renderAttributes(item.attributes)}
+          </Text>
+        ) : (
+          // For backward compatibility with existing cart items
+          <Text style={styles.cartItemVariant}>
+            {item.selectedSize && `Size: ${item.selectedSize}`}
+            {item.selectedSize && item.selectedColor && ", "}
+            {item.selectedColor && `Color: ${item.selectedColor}`}
+          </Text>
+        )}
         <Text style={styles.cartItemPrice}>
           Kes.{" "}
           {formatCurrencyWithCommas(parseFloat(item.price) * item.quantity)}
@@ -121,6 +142,7 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 8,
+    objectFit: "contain",
   },
   cartItemDetails: {
     flex: 1,
