@@ -37,12 +37,12 @@ export default function CategoryProducts({ route, navigation }) {
   const renderProductItem = ({ item }) => (
     <TouchableOpacity
       style={styles.productCard}
-      //   onPress={
-      //     item.quantity > 0
-      //       ? () => navigation.navigate("ProductDetail", { product: item })
-      //       : () => alert(`${item.name} will be available soon!`)
-      //   }
-      onPress={() => navigation.navigate("ProductDetail", { product: item })}
+      onPress={
+        item.quantity > 0
+          ? () => navigation.navigate("ProductDetail", { product: item })
+          : () => alert(`${item.name} will be available soon!`)
+      }
+      // onPress={() => navigation.navigate("ProductDetail", { product: item })}
     >
       <Image
         source={{ uri: item.featured_image }}
