@@ -5,19 +5,14 @@ import {
   FlatList,
   Alert,
   Dimensions,
-  Platform,
   StatusBar,
 } from "react-native";
-
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUser } from "../../../store/auth/authActions";
-// import { fetchAds } from "../../../redux/events/eventActions";
 import api from "../../../services/club.api.service";
 import { useNotification } from "../../../Notifications";
-
 import { ActivityIndicator } from "react-native-paper";
 import { AdCarousel, NavCard, Text } from "../../../components";
-
 import * as Device from "expo-device";
 
 const navigationItems = [
@@ -25,7 +20,7 @@ const navigationItems = [
   { id: "2", icon: "mail", title: "Messages", link: "Friends" },
   { id: "3", icon: "star", title: "Exclusive Offers", link: "Deals" },
   { id: "4", icon: "person", title: "Account", link: "Account" },
-  // { id: "5", icon: "home", title: "House of Raha", link: "HouseOfRaha" },
+  { id: "5", icon: "home", title: "House of Raha", link: "HouseOfRaha" },
   // { id: "6", icon: "disc", title: "Raha Republic", link: "RahaRepublic" },
 ];
 
@@ -33,15 +28,10 @@ const rahaClubDescription =
   "Welcome to Raha Club, your exclusive lifestyle companion.";
 
 export default function Landing({ navigation }) {
-  // Move ALL hooks to the top, before any conditional logic
   const { expoPushToken } = useNotification();
   const { user, token, loading } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const [isDeviceRegistered, setIsDeviceRegistered] = useState(false);
-
-  // useEffect(() => {
-  //   dispatch(fetchAds());
-  // }, []);
 
   useEffect(() => {
     if (!token) {
@@ -72,8 +62,6 @@ export default function Landing({ navigation }) {
         })
         .catch((error) => {
           console.error("Failed to register device:", error);
-          // Only set registered to true if it's not a server error
-          // This allows retrying on actual failures
           if (error.response?.status === 409) {
             // Conflict - device already registered
             setIsDeviceRegistered(true);
@@ -83,14 +71,13 @@ export default function Landing({ navigation }) {
   }, [user?.id, expoPushToken, isDeviceRegistered]);
 
   const handlePress = (link) => {
-    if (link === null || link === undefined) {
+    if (link == null) {
       Alert.alert("Coming Soon!", "Stay tuned for updates!");
     } else {
       navigation.navigate(link);
     }
   };
 
-  // Move the conditional render AFTER all hooks
   if (loading) {
     return (
       <View style={styles.loader}>
@@ -99,19 +86,28 @@ export default function Landing({ navigation }) {
     );
   }
 
+  // Header component to display greeting and description
+  const ListHeader = () => (
+    <View style={styles.header}>
+      <Text
+        value={`Hello, ${user?.first_name || ""}`}
+        variant="subtitle"
+        color="#000"
+      />
+      <Text value={rahaClubDescription} variant="body" color="#000" />
+    </View>
+  );
+
+  // Footer component for the ads section
+  const ListFooter = () => (
+    <View style={styles.ads}>
+      <AdCarousel data={[]} variant="XL" />
+    </View>
+  );
+
   return (
     <View style={styles.container}>
-      <View style={{ padding: 10 }}>
-        <Text
-          value={`Hello, ${user?.first_name || ""}`}
-          variant="subtitle"
-          color="#000"
-        />
-        <Text value={rahaClubDescription} variant="body" color="#000" />
-      </View>
-
       <FlatList
-        style={styles.cardList}
         data={navigationItems}
         renderItem={({ item }) => (
           <NavCard
@@ -122,13 +118,10 @@ export default function Landing({ navigation }) {
         )}
         keyExtractor={(item) => item.id}
         numColumns={2}
-        contentContainerStyle={styles.grid}
+        contentContainerStyle={styles.listContent}
+        ListHeaderComponent={ListHeader}
+        ListFooterComponent={ListFooter}
       />
-
-      <View style={styles.ads}>
-        <AdCarousel data={[]} variant="XL" />
-      </View>
-
       <StatusBar barStyle="light-content" />
     </View>
   );
@@ -143,15 +136,18 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  grid: {
-    justifyContent: "center",
+  listContent: {
+    padding: 10,
+    // Ensure the content takes up enough space for proper scrolling
+    minHeight: Dimensions.get("window").height,
   },
-  cardList: {
-    marginTop: 20,
+  header: {
+    marginBottom: 20,
   },
   ads: {
     height: 200,
     marginVertical: 20,
-    width: Dimensions.get("window").width,
+    width: Dimensions.get("window").width - 20,
+    alignSelf: "center",
   },
 });
