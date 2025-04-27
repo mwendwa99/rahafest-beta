@@ -105,7 +105,10 @@ export default function HouseOfRaha() {
     };
 
     try {
-      const response = await api.post("/house-of-raha/bookings", payload);
+      const response = await api.post(
+        "/house-of-raha/bookings/create",
+        payload
+      );
       console.log("Booking created:", response.data);
       Alert.alert("Success", "Event details submitted successfully");
     } catch (error) {
