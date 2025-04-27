@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -8,13 +8,14 @@ import {
   Alert,
   KeyboardAvoidingView,
   StyleSheet,
-  FlatList,
   Platform,
+  FlatList,
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import * as ImagePicker from "expo-image-picker";
 import { Ionicons as Icon } from "@expo/vector-icons";
+import api from "../../../services/club.api.service";
 
 export default function HouseOfRaha() {
   const [open, setOpen] = useState(false);
@@ -24,6 +25,30 @@ export default function HouseOfRaha() {
   const [setup, setSetup] = useState("");
   const [poster, setPoster] = useState(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [bookingTypes, setBookingTypes] = useState([]);
+
+  // fetch booking types from /house-of-raha/bookingstypes
+  useEffect(() => {
+    const fetchBookingTypes = async () => {
+      try {
+        const response = await api.get("house-of-raha/bookingstypes");
+        if (response.data && response.data.data) {
+          const types = response.data.data.map((type) => ({
+            label: type.name,
+            value: type.id,
+          }));
+          setBookingTypes(types);
+          if (types.length > 0) {
+            setEventType(types[0].value);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching booking types:", error);
+        Alert.alert("Error", "Failed to fetch booking types");
+      }
+    };
+    fetchBookingTypes();
+  }, []);
 
   // Function to pick an image from gallery
   const pickImage = async () => {
@@ -57,21 +82,7 @@ export default function HouseOfRaha() {
     }
   };
 
-  // Memoize the FormContent component to prevent unnecessary re-renders
-  // const MemoizedFormContent = React.useMemo(() => {
-  //   return (
-  //     <>
-  //       <Image
-  //         source={require("../../../assets/houseofraha.png")}
-  //         style={styles.image}
-  //       />
-  //       <View style={styles.formContainer}>{/* Your form elements */}</View>
-  //     </>
-  //   );
-  // }, [open, eventType, date, guests, setup, poster, showDatePicker]);
-
-  const handleSubmit = () => {
-    // Check required fields
+  const handleSubmit = async () => {
     if (!eventType) {
       Alert.alert("Error", "Please select an event type");
       return;
@@ -85,128 +96,155 @@ export default function HouseOfRaha() {
       return;
     }
 
-    // Console log the data
-    console.log(
-      JSON.stringify({
-        eventType,
-        date,
-        guests: parseInt(guests),
-        setup,
-        poster,
-      })
-    );
+    const payload = {
+      booking_type_id: eventType,
+      start_time: date.toISOString(),
+      end_time: new Date(date.getTime() + 2 * 60 * 60 * 1000).toISOString(), // +2 hours
+      number_of_guests: parseInt(guests),
+      special_requests: setup || "", // optional field
+    };
 
-    // You can add your form submission logic here
-    Alert.alert("Success", "Event details submitted successfully");
+    try {
+      const response = await api.post("/house-of-raha/bookings", payload);
+      console.log("Booking created:", response.data);
+      Alert.alert("Success", "Event details submitted successfully");
+    } catch (error) {
+      console.error("Error submitting booking:", JSON.stringify(error));
+      Alert.alert("Error", "Failed to submit booking");
+    }
   };
 
-  // Form content as a separate component to be rendered inside FlatList
-  const FormContent = () => (
-    <>
+  // Render form content as a single item for FlatList
+  const renderFormContent = () => (
+    <View style={styles.formContainer}>
       <Image
         source={require("../../../assets/houseofraha.png")}
         style={styles.image}
       />
 
-      <View style={styles.formContainer}>
-        <DropDownPicker
-          style={styles.dropdown}
-          placeholder="Select Event Type"
-          open={open}
-          value={eventType}
-          items={[
-            { label: "House Party", value: "houseParty" },
-            { label: "Birthday Party", value: "birthdayParty" },
-            { label: "Listening Party", value: "listeningParty" },
-            { label: "Live Deejay Mix", value: "liveDeejay" },
-            { label: "Interviews", value: "interviews" },
-          ]}
-          setOpen={setOpen}
-          setValue={setEventType}
-          // Set zIndex to ensure dropdown appears above other elements
-          zIndex={3000}
-          zIndexInverse={1000}
-        />
-
-        <TouchableOpacity
-          style={styles.dateButton}
-          onPress={() => setShowDatePicker(true)}
-        >
-          <Icon name="calendar" size={24} color="#666" />
-          <Text style={styles.dateText}>
-            {date.toLocaleDateString("en-US", {
-              year: "numeric",
-              month: "short",
-              day: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
+      {/* Event Type Dropdown - Only show when dropdown is closed */}
+      {!open && (
+        <TouchableOpacity style={styles.input} onPress={() => setOpen(true)}>
+          <Text style={eventType ? styles.inputText : styles.placeholderText}>
+            {eventType
+              ? bookingTypes.find((item) => item.value === eventType)?.label
+              : "Select Event Type"}
           </Text>
         </TouchableOpacity>
+      )}
 
-        <DateTimePickerModal
-          isVisible={showDatePicker}
-          mode="datetime"
-          date={date}
-          onConfirm={(selectedDate) => {
-            setShowDatePicker(false);
-            setDate(selectedDate);
-          }}
-          onCancel={() => setShowDatePicker(false)}
-        />
-
-        <TextInput
-          style={styles.input}
-          placeholder="Expected Guests"
-          value={guests}
-          onChangeText={setGuests}
-          keyboardType="numeric"
-        />
-
-        <TextInput
-          style={[styles.input, styles.multiline]}
-          placeholder="Setup Requirements (Optional)"
-          value={setup}
-          onChangeText={setSetup}
-          multiline
-          numberOfLines={3}
-          textAlignVertical="top"
-        />
-
-        <TouchableOpacity style={styles.uploadButton} onPress={pickImage}>
-          <Icon name="cloud-upload-outline" size={24} color="#666" />
-          <Text style={styles.uploadText}>Upload Event Poster (Optional)</Text>
-        </TouchableOpacity>
-
-        {poster && (
-          <Image
-            source={{ uri: poster }}
-            style={styles.posterPreview}
-            resizeMode="cover"
+      {/* Dropdown displayed when opened */}
+      {open && (
+        <View style={{ zIndex: 3000 }}>
+          <DropDownPicker
+            style={styles.dropdown}
+            placeholder="Select Event Type"
+            open={open}
+            value={eventType}
+            items={bookingTypes}
+            setOpen={setOpen}
+            setValue={setEventType}
+            setItems={setBookingTypes}
+            zIndex={3000}
+            zIndexInverse={1000}
+            listMode="SCROLLVIEW"
+            scrollViewProps={{
+              keyboardShouldPersistTaps: "always",
+              contentContainerStyle: { paddingBottom: 20 },
+            }}
           />
-        )}
+        </View>
+      )}
 
-        <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-          <Text style={styles.submitButtonText}>Submit Event Details</Text>
-        </TouchableOpacity>
-      </View>
-    </>
+      {/* Date Picker Button */}
+      <TouchableOpacity
+        style={styles.dateButton}
+        onPress={() => setShowDatePicker(true)}
+      >
+        <Icon name="calendar" size={24} color="#666" />
+        <Text style={styles.dateText}>
+          {date.toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
+        </Text>
+      </TouchableOpacity>
+
+      <DateTimePickerModal
+        isVisible={showDatePicker}
+        mode="datetime"
+        date={date}
+        onConfirm={(selectedDate) => {
+          setShowDatePicker(false);
+          setDate(selectedDate);
+        }}
+        onCancel={() => setShowDatePicker(false)}
+      />
+
+      {/* Guest Input */}
+      <TextInput
+        style={styles.input}
+        placeholder="Expected Guests"
+        value={guests}
+        onChangeText={setGuests}
+        keyboardType="numeric"
+        returnKeyType="next"
+        blurOnSubmit={false}
+      />
+
+      {/* Setup Requirements Input */}
+      <TextInput
+        style={[styles.input, styles.multiline]}
+        placeholder="Setup Requirements (Optional)"
+        value={setup}
+        onChangeText={setSetup}
+        multiline
+        numberOfLines={3}
+        textAlignVertical="top"
+      />
+
+      {/* Image Upload Button */}
+      <TouchableOpacity style={styles.uploadButton} onPress={pickImage}>
+        <Icon name="cloud-upload-outline" size={24} color="#666" />
+        <Text style={styles.uploadText}>Upload Event Poster (Optional)</Text>
+      </TouchableOpacity>
+
+      {/* Image Preview */}
+      {poster && (
+        <Image
+          source={{ uri: poster }}
+          style={styles.posterPreview}
+          resizeMode="cover"
+        />
+      )}
+
+      {/* Submit Button */}
+      <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+        <Text style={styles.submitButtonText}>Submit Event Details</Text>
+      </TouchableOpacity>
+    </View>
   );
 
   return (
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 30}
+      enabled
     >
-      {/* Only change these FlatList props */}
+      {/* Using FlatList instead of ScrollView to avoid nesting issues */}
       <FlatList
-        data={[{ key: "formContent" }]}
-        renderItem={() => <FormContent />}
+        data={[{ key: "form" }]}
+        renderItem={() => renderFormContent()}
         keyExtractor={(item) => item.key}
         contentContainerStyle={styles.scrollContainer}
+        keyboardShouldPersistTaps="always"
+        keyboardDismissMode="on-drag"
         showsVerticalScrollIndicator={true}
-        keyboardShouldPersistTaps="handled"
+        scrollEnabled={true}
         removeClippedSubviews={false}
       />
     </KeyboardAvoidingView>
@@ -220,7 +258,10 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     padding: 20,
-    paddingBottom: 40, // Extra padding at the bottom for better scrolling
+    paddingBottom: 100, // Extra padding at the bottom for better scrolling
+  },
+  formContainer: {
+    width: "100%",
   },
   image: {
     width: "100%",
@@ -228,11 +269,10 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
     marginBottom: 20,
   },
-  formContainer: {
-    width: "100%",
-  },
   dropdown: {
     marginBottom: 15,
+    borderColor: "#ddd",
+    backgroundColor: "#fff",
   },
   dateButton: {
     flexDirection: "row",
@@ -253,6 +293,13 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 15,
     marginBottom: 15,
+    backgroundColor: "#fff",
+  },
+  inputText: {
+    color: "#333",
+  },
+  placeholderText: {
+    color: "#999",
   },
   multiline: {
     height: 100,
