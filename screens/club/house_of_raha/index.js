@@ -243,7 +243,7 @@ export default function HouseOfRaha() {
       {/* Setup Requirements Input */}
       <TextInput
         style={[styles.input, styles.multilineInput]}
-        placeholder="Setup Requirements (Optional)"
+        placeholder="Setup Requirements"
         placeholderTextColor="#999"
         value={setup}
         onChangeText={setSetup}
