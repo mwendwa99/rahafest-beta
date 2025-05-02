@@ -15,13 +15,16 @@ import { ActivityIndicator } from "react-native-paper";
 import { AdCarousel, NavCard, Text } from "../../../components";
 import * as Device from "expo-device";
 
+const screenWidth = Dimensions.get("window").width;
+const screenHeight = Dimensions.get("window").height;
+const numColumns = screenWidth >= 700 ? 4 : 2;
+
 const navigationItems = [
   { id: "1", icon: "globe", title: "Live Chat", link: "Live" },
   { id: "2", icon: "mail", title: "Messages", link: "Friends" },
   { id: "3", icon: "star", title: "Exclusive Offers", link: "Deals" },
   { id: "4", icon: "person", title: "Account", link: "Account" },
   { id: "5", icon: "home", title: "House of Raha", link: "HouseOfRaha" },
-  // { id: "6", icon: "disc", title: "Raha Republic", link: "RahaRepublic" },
 ];
 
 const rahaClubDescription =
@@ -108,6 +111,7 @@ export default function Landing({ navigation }) {
   return (
     <View style={styles.container}>
       <FlatList
+        key={numColumns}
         data={navigationItems}
         renderItem={({ item }) => (
           <NavCard
@@ -117,11 +121,12 @@ export default function Landing({ navigation }) {
           />
         )}
         keyExtractor={(item) => item.id}
-        numColumns={2}
+        numColumns={numColumns}
         contentContainerStyle={styles.listContent}
         ListHeaderComponent={ListHeader}
         ListFooterComponent={ListFooter}
       />
+
       <StatusBar barStyle="light-content" />
     </View>
   );
@@ -139,7 +144,7 @@ const styles = StyleSheet.create({
   listContent: {
     padding: 10,
     // Ensure the content takes up enough space for proper scrolling
-    minHeight: Dimensions.get("window").height,
+    minHeight: screenHeight,
   },
   header: {
     marginBottom: 20,
@@ -147,7 +152,7 @@ const styles = StyleSheet.create({
   ads: {
     height: 200,
     marginVertical: 20,
-    width: Dimensions.get("window").width - 20,
+    width: screenWidth - 20,
     alignSelf: "center",
   },
 });

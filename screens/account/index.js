@@ -112,8 +112,9 @@ export default function Account({ navigation }) {
         />
       }
       nestedScrollEnabled
+      style={styles.container}
     >
-      <View style={styles.container}>
+      <View style={styles.body}>
         <Avatar.Text
           size={100}
           color="#fff"
@@ -224,10 +225,17 @@ export default function Account({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    width: "100%",
+    backgroundColor: "#fff",
+    padding: 10,
+  },
+  body: {
     alignItems: "center",
-    margin: 20,
-    padding: 20,
-    minHeight: 800,
+    justifyContent: "center",
+    alignSelf: "center",
+
+    maxWidth: 400,
+    width: "100%",
   },
   column: {
     alignSelf: "flex-start",
@@ -248,7 +256,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   walletCard: {
-    width: 360,
+    // width: "100%",
     height: 150,
     borderRadius: 10,
     marginVertical: 10,

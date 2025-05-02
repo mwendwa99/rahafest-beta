@@ -99,81 +99,101 @@ export default function Login({ navigation }) {
   };
 
   return (
-    <ImageBackground
-      source={pattern}
-      resizeMode="repeat"
-      style={styles.container}
-    >
-      <View style={styles.section}>
-        <View style={styles.logoContainer}>
-          <Image source={logo} style={styles.logo} />
-        </View>
+    <View style={styles.container}>
+      <ImageBackground
+        source={pattern}
+        resizeMode="repeat"
+        style={styles.imageBg}
+      >
         <View style={styles.section}>
-          {errors.general && (
-            <Text
-              style={{ color: "red", textAlign: "center", marginBottom: 10 }}
-              value={errors.general}
-            />
-          )}
+          <View style={styles.logoContainer}>
+            <Image source={logo} style={styles.logo} />
+            <RNText
+              style={{
+                color: "#fff",
+                textAlign: "center",
+                fontSize: 20,
+                fontWeight: "bold",
+                marginTop: 10,
+              }}
+            >
+              Login
+            </RNText>
+          </View>
+          <View style={styles.section}>
+            {errors.general && (
+              <Text
+                style={{ color: "red", textAlign: "center", marginBottom: 10 }}
+                value={errors.general}
+              />
+            )}
 
-          <View style={styles.row}>
-            <Input
-              value={formData.email}
-              onChange={(value) => handleInputChange("email", value)}
-              placeholder="Email"
-              keyboardType="email-address"
-              inputMode="email"
-              autoComplete="email"
+            <View style={styles.row}>
+              <Input
+                value={formData.email}
+                onChange={(value) => handleInputChange("email", value)}
+                placeholder="Email"
+                keyboardType="email-address"
+                inputMode="email"
+                autoComplete="email"
+              />
+            </View>
+            {getInputError("email")}
+
+            <View style={styles.row}>
+              <Input
+                value={formData.password}
+                onChange={(value) => handleInputChange("password", value)}
+                placeholder="Password"
+                keyboardType="default"
+                autoComplete="password"
+                secureTextEntry={!showPassword}
+                right={
+                  <TextInput.Icon
+                    icon={showPassword ? "eye" : "eye-off"}
+                    onPress={() => setShowPassword(!showPassword)}
+                    size={24}
+                  />
+                }
+              />
+            </View>
+            {getInputError("password")}
+
+            <Pressable
+              style={{ padding: 10, height: 50 }}
+              onPress={() => navigation.navigate("VerifyEmail")}
+            >
+              <Text value={"forgot password?"} style={{ color: "#fafafa" }} />
+            </Pressable>
+
+            <Button
+              label={loading ? "Logging in..." : "Login"}
+              onPress={handleLogin}
+              variant="contained"
+            />
+            <Button
+              label="New here? Register"
+              onPress={() => navigation.navigate("Register")}
+              variant="text"
             />
           </View>
-          {getInputError("email")}
-
-          <View style={styles.row}>
-            <Input
-              value={formData.password}
-              onChange={(value) => handleInputChange("password", value)}
-              placeholder="Password"
-              keyboardType="default"
-              autoComplete="password"
-              secureTextEntry={!showPassword}
-              right={
-                <TextInput.Icon
-                  icon={showPassword ? "eye" : "eye-off"}
-                  onPress={() => setShowPassword(!showPassword)}
-                  size={24}
-                />
-              }
-            />
-          </View>
-          {getInputError("password")}
-
-          <Pressable
-            style={{ padding: 10, height: 50 }}
-            onPress={() => navigation.navigate("VerifyEmail")}
-          >
-            <Text value={"forgot password?"} style={{ color: "#fafafa" }} />
-          </Pressable>
-
-          <Button
-            label={loading ? "Logging in..." : "Login"}
-            onPress={handleLogin}
-            variant="contained"
-          />
-          <Button
-            label="New here? Register"
-            onPress={() => navigation.navigate("Register")}
-            variant="text"
-          />
         </View>
-      </View>
-      <StatusBar style="light" />
-    </ImageBackground>
+        <StatusBar style="light" />
+      </ImageBackground>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#000000",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  imageBg: {
+    margin: "auto",
+    maxWidth: 500,
     width: "100%",
     height: "100%",
   },

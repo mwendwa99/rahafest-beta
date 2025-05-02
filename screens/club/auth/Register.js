@@ -3,8 +3,8 @@ import {
   StyleSheet,
   View,
   Platform,
-  Dimensions,
   ScrollView,
+  Text as RNText,
 } from "react-native";
 import { ImageBackground } from "react-native";
 import { StatusBar } from "expo-status-bar";
@@ -139,151 +139,173 @@ export default function Register({ navigation }) {
   };
 
   return (
-    <ImageBackground
-      source={pattern}
-      resizeMode="repeat"
-      style={styles.container}
-    >
-      <ScrollView style={styles.section}>
-        <View style={styles.section}>
-          {errors.general && (
-            <Text
-              style={{ color: "red", textAlign: "center", marginBottom: 10 }}
-              value={errors.general}
-            />
-          )}
+    <View style={styles.container}>
+      <ImageBackground
+        source={pattern}
+        resizeMode="repeat"
+        style={styles.imageBg}
+      >
+        <ScrollView style={styles.section}>
+          <View style={styles.section}>
+            <RNText
+              style={{
+                color: "#fff",
+                textAlign: "center",
+                fontSize: 20,
+                fontWeight: "bold",
+                marginTop: 10,
+              }}
+            >
+              Register
+            </RNText>
+            {errors.general && (
+              <Text
+                style={{ color: "red", textAlign: "center", marginBottom: 10 }}
+                value={errors.general}
+              />
+            )}
 
-          <View style={styles.column}>
-            <Input
-              required
-              value={formData.firstName}
-              onChange={(value) => handleInputChange("firstName", value)}
-              placeholder="First Name *"
-            />
-            {getInputError("firstName")}
-          </View>
+            <View style={styles.column}>
+              <Input
+                required
+                value={formData.firstName}
+                onChange={(value) => handleInputChange("firstName", value)}
+                placeholder="First Name *"
+              />
+              {getInputError("firstName")}
+            </View>
 
-          <View style={styles.column}>
-            <Input
-              required
-              value={formData.lastName}
-              onChange={(value) => handleInputChange("lastName", value)}
-              placeholder="Last Name *"
-            />
-            {getInputError("lastName")}
-          </View>
+            <View style={styles.column}>
+              <Input
+                required
+                value={formData.lastName}
+                onChange={(value) => handleInputChange("lastName", value)}
+                placeholder="Last Name *"
+              />
+              {getInputError("lastName")}
+            </View>
 
-          <View style={styles.column}>
-            <Input
-              value={formData.email}
-              onChange={(value) => handleInputChange("email", value)}
-              placeholder="Email *"
-              keyboardType="email-address"
-              inputMode="email"
-              autoComplete="email"
-              required
-            />
-            {getInputError("email")}
-          </View>
+            <View style={styles.column}>
+              <Input
+                value={formData.email}
+                onChange={(value) => handleInputChange("email", value)}
+                placeholder="Email *"
+                keyboardType="email-address"
+                inputMode="email"
+                autoComplete="email"
+                required
+              />
+              {getInputError("email")}
+            </View>
 
-          <View style={styles.column}>
-            <Input
-              value={formData.phone}
-              onChange={(value) => handleInputChange("phone", value)}
-              placeholder="Phone (e.g., 254712345678) *"
-              keyboardType="phone-pad"
-              inputMode="tel"
-              autoComplete="tel"
-              required
-            />
-            {getInputError("phone")}
-          </View>
+            <View style={styles.column}>
+              <Input
+                value={formData.phone}
+                onChange={(value) => handleInputChange("phone", value)}
+                placeholder="Phone (e.g., 254712345678) *"
+                keyboardType="phone-pad"
+                inputMode="tel"
+                autoComplete="tel"
+                required
+              />
+              {getInputError("phone")}
+            </View>
 
-          <View style={styles.column}>
-            <Input
-              value={formData.password}
-              onChange={(value) => handleInputChange("password", value)}
-              placeholder="Password *"
-              required
-              secureTextEntry={!showPassword}
-              right={
-                <TextInput.Icon
-                  icon={showPassword ? "eye" : "eye-off"}
-                  onPress={() => setShowPassword(!showPassword)}
+            <View style={styles.column}>
+              <Input
+                value={formData.password}
+                onChange={(value) => handleInputChange("password", value)}
+                placeholder="Password *"
+                required
+                secureTextEntry={!showPassword}
+                right={
+                  <TextInput.Icon
+                    icon={showPassword ? "eye" : "eye-off"}
+                    onPress={() => setShowPassword(!showPassword)}
+                  />
+                }
+              />
+              {getInputError("password")}
+            </View>
+
+            <View style={styles.column}>
+              <Input
+                value={formData.confirmPassword}
+                onChange={(value) =>
+                  handleInputChange("confirmPassword", value)
+                }
+                placeholder="Confirm Password *"
+                required
+                secureTextEntry={!showPassword}
+                right={
+                  <TextInput.Icon
+                    icon={showPassword ? "eye" : "eye-off"}
+                    onPress={() => setShowPassword(!showPassword)}
+                  />
+                }
+              />
+              {getInputError("password")}
+            </View>
+
+            {Platform.OS === "android" ? (
+              <View style={styles.row}>
+                <Checkbox
+                  status={checked ? "checked" : "unchecked"}
+                  color="#fff" // Color when checked
+                  uncheckedColor="#ccc" // Color when unchecked
+                  onPress={() => setChecked(!checked)}
                 />
-              }
-            />
-            {getInputError("password")}
-          </View>
-
-          <View style={styles.column}>
-            <Input
-              value={formData.confirmPassword}
-              onChange={(value) => handleInputChange("confirmPassword", value)}
-              placeholder="Confirm Password *"
-              required
-              secureTextEntry={!showPassword}
-              right={
-                <TextInput.Icon
-                  icon={showPassword ? "eye" : "eye-off"}
-                  onPress={() => setShowPassword(!showPassword)}
+                <Text
+                  value="Agree to the terms and conditions"
+                  variant="body"
+                  style={{ color: "#fff" }}
                 />
-              }
-            />
-            {getInputError("password")}
-          </View>
-
-          {Platform.OS === "android" ? (
-            <View style={styles.row}>
-              <Checkbox
+              </View>
+            ) : (
+              <Checkbox.Item
                 status={checked ? "checked" : "unchecked"}
                 color="#fff" // Color when checked
                 uncheckedColor="#ccc" // Color when unchecked
+                labelStyle={{ color: "#fff" }}
+                label="Tap here to agree to the terms and conditions"
                 onPress={() => setChecked(!checked)}
               />
-              <Text
-                value="Agree to the terms and conditions"
-                variant="body"
-                style={{ color: "#fff" }}
-              />
-            </View>
-          ) : (
-            <Checkbox.Item
-              status={checked ? "checked" : "unchecked"}
-              color="#fff" // Color when checked
-              uncheckedColor="#ccc" // Color when unchecked
-              labelStyle={{ color: "#fff" }}
-              label="Tap here to agree to the terms and conditions"
-              onPress={() => setChecked(!checked)}
+            )}
+
+            {getInputError("terms")}
+
+            <Button
+              label={loading ? "Registering..." : "Register"}
+              onPress={handleSignup}
+              variant="contained"
             />
-          )}
 
-          {getInputError("terms")}
-
-          <Button
-            label={loading ? "Registering..." : "Register"}
-            onPress={handleSignup}
-            variant="contained"
-          />
-
-          <Button
-            label="Already have an account? Login"
-            onPress={() => navigation.navigate("Login")}
-            variant="text"
-            style={{ color: "#fff" }}
-          />
-        </View>
-      </ScrollView>
-      <StatusBar style="light" />
-    </ImageBackground>
+            <Button
+              label="Already have an account? Login"
+              onPress={() => navigation.navigate("Login")}
+              variant="text"
+              style={{ color: "#fff" }}
+            />
+          </View>
+        </ScrollView>
+        <StatusBar style="light" />
+      </ImageBackground>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: Dimensions.get("window").width,
-    height: Dimensions.get("window").height,
+    backgroundColor: "#000000",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  imageBg: {
+    margin: "auto",
+    maxWidth: 500,
+    width: "100%",
+    height: "100%",
   },
 
   logo: {

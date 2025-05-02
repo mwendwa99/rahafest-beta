@@ -45,8 +45,6 @@ const CheckoutScreen = ({ navigation, route }) => {
   const initialSelectedTickets = routeCheckoutData?.selectedTickets;
   const initialEvent = routeCheckoutData?.event;
 
-  console.log(JSON.stringify(route.params));
-
   // State
   const [paymentMethod, setPaymentMethod] = useState("mpesa");
   const [phoneNumber, setPhoneNumber] = useState("");

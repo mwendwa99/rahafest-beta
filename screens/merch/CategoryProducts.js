@@ -200,6 +200,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+    margin: 8,
+    minWidth: 160,
+    maxWidth: "48%",
   },
   productImage: {
     width: "100%",

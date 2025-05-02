@@ -10,6 +10,7 @@ import {
   StyleSheet,
   Platform,
   FlatList,
+  useWindowDimensions,
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
@@ -27,6 +28,8 @@ export default function HouseOfRaha() {
   const [poster, setPoster] = useState(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [bookingTypes, setBookingTypes] = useState([]);
+  const { width } = useWindowDimensions();
+  const isLargeScreen = width >= 700;
 
   // fetch booking types from /house-of-raha/bookingstypes
   useEffect(() => {
@@ -287,7 +290,7 @@ export default function HouseOfRaha() {
 
   return (
     <KeyboardAvoidingView
-      style={styles.container}
+      style={[styles.container, { width: isLargeScreen ? "60%" : "100%" }]} // Adjust width based on screen size
       // behavior={Platform.OS === "ios" ? "padding" : "height"} // 'padding' is usually better for iOS
       behavior="padding" // Use padding for both platforms, adjust offset if needed
       keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0} // Adjust offset based on header height etc.
@@ -311,6 +314,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff", // Light grey background
+    alignSelf: "center", // Center the form
   },
   scrollContainer: {
     padding: 20,

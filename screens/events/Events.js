@@ -7,6 +7,7 @@ import {
   ActivityIndicator,
   StatusBar,
   RefreshControl,
+  useWindowDimensions,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import EventList from "../../components/EventList";
@@ -32,6 +33,8 @@ export default function Events({ navigation }) {
   const [loading, setLoading] = useState({ upcoming: false, past: false });
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState(null);
+  const { width } = useWindowDimensions();
+  const isLargeScreen = width >= 700;
 
   // Fetch 5 events for the specified type once.
   async function fetchEvents(type = "upcoming") {
@@ -83,12 +86,6 @@ export default function Events({ navigation }) {
         location={item?.venue}
         expired={!item?.is_active || item?.is_expired}
         tickets={item?.ticket_types || []}
-        // onPress={() =>
-        //   navigation.navigate("CheckoutNavigator", {
-        //     screen: "Checkout",
-        //     params: { event: item, showDiscount: false },
-        //   })
-        // }
         onPress={() =>
           navigation.navigate("Event", {
             params: { title: item.title },
@@ -96,6 +93,7 @@ export default function Events({ navigation }) {
         }
         isActive={item?.is_active}
         hideDiscounted
+        isLargeScreen={isLargeScreen}
       />
     ),
     [navigation]
@@ -119,6 +117,10 @@ export default function Events({ navigation }) {
             maxToRenderPerBatch={5}
             windowSize={5}
             initialNumToRender={5}
+            numColumns={isLargeScreen ? 2 : 1}
+            columnWrapperStyle={
+              isLargeScreen ? { justifyContent: "space-between" } : null
+            }
           />
         </View>
       );

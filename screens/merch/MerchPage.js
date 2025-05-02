@@ -47,20 +47,7 @@ const MerchandiseCard = ({ item }) => {
         <View>
           <Text style={styles.merchant}>{item?.merchant?.name}</Text>
         </View>
-        <View style={styles.ratingContainer}>
-          {/* <Text>★ {item.rating}</Text> */}
-          {/* {item.is_rahaclub_vip && (
-            <View style={styles.vipBadge}>
-              <Text style={styles.vipText}>VIP</Text>
-            </View>
-          )} */}
-        </View>
-        {/* <TouchableOpacity
-          style={styles.addButton}
-          onPress={() => alert("Coming soon!")}
-        >
-          <Text style={styles.addButtonText}>Add to Cart</Text>
-        </TouchableOpacity> */}
+        <View style={styles.ratingContainer}></View>
       </View>
     </TouchableOpacity>
   );

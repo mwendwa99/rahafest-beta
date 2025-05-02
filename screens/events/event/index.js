@@ -10,6 +10,7 @@ import {
   Alert,
   Dimensions,
   Linking,
+  useWindowDimensions,
 } from "react-native";
 import api from "../../../services/api.service"; // Assuming you have api.service.js
 import TicketSelection from "./TicketSelection"; // Assuming you have TicketSelection.js
@@ -33,6 +34,8 @@ const EventScreen = ({ navigation }) => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success"); // Not used with Alert
   const [filteredTickets, setFilteredTickets] = useState([]); // State to hold filtered tickets
+  const { width } = useWindowDimensions();
+  const isLargeScreen = width >= 700;
 
   const route = useRoute();
   const searchTitle = route.params.params?.title;
@@ -245,8 +248,7 @@ const EventScreen = ({ navigation }) => {
     return (
       <View style={styles.errorContainer}>
         <Text style={styles.errorText}>{error || "Event not found"}</Text>
-        {/* Navigation back is context-dependent - replace with your navigation */}
-        {/* <Button title="Return to Events" onPress={() => navigation.goBack()} /> */}
+
         <TouchableOpacity
           onPress={() => {
             /* Navigate back logic */
@@ -263,7 +265,14 @@ const EventScreen = ({ navigation }) => {
   return (
     <SafeAreaView>
       <ScrollView contentContainerStyle={styles.container}>
-        <Image source={{ uri: event.banner }} style={styles.eventImage} />
+        {event.wide_banner && (
+          <Image
+            source={{
+              uri: event.wide_banner,
+            }}
+            style={styles.eventImage}
+          />
+        )}
 
         <Text style={styles.eventTitle}>{event.title}</Text>
         <Text style={styles.organizerName}>
@@ -388,10 +397,10 @@ const styles = StyleSheet.create({
   },
   eventImage: {
     width: "100%",
-    height: isMobile ? 200 : 400, // Adjust image height for mobile/web
+    height: isMobile ? 100 : 250, // Adjust image height for mobile/web
     borderRadius: 8, // Similar to borderRadius on web Paper
     marginBottom: 20,
-    resizeMode: isMobile ? "contain" : "cover", // Adjust resizeMode for mobile/web
+    resizeMode: isMobile ? "cover" : "cover", // Adjust resizeMode for mobile/web
   },
   eventTitle: {
     fontSize: isMobile ? 24 : 30, // Adjust font size for mobile/web

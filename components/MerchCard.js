@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 150,
     marginBottom: 10,
-    objectFit: "contain"
+    objectFit: "contain",
   },
   infoContainer: {
     padding: 16,

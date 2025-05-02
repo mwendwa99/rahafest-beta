@@ -17,15 +17,11 @@ export default function EventList({
   location,
   image,
   expired,
-  tickets,
-  hideDiscounted = false,
-  isActive,
+  isLargeScreen,
 }) {
   const hasDiscount = (discount_rate) => {
     return discount_rate > 0 ? true : false;
   };
-
-  // console.log(title, isActive);
 
   function calculateOriginalPrice(price, discount_rate) {
     const numericPrice = Number(price) || 0;
@@ -40,30 +36,11 @@ export default function EventList({
     return finalPrice;
   }
 
-  // Filter tickets based on hideDiscounted prop
-  const filteredTickets = hideDiscounted
-    ? tickets.filter(
-        (ticket) =>
-          !hasDiscount(ticket.discount_rate) &&
-          ticket.is_active &&
-          ticket.id !== 22
-      )
-    : tickets.filter(
-        (ticket) =>
-          hasDiscount(ticket.discount_rate) &&
-          ticket.is_active &&
-          ticket.id !== 22
-      );
-
-  // console.log(JSON.stringify(filteredTickets));
-
   return (
-    <View style={styles.container}>
-      <Pressable
-        disabled={expired}
-        onPress={onPress}
-        style={styles.mainContent}
-      >
+    <View
+      style={[styles.container, { maxWidth: isLargeScreen ? "48%" : "100%" }]}
+    >
+      <Pressable disabled={expired} onPress={onPress}>
         {expired && (
           <View style={styles.chip}>
             <Text style={styles.text}>expired</Text>
@@ -77,38 +54,6 @@ export default function EventList({
           <Text style={styles.subtitle}>{subtitle}</Text>
         </View>
       </Pressable>
-
-      {/* <View style={styles.ticketContainer}>
-        <FlatList
-          data={filteredTickets}
-          keyExtractor={({ item }) => item?.id.toString()}
-          horizontal
-          showsHorizontalScrollIndicator={true}
-          renderItem={({ item }) => (
-            <View style={styles.ticket}>
-              <Text style={styles.title}>{item.title}</Text>
-              <View style={{ flexDirection: "row" }}>
-                {hasDiscount(item.discount_rate) && (
-                  <Text
-                    style={[
-                      styles.price,
-                      hasDiscount(item.discount_rate) && styles.discount,
-                    ]}
-                  >
-                    {calculateOriginalPrice(item.price, item.discount_rate)}
-                  </Text>
-                )}
-                <Text style={[styles.price]}>
-                  {`${formatCurrencyWithCommas(item.price)}`}
-                </Text>
-              </View>
-            </View>
-          )}
-          ListEmptyComponent={() => (
-            <Text>Tickets will be available soon!</Text>
-          )}
-        />
-      </View> */}
     </View>
   );
 }
@@ -122,16 +67,12 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     marginVertical: 5,
     backgroundColor: "#fff",
-    // borderRadius: 8,
     overflow: "hidden",
+    flex: 1,
+    margin: 8,
+    minWidth: 160,
+    // maxWidth: "48%",
   },
-  mainContent: {
-    // padding: 16,
-  },
-  // ticketContainer: {
-  //   paddingHorizontal: 16,
-  //   paddingBottom: 16,
-  // },
   chip: {
     backgroundColor: "#fafafa",
     width: 70,
@@ -163,7 +104,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   ticket: {
-    // width: 40,
     marginVertical: 2,
     flexDirection: "column",
     borderWidth: 1,
@@ -174,7 +114,6 @@ const styles = StyleSheet.create({
   },
   title: {
     fontWeight: 700,
-    // fontSize: 18,
   },
   subtitle: {
     fontSize: 12,
