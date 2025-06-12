@@ -11,6 +11,10 @@ web-build/
 android
 ios
 
+.env
+google-services.json
+google-services.*.json
+
 # Native
 *.orig.*
 *.jks
