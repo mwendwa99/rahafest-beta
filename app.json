@@ -3,6 +3,7 @@
     "name": "Raha",
     "slug": "rahafest-beta",
     "version": "11.0.4",
+    "sdkVersion": "53.0.0",       
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "notification": {

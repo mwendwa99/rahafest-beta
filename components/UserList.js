@@ -1,45 +1,36 @@
+import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
 import { Avatar } from "react-native-paper";
 import Text from "./Text";
 import Button from "./Button";
 
-export default function UserList({
+const UserList = memo(({
   user,
   handleSendFriendRequest,
   sentFriendRequest,
   pendingFriendRequests = [],
-}) {
-  // Check if the user is in the pending friend requests
-  const isPending =
+}) => {
+  const isPending = React.useMemo(() => 
     Array.isArray(pendingFriendRequests) &&
-    pendingFriendRequests.some((request) => request.friend === user.id);
+    pendingFriendRequests.some((request) => request.friend === user.id),
+    [pendingFriendRequests, user.id]
+  );
+
+  const userSlug = user?.friend_user_slug || user?.user_slug || "Anonymous";
+  const avatarLabel = userSlug.charAt(0).toUpperCase() || "?";
 
   return (
     <View style={styles.container}>
       <View style={styles.row}>
         <Avatar.Text
-          style={{ marginRight: 10 }}
+          style={styles.avatar}
           size={30}
-          label={
-            user?.friend_user_slug
-              ? user.friend_user_slug.charAt(0).toUpperCase()
-              : user?.user_slug
-              ? user.user_slug.charAt(0).toUpperCase()
-              : "?" // Fallback label if slug is null, empty, or undefined
-          }
+          label={avatarLabel}
         />
         <View style={styles.column}>
           <Text
-            value={
-              user?.friend_user_slug
-                ? user.friend_user_slug
-                : user?.user_slug
-                ? user.user_slug
-                : "Anonymous"
-            }
-            style={{
-              color: "#fafafa",
-            }}
+            value={userSlug}
+            style={styles.userText}
             variant="body"
           />
         </View>
@@ -59,17 +50,17 @@ export default function UserList({
       />
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   container: {
-    // backgroundColor: "#fafafa",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: "lightgray",
+    height: 70, // Fixed height for getItemLayout
   },
   row: {
     flexDirection: "row",
@@ -78,4 +69,12 @@ const styles = StyleSheet.create({
   column: {
     flexDirection: "column",
   },
+  avatar: {
+    marginRight: 10,
+  },
+  userText: {
+    color: "#fafafa",
+  },
 });
+
+export default UserList;

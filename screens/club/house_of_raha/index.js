@@ -180,7 +180,6 @@ export default function HouseOfRaha() {
 
       {/* Title */}
       <Text style={styles.title}>Make your event unforgettable</Text>
-
       {/* Event Type Dropdown */}
       <View style={styles.dropdownContainer}>
         <DropDownPicker
