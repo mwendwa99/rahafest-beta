@@ -38,13 +38,12 @@ const EventScreen = ({ navigation }) => {
   const isLargeScreen = width >= 700;
 
   const route = useRoute();
-  const searchTitle = route.params.params?.title;
+  const eventId = route.params?.eventId; // Get event ID instead of title
+  const eventTitle = route.params?.eventTitle; // Optional: for fallback
 
   // Simulate searchParams.get("search") using route params if needed
-  //   const searchTitle = route?.params?.search || "your_event_title"; // Or get from props, context etc.
-
   const fetchEvent = useCallback(async () => {
-    if (!searchTitle) {
+    if (!eventId && !eventTitle) {
       setError("No event specified");
       setLoading(false);
       return;
@@ -54,22 +53,55 @@ const EventScreen = ({ navigation }) => {
       setLoading(true);
       setError(null);
 
-      // Adapt api.get for React Native - assuming api.service.js is adjusted or using fetch
+      if (eventId) {
+        // Try to fetch by ID first
+        try {
+          const response = await api.get(`/public/events/${eventId}`);
+          setEvent(response.data.data);
+          return;
+        } catch (idError) {
+          // If ID fetch fails, fall back to search
+          console.log("ID fetch failed, falling back to search");
+        }
+      }
+
+      // Fallback: search by title and filter by ID
       const response = await api.get(
-        `/public/events/list?search=${encodeURIComponent(searchTitle)}`
+        `/public/events/list?search=${encodeURIComponent(eventTitle)}`
       );
 
       if (response.data.data.items.length === 0) {
         setError("Event not found");
         return;
       }
-      setEvent(response.data.data.items[0]);
+
+      // Find the specific event by ID if available
+      let targetEvent;
+      if (eventId) {
+        targetEvent = response.data.data.items.find(
+          (item) => item.id === eventId
+        );
+      }
+
+      // If no ID match found, get the most recent active event
+      if (!targetEvent) {
+        targetEvent = response.data.data.items
+          .filter((item) => item.is_active && !item.is_expired)
+          .sort((a, b) => new Date(b.start_date) - new Date(a.start_date))[0];
+      }
+
+      // Final fallback to first item
+      if (!targetEvent) {
+        targetEvent = response.data.data.items[0];
+      }
+
+      setEvent(targetEvent);
     } catch (err) {
       setError(err.message || "Failed to fetch event");
     } finally {
       setLoading(false);
     }
-  }, [searchTitle]);
+  }, [eventId, eventTitle]);
 
   useEffect(() => {
     fetchEvent();

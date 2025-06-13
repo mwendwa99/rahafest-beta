@@ -75,29 +75,31 @@ export default function Events({ navigation }) {
     setRefreshing(false);
   }, []);
 
-  const renderEventItem = useCallback(
-    ({ item }) => (
-      <EventList
-        id={item?.id?.toString()}
-        title={item?.title}
-        subtitle={item?.event_organizer?.organization_name}
-        image={item?.banner}
-        date={formatEventDates(item?.start_date, item?.end_date)}
-        location={item?.venue}
-        expired={!item?.is_active || item?.is_expired}
-        tickets={item?.ticket_types || []}
-        onPress={() =>
-          navigation.navigate("Event", {
-            params: { title: item.title },
-          })
-        }
-        isActive={item?.is_active}
-        hideDiscounted
-        isLargeScreen={isLargeScreen}
-      />
-    ),
-    [navigation]
-  );
+ const renderEventItem = useCallback(
+  ({ item }) => (
+    <EventList
+      id={item?.id?.toString()}
+      title={item?.title}
+      subtitle={item?.event_organizer?.organization_name}
+      image={item?.banner}
+      date={formatEventDates(item?.start_date, item?.end_date)}
+      location={item?.venue}
+      expired={!item?.is_active || item?.is_expired}
+      tickets={item?.ticket_types || []}
+      onPress={() =>
+        navigation.navigate("Event", {
+          // Pass the event ID instead of just title
+          eventId: item.id,
+          eventTitle: item.title, // Keep title for display purposes
+        })
+      }
+      isActive={item?.is_active}
+      hideDiscounted
+      isLargeScreen={isLargeScreen}
+    />
+  ),
+  [navigation]
+);
 
   // Render each section without infinite scroll (no onEndReached)
   const renderSection = useCallback(
