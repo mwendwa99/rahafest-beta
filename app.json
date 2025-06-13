@@ -2,8 +2,8 @@
   "expo": {
     "name": "Raha",
     "slug": "rahafest-beta",
-    "version": "11.0.4",
-    "sdkVersion": "53.0.0",       
+    "version": "11.0.5",
+    "sdkVersion": "53.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "notification": {
@@ -19,7 +19,7 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.mwendwa99.rahafestbeta",
-      "buildNumber": "5"
+      "buildNumber": "6"
     },
     "android": {
       "adaptiveIcon": {
@@ -27,7 +27,7 @@
         "backgroundColor": "#212529"
       },
       "package": "com.mwendwa99.rahafestbeta",
-      "versionCode": 41,
+      "versionCode": 42,
       "googleServicesFile": "./google-services.json"
     },
     "web": {
