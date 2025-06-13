@@ -6,9 +6,9 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
-  SafeAreaView,
   Dimensions,
 } from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useCart } from "../../context/CartContext";
 
 const { width } = Dimensions.get("window");

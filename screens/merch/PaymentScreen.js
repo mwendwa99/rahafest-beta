@@ -5,9 +5,9 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
-  SafeAreaView,
   TextInput,
 } from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from "react-redux";
 import { validateMpesaPhone } from "../../utils/form_validation";
 // import { triggerSTK } from "../../redux/merch/merchActions";

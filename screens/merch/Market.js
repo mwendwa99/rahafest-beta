@@ -7,10 +7,10 @@ import {
   TouchableOpacity,
   Image,
   ActivityIndicator,
-  SafeAreaView,
   StatusBar,
   RefreshControl,
 } from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
 import api from "../../services/api.service"; // Assuming this is where your api.get is defined
 
 export default function Marketplace({ navigation }) {

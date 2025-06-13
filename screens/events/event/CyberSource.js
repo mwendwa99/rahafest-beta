@@ -1,6 +1,7 @@
 // SecureCheckout.js - No changes needed as per the request, but ensure it's in your components directory
 import React, { useRef, useState, useEffect } from "react";
-import { View, ActivityIndicator, SafeAreaView } from "react-native";
+import { View, ActivityIndicator } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { WebView } from "react-native-webview";
 import HmacSHA256 from "crypto-js/hmac-sha256";
 import Base64 from "crypto-js/enc-base64";

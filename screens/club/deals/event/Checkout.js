@@ -9,9 +9,9 @@ import {
   Alert,
   StyleSheet,
   Dimensions,
-  SafeAreaView,
   Platform,
 } from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "../../../../services/api.service";
 import { SecureCheckout } from "./CyberSource"; // Import SecureCheckout
